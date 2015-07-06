@@ -10,49 +10,16 @@ buildscript {
             url "https://jitpack.io"
         }
 
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
 
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
 
     }
 }
 
-// ---
-apply plugin: "com.gradle.plugin-publish"
 
-repositories {
-    jcenter()
-}
-
-dependencies {
-    compile gradleApi()
-    compile localGroovy()
-}
-
-version = "1.0"
-group = "com.tommytao.a5steak"
-
-pluginBundle {
-    website = 'http://www.gradle.org/'
-    vcsUrl = 'https://github.com/gradle/gradle'
-    description = 'A pack of handy tools'
-    tags = ['a5', 'steak', 'tool']
-
-    plugins {
-        greetingsPlugin {
-            id = 'com.tommytao.a5steak'
-            displayName = 'A5Steak'
-        }
-    }
-}
-
-// ---
 
 allprojects {
     repositories {
@@ -64,8 +31,5 @@ allprojects {
             url "https://jitpack.io"
         }
 
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
     }
 }
