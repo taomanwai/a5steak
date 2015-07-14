@@ -72,7 +72,7 @@ public class Foundation {
     public final int BUFFER_SIZE_IN_BYTE = 1024;
     public final String BOUNDARY_OF_HTTP_POST_BYTE_ARRAY = "&&3rewfwefwfewfhufrbewfuweriwefr"; // Not 0xKhTmLbOuNdArY
 
-    private boolean debugMode = true;
+    protected boolean debugMode = true;
 
     protected Context appContext;
 
@@ -125,7 +125,7 @@ public class Foundation {
 
     // === http ===
 
-    private int calculateDownloadPercentage(int finished, int totalSize) {
+    protected int calculateDownloadPercentage(int finished, int totalSize) {
 
         double result = (double) finished / totalSize * 100;
 
@@ -239,7 +239,7 @@ public class Foundation {
 
     }
 
-    private File buildFile(String directory, String fileName) {
+    protected File buildFile(String directory, String fileName) {
 
         boolean isSucceed = false;
 
@@ -258,7 +258,7 @@ public class Foundation {
         return isSucceed ? file : null;
     }
 
-    private Object[] link2HttpGetConnectionAndInputStream(final String link, final int maxNoOfRetries) {
+    protected Object[] link2HttpGetConnectionAndInputStream(final String link, final int maxNoOfRetries) {
 
         if (link == null || link.isEmpty()) {
 //            Log.e(Foundation.class.getName(), "base: ERR: " + "link is null or empty");
@@ -567,7 +567,7 @@ public class Foundation {
 
     }
 
-    private void triggerHttpPostByteArrayListener(final OnHttpPostByteArrayListener listener, final boolean succeed) {
+    protected void triggerHttpPostByteArrayListener(final OnHttpPostByteArrayListener listener, final boolean succeed) {
 
         if (listener == null)
             return;
@@ -583,7 +583,7 @@ public class Foundation {
 
     }
 
-    private void triggerHttpPostJSONListener(final OnHttpPostJSONRecvJSONListener listener, final JSONObject response) {
+    protected void triggerHttpPostJSONListener(final OnHttpPostJSONRecvJSONListener listener, final JSONObject response) {
 
         if (listener == null)
             return;
@@ -898,6 +898,54 @@ public class Foundation {
 		return genHash(input, "SHA-1");
 	}
 
+    // === res id 2 name ===
+    protected String resId2Name(int resId, boolean fullName) {
+
+        String idName = appContext.getResources().getResourceName(resId);
+
+        int dividerIndex = -1;
+        if (fullName)
+            dividerIndex = idName.indexOf(':');
+        else
+            dividerIndex = idName.indexOf('/');
+
+        if (dividerIndex == -1)
+            return "";
+
+        return idName.substring(dividerIndex + 1, idName.length());
+
+    }
+
+    // === file utils ===
+
+    protected boolean deleteFolder(File folder) {
+
+        return deleteFolderExcept(folder, null);
+
+    }
+
+    protected boolean deleteFolderExcept(File folder, File exceptFileOrFolder) {
+
+        if (folder.isDirectory()) {
+            String[] children = folder.list();
+            for (int i = 0; i < children.length; i++) {
+                File fileOrFolder = new File(folder, children[i]);
+                if (exceptFileOrFolder != null
+                        && fileOrFolder.getAbsolutePath().equals(
+                        exceptFileOrFolder.getAbsolutePath()))
+                    continue;
+                if (fileOrFolder.isDirectory()) {
+                    deleteFolderExcept(fileOrFolder, exceptFileOrFolder);
+                } else {
+                    fileOrFolder.delete();
+                }
+            }
+            folder.delete();
+        }
+
+        return (!folder.exists());
+
+    }
 
 
     // === Check inside China or not ===
@@ -998,69 +1046,22 @@ public class Foundation {
 
     }
 
-    // === res id 2 name ===
-    protected String resId2Name(int resId, boolean fullName) {
 
-        String idName = appContext.getResources().getResourceName(resId);
-
-        int dividerIndex = -1;
-        if (fullName)
-            dividerIndex = idName.indexOf(':');
-        else
-            dividerIndex = idName.indexOf('/');
-
-        if (dividerIndex == -1)
-            return "";
-
-        return idName.substring(dividerIndex + 1, idName.length());
-
-    }
-
-    // === file utils ===
-
-    protected boolean deleteFolder(File folder) {
-
-        return deleteFolderExcept(folder, null);
-
-    }
-
-    protected boolean deleteFolderExcept(File folder, File exceptFileOrFolder) {
-
-        if (folder.isDirectory()) {
-            String[] children = folder.list();
-            for (int i = 0; i < children.length; i++) {
-                File fileOrFolder = new File(folder, children[i]);
-                if (exceptFileOrFolder != null
-                        && fileOrFolder.getAbsolutePath().equals(
-                        exceptFileOrFolder.getAbsolutePath()))
-                    continue;
-                if (fileOrFolder.isDirectory()) {
-                    deleteFolderExcept(fileOrFolder, exceptFileOrFolder);
-                } else {
-                    fileOrFolder.delete();
-                }
-            }
-            folder.delete();
-        }
-
-        return (!folder.exists());
-
-    }
 
 
     // === GCJ02 conversion (using U algorithm) ===
 
-    private double latitudeOffsetForWgs84ToGcj02(double d, double d1) {
+    protected double latitudeOffsetForWgs84ToGcj02(double d, double d1) {
         return -100D + 2D * d + 3D * d1 + d1 * (0.20000000000000001D * d1) + d1 * (0.10000000000000001D * d) + 0.20000000000000001D * Math.sqrt(Math.abs(d)) + (2D * (20D * Math.sin(3.1415926535897931D * (6D * d)) + 20D * Math.sin(3.1415926535897931D * (2D * d)))) / 3D + (2D * (20D * Math.sin(3.1415926535897931D * d1) + 40D * Math.sin(3.1415926535897931D * (d1 / 3D)))) / 3D + (2D * (160D * Math.sin(3.1415926535897931D * (d1 / 12D)) + 320D * Math.sin((3.1415926535897931D * d1) / 30D))) / 3D;
     }
 
-    private double longitudeOffsetForWgs84ToGcj02(double d, double d1) {
+    protected double longitudeOffsetForWgs84ToGcj02(double d, double d1) {
         return 300D + d + 2D * d1 + d * (0.10000000000000001D * d) + d1 * (0.10000000000000001D * d) + 0.10000000000000001D * Math.sqrt(Math.abs(d)) + (2D * (20D * Math.sin(3.1415926535897931D * (6D * d)) + 20D * Math.sin(3.1415926535897931D * (2D * d)))) / 3D + (2D * (20D * Math.sin(3.1415926535897931D * d) + 40D * Math.sin(3.1415926535897931D * (d / 3D)))) / 3D + (2D * (150D * Math.sin(3.1415926535897931D * (d / 12D)) + 300D * Math.sin(3.1415926535897931D * (d / 30D)))) / 3D;
     }
 
-    protected Location gcj02ToWgs84InUStyle(double gcjLat, double gcjLng) {
+    protected Location gcj02ToWgs84(double gcjLat, double gcjLng) {
 
-        Location locationForDeltaCalculation = wgs84ToGcj02InUStyle(gcjLat, gcjLng);
+        Location locationForDeltaCalculation = wgs84ToGcj02(gcjLat, gcjLng);
 
         if (locationForDeltaCalculation == null)
             return null;
@@ -1075,7 +1076,7 @@ public class Foundation {
 
     }
 
-    protected Location wgs84ToGcj02InUStyle(double wgsLat, double wgsLng) {
+    protected Location wgs84ToGcj02(double wgsLat, double wgsLng) {
 
         if (Double.isNaN(wgsLat) || Double.isNaN(wgsLng))
             return null;
@@ -1094,131 +1095,134 @@ public class Foundation {
     }
 
 
-    // ==== GCJ02 conversion ===
-
-
-    protected Location gcj02ToWgs84(double gcjLat, double gcjLng) {
-
-        if (Double.isNaN(gcjLat) || Double.isNaN(gcjLng)) {
-            return null;
-        }
-
-        Location result = new Location("");
-
-//        if (!isInChinaWgs84(gcjLat, gcjLng)) {
-//            result.setLatitude(gcjLat);
-//            result.setLongitude(gcjLng);
-//            log("lbsamap: " + "gcj02ToWgs84 outside China - output directly - no conversion");
-//            return result;
+//    // ==== GCJ02 conversion ===
+//
+//
+//    protected Location gcj02ToWgs84(double gcjLat, double gcjLng) {
+//
+//        if (Double.isNaN(gcjLat) || Double.isNaN(gcjLng)) {
+//            return null;
 //        }
-
-        Location d = delta(gcjLat, gcjLng);
-
-        result.setLatitude(gcjLat - d.getLatitude());
-        result.setLongitude(gcjLng - d.getLongitude());
-
-
-        return result;
-
-    }
-
-
-    protected Location wgs84ToGcj02(double lat, double lng) {
-
-        if (Double.isNaN(lat) || Double.isNaN(lng))
-            return null;
-
-        Location result = new Location("");
-
-        double mgLat;
-        double mgLon;
-
-//        if (!isInChinaWgs84(lat, lng)) {
-//            mgLat = lat;
-//            mgLon = lng;
+//
+//        Location result = new Location("");
+//
+////        if (!isInChinaWgs84(gcjLat, gcjLng)) {
+////            result.setLatitude(gcjLat);
+////            result.setLongitude(gcjLng);
+////            log("lbsamap: " + "gcj02ToWgs84 outside China - output directly - no conversion");
+////            return result;
+////        }
+//
+//        Location d = delta(gcjLat, gcjLng);
+//
+//        result.setLatitude(gcjLat - d.getLatitude());
+//        result.setLongitude(gcjLng - d.getLongitude());
+//
+//
+//        return result;
+//
+//    }
+//
+//
+//    protected Location wgs84ToGcj02(double lat, double lng) {
+//
+//        if (Double.isNaN(lat) || Double.isNaN(lng))
+//            return null;
+//
+//        Location result = new Location("");
+//
+//        double mgLat;
+//        double mgLon;
+//
+////        if (!isInChinaWgs84(lat, lng)) {
+////            mgLat = lat;
+////            mgLon = lng;
+////        }
+//
+//        double dLat = transformLat(lng - 105.0, lat - 35.0);
+//
+//        double dLon = transformLon(lng - 105.0, lat - 35.0);
+//
+//        double radLat = lat / 180.0 * Math.PI;
+//
+//        double magic = Math.sin(radLat);
+//
+//        magic = 1 - ee * magic * magic;
+//
+//        double sqrtMagic = Math.sqrt(magic);
+//
+//        dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
+//
+//        dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
+//
+//        mgLat = lat + dLat;
+//
+//        mgLon = lng + dLon;
+//
+//        result.setLatitude(mgLat);
+//
+//        result.setLongitude(mgLon);
+//
+//        return result;
+//    }
+//
+//    private double a = 6378245.0;
+//
+//    private double ee = 0.00669342162296594323;
+//
+//    private Location delta(double lat, double lng) {
+//
+//        if (Double.isNaN(lat) || Double.isNaN(lng)) {
+//            return null;
 //        }
+//
+//        double dLat = transformLat(lng - 105.0, lat - 35.0);
+//        double dLng = transformLon(lng - 105.0, lat - 35.0);
+//        double radLat = lat / 180.0 * Math.PI;
+//        double magic = Math.sin(radLat);
+//        magic = 1 - ee * magic * magic;
+//        double sqrtMagic = Math.sqrt(magic);
+//        dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
+//        dLng = (dLng * 180.0) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
+//
+//        Location result = new Location("");
+//        result.setLatitude(dLat);
+//        result.setLongitude(dLng);
+//
+//        return result;
+//
+//    }
+//
+//    private double transformLat(double x, double y) {
+//
+//        double ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
+//
+//        ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
+//
+//        ret += (20.0 * Math.sin(y * Math.PI) + 40.0 * Math.sin(y / 3.0 * Math.PI)) * 2.0 / 3.0;
+//
+//        ret += (160.0 * Math.sin(y / 12.0 * Math.PI) + 320 * Math.sin(y * Math.PI / 30.0)) * 2.0 / 3.0;
+//
+//        return ret;
+//
+//    }
+//
+//    private double transformLon(double x, double y) {
+//
+//        double ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
+//
+//        ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
+//
+//        ret += (20.0 * Math.sin(x * Math.PI) + 40.0 * Math.sin(x / 3.0 * Math.PI)) * 2.0 / 3.0;
+//
+//        ret += (150.0 * Math.sin(x / 12.0 * Math.PI) + 300.0 * Math.sin(x / 30.0 * Math.PI)) * 2.0 / 3.0;
+//
+//        return ret;
+//
+//    }
 
-        double dLat = transformLat(lng - 105.0, lat - 35.0);
+    // ==== Media player  ===
 
-        double dLon = transformLon(lng - 105.0, lat - 35.0);
-
-        double radLat = lat / 180.0 * Math.PI;
-
-        double magic = Math.sin(radLat);
-
-        magic = 1 - ee * magic * magic;
-
-        double sqrtMagic = Math.sqrt(magic);
-
-        dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
-
-        dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
-
-        mgLat = lat + dLat;
-
-        mgLon = lng + dLon;
-
-        result.setLatitude(mgLat);
-
-        result.setLongitude(mgLon);
-
-        return result;
-    }
-
-    private double a = 6378245.0;
-
-    private double ee = 0.00669342162296594323;
-
-    private Location delta(double lat, double lng) {
-
-        if (Double.isNaN(lat) || Double.isNaN(lng)) {
-            return null;
-        }
-
-        double dLat = transformLat(lng - 105.0, lat - 35.0);
-        double dLng = transformLon(lng - 105.0, lat - 35.0);
-        double radLat = lat / 180.0 * Math.PI;
-        double magic = Math.sin(radLat);
-        magic = 1 - ee * magic * magic;
-        double sqrtMagic = Math.sqrt(magic);
-        dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
-        dLng = (dLng * 180.0) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
-
-        Location result = new Location("");
-        result.setLatitude(dLat);
-        result.setLongitude(dLng);
-
-        return result;
-
-    }
-
-    private double transformLat(double x, double y) {
-
-        double ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
-
-        ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
-
-        ret += (20.0 * Math.sin(y * Math.PI) + 40.0 * Math.sin(y / 3.0 * Math.PI)) * 2.0 / 3.0;
-
-        ret += (160.0 * Math.sin(y / 12.0 * Math.PI) + 320 * Math.sin(y * Math.PI / 30.0)) * 2.0 / 3.0;
-
-        return ret;
-
-    }
-
-    private double transformLon(double x, double y) {
-
-        double ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
-
-        ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
-
-        ret += (20.0 * Math.sin(x * Math.PI) + 40.0 * Math.sin(x / 3.0 * Math.PI)) * 2.0 / 3.0;
-
-        ret += (150.0 * Math.sin(x / 12.0 * Math.PI) + 300.0 * Math.sin(x / 30.0 * Math.PI)) * 2.0 / 3.0;
-
-        return ret;
-
-    }
 
 
 

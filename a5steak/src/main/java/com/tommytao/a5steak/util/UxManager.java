@@ -29,8 +29,7 @@ import java.lang.reflect.Field;
 
 /**
  * Responsible for UX functions
- * <p/>
- * Warning: based on CircularReveal
+ *
  *
  * @author tommytao
  */

@@ -35,7 +35,6 @@ public class MusicManager extends Foundation {
 
     /**
      *
-     *
      * Release media player which is playing
      *
      * Ref: http://stackoverflow.com/questions/7816551/java-lang-illegalstateexception-what-does-it-mean
