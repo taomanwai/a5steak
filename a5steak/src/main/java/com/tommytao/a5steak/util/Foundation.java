@@ -71,6 +71,15 @@ public class Foundation {
 
     }
 
+    public static interface OnPlayListener {
+
+        public void onStart();
+
+        public void onComplete(boolean succeed);
+
+
+    }
+
     public final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 10000;
     public final int DEFAULT_READ_TIMEOUT_IN_MS = DEFAULT_CONNECT_TIMEOUT_IN_MS;
     public final int BUFFER_SIZE_IN_BYTE = 1024;
@@ -113,9 +122,6 @@ public class Foundation {
         log("base: create");
 
     }
-
-
-
 
 
     // === log ===
@@ -342,7 +348,6 @@ public class Foundation {
         return hasException ? null : new Object[]{conn, is};
 
     }
-
 
 
     protected void httpGetJSON(final String link, final int maxNoOfRetries, final OnHttpGetJSONListener listener) {
@@ -680,10 +685,10 @@ public class Foundation {
                         InputStream in = null;
                         try {
                             in = new BufferedInputStream(connection.getInputStream());
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        if (in!=null){
+                        if (in != null) {
                             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                             StringBuilder sb = new StringBuilder();
                             String line = "";
@@ -715,7 +720,6 @@ public class Foundation {
         }.start();
 
     }
-
 
 
     protected void httpPostByteArray(final String link, final Map<String, Object> params, final byte[] imgData, final Map<String, Object> imgDataParams, final OnHttpPostByteArrayListener listener) {
@@ -752,7 +756,6 @@ public class Foundation {
                 }
 
 
-
                 connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
                 connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
                 connection.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
@@ -771,7 +774,6 @@ public class Foundation {
                 connection.setDoInput(true);
 
 
-
                 StringBuffer sbRequestBody = new StringBuffer();
 
                 // parameters part
@@ -788,7 +790,7 @@ public class Foundation {
                 sbRequestBody.append(TWO_HYPHENS).append(BOUNDARY).append(NEW_LINE);
 //        sbRequestBody.append("Content-Disposition: form-data; name=\"").append(imageKey).append("\"; filename=\"dummy.jpg\"").append(NEW_LINE);
                 sbRequestBody.append("Content-Disposition: form-data");
-                if (imgDataParams!=null || !imgDataParams.isEmpty()) {
+                if (imgDataParams != null || !imgDataParams.isEmpty()) {
                     sbRequestBody.append("; ");
                     int i = 0;
                     for (Map.Entry<String, Object> entity : imgDataParams.entrySet()) {
@@ -880,27 +882,27 @@ public class Foundation {
 
     protected String genHash(String input, String algorithm) {
 
-		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
-			byte[] array = md.digest(input.getBytes());
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
+            byte[] array = md.digest(input.getBytes());
 
-			return byteArrayToHexStr(array);
-		} catch (Exception e) {
+            return byteArrayToHexStr(array);
+        } catch (Exception e) {
             e.printStackTrace();
-		}
-		return "";
+        }
+        return "";
 
-	}
+    }
 
     protected String md5(String input) {
 
-		return genHash(input, "MD5");
+        return genHash(input, "MD5");
 
-	}
+    }
 
     protected String sha1(String input) {
-		return genHash(input, "SHA-1");
-	}
+        return genHash(input, "SHA-1");
+    }
 
     // === res id 2 name ===
     protected String resId2Name(int resId, boolean fullName) {
@@ -1019,7 +1021,6 @@ public class Foundation {
         double d4 = 0.0064999999999999997D + d2 * Math.cos(d3);
 
 
-
         Location result = new Location("");
         result.setLatitude(0.0060000000000000001D + d2 * Math.sin(d3));
         result.setLongitude(d4);
@@ -1049,8 +1050,6 @@ public class Foundation {
 
 
     }
-
-
 
 
     // === GCJ02 conversion (using U algorithm) ===
@@ -1251,7 +1250,7 @@ public class Foundation {
 
     }
 
-    public void playRaw(final int resId) {
+    public void playRaw(final int resId, final OnPlayListener listener) {
 
         releaseMediaPlayer();
 
@@ -1259,6 +1258,15 @@ public class Foundation {
             mediaPlayer = getMediaPlayerFromRaw(resId);
 
             getMediaPlayer().start();
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onStart();
+
+                }
+            });
 
             getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -1270,17 +1278,30 @@ public class Foundation {
                         e.printStackTrace();
                     }
 
+                    if (listener != null)
+                        listener.onComplete(true);
+
+
                 }
             });
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onComplete(false);
+
+                }
+            });
         }
 
 
     }
 
-    public void playAssets(final String fileName) {
+    public void playAssets(final String fileName, final OnPlayListener listener) {
 
         releaseMediaPlayer();
 
@@ -1293,6 +1314,15 @@ public class Foundation {
             getMediaPlayer().prepare();
             getMediaPlayer().start();
 
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onStart();
+
+                }
+            });
+
             getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
@@ -1301,20 +1331,32 @@ public class Foundation {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    if (listener != null)
+                        listener.onComplete(true);
+
+
                 }
             });
 
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onComplete(false);
+
+                }
+            });
         }
 
     }
 
 
-
-
-    public void playUrl(final String url) {
+    public void playUrl(final String url, final OnPlayListener listener) {
 
         releaseMediaPlayer();
 
@@ -1327,7 +1369,15 @@ public class Foundation {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
 
-                    mediaPlayer.start();
+                    try {
+                        mediaPlayer.start();
+                        if (listener != null)
+                            listener.onStart();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (listener != null)
+                            listener.onComplete(false);
+                    }
 
                 }
             });
@@ -1339,18 +1389,26 @@ public class Foundation {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    if (listener != null)
+                        listener.onComplete(true);
                 }
             });
             getMediaPlayer().prepareAsync();
 
         } catch (Exception e) {
             e.printStackTrace();
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onComplete(false);
+
+                }
+            });
         }
 
     }
-
-
-
 
 
 }

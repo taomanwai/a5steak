@@ -22,22 +22,21 @@ public class MusicManager extends Foundation {
 
     public static final String BLINK_MP3_URL = "http://www.xamuel.com/blank-mp3-files/1sec.mp3";
 
-
     @Override
     public MediaPlayer getMediaPlayer() {
         return super.getMediaPlayer();
     }
 
     @Override
-    public void playRaw(final int resId) {
+    public void playRaw(final int resId, OnPlayListener listener) {
 
-        super.playRaw(resId);
+        super.playRaw(resId, listener);
 
     }
 
-    public void playAssets(final String fileName) {
+    public void playAssets(final String fileName, OnPlayListener listener) {
 
-        super.playAssets(fileName);
+        super.playAssets(fileName, listener);
 
     }
 
@@ -49,9 +48,9 @@ public class MusicManager extends Foundation {
      *
      * @param url
      */
-    public void playUrl(final String url) {
+    public void playUrl(final String url, OnPlayListener listener) {
 
-        super.playUrl(url);
+        super.playUrl(url, listener);
 
     }
 
