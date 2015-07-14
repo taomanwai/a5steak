@@ -84,7 +84,6 @@ public class SpeechManager extends Foundation {
 
         }
 
-
         return true;
 
     }
@@ -97,7 +96,11 @@ public class SpeechManager extends Foundation {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, isWebSearchOnly ? RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH
                 : RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale.getLanguage() + "-" + locale.getCountry());
+        String localeStr = locale.getLanguage() + "-" + locale.getCountry();
+
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, localeStr);
+
+        intent.putExtra("android.speech.extra.EXTRA_ADDITIONAL_LANGUAGES", new String[]{localeStr});
 
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
 

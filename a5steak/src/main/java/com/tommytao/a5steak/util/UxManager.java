@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -27,8 +26,6 @@ import android.widget.TextView;
 import com.tommytao.a5steak.R;
 
 import java.lang.reflect.Field;
-
-import io.codetail.animation.SupportAnimator;
 
 /**
  * Responsible for UX functions
@@ -268,48 +265,46 @@ public class UxManager extends Foundation {
         view.startAnimation(slideUp);
     }
 
-
-    public void circularReveal(View view, int centerX, int centerY, int fromRadius, int toRadius, int durationInMs, final Listener listener) {
-
-        if (null == view)
-            return;
-
-        view.setVisibility(View.VISIBLE);
-
-        SupportAnimator animator = io.codetail.animation.ViewAnimationUtils.createCircularReveal(
-                view, centerX, centerY, fromRadius, toRadius);
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.setDuration(durationInMs);
-        animator.start();
-
-        animator.addListener(new SupportAnimator.AnimatorListener() {
-            @Override
-            public void onAnimationStart() {
-
-            }
-
-            @Override
-            public void onAnimationEnd() {
-
-
-                if (listener != null)
-                    listener.onComplete();
-
-            }
-
-            @Override
-            public void onAnimationCancel() {
-
-            }
-
-            @Override
-            public void onAnimationRepeat() {
-
-            }
-        });
-
-
-    }
+//    public void circularReveal(View view, int centerX, int centerY, int fromRadius, int toRadius, int durationInMs, final Listener listener) {
+//
+//        if (null == view)
+//            return;
+//
+//        view.setVisibility(View.VISIBLE);
+//
+//        SupportAnimator animator = io.codetail.animation.ViewAnimationUtils.createCircularReveal(
+//                view, centerX, centerY, fromRadius, toRadius);
+//        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+//        animator.setDuration(durationInMs);
+//        animator.start();
+//
+//        animator.addListener(new SupportAnimator.AnimatorListener() {
+//            @Override
+//            public void onAnimationStart() {
+//
+//            }
+//
+//            @Override
+//            public void onAnimationEnd() {
+//
+//
+//                if (listener != null)
+//                    listener.onComplete();
+//
+//            }
+//
+//            @Override
+//            public void onAnimationCancel() {
+//
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat() {
+//
+//            }
+//        });
+//
+//    }
 
     public void slideHorizontal(final View view, int fromX, int toX, final long durationInMs, float fromAlpha, float toAlpha, final Listener listener) {
 
