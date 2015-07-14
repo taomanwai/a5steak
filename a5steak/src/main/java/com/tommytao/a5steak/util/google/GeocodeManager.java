@@ -3,7 +3,6 @@ package com.tommytao.a5steak.util.google;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Base64;
 
 import com.tommytao.a5steak.util.Foundation;
 
@@ -19,9 +18,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Locale;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 public class GeocodeManager extends Foundation {
 
@@ -191,62 +187,62 @@ public class GeocodeManager extends Foundation {
 		}
 	}
 
-	public static class UrlSigner {
-
-		// Note: Generally, you should store your private key someplace safe
-		// and read them into your code
-
-		private static String keyString = "YOUR_PRIVATE_KEY";
-
-		// The URL shown in these examples must be already
-		// URL-encoded. In practice, you will likely have code
-		// which assembles your URL from user or web service input
-		// and plugs those values into its parameters.
-		private static String urlString = "YOUR_URL_TO_SIGN";
-
-		// This variable stores the binary key, which is computed from the
-		// string
-		// (Base64) key
-		private static byte[] key;
-
-		public UrlSigner(String keyString) throws IOException {
-			// Convert the key from 'web safe' base 64 to binary
-			keyString = keyString.replace('-', '+');
-			keyString = keyString.replace('_', '/');
-			System.out.println("Key: " + keyString);
-			key = Base64.decode(keyString, Base64.DEFAULT);
-
-		}
-
-		public String signRequest(String path, String query) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException,
-                URISyntaxException {
-
-			// Retrieve the proper URL components to sign
-			String resource = path + '?' + query;
-
-			// Get an HMAC-SHA1 signing key from the raw key bytes
-			SecretKeySpec sha1Key = new SecretKeySpec(key, "HmacSHA1");
-
-			// Get an HMAC-SHA1 Mac instance and initialize it with the
-			// HMAC-SHA1
-			// key
-			Mac mac = Mac.getInstance("HmacSHA1");
-			mac.init(sha1Key);
-
-			// compute the binary signature for the request
-			byte[] sigBytes = mac.doFinal(resource.getBytes());
-
-			// base 64 encode the binary signature
-			String signature = Base64.encodeToString(sigBytes, Base64.DEFAULT);
-
-			// convert the signature to 'web safe' base 64
-			signature = signature.replace('+', '-');
-			signature = signature.replace('/', '_');
-
-			return resource + "&signature=" + signature;
-		}
-
-	}
+//	public static class UrlSigner {
+//
+//		// Note: Generally, you should store your private key someplace safe
+//		// and read them into your code
+//
+//		private static String keyString = "YOUR_PRIVATE_KEY";
+//
+//		// The URL shown in these examples must be already
+//		// URL-encoded. In practice, you will likely have code
+//		// which assembles your URL from user or web service input
+//		// and plugs those values into its parameters.
+//		private static String urlString = "YOUR_URL_TO_SIGN";
+//
+//		// This variable stores the binary key, which is computed from the
+//		// string
+//		// (Base64) key
+//		private static byte[] key;
+//
+//		public UrlSigner(String keyString) throws IOException {
+//			// Convert the key from 'web safe' base 64 to binary
+//			keyString = keyString.replace('-', '+');
+//			keyString = keyString.replace('_', '/');
+//			System.out.println("Key: " + keyString);
+//			key = Base64.decode(keyString, Base64.DEFAULT);
+//
+//		}
+//
+//		public String signRequest(String path, String query) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException,
+//                URISyntaxException {
+//
+//			// Retrieve the proper URL components to sign
+//			String resource = path + '?' + query;
+//
+//			// Get an HMAC-SHA1 signing key from the raw key bytes
+//			SecretKeySpec sha1Key = new SecretKeySpec(key, "HmacSHA1");
+//
+//			// Get an HMAC-SHA1 Mac instance and initialize it with the
+//			// HMAC-SHA1
+//			// key
+//			Mac mac = Mac.getInstance("HmacSHA1");
+//			mac.init(sha1Key);
+//
+//			// compute the binary signature for the request
+//			byte[] sigBytes = mac.doFinal(resource.getBytes());
+//
+//			// base 64 encode the binary signature
+//			String signature = Base64.encodeToString(sigBytes, Base64.DEFAULT);
+//
+//			// convert the signature to 'web safe' base 64
+//			signature = signature.replace('+', '-');
+//			signature = signature.replace('/', '_');
+//
+//			return resource + "&signature=" + signature;
+//		}
+//
+//	}
 
 	public final int DEFAULT_MAX_NO_OF_RETRIES = 3;
 
@@ -270,13 +266,14 @@ public class GeocodeManager extends Foundation {
 
 	}
 
-	private static String businessNize(String tmpString) {
+	private static String businessNize(String apiDomain, String cryptoForBusiness, String input) {
+		String output = input;
 		UrlSigner signer;
 		try {
-			URL url = new URL(tmpString);
-			signer = new UrlSigner(CRYPTO_FOR_BUSINESS);
+			URL url = new URL(input);
+			signer = new UrlSigner(cryptoForBusiness);
 			String request = signer.signRequest(url.getPath(), url.getQuery());
-			tmpString = API_DOMAIN + request;
+			output = apiDomain + request;
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
@@ -287,7 +284,7 @@ public class GeocodeManager extends Foundation {
 			e.printStackTrace();
 		}
 
-		return tmpString;
+		return output;
 	}
 
 	private String genGetLink(double latitude, double longitude, Locale locale) {
@@ -298,7 +295,7 @@ public class GeocodeManager extends Foundation {
 		// localeString = "zh-tw"; // coz if "zh" or "zh-CN" means Simplified
 		// // Chinese
 
-		String result = businessNize(String.format("http://maps.google.com/maps/api/geocode/json?latlng=%.6f,%.6f&language=%s&client=%s", latitude, longitude,
+		String result = businessNize(API_DOMAIN, CLIENT_ID_FOR_BUSINESS, String.format("http://maps.google.com/maps/api/geocode/json?latlng=%.6f,%.6f&language=%s&client=%s", latitude, longitude,
                 localeStr, CLIENT_ID_FOR_BUSINESS));
 
 		if (result.endsWith("\r\n"))
@@ -321,7 +318,7 @@ public class GeocodeManager extends Foundation {
 		// if (locale.getLanguage().equals("zh"))
 		// localeString = "zh-tw";
 
-		return businessNize(String.format("http://maps.google.com/maps/api/geocode/json?address=%s&bounds=%s&language=%s&client=%s", encodedAddress, bounds,
+		return businessNize(API_DOMAIN, CLIENT_ID_FOR_BUSINESS, String.format("http://maps.google.com/maps/api/geocode/json?address=%s&bounds=%s&language=%s&client=%s", encodedAddress, bounds,
                 localeString, CLIENT_ID_FOR_BUSINESS));
 	}
 
@@ -338,7 +335,7 @@ public class GeocodeManager extends Foundation {
 		// if (locale.getLanguage().equals("zh"))
 		// localeString = "zh-tw";
 
-		return businessNize(String.format("http://maps.google.com/maps/api/geocode/json?address=%s&components=country:%s&language=%s&client=%s",
+		return businessNize(API_DOMAIN, CLIENT_ID_FOR_BUSINESS, String.format("http://maps.google.com/maps/api/geocode/json?address=%s&components=country:%s&language=%s&client=%s",
                 encodedAddress, country, localeString, CLIENT_ID_FOR_BUSINESS));
 	}
 
@@ -466,25 +463,6 @@ public class GeocodeManager extends Foundation {
 
 		}
 
-		// JSONObject params = new JSONObject();
-		// ForeverCacheJsonObjectRequest req = new
-		// ForeverCacheJsonObjectRequest(Method.GET, link, params, new
-		// Response.Listener<JSONObject>() {
-		//
-		// @Override
-		// public void onResponse(JSONObject response) {
-		// response2Get(response, locale, listener);
-		// }
-		// }, new Response.ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError error) {
-		// response2Get(null, locale, listener);
-		// }
-		// });
-		//
-		// volleyReqQueue.add(req);
-
 		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
@@ -519,26 +497,6 @@ public class GeocodeManager extends Foundation {
 
 		String link = genSearchByBoundsLink(keyword, bounds, locale);
 
-		// JSONObject params = new JSONObject();
-		// ForeverCacheJsonObjectRequest req = new
-		// ForeverCacheJsonObjectRequest(Method.GET, link, params, new
-		// Response.Listener<JSONObject>() {
-		//
-		// @Override
-		// public void onResponse(JSONObject response) {
-		// response2Search(response, keyword, bounds, locale, listener);
-		// }
-		//
-		// }, new Response.ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError error) {
-		// response2Search(null, keyword, bounds, locale, listener);
-		// }
-		// });
-		//
-		// volleyReqQueue.add(req);
-
 		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() { 
 
 			@Override
@@ -558,25 +516,6 @@ public class GeocodeManager extends Foundation {
 
 		String link = genSearchByCountryLink(keyword, country, locale);
 
-		// JSONObject params = new JSONObject();
-		// ForeverCacheJsonObjectRequest req = new
-		// ForeverCacheJsonObjectRequest(Method.GET, link, params, new
-		// Response.Listener<JSONObject>() {
-		//
-		// @Override
-		// public void onResponse(JSONObject response) {
-		// response2Search(response, keyword, WORLD_BOUNDS, locale, listener);
-		// }
-		//
-		// }, new Response.ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError error) {
-		// response2Search(null, keyword, WORLD_BOUNDS, locale, listener);
-		// }
-		// });
-		//
-		// volleyReqQueue.add(req);
 
 		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
 
