@@ -291,11 +291,8 @@ public class GeocodeManager extends Foundation {
 
 		String localeStr = locale.getLanguage() + "-" + locale.getCountry();
 
-		// if (locale.getLanguage().equals("zh"))
-		// localeString = "zh-tw"; // coz if "zh" or "zh-CN" means Simplified
-		// // Chinese
 
-		String result = businessNize(API_DOMAIN, CLIENT_ID_FOR_BUSINESS, String.format("http://maps.google.com/maps/api/geocode/json?latlng=%.6f,%.6f&language=%s&client=%s", latitude, longitude,
+		String result = businessNize(API_DOMAIN, CRYPTO_FOR_BUSINESS, String.format("http://maps.google.com/maps/api/geocode/json?latlng=%.6f,%.6f&language=%s&client=%s", latitude, longitude,
                 localeStr, CLIENT_ID_FOR_BUSINESS));
 
 		if (result.endsWith("\r\n"))

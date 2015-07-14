@@ -5,8 +5,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
 
+import com.tommytao.a5steak.util.google.GeocodeManager;
 import com.tommytao.a5steak.util.google.TextSpeaker;
 
 import java.util.Locale;
@@ -30,6 +30,7 @@ public class MainActivity extends ActionBarActivity {
 
 
         TextSpeaker.getInstance().init(this, new Locale("zh", "HK"));
+        GeocodeManager.getInstance().init(this);
 
 
 
@@ -39,16 +40,9 @@ public class MainActivity extends ActionBarActivity {
     @OnClick(R.id.btnSpeak)
     public void speak(){
 
-        TextSpeaker.getInstance().speak(ediInput.getText().toString(), new TextSpeaker.OnSpeakListener() {
+        GeocodeManager.getInstance().get(22.425218, 114.238208, new Locale("zh", "HK"), new GeocodeManager.OnGetListener() {
             @Override
-            public void onStart() {
-                Toast.makeText(MainActivity.this, "start", Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onComplete(boolean succeed) {
-                Toast.makeText(MainActivity.this, "end", Toast.LENGTH_SHORT).show();
+            public void returnGeocode(GeocodeManager.Geocode geocode) {
 
             }
         });
