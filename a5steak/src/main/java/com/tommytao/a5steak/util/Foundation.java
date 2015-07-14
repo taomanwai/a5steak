@@ -1,7 +1,11 @@
 package com.tommytao.a5steak.util;
 
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.res.AssetFileDescriptor;
 import android.location.Location;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
@@ -1222,6 +1226,128 @@ public class Foundation {
 //    }
 
     // ==== Media player  ===
+
+    protected MediaPlayer mediaPlayer = new MediaPlayer();
+
+    public MediaPlayer getMediaPlayer() {
+
+        return mediaPlayer;
+
+    }
+
+    protected MediaPlayer getMediaPlayerFromRaw(int resId) {
+        return MediaPlayer.create(appContext, resId);
+    }
+
+
+    protected void releaseMediaPlayer() {
+
+        try {
+            mediaPlayer.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void playRaw(final int resId) {
+
+        releaseMediaPlayer();
+
+        try {
+            mediaPlayer = getMediaPlayerFromRaw(resId);
+
+            getMediaPlayer().start();
+
+            getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+
+                    try {
+                        mediaPlayer.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void playAssets(final String fileName) {
+
+        releaseMediaPlayer();
+
+        try {
+
+            mediaPlayer = new MediaPlayer();
+            AssetFileDescriptor descriptor = ((ContextWrapper) appContext).getAssets().openFd(fileName);
+            getMediaPlayer().setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+            descriptor.close();
+            getMediaPlayer().prepare();
+            getMediaPlayer().start();
+
+            getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    try {
+                        mediaPlayer.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+
+    public void playUrl(final String url) {
+
+        releaseMediaPlayer();
+
+        try {
+
+            mediaPlayer = new MediaPlayer();
+            getMediaPlayer().setAudioStreamType(AudioManager.STREAM_MUSIC);
+            getMediaPlayer().setDataSource(url);
+            getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+
+                    mediaPlayer.start();
+
+                }
+            });
+            getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    try {
+                        mediaPlayer.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            getMediaPlayer().prepareAsync();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
 

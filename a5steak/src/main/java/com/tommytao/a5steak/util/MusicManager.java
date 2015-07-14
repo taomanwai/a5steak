@@ -1,7 +1,5 @@
 package com.tommytao.a5steak.util;
 
-import android.content.ContextWrapper;
-import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 
 public class MusicManager extends Foundation {
@@ -22,85 +20,39 @@ public class MusicManager extends Foundation {
 
 	// --
 
-	private MediaPlayer mediaPlayer;
-
-	public MediaPlayer getMediaPlayer() {
-
-		if (mediaPlayer == null)
-			mediaPlayer = new MediaPlayer();
-
-		return mediaPlayer;
-	}
+    public static final String BLINK_MP3_URL = "http://www.xamuel.com/blank-mp3-files/1sec.mp3";
 
 
-    /**
-     *
-     * Release media player which is playing
-     *
-     * Ref: http://stackoverflow.com/questions/7816551/java-lang-illegalstateexception-what-does-it-mean
-     *
-     *
-     * @return TRUE: succeed without exception caught; FALSE: failed with exception caught and printed to logcat
-     */
-    public boolean releasePlayingMediaPlayer(){
+    @Override
+    public MediaPlayer getMediaPlayer() {
+        return super.getMediaPlayer();
+    }
 
-        try {
-            if (!getMediaPlayer().isPlaying())
-                return true;
+    @Override
+    public void playRaw(final int resId) {
 
-            getMediaPlayer().stop();
-            getMediaPlayer().release();
-
-            return  true;
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return false;
+        super.playRaw(resId);
 
     }
 
-	public boolean playAssets(final String fileName) {
-		try {
+    public void playAssets(final String fileName) {
 
-            boolean succeed = releasePlayingMediaPlayer();
-            if (!succeed)
-                return false;
+        super.playAssets(fileName);
 
-            mediaPlayer = new MediaPlayer();
-			AssetFileDescriptor descriptor = ((ContextWrapper) appContext).getAssets().openFd(fileName);
-			getMediaPlayer().reset();
-			getMediaPlayer().setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
-			descriptor.close();
-			getMediaPlayer().prepare();
-			getMediaPlayer().setLooping(false);
-			getMediaPlayer().start();
+    }
 
-            return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    /**
+     *
+     * Play sound from url
+     *
+     * Note: Play it few seconds before requirement because prepareAsync() (i.e. buffering, etc.) takes time
+     *
+     * @param url
+     */
+    public void playUrl(final String url) {
 
-        return false;
-	}
+        super.playUrl(url);
 
-    public boolean playRaw(final int resId) {
-        try {
-
-            boolean succeed = releasePlayingMediaPlayer();
-            if (!succeed)
-                return false;
-
-            mediaPlayer = MediaPlayer.create(appContext, resId);
-            getMediaPlayer().start();
-
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return false;
     }
 
 }
