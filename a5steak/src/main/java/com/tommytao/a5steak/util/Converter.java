@@ -1,7 +1,6 @@
 package com.tommytao.a5steak.util;
 
 import android.content.Context;
-import android.location.Location;
 import android.util.DisplayMetrics;
 
 import java.text.DateFormat;
@@ -156,25 +155,6 @@ public class Converter extends Foundation {
         return csv;
     }
 
-
-    public String locations2LocationsStrInEasyVanStyle(ArrayList<Location> locations) {
-
-        // TODO MVP for loop is not optimized
-        if (locations == null || locations.isEmpty())
-            return "";
-
-        String result = "";
-        for (Location location : locations) {
-            if (!result.isEmpty())
-                result += ",";
-
-            result +=
-                    String.format("%.6f", location.getLatitude()) + "|" + String.format("%.6f", location.getLongitude());
-        }
-
-        return result;
-
-    }
 
     @Override
     public String resId2Name(int resId, boolean fullName) {

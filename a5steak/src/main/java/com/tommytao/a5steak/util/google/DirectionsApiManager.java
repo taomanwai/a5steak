@@ -1,7 +1,12 @@
 package com.tommytao.a5steak.util.google;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.tommytao.a5steak.util.Foundation;
 
@@ -9,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -186,7 +192,7 @@ public class DirectionsApiManager extends Foundation {
 
     public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {
 
-        if (!super.init(appContext)){
+        if (!super.init(appContext)) {
             return false;
         }
 
@@ -196,7 +202,7 @@ public class DirectionsApiManager extends Foundation {
         return true;
     }
 
-    private boolean isForWork(){
+    private boolean isForWork() {
         return !TextUtils.isEmpty(clientIdForWork) && !TextUtils.isEmpty(cryptoForWork);
     }
 
@@ -280,7 +286,7 @@ public class DirectionsApiManager extends Foundation {
                 instructionsInHtml = stepJObj.getString("html_instructions");
 
                 maneuverStr = stepJObj.optString("maneuver", "");
-                switch (maneuverStr){
+                switch (maneuverStr) {
                     case "turn-sharp-left":
                         maneuver = Step.MANEUVER_TURN_SHARP_LEFT;
                         break;
@@ -336,7 +342,6 @@ public class DirectionsApiManager extends Foundation {
                     case "fork-left":
                         maneuver = Step.MANEUVER_FORK_LEFT;
                         break;
-
 
 
                     case "ferry-train":
@@ -410,6 +415,28 @@ public class DirectionsApiManager extends Foundation {
 
         });
 
+
+    }
+
+
+    public void goToNav(Activity activity, double latitude, double longitude, String errMsgWhenNoNavApp) {
+
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:ll=" + latitude + "," + longitude));
+//        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude));
+
+        // Check intent
+        PackageManager packageManager = activity.getPackageManager();
+        List activities = packageManager.queryIntentActivities(
+                intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+
+        if (activities.isEmpty()) {
+            Toast.makeText(activity, errMsgWhenNoNavApp, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        activity.startActivity(intent);
 
     }
 

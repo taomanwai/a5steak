@@ -116,9 +116,18 @@ public class SpeechManager extends Foundation {
         getSpeechRecognizer().cancel();
     }
 
-    // http://stackoverflow.com/questions/18476088/how-do-i-create-the-semi-transparent-grey-tutorial-overlay-in-android
-    // http://stackoverflow.com/questions/5849063/does-recognitionlistener-onerror-automatically-speechrecognizer-cancel
-    // http://stackoverflow.com/questions/6316937/how-can-i-use-speech-recognition-without-the-annoying-dialog-in-android-phones
+    /**
+     *
+     *
+     * Note:
+     * <a href="http://stackoverflow.com/questions/18476088/how-do-i-create-the-semi-transparent-grey-tutorial-overlay-in-android">Note1</a>
+     * <a href="http://stackoverflow.com/questions/5849063/does-recognitionlistener-onerror-automatically-speechrecognizer-cancel">Note2</a>
+     * <a href="http://stackoverflow.com/questions/6316937/how-can-i-use-speech-recognition-without-the-annoying-dialog-in-android-phones">Note3</a>
+     *
+     * @param isWebSearchOnly
+     * @param locale
+     * @param listener
+     */
     public void listen(boolean isWebSearchOnly, Locale locale, final Listener listener) {
 
         if (listener == null)

@@ -2,17 +2,17 @@ package com.tommytao.a5steak.sample;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 
-import com.tommytao.a5steak.util.google.DirectionsApiManager;
-import com.tommytao.a5steak.util.google.GeocodeManager;
-import com.tommytao.a5steak.util.google.PlacesApiManager;
-import com.tommytao.a5steak.util.google.TextSpeaker;
-
-import java.util.Locale;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.tommytao.a5steak.customview.GMapAdapter;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -21,8 +21,19 @@ import butterknife.OnClick;
 
 public class MainActivity extends ActionBarActivity {
 
+    @InjectView(R.id.flMap)
+    FrameLayout flMap;
+
+    @InjectView(R.id.btnSpeak)
+    Button btnSpeak;
+
+    @InjectView(R.id.btnReset)
+    Button btnReset;
+
     @InjectView(R.id.ediInput)
     EditText ediInput;
+
+    GMapAdapter mapAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +42,10 @@ public class MainActivity extends ActionBarActivity {
 
         ButterKnife.inject(this);
 
-
-        TextSpeaker.getInstance().init(this, new Locale("zh", "HK"));
-        GeocodeManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
-//        GeocodeManager.getInstance().init(this, "", "");
-
-        DirectionsApiManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
-
-        PlacesApiManager.getInstance().init(this, "AIzaSyDho8iArjPHWI7GiY1xGhefeB6LplFucdI");
-
-
-
-
-
+        MapView mapView = new MapView(this);
+        flMap.addView(mapView);
+        mapAdapter = new GMapAdapter(mapView);
+        mapAdapter.onCreate(savedInstanceState);
 
 
     }
@@ -51,28 +53,49 @@ public class MainActivity extends ActionBarActivity {
     @OnClick(R.id.btnSpeak)
     public void speak(){
 
-//        GeocodeManager.getInstance().get(22.425218, 114.238208, new Locale("zh", "HK"), new GeocodeManager.OnGetListener() {
-//            @Override
-//            public void returnGeocode(GeocodeManager.Geocode geocode) {
-//                Log.d("", "");
-//            }
-//        });
+        CameraPosition position = new CameraPosition.Builder().target(new LatLng(0,0)).tilt(45).bearing(20).build();
 
-//        DirectionsApiManager.getInstance().route(22.425218, 114.238208, 22.425218, 114.238218, new Locale("zh", "HK"), new DirectionsApiManager.OnRouteListener() {
-//            @Override
-//            public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList) {
-//                Log.d("", "");
-//            }
-//        });
+        ((GoogleMap) mapAdapter.getMap()).animateCamera(CameraUpdateFactory.newCameraPosition(position));
 
-        PlacesApiManager.getInstance().getPlaceFromPlaceId("ChIJ_zlGSrMIBDQRvDT41ncaC2c", new Locale("zh", "HK"), new PlacesApiManager.OnGetPlaceListener() {
-            @Override
-            public void returnPlace(PlacesApiManager.Place place) {
-                Log.d("", "");
-            }
-        });
 
-//        22.425218, 114.238208
+    }
+
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+
+        mapAdapter.onLowMemory();
+    }
+
+    @Override
+    protected void onPause() {
+
+        mapAdapter.onPause();
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        mapAdapter.onDestroy();
+
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mapAdapter.onResume();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mapAdapter.onSaveInstanceState(outState);
 
     }
 
@@ -81,22 +104,9 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return false;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

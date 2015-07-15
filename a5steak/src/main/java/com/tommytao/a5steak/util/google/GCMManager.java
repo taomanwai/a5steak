@@ -200,13 +200,6 @@ public class GCMManager extends Foundation {
 
 	}
 
-	public String getLastKnownRegIdInEasyVanStyle() {
-
-		if (lastKnownRegId.isEmpty())
-			return "noGooglePushRegId";
-
-		return lastKnownRegId;
-	}
 
 	private IntentFilter getIntentFilter() {
 

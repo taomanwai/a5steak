@@ -33,7 +33,7 @@ import java.nio.charset.Charset;
  * especially useful for adding things like proxy support as well as better
  * support for applets.  For
  * example, you could create a
- * {@link com.easyvan.ext.library.net.DatagramSocketFactory}
+ * DatagramSocketFactory
  * that
  * requests browser security capabilities before creating a socket.
  * All classes derived from DatagramSocketClient should use the
