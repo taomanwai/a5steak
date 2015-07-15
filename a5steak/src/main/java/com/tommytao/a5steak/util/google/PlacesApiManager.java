@@ -15,6 +15,12 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ *
+ * Responsible for get or search location info through Google Places API
+ *
+ *
+ */
 public class PlacesApiManager extends Foundation {
 
     private static PlacesApiManager instance;
@@ -104,6 +110,13 @@ public class PlacesApiManager extends Foundation {
         return super.init(appContext);
     }
 
+	/**
+	 *
+	 * @param appContext Application context
+	 * @param key Places API key, to know how to get it, please browse <a href="http://stackoverflow.com/questions/24302920/how-do-i-get-a-google-places-api-key-for-my-android-app">here</a>
+	 * @return TRUE when init succeed
+	 *
+	 */
     public boolean init(Context appContext, String key) {
 
         if (!super.init(appContext)){
