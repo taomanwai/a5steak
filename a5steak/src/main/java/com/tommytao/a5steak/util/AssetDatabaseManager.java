@@ -86,6 +86,15 @@ public class AssetDatabaseManager extends Foundation {
 
     }
 
+    public String getCursorStr(Cursor cursor, String key) {
+        try {
+            return cursor.getString(cursor.getColumnIndex(key));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
 
 
