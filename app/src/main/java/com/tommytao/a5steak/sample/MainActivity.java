@@ -2,11 +2,14 @@ package com.tommytao.a5steak.sample;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import com.tommytao.a5steak.util.google.DirectionsApiManager;
 import com.tommytao.a5steak.util.google.GeocodeManager;
+import com.tommytao.a5steak.util.google.PlacesApiManager;
 import com.tommytao.a5steak.util.google.TextSpeaker;
 
 import java.util.Locale;
@@ -30,7 +33,15 @@ public class MainActivity extends ActionBarActivity {
 
 
         TextSpeaker.getInstance().init(this, new Locale("zh", "HK"));
-        GeocodeManager.getInstance().init(this);
+        GeocodeManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
+//        GeocodeManager.getInstance().init(this, "", "");
+
+        DirectionsApiManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
+
+        PlacesApiManager.getInstance().init(this, "AIzaSyDho8iArjPHWI7GiY1xGhefeB6LplFucdI");
+
+
+
 
 
 
@@ -40,12 +51,28 @@ public class MainActivity extends ActionBarActivity {
     @OnClick(R.id.btnSpeak)
     public void speak(){
 
-        GeocodeManager.getInstance().get(22.425218, 114.238208, new Locale("zh", "HK"), new GeocodeManager.OnGetListener() {
-            @Override
-            public void returnGeocode(GeocodeManager.Geocode geocode) {
+//        GeocodeManager.getInstance().get(22.425218, 114.238208, new Locale("zh", "HK"), new GeocodeManager.OnGetListener() {
+//            @Override
+//            public void returnGeocode(GeocodeManager.Geocode geocode) {
+//                Log.d("", "");
+//            }
+//        });
 
+//        DirectionsApiManager.getInstance().route(22.425218, 114.238208, 22.425218, 114.238218, new Locale("zh", "HK"), new DirectionsApiManager.OnRouteListener() {
+//            @Override
+//            public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList) {
+//                Log.d("", "");
+//            }
+//        });
+
+        PlacesApiManager.getInstance().getPlaceFromPlaceId("ChIJ_zlGSrMIBDQRvDT41ncaC2c", new Locale("zh", "HK"), new PlacesApiManager.OnGetPlaceListener() {
+            @Override
+            public void returnPlace(PlacesApiManager.Place place) {
+                Log.d("", "");
             }
         });
+
+//        22.425218, 114.238208
 
     }
 

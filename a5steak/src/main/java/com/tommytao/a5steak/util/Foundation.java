@@ -1477,5 +1477,41 @@ public class Foundation {
 
     }
 
+    protected static String signToForWork(String link, String apiDomainForWork, String clientIdForWork, String cryptoForWork) {
+        String result = link + "&client=" + clientIdForWork;
+        UrlSigner signer;
+        try {
+            URL url = new URL(result);
+            signer = new UrlSigner(cryptoForWork);
+            String request = signer.signRequest(url.getPath(), url.getQuery());
+            result = apiDomainForWork + request;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static final String API_DOMAIN_FOR_WORK = "https://maps.google.com";
+
+    public static final String WORLD_BOUNDS = "-90,-180|90,180";
+
+    protected String clientIdForWork = "";
+    protected String cryptoForWork = "";
+
+    public String getClientIdForWork() {
+        return clientIdForWork;
+    }
+
+    public String getCryptoForWork() {
+        return cryptoForWork;
+    }
+
 
 }

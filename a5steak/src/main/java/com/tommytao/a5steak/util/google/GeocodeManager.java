@@ -1,25 +1,38 @@
 package com.tommytao.a5steak.util.google;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import com.tommytao.a5steak.util.Foundation;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class GeocodeManager extends Foundation {
+
+	private static GeocodeManager instance;
+
+	public static GeocodeManager getInstance() {
+		if (instance == null)
+			instance = new GeocodeManager();
+
+		return instance;
+	}
+
+	private GeocodeManager() {
+
+	}
+
+
+	// --
 
 	public static interface OnGetListener {
 
@@ -187,119 +200,44 @@ public class GeocodeManager extends Foundation {
 		}
 	}
 
-//	public static class UrlSigner {
-//
-//		// Note: Generally, you should store your private key someplace safe
-//		// and read them into your code
-//
-//		private static String keyString = "YOUR_PRIVATE_KEY";
-//
-//		// The URL shown in these examples must be already
-//		// URL-encoded. In practice, you will likely have code
-//		// which assembles your URL from user or web service input
-//		// and plugs those values into its parameters.
-//		private static String urlString = "YOUR_URL_TO_SIGN";
-//
-//		// This variable stores the binary key, which is computed from the
-//		// string
-//		// (Base64) key
-//		private static byte[] key;
-//
-//		public UrlSigner(String keyString) throws IOException {
-//			// Convert the key from 'web safe' base 64 to binary
-//			keyString = keyString.replace('-', '+');
-//			keyString = keyString.replace('_', '/');
-//			System.out.println("Key: " + keyString);
-//			key = Base64.decode(keyString, Base64.DEFAULT);
-//
-//		}
-//
-//		public String signRequest(String path, String query) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException,
-//                URISyntaxException {
-//
-//			// Retrieve the proper URL components to sign
-//			String resource = path + '?' + query;
-//
-//			// Get an HMAC-SHA1 signing key from the raw key bytes
-//			SecretKeySpec sha1Key = new SecretKeySpec(key, "HmacSHA1");
-//
-//			// Get an HMAC-SHA1 Mac instance and initialize it with the
-//			// HMAC-SHA1
-//			// key
-//			Mac mac = Mac.getInstance("HmacSHA1");
-//			mac.init(sha1Key);
-//
-//			// compute the binary signature for the request
-//			byte[] sigBytes = mac.doFinal(resource.getBytes());
-//
-//			// base 64 encode the binary signature
-//			String signature = Base64.encodeToString(sigBytes, Base64.DEFAULT);
-//
-//			// convert the signature to 'web safe' base 64
-//			signature = signature.replace('+', '-');
-//			signature = signature.replace('/', '_');
-//
-//			return resource + "&signature=" + signature;
-//		}
-//
-//	}
-
 	public final int DEFAULT_MAX_NO_OF_RETRIES = 3;
 
-	public static final String CLIENT_ID_FOR_BUSINESS = "gme-easyvanhongkonglimited";
-	public static final String CRYPTO_FOR_BUSINESS = "RglSWAR2KO9R2OghAMwyj4WqIXg=";
-	public static final String API_DOMAIN = "https://maps.google.com";
-
-	public static final String WORLD_BOUNDS = "-90,-180|90,180";
-
-	private static GeocodeManager instance = null;
-
-	private GeocodeManager() {
-
+	@Deprecated
+	public boolean init(Context appContext) {
+		return super.init(appContext);
 	}
 
-	public static GeocodeManager getInstance() {
-		if (instance != null)
-			return instance;
-		else
-			return instance = new GeocodeManager();
+	public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {
 
-	}
-
-	private static String businessNize(String apiDomain, String cryptoForBusiness, String input) {
-		String output = input;
-		UrlSigner signer;
-		try {
-			URL url = new URL(input);
-			signer = new UrlSigner(cryptoForBusiness);
-			String request = signer.signRequest(url.getPath(), url.getQuery());
-			output = apiDomain + request;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
+		if (!super.init(appContext)){
+			return false;
 		}
 
-		return output;
+		this.clientIdForWork = clientIdForWork;
+		this.cryptoForWork = cryptoForWork;
+
+		return true;
+
 	}
 
 	private String genGetLink(double latitude, double longitude, Locale locale) {
 
 		String localeStr = locale.getLanguage() + "-" + locale.getCountry();
 
+		String result = String.format("http://maps.google.com/maps/api/geocode/json?latlng=%.6f,%.6f&language=%s", latitude, longitude,
+				localeStr);
 
-		String result = businessNize(API_DOMAIN, CRYPTO_FOR_BUSINESS, String.format("http://maps.google.com/maps/api/geocode/json?latlng=%.6f,%.6f&language=%s&client=%s", latitude, longitude,
-                localeStr, CLIENT_ID_FOR_BUSINESS));
+		result = isForWork() ? signToForWork(result, API_DOMAIN_FOR_WORK, clientIdForWork, cryptoForWork) : result;
 
 		if (result.endsWith("\r\n"))
 			result = result.substring(0, result.length() - 3);
 
 		return result;
 
+	}
+
+	private boolean isForWork(){
+		return !TextUtils.isEmpty(clientIdForWork) && !TextUtils.isEmpty(cryptoForWork);
 	}
 
 	private String genSearchByBoundsLink(String address, String bounds, Locale locale) {
@@ -310,13 +248,12 @@ public class GeocodeManager extends Foundation {
 			e.printStackTrace();
 		}
 
-		String localeString = locale.getLanguage() + "-" + locale.getCountry();
+		String localeStr = locale.getLanguage() + "-" + locale.getCountry();
 
-		// if (locale.getLanguage().equals("zh"))
-		// localeString = "zh-tw";
+		String result = String.format("http://maps.google.com/maps/api/geocode/json?address=%s&bounds=%s&language=%s", encodedAddress, bounds,
+				localeStr);
 
-		return businessNize(API_DOMAIN, CLIENT_ID_FOR_BUSINESS, String.format("http://maps.google.com/maps/api/geocode/json?address=%s&bounds=%s&language=%s&client=%s", encodedAddress, bounds,
-                localeString, CLIENT_ID_FOR_BUSINESS));
+		return isForWork() ? signToForWork(result, API_DOMAIN_FOR_WORK, clientIdForWork, cryptoForWork) : result;
 	}
 
 	private String genSearchByCountryLink(String address, String country, Locale locale) {
@@ -327,13 +264,12 @@ public class GeocodeManager extends Foundation {
 			e.printStackTrace();
 		}
 
-		String localeString = locale.getLanguage() + "-" + locale.getCountry();
+		String localeStr = locale.getLanguage() + "-" + locale.getCountry();
 
-		// if (locale.getLanguage().equals("zh"))
-		// localeString = "zh-tw";
+		String result = String.format("http://maps.google.com/maps/api/geocode/json?address=%s&components=country:%s&language=%s",
+				encodedAddress, country, localeStr);
 
-		return businessNize(API_DOMAIN, CLIENT_ID_FOR_BUSINESS, String.format("http://maps.google.com/maps/api/geocode/json?address=%s&components=country:%s&language=%s&client=%s",
-                encodedAddress, country, localeString, CLIENT_ID_FOR_BUSINESS));
+		return isForWork() ? signToForWork(result, API_DOMAIN_FOR_WORK, clientIdForWork, cryptoForWork) : result;
 	}
 
 	private void response2Get(JSONObject responseJObj, Locale locale, OnGetListener listener) {
@@ -569,7 +505,7 @@ public class GeocodeManager extends Foundation {
 		if (listener == null)
 			return;
 
-		ArrayList<POIPoint> poiPoints = new ArrayList<POIPoint>();
+		ArrayList<POIPoint> poiPoints = new ArrayList<>();
 
 		try {
 			JSONArray resultsJArray = responseJObj.getJSONArray("results");

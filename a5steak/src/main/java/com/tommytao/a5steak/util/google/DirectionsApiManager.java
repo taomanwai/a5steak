@@ -1,15 +1,13 @@
 package com.tommytao.a5steak.util.google;
 
+import android.content.Context;
+import android.text.TextUtils;
+
 import com.tommytao.a5steak.util.Foundation;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -28,6 +26,22 @@ import java.util.Locale;
  * 10 requests per second.
  */
 public class DirectionsApiManager extends Foundation {
+
+    private static DirectionsApiManager instance;
+
+    public static DirectionsApiManager getInstance() {
+        if (instance != null)
+            return instance;
+        else
+            return instance = new DirectionsApiManager();
+
+    }
+
+    private DirectionsApiManager() {
+
+    }
+
+    // --
 
     public static interface OnRouteListener {
 
@@ -163,112 +177,37 @@ public class DirectionsApiManager extends Foundation {
         }
     }
 
-
-//    public static class UrlSigner {
-//
-//        // Note: Generally, you should store your private key someplace safe
-//        // and read them into your code
-//
-//        private static String keyString = "YOUR_PRIVATE_KEY";
-//
-//        // The URL shown in these examples must be already
-//        // URL-encoded. In practice, you will likely have code
-//        // which assembles your URL from user or web service input
-//        // and plugs those values into its parameters.
-//        private static String urlString = "YOUR_URL_TO_SIGN";
-//
-//        // This variable stores the binary key, which is computed from the
-//        // string
-//        // (Base64) key
-//        private static byte[] key;
-//
-//        public UrlSigner(String keyString) throws IOException {
-//            // Convert the key from 'web safe' base 64 to binary
-//            keyString = keyString.replace('-', '+');
-//            keyString = keyString.replace('_', '/');
-//            System.out.println("Key: " + keyString);
-//            key = Base64.decode(keyString, Base64.DEFAULT);
-//
-//        }
-//
-//        public String signRequest(String path, String query) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException,
-//                URISyntaxException {
-//
-//            // Retrieve the proper URL components to sign
-//            String resource = path + '?' + query;
-//
-//            // Get an HMAC-SHA1 signing key from the raw key bytes
-//            SecretKeySpec sha1Key = new SecretKeySpec(key, "HmacSHA1");
-//
-//            // Get an HMAC-SHA1 Mac instance and initialize it with the
-//            // HMAC-SHA1
-//            // key
-//            Mac mac = Mac.getInstance("HmacSHA1");
-//            mac.init(sha1Key);
-//
-//            // compute the binary signature for the request
-//            byte[] sigBytes = mac.doFinal(resource.getBytes());
-//
-//            // base 64 encode the binary signature
-//            String signature = Base64.encodeToString(sigBytes, Base64.DEFAULT);
-//
-//            // convert the signature to 'web safe' base 64
-//            signature = signature.replace('+', '-');
-//            signature = signature.replace('/', '_');
-//
-//            return resource + "&signature=" + signature;
-//        }
-//
-//    }
-
     public final int DEFAULT_MAX_NO_OF_RETRIES = 3;
 
-    public static final String CLIENT_ID_FOR_BUSINESS = "gme-easyvanhongkonglimited";
-    public static final String CRYPTO_FOR_BUSINESS = "RglSWAR2KO9R2OghAMwyj4WqIXg=";
-    public static final String API_DOMAIN = "https://maps.google.com";
-
-    public static final String WORLD_BOUNDS = "-90,-180|90,180";
-
-    private static DirectionsApiManager instance = null;
-
-    private DirectionsApiManager() {
-
+    @Deprecated
+    public boolean init(Context appContext) {
+        return super.init(appContext);
     }
 
-    public static DirectionsApiManager getInstance() {
-        if (instance != null)
-            return instance;
-        else
-            return instance = new DirectionsApiManager();
+    public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {
 
-    }
-
-    private static String businessNize(String tmpString) {
-        UrlSigner signer;
-        try {
-            URL url = new URL(tmpString);
-            signer = new UrlSigner(CRYPTO_FOR_BUSINESS);
-            String request = signer.signRequest(url.getPath(), url.getQuery());
-            tmpString = API_DOMAIN + request;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+        if (!super.init(appContext)){
+            return false;
         }
 
-        return tmpString;
+        this.clientIdForWork = clientIdForWork;
+        this.cryptoForWork = cryptoForWork;
+
+        return true;
+    }
+
+    private boolean isForWork(){
+        return !TextUtils.isEmpty(clientIdForWork) && !TextUtils.isEmpty(cryptoForWork);
     }
 
     private String genRouteLink(double startLatitude, double startLongitude, double endLatitude, double endLongitude, final Locale locale) {
 
         String localeString = locale.getLanguage() + "-" + locale.getCountry();
 
-        String result = businessNize(String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%.6f,%.6f&destination=%.6f,%.6f&language=%s&client=%s", startLatitude, startLongitude, endLatitude, endLongitude,
-                localeString, CLIENT_ID_FOR_BUSINESS));
+        String result = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%.6f,%.6f&destination=%.6f,%.6f&language=%s", startLatitude, startLongitude, endLatitude, endLongitude,
+                localeString);
+
+        result = isForWork() ? signToForWork(result, API_DOMAIN_FOR_WORK, clientIdForWork, cryptoForWork) : result;
 
         if (result.endsWith("\r\n"))
             result = result.substring(0, result.length() - 3);

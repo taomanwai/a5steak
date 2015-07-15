@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util.google;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +16,22 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class PlacesApiManager extends Foundation {
+
+    private static PlacesApiManager instance;
+
+    public static PlacesApiManager getInstance() {
+
+        if (instance == null)
+            instance = new PlacesApiManager();
+
+        return instance;
+    }
+
+    private PlacesApiManager() {
+
+    }
+
+    // --
 
 	public static class Place {
 
@@ -59,11 +76,6 @@ public class PlacesApiManager extends Foundation {
 		}
 
 	}
-	
-	public final int DEFAULT_MAX_NO_OF_RETRIES = 3;
-
-	public static final String KEY = "AIzaSyDho8iArjPHWI7GiY1xGhefeB6LplFucdI";
-	public static final int GET_PLACE_FROM_LAT_LNG_IN_METER = 5;
 
 	public static interface OnGetPlaceListener {
 
@@ -77,21 +89,34 @@ public class PlacesApiManager extends Foundation {
 
 	}
 
-	private static PlacesApiManager instance;
+    public final int DEFAULT_MAX_NO_OF_RETRIES = 3;
 
-	public static PlacesApiManager getInstance() {
+    public static final int GET_PLACE_FROM_LAT_LNG_IN_METER = 5;
 
-		if (instance == null)
-			instance = new PlacesApiManager();
+    private String key = "";
 
-		return instance;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	private PlacesApiManager() {
+    @Deprecated
+    public boolean init(Context appContext) {
+        return super.init(appContext);
+    }
 
-	}
+    public boolean init(Context appContext, String key) {
 
-	// --
+        if (!super.init(appContext)){
+            return false;
+        }
+
+        this.key = key;
+
+        return true;
+
+    }
+
+
 
 	private Location obtainLocationFromGeometryJObj(JSONObject geometryJObj) {
 
@@ -149,10 +174,6 @@ public class PlacesApiManager extends Foundation {
 	}
 
 	private String genLocaleStr(Locale locale) {
-		// String lang = locale.getLanguage();
-		// String country = locale.getCountry();
-		//
-		// String localeStr = lang + "-" + country;
 
 		return locale.getLanguage() + "-" + locale.getCountry();
 	}
@@ -165,7 +186,7 @@ public class PlacesApiManager extends Foundation {
 
 		String localeStr = genLocaleStr(locale);
 
-		String result = String.format("https://maps.googleapis.com/maps/api/place/details/json?placeid=%s&language=%s&key=%s", placeId, localeStr, KEY);
+		String result = String.format("https://maps.googleapis.com/maps/api/place/details/json?placeid=%s&language=%s&key=%s", placeId, localeStr, getKey());
 
 		return result;
 
@@ -188,7 +209,7 @@ public class PlacesApiManager extends Foundation {
 		// ===========================
 
 		String result = String.format("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%.6f,%.6f&keyword=%s&language=%s&key=%s",
-                latitude, longitude, keywordURLEncoded, localeStr, KEY);
+                latitude, longitude, keywordURLEncoded, localeStr, getKey());
 
 		result += !isRankByDistance ? ("&radius=" + radiusInMeter) : "&rankby=distance";
 
@@ -215,34 +236,13 @@ public class PlacesApiManager extends Foundation {
 			return;
 		}
 
-//		JSONObject params = new JSONObject();
-//		ForeverCacheJsonObjectRequest req = new ForeverCacheJsonObjectRequest(Method.GET, link, params, new Response.Listener<JSONObject>() {
-//
-//			@Override
-//			public void onResponse(JSONObject response) {
-//
-//				response2GetPlace(response, locale, listener);
-//
-//			}
-//
-//		}, new Response.ErrorListener() {
-//
-//			@Override
-//			public void onErrorResponse(VolleyError error) {
-//
-//				response2GetPlace(null, locale, listener);
-//
-//			}
-//		});
-//
-//		volleyReqQueue.add(req);
-		
+
 		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
 			public void onComplete(JSONObject response) {
 
-				response2GetPlace(null, locale, listener);
+				response2GetPlaceFromLatLng(response, locale, listener);
 
 			}
 
@@ -269,33 +269,12 @@ public class PlacesApiManager extends Foundation {
 			return;
 		}
 
-//		JSONObject params = new JSONObject();
-//		ForeverCacheJsonObjectRequest req = new ForeverCacheJsonObjectRequest(Method.GET, link, params, new Response.Listener<JSONObject>() {
-//
-//			@Override
-//			public void onResponse(JSONObject response) {
-//
-//				response2GetPlace(response, locale, listener);
-//
-//			}
-//		}, new Response.ErrorListener() {
-//
-//			@Override
-//			public void onErrorResponse(VolleyError error) {
-//
-//				response2GetPlace(null, locale, listener);
-//
-//			}
-//		});
-//
-//		volleyReqQueue.add(req);
-		
 		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
 			public void onComplete(JSONObject response) {
 
-				response2GetPlace(null, locale, listener);
+				response2GetPlaceFromPlaceId(response, locale, listener);
 
 			}
 
@@ -313,7 +292,7 @@ public class PlacesApiManager extends Foundation {
 
 	/**
 	 * Search nearby places by Google Places API
-	 * 
+	 *
 	 * @param keyword
 	 *            Search keyword
 	 * @param latitude
@@ -369,31 +348,12 @@ public class PlacesApiManager extends Foundation {
 			return;
 		}
 
-//		JSONObject params = new JSONObject();
-//		ForeverCacheJsonObjectRequest req = new ForeverCacheJsonObjectRequest(Method.GET, link, params, new Response.Listener<JSONObject>() {
-//
-//			@Override
-//			public void onResponse(JSONObject response) {
-//				response2SearchPlaces(response, keyword, locale, listener);
-//			}
-//
-//		}, new Response.ErrorListener() {
-//
-//			@Override
-//			public void onErrorResponse(VolleyError error) {
-//				response2SearchPlaces(null, keyword, locale, listener);
-//			}
-//
-//		});
-//
-//		volleyReqQueue.add(req);
-		
 		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
 			public void onComplete(JSONObject response) {
 
-				response2SearchPlaces(null, keyword, locale, listener);
+				response2SearchPlaces(response, keyword, locale, listener);
 
 			}
 
@@ -442,10 +402,6 @@ public class PlacesApiManager extends Foundation {
 			for (int i = 0; i < resultsJArray.length(); i++) {
 				resultJObj = resultsJArray.getJSONObject(i);
 
-				// if (isResultType(resultJObj, "establishment") ||
-				// isResultType(resultJObj, "neighborhood")) {
-
-				// NO FILTERING! Follow iOS!
 				String placeId = resultJObj.getString("place_id");
 				String name = resultJObj.getString("name");
 				location = obtainLocationFromGeometryJObj(resultJObj.getJSONObject("geometry"));
@@ -453,7 +409,6 @@ public class PlacesApiManager extends Foundation {
 				if (location != null)
 					results.add(new Place(placeId, name, location.getLatitude(), location.getLongitude()));
 
-				// }
 
 			}
 
@@ -466,7 +421,7 @@ public class PlacesApiManager extends Foundation {
 
 	}
 
-	private void response2GetPlace(JSONObject responseJObj, Locale locale, OnGetPlaceListener listener) {
+	private void response2GetPlaceFromLatLng(JSONObject responseJObj, Locale locale, OnGetPlaceListener listener) {
 
 		if (listener == null)
 			return;
@@ -498,22 +453,73 @@ public class PlacesApiManager extends Foundation {
 			for (int i = 0; i < resultsJArray.length(); i++) {
 				resultJObj = resultsJArray.getJSONObject(i);
 
-				// NO FILTERING! Follow iOS! As per requested by Milan
-				// if (isResultType(resultJObj, "establishment")) {
 				placeId = resultJObj.optString("place_id", "");
 				name = resultJObj.optString("name", "");
 				location = obtainLocationFromGeometryJObj(resultJObj.getJSONObject("geometry"));
 
 				if (location != null)
 					break;
-				// }
+
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			hasException = true;
 		}
-		
+
+		boolean isResultValid = !placeId.isEmpty() && !name.isEmpty() && location!=null;
+
+		listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, location.getLatitude(), location.getLongitude()));
+
+	}
+
+	private void response2GetPlaceFromPlaceId(JSONObject responseJObj, Locale locale, OnGetPlaceListener listener) {
+
+		if (listener == null)
+			return;
+
+		if (responseJObj == null)
+			listener.returnPlace(null);
+
+		String status = "";
+		JSONObject resultJObj = null;
+
+		String placeId = "";
+		String name = "";
+
+		Location location = null;
+
+		boolean hasException = false;
+
+		try {
+
+			status = responseJObj.getString("status");
+			if (!"OK".equals(status)) {
+				listener.returnPlace(null);
+				return;
+			}
+
+			resultJObj = responseJObj.getJSONObject("result");
+
+			placeId = resultJObj.optString("place_id", "");
+			name = resultJObj.optString("name", "");
+			location = obtainLocationFromGeometryJObj(resultJObj.getJSONObject("geometry"));
+
+//			for (int i = 0; i < resultsJObj.length(); i++) {
+//				resultJObj = resultsJObj.getJSONObject(i);
+//
+//
+//
+//				if (location != null)
+//					break;
+//
+//			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			hasException = true;
+		}
+
 		boolean isResultValid = !placeId.isEmpty() && !name.isEmpty() && location!=null;
 
 		listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, location.getLatitude(), location.getLongitude()));
