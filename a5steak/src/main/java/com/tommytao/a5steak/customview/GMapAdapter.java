@@ -134,14 +134,14 @@ public class GMapAdapter implements IMapAdapter {
 
         PolylineOptions lineOptions = new PolylineOptions();
 
-        ArrayList<LatLng> latLngs = new ArrayList<LatLng>();
+        ArrayList<LatLng> latLngs = new ArrayList<>();
 
         for (Location location : locations)
             if (location != null)
                 latLngs.add(new LatLng(location.getLatitude(), location.getLongitude()));
 
         lineOptions.addAll(latLngs);
-        lineOptions.width(11.0f);
+        lineOptions.width(width); // 11.0f
         lineOptions.color(color);
 
         return ((GoogleMap) getMap()).addPolyline(lineOptions);

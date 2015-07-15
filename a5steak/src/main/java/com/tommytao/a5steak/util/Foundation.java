@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.crypto.Mac;
@@ -1237,7 +1238,7 @@ public class Foundation {
 
     protected MediaPlayer mediaPlayer = new MediaPlayer();
 
-    public MediaPlayer getMediaPlayer() {
+    protected MediaPlayer getMediaPlayer() {
 
         return mediaPlayer;
 
@@ -1259,7 +1260,7 @@ public class Foundation {
 
     }
 
-    public void playRaw(final int resId, final OnPlayListener listener) {
+    protected void playRaw(final int resId, final OnPlayListener listener) {
 
         releaseMediaPlayer();
 
@@ -1310,7 +1311,7 @@ public class Foundation {
 
     }
 
-    public void playAssets(final String fileName, final OnPlayListener listener) {
+    protected void playAssets(final String fileName, final OnPlayListener listener) {
 
         releaseMediaPlayer();
 
@@ -1365,7 +1366,7 @@ public class Foundation {
     }
 
 
-    public void playUrl(final String url, final OnPlayListener listener) {
+    protected void playUrl(final String url, final OnPlayListener listener) {
 
         releaseMediaPlayer();
 
@@ -1420,7 +1421,7 @@ public class Foundation {
     }
 
     // === Google API for Work ===
-    public static class UrlSigner {
+    protected static class UrlSigner {
 
         // Note: Generally, you should store your private key someplace safe
         // and read them into your code
@@ -1505,12 +1506,49 @@ public class Foundation {
     protected String clientIdForWork = "";
     protected String cryptoForWork = "";
 
-    public String getClientIdForWork() {
+    protected String getClientIdForWork() {
         return clientIdForWork;
     }
 
-    public String getCryptoForWork() {
+    protected String getCryptoForWork() {
         return cryptoForWork;
+    }
+
+    // === Directions API ===
+    protected ArrayList<Location> decodePolylinePointsToLocationList(String polylinePoints){
+        ArrayList<Location> poly = new ArrayList<>();
+        int index = 0, len = polylinePoints.length();
+        int lat = 0, lng = 0;
+
+        Location location = null;
+
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = polylinePoints.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = polylinePoints.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            location = new Location("");
+            location.setLatitude((double) lat / 1E5);
+            location.setLongitude((double) lng / 1E5);
+            poly.add(location);
+        }
+
+        return poly;
     }
 
 

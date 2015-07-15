@@ -192,7 +192,7 @@ public class LBSManager extends Foundation implements LocationListener {
 
 	public Location getLastKnownLocation() {
 
-		Location result = getLocationManager().getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		Location result = getLocationManager().getLastKnownLocation(LocationManager.NETWORK_PROVIDER); // NETWORK_PROVIDER
 
 		if (result == null) {
 

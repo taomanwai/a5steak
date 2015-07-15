@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -51,11 +52,11 @@ public class DirectionsApiManager extends Foundation {
 
     public static interface OnRouteListener {
 
-        public void returnStepList(ArrayList<Step> stepList);
+        public void returnStepList(ArrayList<Step> stepList, ArrayList<Location> overviewPolylineLocationList);
 
     }
 
-    public static class Step {
+    public static class Step extends Foundation {
 
         public static int MANEUVER_NONE = -1;
 
@@ -93,6 +94,7 @@ public class DirectionsApiManager extends Foundation {
         private double endLongitude = Double.NaN;
 
         private String polylinePoints = "";
+        private ArrayList<Location> polylineLocationList = new ArrayList<Location>();
 
         private String instructionsInHtml = "";
         private int maneuver = MANEUVER_NONE;
@@ -112,6 +114,11 @@ public class DirectionsApiManager extends Foundation {
             this.instructionsInHtml = instructionsInHtml;
             this.maneuver = maneuver;
             this.travelMode = travelMode;
+        }
+
+        @Deprecated
+        public boolean init(Context appContext) {
+            return super.init(appContext);
         }
 
         public int getDistanceInMeter() {
@@ -160,27 +167,20 @@ public class DirectionsApiManager extends Foundation {
             return polylinePoints;
         }
 
+        public ArrayList<Location> getPolylineLocationList() {
+
+            if (polylineLocationList.isEmpty())
+                polylineLocationList = decodePolylinePointsToLocationList(polylinePoints);
+
+            return polylineLocationList;
+
+        }
+
         public int getManeuver() {
             return maneuver;
         }
 
-        @Override
-        public String toString() {
-            return "Step{" +
-                    "distanceInMeter=" + distanceInMeter +
-                    ", distanceInText='" + distanceInText + '\'' +
-                    ", durationInMs=" + durationInMs +
-                    ", durationInText='" + durationInText + '\'' +
-                    ", startLatitude=" + startLatitude +
-                    ", startLongitude=" + startLongitude +
-                    ", endLatitude=" + endLatitude +
-                    ", endLongitude=" + endLongitude +
-                    ", polylinePoints='" + polylinePoints + '\'' +
-                    ", instructionsInHtml='" + instructionsInHtml + '\'' +
-                    ", maneuver=" + maneuver +
-                    ", travelMode='" + travelMode + '\'' +
-                    '}';
-        }
+
     }
 
     public final int DEFAULT_MAX_NO_OF_RETRIES = 3;
@@ -227,17 +227,21 @@ public class DirectionsApiManager extends Foundation {
         if (listener == null)
             return;
 
+        String overviewPolylinePoints = "";
+
         if (responseJObj == null) {
-            listener.returnStepList(new ArrayList<Step>());
+            listener.returnStepList(new ArrayList<Step>(), decodePolylinePointsToLocationList(overviewPolylinePoints));
             return;
         }
 
 
-        ArrayList<Step> stepList = new ArrayList<Step>();
+        ArrayList<Step> stepList = new ArrayList<>();
+
         boolean hasException = false;
         try {
 
             String status = "";
+
 
             Step step;
 
@@ -260,13 +264,14 @@ public class DirectionsApiManager extends Foundation {
             status = responseJObj.getString("status");
 
             if (!"OK".equals(status)) {
-                listener.returnStepList(new ArrayList<Step>());
+                listener.returnStepList(new ArrayList<Step>(), decodePolylinePointsToLocationList(overviewPolylinePoints));
                 return;
             }
 
             JSONArray routesJArray = responseJObj.getJSONArray("routes");
             JSONArray legsJArray = routesJArray.getJSONObject(0).getJSONArray("legs");
             JSONArray stepsJArray = legsJArray.getJSONObject(0).getJSONArray("steps");
+            overviewPolylinePoints = routesJArray.getJSONObject(0).getJSONObject("overview_polyline").getString("points");
 
 
             for (int i = 0; i < stepsJArray.length(); i++) {
@@ -392,7 +397,7 @@ public class DirectionsApiManager extends Foundation {
 
         }
 
-        listener.returnStepList(hasException ? new ArrayList<Step>() : stepList);
+        listener.returnStepList(hasException ? new ArrayList<Step>() : stepList, decodePolylinePointsToLocationList(overviewPolylinePoints));
 
     }
 

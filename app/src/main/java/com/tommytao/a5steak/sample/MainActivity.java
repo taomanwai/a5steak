@@ -1,18 +1,22 @@
 package com.tommytao.a5steak.sample;
 
+import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
 import com.tommytao.a5steak.customview.GMapAdapter;
+import com.tommytao.a5steak.util.LBSManager;
+import com.tommytao.a5steak.util.google.DirectionsApiManager;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -47,15 +51,46 @@ public class MainActivity extends ActionBarActivity {
         mapAdapter = new GMapAdapter(mapView);
         mapAdapter.onCreate(savedInstanceState);
 
+        LBSManager.getInstance().init(this);
+        LBSManager.getInstance().connect(new LBSManager.Listener() {
+            @Override
+            public void onConnected() {
+                Log.d("", "");
+            }
+
+            @Override
+            public void onError() {
+                Log.d("", "");
+
+            }
+        });
+        DirectionsApiManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
+
 
     }
 
     @OnClick(R.id.btnSpeak)
-    public void speak(){
+    public void speak() {
 
-        CameraPosition position = new CameraPosition.Builder().target(new LatLng(0,0)).tilt(45).bearing(20).build();
+//        CameraPosition position = new CameraPosition.Builder().target(new LatLng(0,0)).tilt(45).bearing(20).build();
+//
+//        ((GoogleMap) mapAdapter.getMap()).animateCamera(CameraUpdateFactory.newCameraPosition(position));
 
-        ((GoogleMap) mapAdapter.getMap()).animateCamera(CameraUpdateFactory.newCameraPosition(position));
+        Double lat = LBSManager.getInstance().getLastKnownLocation().getLatitude();
+        Double lng = LBSManager.getInstance().getLastKnownLocation().getLongitude();
+
+        mapAdapter.moveCameraByLatLng(lat, lng, 13);
+
+        DirectionsApiManager.getInstance().route(lat, lng, 22.423159, 114.235990, new Locale("zh", "HK"), new DirectionsApiManager.OnRouteListener() {
+            @Override
+            public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
+
+
+
+                mapAdapter.addPolyline(overviewPolylineLocationList, 11, Color.RED);
+
+            }
+        });
 
 
     }
@@ -98,7 +133,6 @@ public class MainActivity extends ActionBarActivity {
         mapAdapter.onSaveInstanceState(outState);
 
     }
-
 
 
     @Override
