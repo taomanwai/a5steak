@@ -65,7 +65,8 @@ public class LBSManager extends Foundation implements LocationListener {
 
 	private LocationManager locationManager;
 
-	public final static int NETWORK_LOCATION_PROVIDER_UPDATE_INTERVAL_IN_SECOND = 15;
+	public final static String PROVIDER = LocationManager.NETWORK_PROVIDER;
+	public final static int PROVIDER_UPDATE_INTERVAL_IN_SECOND = 15;
 
 	public final static String PREFS_LAT_E6 = "LBSManager.PREFS_LAT_E6";
 	public final static String PREFS_LNG_E6 = "LBSManager.PREFS_LNG_E6";
@@ -118,15 +119,11 @@ public class LBSManager extends Foundation implements LocationListener {
 
 	public float distanceFromLastKnownLatLng(double lat, double lng) {
 
-		Location location = getLocationManager().getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		Location location = getLocationManager().getLastKnownLocation(PROVIDER);
 
 		if (location == null)
 			return -1;
 
-//		float[] distance = new float[3];
-//		Location.distanceBetween(location.getLatitude(), location.getLongitude(), latitude, longitude, distance);
-//
-//		return distance[0];
 
         return calculateDistance(location.getLatitude(), location.getLongitude(), lat, lng);
 
@@ -182,7 +179,7 @@ public class LBSManager extends Foundation implements LocationListener {
 
 		log("lbs: " + "connect");
 
-		this.getLocationManager().requestLocationUpdates(LocationManager.NETWORK_PROVIDER, NETWORK_LOCATION_PROVIDER_UPDATE_INTERVAL_IN_SECOND * 1000, 0, this);
+		this.getLocationManager().requestLocationUpdates(PROVIDER, PROVIDER_UPDATE_INTERVAL_IN_SECOND * 1000, 0, this);
 
 		connected = true;
 
@@ -192,12 +189,9 @@ public class LBSManager extends Foundation implements LocationListener {
 
 	public Location getLastKnownLocation() {
 
-		Location result = getLocationManager().getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		Location result = getLocationManager().getLastKnownLocation(PROVIDER);
 
-		// TODO MVP to read Genymotion emulator GPS value
-		if (result == null){
-			result = getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		}
+
 
 		if (result == null) {
 
@@ -219,6 +213,7 @@ public class LBSManager extends Foundation implements LocationListener {
 		else
 			log("lbs: " + "last known location: NOT found. Providers: " + getLocationManager().getAllProviders().toString());
 
+
 		return result;
 
 	}
@@ -232,7 +227,7 @@ public class LBSManager extends Foundation implements LocationListener {
 
 	public boolean isAvailable() {
 
-		boolean result = (this.getLocationManager() != null && this.getLocationManager().isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+		boolean result = (this.getLocationManager() != null && this.getLocationManager().isProviderEnabled(PROVIDER));
 
 		return result;
 
