@@ -641,7 +641,7 @@ public class UxManager extends Foundation {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                view.setVisibility(View.INVISIBLE);
+                view.setVisibility(View.GONE);
                 if (listener != null)
                     listener.onComplete();
             }
