@@ -192,7 +192,12 @@ public class LBSManager extends Foundation implements LocationListener {
 
 	public Location getLastKnownLocation() {
 
-		Location result = getLocationManager().getLastKnownLocation(LocationManager.NETWORK_PROVIDER); // NETWORK_PROVIDER
+		Location result = getLocationManager().getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+		// TODO MVP to read Genymotion emulator GPS value
+		if (result == null){
+			result = getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		}
 
 		if (result == null) {
 

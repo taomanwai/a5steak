@@ -8,6 +8,12 @@
         android:layout_height="match_parent">
 
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ready"
+            android:id="@+id/tvMsg"
+            android:layout_gravity="center_horizontal|top" />
     </FrameLayout>
 
     <Button
@@ -21,11 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnSpeak"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ediInput"
-        android:layout_centerInParent="true" />
+
+
+
 
 
 </RelativeLayout>

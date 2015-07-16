@@ -7,8 +7,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.MapView;
 import com.tommytao.a5steak.customview.GMapAdapter;
@@ -34,8 +35,8 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.btnReset)
     Button btnReset;
 
-    @InjectView(R.id.ediInput)
-    EditText ediInput;
+    @InjectView(R.id.tvMsg)
+    TextView tvMsg;
 
     GMapAdapter mapAdapter;
 
@@ -86,12 +87,22 @@ public class MainActivity extends ActionBarActivity {
             public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
 
 
-
                 mapAdapter.addPolyline(overviewPolylineLocationList, 11, Color.RED);
 
             }
         });
 
+
+    }
+
+    @OnClick(R.id.btnReset)
+    public void reset(){
+
+        if (LBSManager.getInstance().isAvailable()){
+            Toast.makeText(this, "yes", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "no", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
