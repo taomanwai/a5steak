@@ -1,23 +1,25 @@
 package com.tommytao.a5steak.sample;
 
-import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.MapView;
 import com.tommytao.a5steak.customview.GMapAdapter;
+import com.tommytao.a5steak.util.FineOrientationManager;
+import com.tommytao.a5steak.util.GSensor;
 import com.tommytao.a5steak.util.LBSManager;
+import com.tommytao.a5steak.util.MagneticSensor;
+import com.tommytao.a5steak.util.UxManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -38,7 +40,18 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.tvMsg)
     TextView tvMsg;
 
+    @InjectView(R.id.flBar)
+    FrameLayout flBar;
+
+    @InjectView(R.id.flHBar)
+    FrameLayout flHBar;
+
+
+    Handler h;
+
     GMapAdapter mapAdapter;
+
+    ArrayList<Double> yawHistories = new ArrayList<Double>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,42 +80,40 @@ public class MainActivity extends ActionBarActivity {
         });
         DirectionsApiManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
 
+        FineOrientationManager.getInstance().init(this);
+
+        MagneticSensor.getInstance().init(this);
+
+        MagneticSensor.getInstance().connect();
+
+        GSensor.getInstance().init(this);
+
+        GSensor.getInstance().connect();
+
+
 
     }
+
 
     @OnClick(R.id.btnSpeak)
     public void speak() {
 
-//        CameraPosition position = new CameraPosition.Builder().target(new LatLng(0,0)).tilt(45).bearing(20).build();
-//
-//        ((GoogleMap) mapAdapter.getMap()).animateCamera(CameraUpdateFactory.newCameraPosition(position));
-
-        Double lat = LBSManager.getInstance().getLastKnownLocation().getLatitude();
-        Double lng = LBSManager.getInstance().getLastKnownLocation().getLongitude();
-
-        mapAdapter.moveCameraByLatLng(lat, lng, 13);
-
-        DirectionsApiManager.getInstance().route(lat, lng, 22.423159, 114.235990, new Locale("zh", "HK"), new DirectionsApiManager.OnRouteListener() {
+        UxManager.getInstance().slideRightHideView(flHBar, 300, new UxManager.Listener() {
             @Override
-            public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
-
-
-                mapAdapter.addPolyline(overviewPolylineLocationList, 11, Color.RED);
-
+            public void onComplete() {
+                flHBar.setVisibility(View.GONE);
             }
         });
+
+
 
 
     }
 
     @OnClick(R.id.btnReset)
-    public void reset(){
+    public void reset() {
 
-        if (LBSManager.getInstance().isAvailable()){
-            Toast.makeText(this, "yes", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "no", Toast.LENGTH_SHORT).show();
-        }
+        UxManager.getInstance().slideLeftShowView(flHBar, 300, null);
 
     }
 

@@ -3,6 +3,8 @@ package com.tommytao.a5steak.util;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.AssetFileDescriptor;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -1550,6 +1552,50 @@ public class Foundation {
 
         return poly;
     }
+
+    // === Sensor ===
+    protected float lastKnownX = Float.NaN;
+    protected float lastKnownY = Float.NaN;
+    protected float lastKnownZ = Float.NaN;
+
+    protected SensorManager sensorManager;
+    protected Sensor sensor;
+
+
+    protected SensorManager getSensorManager() {
+
+        if (sensorManager == null)
+            sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
+
+        return sensorManager;
+    }
+
+    protected float getLastKnownX() {
+        return lastKnownX;
+    }
+
+    protected float getLastKnownY() {
+        return lastKnownY;
+    }
+
+    protected float getLastKnownZ() {
+        return lastKnownZ;
+    }
+
+    protected double getLastKnownMagnitude() {
+
+        if (Float.isNaN(lastKnownX) ||
+                Float.isNaN(lastKnownY) ||
+                Float.isNaN(lastKnownZ))
+            return Double.NaN;
+
+        return Math.sqrt(lastKnownX * lastKnownX + lastKnownY * lastKnownY + lastKnownZ * lastKnownZ);
+
+
+    }
+
+    // === Converter ===
+
 
 
 }

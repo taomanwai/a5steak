@@ -253,29 +253,6 @@ public class LBSManager extends Foundation implements LocationListener {
 		return latE62Lat(lngE6); // just use back latE62Lat()
 	}
 
-//	public boolean isLatValid(double lat) {
-//
-//		if (Double.isNaN(lat))
-//			return false;
-//
-//		if (lat >= -90 || lat <= 90)
-//			return true;
-//
-//		return false;
-//
-//	}
-//
-//	public boolean isLngValid(double lng) {
-//
-//		if (Double.isNaN(lng))
-//			return false;
-//
-//		if (lng >= -180 || lng <= 180)
-//			return true;
-//
-//		return false;
-//
-//	}
 
 	@Override
 	public void onLocationChanged(Location location) {

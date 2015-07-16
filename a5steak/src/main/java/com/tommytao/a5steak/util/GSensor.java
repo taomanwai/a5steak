@@ -7,26 +7,22 @@ import android.hardware.SensorManager;
 
 
 /**
- * Responsible for getting magnetic field reading (calibrated)
- *
- * Note:
- * Electrical devices usually emits 15 or 20 uT (<a href="http://www.magneticsciences.com/EMF-health/">Ref</a>)
- * Earth naturally emits 15 or 20 uT (<a href="https://en.wikipedia.org/wiki/Earth%27s_magnetic_field">Ref</a>)
+ * Responsible for getting gravity field reading
  *
  */
-public class MagneticSensor extends Foundation implements SensorEventListener {
+public class GSensor extends Foundation implements SensorEventListener {
 
-    private static MagneticSensor instance;
+    private static GSensor instance;
 
-    public static MagneticSensor getInstance() {
+    public static GSensor getInstance() {
 
         if (instance == null)
-            instance = new MagneticSensor();
+            instance = new GSensor();
 
         return instance;
     }
 
-    private MagneticSensor() {
+    private GSensor() {
 
     }
 
@@ -35,7 +31,9 @@ public class MagneticSensor extends Foundation implements SensorEventListener {
     private Sensor getSensor() {
 
         if (sensor == null)
-            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
 
         return sensor;
     }
@@ -59,7 +57,6 @@ public class MagneticSensor extends Foundation implements SensorEventListener {
         lastKnownX = sensorEvent.values[0];
         lastKnownY = sensorEvent.values[1];
         lastKnownZ = sensorEvent.values[2];
-
 
     }
 
@@ -87,6 +84,5 @@ public class MagneticSensor extends Foundation implements SensorEventListener {
     public double getLastKnownMagnitude() {
         return super.getLastKnownMagnitude();
     }
-
 
 }

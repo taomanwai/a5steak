@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.View.MeasureSpec;
@@ -29,7 +31,6 @@ import java.lang.reflect.Field;
 
 /**
  * Responsible for UX functions
- *
  *
  * @author tommytao
  */
@@ -160,7 +161,7 @@ public class UxManager extends Foundation {
 
         final int halfDurationInMs = durationInMs / 2;
 
-        UxManager.getInstance().fadeOutView(textView, halfDurationInMs, false, new Listener() {
+        UxManager.getInstance().fadeOutView(textView, halfDurationInMs, new Listener() {
             @Override
             public void onComplete() {
 
@@ -200,10 +201,25 @@ public class UxManager extends Foundation {
 
     }
 
-    public void slideDownView(final View view, int durationInMs, final Listener listener) {
+    public void slideDownHideView(final View view, int durationInMs, final Listener listener) {
 
         if (null == view)
             return;
+
+        if (view.getVisibility() != View.VISIBLE) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    if (listener!=null)
+                        listener.onComplete();
+
+                }
+            }, durationInMs);
+
+            return;
+        }
 
         final Animation slideDown =
                 new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
@@ -217,7 +233,7 @@ public class UxManager extends Foundation {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                view.setVisibility(View.GONE);
+                view.setVisibility(View.INVISIBLE);
 
                 if (listener != null)
                     listener.onComplete();
@@ -232,10 +248,25 @@ public class UxManager extends Foundation {
         view.startAnimation(slideDown);
     }
 
-    public void slideUpView(final View view, int durationInMs, final Listener listener) {
+    public void slideUpShowView(final View view, int durationInMs, final Listener listener) {
 
         if (null == view)
             return;
+
+        if (view.getVisibility() == View.VISIBLE) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    if (listener!=null)
+                        listener.onComplete();
+
+                }
+            }, durationInMs);
+
+            return;
+        }
 
         final Animation slideUp =
                 new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
@@ -263,6 +294,207 @@ public class UxManager extends Foundation {
 
         view.startAnimation(slideUp);
     }
+
+
+    // ===
+
+    public void slideDownShowView(final View view, int durationInMs, final Listener listener) {
+
+        if (null == view)
+            return;
+
+        if (view.getVisibility() == View.VISIBLE) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    if (listener!=null)
+                        listener.onComplete();
+
+                }
+            }, durationInMs);
+
+            return;
+        }
+
+        final Animation slideDown =
+                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
+                        TranslateAnimation.RELATIVE_TO_SELF, -1.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f);
+        slideDown.setDuration(durationInMs);
+        slideDown.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                if (listener != null)
+                    listener.onComplete();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.startAnimation(slideDown);
+    }
+
+    public void slideUpHideView(final View view, int durationInMs, final Listener listener) {
+
+        if (null == view)
+            return;
+
+        if (view.getVisibility() != View.VISIBLE) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    if (listener!=null)
+                        listener.onComplete();
+
+                }
+            }, durationInMs);
+
+            return;
+        }
+
+        final Animation slideUp =
+                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
+                        TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, -1.0f);
+        slideUp.setDuration(durationInMs);
+        slideUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                view.setVisibility(View.INVISIBLE);
+
+                if (listener != null)
+                    listener.onComplete();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.startAnimation(slideUp);
+    }
+
+
+    // ===
+
+
+    public void slideLeftShowView(final View view, int durationInMs, final Listener listener) {
+
+        if (null == view)
+            return;
+
+        if (view.getVisibility() == View.VISIBLE) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    if (listener!=null)
+                        listener.onComplete();
+
+                }
+            }, durationInMs);
+
+            return;
+        }
+
+        final Animation slideDown =
+                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 1.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
+                        TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f);
+        slideDown.setDuration(durationInMs);
+        slideDown.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                if (listener != null)
+                    listener.onComplete();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.startAnimation(slideDown);
+    }
+
+    public void slideRightHideView(final View view, int durationInMs, final Listener listener) {
+
+        if (null == view)
+            return;
+
+        if (view.getVisibility() != View.VISIBLE) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    if (listener!=null)
+                        listener.onComplete();
+
+                }
+            }, durationInMs);
+
+            return;
+        }
+
+        final Animation slideUp =
+                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 1.0f,
+                        TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f);
+        slideUp.setDuration(durationInMs);
+        slideUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                view.setVisibility(View.INVISIBLE);
+
+                if (listener != null)
+                    listener.onComplete();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.startAnimation(slideUp);
+    }
+
+
+    // ===
+
 
 //    public void circularReveal(View view, int centerX, int centerY, int fromRadius, int toRadius, int durationInMs, final Listener listener) {
 //
@@ -305,10 +537,10 @@ public class UxManager extends Foundation {
 //
 //    }
 
-    public void slideHorizontal(final View view, int fromX, int toX, final long durationInMs, float fromAlpha, float toAlpha, final Listener listener) {
+    public void slideView(final View view, int fromX, int toX, int fromY, int toY, float fromAlpha, float toAlpha, final long durationInMs, final Listener listener) {
 
         AnimationSet animSet = new AnimationSet(true);
-        Animation slideAnim = new TranslateAnimation(fromX, toX, 0, 0);
+        Animation slideAnim = new TranslateAnimation(fromX, toX, fromY, toY);
         slideAnim.setDuration(durationInMs);
 
         animSet.addAnimation(slideAnim);
@@ -345,7 +577,6 @@ public class UxManager extends Foundation {
         }
 
         view.startAnimation(animSet);
-
 
     }
 
@@ -397,7 +628,7 @@ public class UxManager extends Foundation {
     }
 
     // TODO MVP seems having performance issue
-    public void fadeOutView(final View view, final long durationInMs, final boolean gone, final Listener listener) {
+    public void fadeOutView(final View view, final long durationInMs, final Listener listener) {
 
         if (null == view)
             return;
@@ -410,7 +641,7 @@ public class UxManager extends Foundation {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                view.setVisibility(gone ? View.GONE : View.INVISIBLE);
+                view.setVisibility(View.INVISIBLE);
                 if (listener != null)
                     listener.onComplete();
             }
