@@ -72,14 +72,14 @@ public class MainActivity extends ActionBarActivity {
         mapAdapter.onCreate(savedInstanceState);
 
         LBSManager.getInstance().init(this);
-        LBSManager.getInstance().connect(LBSManager.DEFAULT_UPDATE_INTERVAL_IN_MS, new LBSManager.OnConnectListener() {
-
-            @Override
-            public void onConnected(boolean succeed) {
-                Log.d("", "");
-            }
-
-        });
+//        LBSManager.getInstance().connect(LBSManager.DEFAULT_UPDATE_INTERVAL_IN_MS, new LBSManager.OnConnectListener() {
+//
+//            @Override
+//            public void onConnected(boolean succeed) {
+//                Log.d("", "");
+//            }
+//
+//        });
 
         h = new Handler(Looper.getMainLooper());
 
@@ -89,11 +89,11 @@ public class MainActivity extends ActionBarActivity {
 
         MagneticSensor.getInstance().init(this);
 
-        MagneticSensor.getInstance().connect();
+//        MagneticSensor.getInstance().connect();
 
         GSensor.getInstance().init(this);
 
-        GSensor.getInstance().connect();
+//        GSensor.getInstance().connect();
 
         LBSManager.getInstance().addOnLocationChangeListener(new LBSManager.OnLocationChangeListener() {
             @Override
@@ -123,8 +123,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void run() {
 
-
-                updateMap();
+//                updateMap();
 
                 h.postDelayed(this, 30);
 
@@ -132,6 +131,366 @@ public class MainActivity extends ActionBarActivity {
         }, 30);
 
         ArrayList<String> strList = new ArrayList<String>();
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
         strList.add("abc");
         strList.add("efg");
         strList.add("abc");
@@ -182,12 +541,21 @@ public class MainActivity extends ActionBarActivity {
 
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
 
+                    Log.d("", "test_t: idle");
                     UxManager.getInstance().fadeOutView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
 
 
 
                 } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    Log.d("", "test_t: touch");
+
+                    tvMsg.clearAnimation();
+
                     UxManager.getInstance().fadeInView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
+
+                } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING){
+                    Log.d("", "test_t: fling");
+
                 }
 
             }

@@ -586,8 +586,8 @@ public class UxManager extends Foundation {
         if (null == view)
             return;
 
-        if (View.VISIBLE == view.getVisibility())
-            return;
+//        if (View.VISIBLE == view.getVisibility())
+//            return;
 
         Animation anim = new AlphaAnimation(0, 1.0f);
         anim.setDuration(durationInMs);
