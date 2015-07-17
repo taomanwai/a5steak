@@ -7,8 +7,10 @@ import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.Button;
+import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -17,48 +19,45 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.tommytao.a5steak.customview.GMapAdapter;
+import com.tommytao.a5steak.customview.ScrollBarListView;
 import com.tommytao.a5steak.util.DataProcessor;
 import com.tommytao.a5steak.util.FineOrientationManager;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.GSensor;
 import com.tommytao.a5steak.util.LBSManager;
 import com.tommytao.a5steak.util.MagneticSensor;
+import com.tommytao.a5steak.util.UxManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 
 public class MainActivity extends ActionBarActivity {
 
+
+
+
     @InjectView(R.id.flMap)
     FrameLayout flMap;
 
-    @InjectView(R.id.btnSpeak)
-    Button btnSpeak;
-
-    @InjectView(R.id.btnReset)
-    Button btnReset;
+    @InjectView(R.id.listView)
+    ScrollBarListView listView;
 
     @InjectView(R.id.tvMsg)
     TextView tvMsg;
 
-    @InjectView(R.id.flBar)
-    FrameLayout flBar;
 
-    @InjectView(R.id.flHBar)
-    FrameLayout flHBar;
 
     Handler h;
 
-    ArrayList<Double> bearList = new ArrayList<Double>();
+    ArrayList<Double> bearList = new ArrayList<>();
 
     GMapAdapter mapAdapter;
 
-    ArrayList<Double> yawHistories = new ArrayList<Double>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,17 +114,10 @@ public class MainActivity extends ActionBarActivity {
         MagneticSensor.getInstance().addOnReadingChangeListener(new Foundation.OnReadingChangeListener() {
             @Override
             public void onReadingChanged(float x, float y, float z) {
-                Log.d("", "change_t: mag: " + x + " " + y + " "+ z);
+                Log.d("", "change_t: mag: " + x + " " + y + " " + z);
 //                updateMap();
             }
         });
-
-
-    }
-
-    @OnClick(R.id.btnSpeak)
-    public void speak() {
-
 
         h.postDelayed(new Runnable() {
             @Override
@@ -139,10 +131,93 @@ public class MainActivity extends ActionBarActivity {
             }
         }, 30);
 
-        updateMap();
+        ArrayList<String> strList = new ArrayList<String>();
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        strList.add("abc");
+        strList.add("efg");
+        ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strList);
+
+        listView.setAdapter(itemsAdapter);
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+
+                    UxManager.getInstance().fadeOutView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
+
+
+
+                } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    UxManager.getInstance().fadeInView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
+                }
+
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+                tvMsg.setText("" + listView.getFirstVisiblePosition() + "/" + listView.getAdapter().getCount() + " "
+                        +listView.computeVerticalScrollOffset() + " " + listView.computeVerticalScrollExtent() + " " +listView.computeVerticalScrollRange());
+
+                double ratioOfListView = (double) (listView.computeVerticalScrollOffset() + listView.computeVerticalScrollExtent() / 2) / listView.computeVerticalScrollRange();
+
+                int offset = (int) (listView.getHeight() * ratioOfListView);
+
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) tvMsg.getLayoutParams();
+                lp.topMargin = offset - tvMsg.getHeight() / 2;
+                tvMsg.setLayoutParams(lp);
+
+
+
+
+
+
+            }
+        });
 
 
     }
+
+
 
     private void updateMap(){
 
@@ -156,29 +231,25 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        DataProcessor.getInstance().lowPassFilterForAngle(bearList, 40, bear);
+        try {
+            DataProcessor.getInstance().lowPassFilterForAngle(bearList, 40, bear);
 
-        bear = bearList.get(0);
+            bear = bearList.get(0);
 
-        bear = Math.round(bear * 10000) / 10000;
-
-
-
-//        double lat = LBSManager.getInstance().getLastKnownLocation().getLatitude();
-//        double lng = LBSManager.getInstance().getLastKnownLocation().getLongitude();
-                double lat = 22.421318;
-                double lng = 114.226747;
-
-        ((GoogleMap) mapAdapter.getMap()).moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(17).bearing((float) bear).build()));
+            bear = Math.round(bear * 10000) / 10000;
 
 
-    }
+            double lat = LBSManager.getInstance().getLastKnownLocation().getLatitude();
+            double lng = LBSManager.getInstance().getLastKnownLocation().getLongitude();
 
-    @OnClick(R.id.btnReset)
-    public void reset() {
 
+            ((GoogleMap) mapAdapter.getMap()).moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(17).bearing((float) bear).build()));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
+
 
 
     @Override
