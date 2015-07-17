@@ -60,6 +60,9 @@ public class MagneticSensor extends Foundation implements SensorEventListener {
         lastKnownY = sensorEvent.values[1];
         lastKnownZ = sensorEvent.values[2];
 
+        for (OnReadingChangeListener onReadingChangeListener : onReadingChangeListenerList){
+            onReadingChangeListener.onReadingChanged(lastKnownX, lastKnownY, lastKnownZ);
+        }
 
     }
 

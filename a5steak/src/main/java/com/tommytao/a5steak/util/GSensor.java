@@ -28,6 +28,17 @@ public class GSensor extends Foundation implements SensorEventListener {
 
     // --
 
+
+    @Override
+    public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
+        super.addOnReadingChangeListener(onReadingChangeListener);
+    }
+
+    @Override
+    public boolean removeOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
+        return super.removeOnReadingChangeListener(onReadingChangeListener);
+    }
+
     private Sensor getSensor() {
 
         if (sensor == null)
@@ -57,6 +68,10 @@ public class GSensor extends Foundation implements SensorEventListener {
         lastKnownX = sensorEvent.values[0];
         lastKnownY = sensorEvent.values[1];
         lastKnownZ = sensorEvent.values[2];
+
+        for (OnReadingChangeListener onReadingChangeListener : onReadingChangeListenerList){
+            onReadingChangeListener.onReadingChanged(lastKnownX, lastKnownY, lastKnownZ);
+        }
 
     }
 

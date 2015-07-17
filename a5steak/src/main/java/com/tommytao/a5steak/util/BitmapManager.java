@@ -560,7 +560,7 @@ public class BitmapManager extends Foundation {
 
         String country = config.locale.getCountry();
 
-        String idName = resId2Name(resId, false);
+        String idName = resIdToName(resId, false);
 
         if (idName.equals("")) {
             // XXX idName seems invalid

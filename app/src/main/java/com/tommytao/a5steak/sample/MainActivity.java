@@ -1,22 +1,28 @@
 package com.tommytao.a5steak.sample;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.tommytao.a5steak.customview.GMapAdapter;
+import com.tommytao.a5steak.util.DataProcessor;
 import com.tommytao.a5steak.util.FineOrientationManager;
+import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.GSensor;
 import com.tommytao.a5steak.util.LBSManager;
 import com.tommytao.a5steak.util.MagneticSensor;
-import com.tommytao.a5steak.util.UxManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 
 import java.util.ArrayList;
@@ -46,8 +52,9 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.flHBar)
     FrameLayout flHBar;
 
-
     Handler h;
+
+    ArrayList<Double> bearList = new ArrayList<Double>();
 
     GMapAdapter mapAdapter;
 
@@ -66,18 +73,17 @@ public class MainActivity extends ActionBarActivity {
         mapAdapter.onCreate(savedInstanceState);
 
         LBSManager.getInstance().init(this);
-        LBSManager.getInstance().connect(new LBSManager.Listener() {
+        LBSManager.getInstance().connect(LBSManager.DEFAULT_UPDATE_INTERVAL_IN_MS, new LBSManager.OnConnectListener() {
+
             @Override
-            public void onConnected() {
+            public void onConnected(boolean succeed) {
                 Log.d("", "");
             }
 
-            @Override
-            public void onError() {
-                Log.d("", "");
-
-            }
         });
+
+        h = new Handler(Looper.getMainLooper());
+
         DirectionsApiManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
 
         FineOrientationManager.getInstance().init(this);
@@ -90,22 +96,80 @@ public class MainActivity extends ActionBarActivity {
 
         GSensor.getInstance().connect();
 
-
-
-    }
-
-
-    @OnClick(R.id.btnSpeak)
-    public void speak() {
-
-        UxManager.getInstance().slideRightHideView(flHBar, 300, new UxManager.Listener() {
+        LBSManager.getInstance().addOnLocationChangeListener(new LBSManager.OnLocationChangeListener() {
             @Override
-            public void onComplete() {
-                flHBar.setVisibility(View.GONE);
+            public void onLocationChanged(Location location) {
+                Log.d("", "change_t: loc: " + location.getLatitude() + " " + location.getLongitude());
+//                updateMap();
+            }
+        });
+
+        GSensor.getInstance().addOnReadingChangeListener(new Foundation.OnReadingChangeListener() {
+            @Override
+            public void onReadingChanged(float x, float y, float z) {
+                Log.d("", "change_t: g: " + x + " " + y + " " + z);
+//                updateMap();
+            }
+        });
+
+        MagneticSensor.getInstance().addOnReadingChangeListener(new Foundation.OnReadingChangeListener() {
+            @Override
+            public void onReadingChanged(float x, float y, float z) {
+                Log.d("", "change_t: mag: " + x + " " + y + " "+ z);
+//                updateMap();
             }
         });
 
 
+    }
+
+    @OnClick(R.id.btnSpeak)
+    public void speak() {
+
+
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+
+                updateMap();
+
+                h.postDelayed(this, 30);
+
+            }
+        }, 30);
+
+        updateMap();
+
+
+    }
+
+    private void updateMap(){
+
+        double bear = 0;
+
+        try {
+            bear = FineOrientationManager.getInstance().calculateYawPitchRoll(
+                    GSensor.getInstance().getLastKnownX(), GSensor.getInstance().getLastKnownY(), GSensor.getInstance().getLastKnownZ(),
+                    MagneticSensor.getInstance().getLastKnownX(), MagneticSensor.getInstance().getLastKnownY(), MagneticSensor.getInstance().getLastKnownZ()).getYaw();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DataProcessor.getInstance().lowPassFilterForAngle(bearList, 40, bear);
+
+        bear = bearList.get(0);
+
+        bear = Math.round(bear * 10000) / 10000;
+
+
+
+//        double lat = LBSManager.getInstance().getLastKnownLocation().getLatitude();
+//        double lng = LBSManager.getInstance().getLastKnownLocation().getLongitude();
+                double lat = 22.421318;
+                double lng = 114.226747;
+
+        ((GoogleMap) mapAdapter.getMap()).moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(17).bearing((float) bear).build()));
 
 
     }
@@ -113,7 +177,6 @@ public class MainActivity extends ActionBarActivity {
     @OnClick(R.id.btnReset)
     public void reset() {
 
-        UxManager.getInstance().slideLeftShowView(flHBar, 300, null);
 
     }
 

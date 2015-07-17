@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 
+import java.util.ArrayList;
+
 /**
  * Responsible for getting latitude and longitude
  * 
@@ -53,26 +55,39 @@ public class LBSManager extends Foundation implements LocationListener {
 
 	// --
 
-	public static interface Listener {
+	public static interface OnConnectListener {
 
-		public void onConnected();
+		public void onConnected(boolean succeed);
 
-		public void onError();
 
 	}
 
-	private boolean connected;
+	public static interface OnLocationChangeListener {
 
-	private LocationManager locationManager;
+		public void onLocationChanged(Location location);
+
+	}
+
 
 	public final static String PROVIDER = LocationManager.NETWORK_PROVIDER;
-	public final static int PROVIDER_UPDATE_INTERVAL_IN_SECOND = 15;
+	public final static int DEFAULT_UPDATE_INTERVAL_IN_MS = 15 * 1000;
 
 	public final static String PREFS_LAT_E6 = "LBSManager.PREFS_LAT_E6";
 	public final static String PREFS_LNG_E6 = "LBSManager.PREFS_LNG_E6";
 
 	private final long INVALID_LAT_E6_EXAMPLE = 999999999;
     private final long INVALID_LNG_E6_EXAMPLE = 999999999;
+
+	private boolean connected;
+
+	private LocationManager locationManager;
+
+	private int updateIntervalInMs = DEFAULT_UPDATE_INTERVAL_IN_MS;
+
+	private ArrayList<OnLocationChangeListener> onLocationChangeListenerList = new ArrayList<OnLocationChangeListener>();
+
+
+
 
 	@Override
 	public boolean init(Context appContext) {
@@ -91,6 +106,15 @@ public class LBSManager extends Foundation implements LocationListener {
 
 	}
 
+
+	public void addOnLocationChangeListener(OnLocationChangeListener onLocationChangeListener){
+		onLocationChangeListenerList.add(onLocationChangeListener);
+	}
+
+	public boolean removeOnLocationChangeListener(OnLocationChangeListener onLocationChangeListener){
+		return onLocationChangeListenerList.remove(onLocationChangeListener);
+	}
+
 	public void disconnect() {
 
 		if (!isConnected()) {
@@ -106,9 +130,15 @@ public class LBSManager extends Foundation implements LocationListener {
 
 		connected = false;
 
+		updateIntervalInMs = DEFAULT_UPDATE_INTERVAL_IN_MS;
+
 	}
 
-    public float calculateDistance(double lat1, double lng1, double lat2, double lng2){
+	public int getUpdateIntervalInMs() {
+		return updateIntervalInMs;
+	}
+
+	public float calculateDistance(double lat1, double lng1, double lat2, double lng2){
 
         float[] distance = new float[3];
         Location.distanceBetween(lat1, lng1, lat2, lng2, distance);
@@ -134,9 +164,9 @@ public class LBSManager extends Foundation implements LocationListener {
 		activity.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 	}
 
-	private void triggerListener(final Listener listener, final boolean isConnected) {
+	private void triggerListener(final OnConnectListener onConnectListener, final boolean isConnected) {
 
-		if (listener == null)
+		if (onConnectListener == null)
 			return;
 
 		Handler h = new Handler(Looper.getMainLooper());
@@ -146,10 +176,8 @@ public class LBSManager extends Foundation implements LocationListener {
 			@Override
 			public void run() {
 
-				if (isConnected)
-					listener.onConnected();
-				else
-					listener.onError();
+					onConnectListener.onConnected(isConnected);
+
 
 			}
 
@@ -157,13 +185,13 @@ public class LBSManager extends Foundation implements LocationListener {
 
 	}
 
-	public void connect(final Listener listener) {
+	public void connect(int updateIntervalInMs,final OnConnectListener onConnectListener) {
 
 		if (!this.isAvailable()) {
 
 			log("lbs: " + "connect rejected: provider NOT available");
 
-			triggerListener(listener, false);
+			triggerListener(onConnectListener, false);
 
 			return;
 		}
@@ -172,18 +200,20 @@ public class LBSManager extends Foundation implements LocationListener {
 
 			log("lbs: " + "connect rejected: already connected");
 
-			triggerListener(listener, true);
+			triggerListener(onConnectListener, true);
 
 			return;
 		}
 
 		log("lbs: " + "connect");
 
-		this.getLocationManager().requestLocationUpdates(PROVIDER, PROVIDER_UPDATE_INTERVAL_IN_SECOND * 1000, 0, this);
+		this.getLocationManager().requestLocationUpdates(PROVIDER, updateIntervalInMs, 0, this);
+
+		this.updateIntervalInMs = updateIntervalInMs;
 
 		connected = true;
 
-		triggerListener(listener, true);
+		triggerListener(onConnectListener, true);
 
 	}
 
@@ -270,6 +300,10 @@ public class LBSManager extends Foundation implements LocationListener {
 		editor.putLong(PREFS_LAT_E6, lat2LatE6(location.getLatitude()));
 		editor.putLong(PREFS_LNG_E6, lng2LngE6(location.getLongitude()));
 		editor.commit();
+
+		for (OnLocationChangeListener onLocationChangeListener : onLocationChangeListenerList){
+			onLocationChangeListener.onLocationChanged(location);
+		}
 
 	}
 

@@ -157,8 +157,8 @@ public class Converter extends Foundation {
 
 
     @Override
-    public String resId2Name(int resId, boolean fullName) {
-        return super.resId2Name(resId, fullName);
+    public String resIdToName(int resId, boolean fullName) {
+        return super.resIdToName(resId, fullName);
     }
 
     public String numOfStarsToStarsStr(int numOfStars) {
@@ -192,4 +192,18 @@ public class Converter extends Foundation {
 
     }
 
+    @Override
+    protected double normalizeToOneLoopBearing(double value) {
+        return super.normalizeToOneLoopBearing(value);
+    }
+
+    @Override
+    protected double halfToWholeCircleBearing(double value) {
+        return super.halfToWholeCircleBearing(value);
+    }
+
+    @Override
+    protected double wholeToHalfCircleBearing(double value) {
+        return super.wholeToHalfCircleBearing(value);
+    }
 }

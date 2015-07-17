@@ -178,7 +178,6 @@ public class Foundation {
             protected File doInBackground(String... links) {
 
                 if (links.length != 1) {
-//                    Log.e(Foundation.class.getName(), "base: ERR: " + "Number of link is not 1 but " + links.length);
                     log("base: ERR: " + "Number of link is not 1 but " + links.length);
                     return null;
                 }
@@ -186,7 +185,6 @@ public class Foundation {
                 Object[] objs = link2HttpGetConnectionAndInputStream(links[0], 1);
 
                 if (objs == null) {
-//                    Log.e(Foundation.class.getName(), "base: ERR: " + "ConnectionAndInputStream err for " + links[0]);
                     log("base: ERR: " + "ConnectionAndInputStream err for " + links[0]);
                     return null;
                 }
@@ -198,7 +196,6 @@ public class Foundation {
                 file = buildFile(directory, fileName);
 
                 if (file == null) {
-//                    Log.e(Foundation.class.getName(), "base: ERR: " + "file init err for " + directory + File.separator + fileName);
                     log("base: ERR: " + "file init err for " + directory + File.separator + fileName);
                     return null;
                 }
@@ -283,7 +280,6 @@ public class Foundation {
     protected Object[] link2HttpGetConnectionAndInputStream(final String link, final int maxNoOfRetries) {
 
         if (link == null || link.isEmpty()) {
-//            Log.e(Foundation.class.getName(), "base: ERR: " + "link is null or empty");
             log("base: ERR: " + "link is null or empty");
             return new Object[]{null, null};
         }
@@ -296,7 +292,6 @@ public class Foundation {
         }
 
         if (url == null) {
-//            Log.e(Foundation.class.getName(), "base: ERR: " + "malformed URL for " + link);
             log("base: ERR: " + "malformed URL for " + link);
             return new Object[]{null, null};
         }
@@ -328,7 +323,6 @@ public class Foundation {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-//                    Log.e(Foundation.class.getName(), "base: ERR: " + "get input stream error for " + link);
                     log("base: ERR: " + "get input stream error for " + link);
                 }
                 countOfRetries++;
@@ -336,7 +330,6 @@ public class Foundation {
 
         } catch (Exception e) {
             e.printStackTrace();
-//            Log.e(Foundation.class.getName(), "base: ERR: " + "setup (not connect) connection error");
             log("base: ERR: " + "setup (not connect) connection error");
 
             hasException = true;
@@ -372,7 +365,6 @@ public class Foundation {
             protected JSONObject doInBackground(String... links) {
 
                 if (links.length != 1) {
-//                    Log.e(Foundation.class.getName(), "base: ERR: " + "Number of link is not 1 but " + links.length);
                     log("base: ERR: " + "Number of link is not 1 but " + links.length);
                     return null;
                 }
@@ -385,7 +377,6 @@ public class Foundation {
                 }
 
                 if (url == null) {
-//                    Log.e(Foundation.class.getName(), "base: ERR: " + "URL is invalid for " + link);
                     log("base: ERR: " + "URL is invalid for " + link);
                     return null;
                 }
@@ -509,7 +500,6 @@ public class Foundation {
             protected byte[] doInBackground(String... links) {
 
                 if (links.length != 1) {
-//                    Log.e(Foundation.class.getName(), "base: ERR: " + "Number of link is not 1 but " + links.length);
                     log("base: ERR: " + "Number of link is not 1 but " + links.length);
                     return null;
                 }
@@ -517,7 +507,6 @@ public class Foundation {
                 Object[] objs = link2HttpGetConnectionAndInputStream(links[0], 1);
 
                 if (objs == null) {
-//                    Log.e(Foundation.class.getName(), "base: ERR: " + "ConnectionAndInputStream err for " + links[0]);
                     log("base: ERR: " + "ConnectionAndInputStream err for " + links[0]);
                     return null;
                 }
@@ -546,7 +535,6 @@ public class Foundation {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-//                    Log.e(Foundation.class.getName(), "base: ERR: " + "read http or save file err");
                     log("base: ERR: " + "read http or save file err");
                     ba = new byte[0];
 
@@ -800,7 +788,6 @@ public class Foundation {
 
                 // media part
                 sbRequestBody.append(TWO_HYPHENS).append(BOUNDARY).append(NEW_LINE);
-//        sbRequestBody.append("Content-Disposition: form-data; name=\"").append(imageKey).append("\"; filename=\"dummy.jpg\"").append(NEW_LINE);
                 sbRequestBody.append("Content-Disposition: form-data");
                 if (imgDataParams != null || !imgDataParams.isEmpty()) {
                     sbRequestBody.append("; ");
@@ -814,8 +801,6 @@ public class Foundation {
                 }
                 sbRequestBody.append(NEW_LINE).append(NEW_LINE);
 
-//        sbRequestBody.append("Content-Type: image/jpeg").append(NEW_LINE);
-//        sbRequestBody.append("Content-Transfer-Encoding: binary").append(NEW_LINE).append(NEW_LINE);
 
                 boolean succeedOfConnection = false;
                 try {
@@ -849,7 +834,6 @@ public class Foundation {
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
                         succeedOfOutput = true;
 
-//                    succeedOfOutput = true;
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -916,23 +900,7 @@ public class Foundation {
         return genHash(input, "SHA-1");
     }
 
-    // === res id 2 name ===
-    protected String resId2Name(int resId, boolean fullName) {
 
-        String idName = appContext.getResources().getResourceName(resId);
-
-        int dividerIndex = -1;
-        if (fullName)
-            dividerIndex = idName.indexOf(':');
-        else
-            dividerIndex = idName.indexOf('/');
-
-        if (dividerIndex == -1)
-            return "";
-
-        return idName.substring(dividerIndex + 1, idName.length());
-
-    }
 
     // === file utils ===
 
@@ -967,7 +935,6 @@ public class Foundation {
 
 
     // === Check inside China or not ===
-
 
     protected boolean isInChinaWgs84(double lat, double lng) {
 
@@ -1554,6 +1521,26 @@ public class Foundation {
     }
 
     // === Sensor ===
+    public static interface OnReadingChangeListener {
+
+        public void onReadingChanged(float x, float y, float z);
+
+    }
+
+    protected ArrayList<OnReadingChangeListener> onReadingChangeListenerList = new ArrayList<OnReadingChangeListener>();
+
+    public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener){
+
+        onReadingChangeListenerList.add(onReadingChangeListener);
+
+    }
+
+    public boolean removeOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener){
+
+        return onReadingChangeListenerList.remove(onReadingChangeListener);
+
+    }
+
     protected float lastKnownX = Float.NaN;
     protected float lastKnownY = Float.NaN;
     protected float lastKnownZ = Float.NaN;
@@ -1595,6 +1582,56 @@ public class Foundation {
     }
 
     // === Converter ===
+    protected String resIdToName(int resId, boolean fullName) {
+
+        String idName = appContext.getResources().getResourceName(resId);
+
+        int dividerIndex = -1;
+        if (fullName)
+            dividerIndex = idName.indexOf(':');
+        else
+            dividerIndex = idName.indexOf('/');
+
+        if (dividerIndex == -1)
+            return "";
+
+        return idName.substring(dividerIndex + 1, idName.length());
+
+    }
+
+    protected double normalizeToOneLoopBearing(double value){
+        return value % 360;
+    }
+
+    protected double halfToWholeCircleBearing(double value){
+
+        value = normalizeToOneLoopBearing(value);
+
+        if (value < 0){
+            value = 360 + value;
+        }
+
+        return value;
+
+    }
+
+    protected double wholeToHalfCircleBearing(double value){
+
+        value = normalizeToOneLoopBearing(value);
+
+        if (value > 180){
+            value = - (360-value);
+        }
+
+        return  value;
+
+
+
+
+    }
+
+
+
 
 
 
