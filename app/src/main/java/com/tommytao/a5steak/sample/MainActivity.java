@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -49,6 +51,17 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.tvMsg)
     TextView tvMsg;
 
+    @InjectView(R.id.tvMiddle)
+    TextView tvMiddle;
+
+    @InjectView(R.id.topBar)
+    View topBar;
+
+    @InjectView(R.id.rightBar)
+    View rightBar;
+
+    @InjectView(R.id.bottomBar)
+    View bottomBar;
 
 
     Handler h;
@@ -56,6 +69,28 @@ public class MainActivity extends ActionBarActivity {
     ArrayList<Double> bearList = new ArrayList<>();
 
     GMapAdapter mapAdapter;
+
+    @OnClick(R.id.btnOne)
+    public void oneClicked(){
+//        UxManager.getInstance().fadeOutView(tvMiddle, 3000, null);
+
+        UxManager.getInstance().slideLeftShowView(rightBar, 3000, null);
+
+
+    }
+
+    @OnClick(R.id.btnTwo)
+    public void twoClicked(){
+//        UxManager.getInstance().fadeInView(tvMiddle, 3000, null);
+
+        UxManager.getInstance().slideRightHideView(rightBar, 3000, null);
+    }
+
+    @OnClick(R.id.btnThree)
+    public void threeClicked(){
+
+        UxManager.getInstance().clearAnimationTo(tvMiddle, true);
+    }
 
 
 
@@ -547,11 +582,13 @@ public class MainActivity extends ActionBarActivity {
 
 
                 } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+
                     Log.d("", "test_t: touch");
+//                    tvMsg.clearAnimation();
 
-                    tvMsg.clearAnimation();
+//                    UxManager.getInstance().fadeInView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
 
-                    UxManager.getInstance().fadeInView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
+                    UxManager.getInstance().clearAnimationTo(tvMsg, true);
 
                 } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING){
                     Log.d("", "test_t: fling");
