@@ -41,7 +41,6 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-
     @InjectView(R.id.flMap)
     FrameLayout flMap;
 
@@ -62,6 +61,9 @@ public class MainActivity extends ActionBarActivity {
 
     @InjectView(R.id.bottomBar)
     View bottomBar;
+
+    @InjectView(R.id.flFrag)
+    FrameLayout flFrag;
 
 
     Handler h;
@@ -89,7 +91,16 @@ public class MainActivity extends ActionBarActivity {
     @OnClick(R.id.btnThree)
     public void threeClicked(){
 
-        UxManager.getInstance().clearAnimationTo(tvMiddle, true);
+//        UxManager.getInstance().clearAnimationTo(tvMiddle, true);
+
+//        UxManager.getInstance().spinViewInfinitely(tvMiddle, null);
+
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.flFrag, TwoFragment.newInstance()).addToBackStack(null).commit();
+
+
+
     }
 
 
@@ -100,6 +111,13 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.inject(this);
+
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.flFrag, OneFragment.newInstance()).commit();
+
+
+        UxManager.getInstance().init(this);
+
 
         MapView mapView = new MapView(this);
         flMap.addView(mapView);
@@ -121,6 +139,8 @@ public class MainActivity extends ActionBarActivity {
         DirectionsApiManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
 
         FineOrientationManager.getInstance().init(this);
+
+
 
         MagneticSensor.getInstance().init(this);
 

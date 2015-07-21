@@ -99,7 +99,7 @@ public class Foundation {
 
     protected boolean debugMode = true;
 
-    protected Context appContext;
+    public Context appContext;
 
     public boolean init(Context context) {
 

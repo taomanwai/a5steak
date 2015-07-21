@@ -38,8 +38,8 @@ public class UxManager extends Foundation {
 
     public static UxManager getInstance() {
 
-        if (instance == null) ;
-        instance = new UxManager();
+        if (instance == null)
+            instance = new UxManager();
 
         return instance;
     }
@@ -234,8 +234,6 @@ public class UxManager extends Foundation {
         slideView(view, 0, 0, 0, view.getHeight(), 1.0f, 0.0f, durationInMs, listener);
 
 
-
-
     }
 
     public void slideUpShowView(final View view, int durationInMs, final Listener listener) {
@@ -271,7 +269,6 @@ public class UxManager extends Foundation {
 //        view.startAnimation(slideUp);
 
         slideView(view, 0, 0, view.getHeight(), 0, 0.0f, 1.0f, durationInMs, listener);
-
 
 
     }
@@ -390,7 +387,6 @@ public class UxManager extends Foundation {
 //        view.startAnimation(slideDown);
 
         slideView(view, view.getWidth(), 0, 0, 0, 0.0f, 1.0f, durationInMs, listener);
-
 
 
     }
@@ -556,14 +552,65 @@ public class UxManager extends Foundation {
         view.startAnimation(anim);
     }
 
-    public void shakeView(final View view) {
+    private void playXmlAnim(final View view, final int resId, final Listener listener) {
 
         if (null == view)
             return;
 
-        view.startAnimation(AnimationUtils.loadAnimation(appContext, R.anim.anim_sideshake));
+        Animation anim = AnimationUtils.loadAnimation(appContext, resId);
+
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                if (listener != null)
+                    listener.onComplete();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.startAnimation(anim);
 
     }
+
+
+
+    public void blastViewForTwoAndHalfSecond(final View view, final Listener listener) {
+
+        playXmlAnim(view, R.anim.blast, listener);
+
+    }
+
+
+    public void doubleBlinkViewForHalfSecond(final View view, final Listener listener) {
+
+        playXmlAnim(view, R.anim.double_blink, listener);
+
+    }
+
+    public void shakeViewForOneSecond(final View view, final Listener listener) {
+
+        playXmlAnim(view, R.anim.shake, listener);
+
+    }
+
+    public void spinViewInfinitely(final View view, final Listener listener) {
+
+        playXmlAnim(view, R.anim.spin, listener);
+
+    }
+
+
 
     // TODO MVP seems having performance issue
     public void fadeOutView(final View view, final long durationInMs, final Listener listener) {

@@ -32,4 +32,6 @@ dependencies {
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     // compile 'com.github.ozodrukh:CircularReveal:1.0.4@aar'
 
+    compile 'com.nineoldandroids:library:2.4.0'
+
 }
