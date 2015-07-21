@@ -96,7 +96,7 @@ public class MainActivity extends ActionBarActivity {
 //        UxManager.getInstance().spinViewInfinitely(tvMiddle, null);
 
         getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                .setCustomAnimations(R.anim.fade_in_300, R.anim.fade_out_300, R.anim.fade_in_300, R.anim.fade_out_300)
                 .replace(R.id.flFrag, TwoFragment.newInstance()).addToBackStack(null).commit();
 
 
