@@ -268,7 +268,7 @@ public class UxManager extends Foundation {
 //
 //        view.startAnimation(slideUp);
 
-        slideView(view, 0, 0, view.getHeight(), 0, 0.0f, 1.0f, durationInMs, listener);
+        slideView(view, 0, 0, view.getHeight(), 0, 1.0f, 1.0f, durationInMs, listener);
 
 
     }
@@ -307,7 +307,7 @@ public class UxManager extends Foundation {
 //
 //        view.startAnimation(slideDown);
 
-        slideView(view, 0, 0, -view.getHeight(), 0, 0.0f, 1.0f, durationInMs, listener);
+        slideView(view, 0, 0, -view.getHeight(), 0, 1.0f, 1.0f, durationInMs, listener);
 
 
     }
@@ -386,7 +386,7 @@ public class UxManager extends Foundation {
 //
 //        view.startAnimation(slideDown);
 
-        slideView(view, view.getWidth(), 0, 0, 0, 0.0f, 1.0f, durationInMs, listener);
+        slideView(view, view.getWidth(), 0, 0, 0, 1.0f, 1.0f, durationInMs, listener);
 
 
     }
