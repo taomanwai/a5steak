@@ -25,12 +25,12 @@ public class Thinker {
 	// --
 
 	/**
-	 * Check if email valid Ref:
-	 * http://stackoverflow.com/questions/1819142/how-should
-	 * -i-validate-an-e-mail-address
+	 * Check if email valid
+	 *
+	 * Ref: http://stackoverflow.com/questions/1819142/how-should-i-validate-an-e-mail-address
 	 * 
 	 * @param email
-	 * @return true = valid, false = invalid
+	 * @return TRUE = valid, FALSE = invalid
 	 * 
 	 */
 	public boolean isEmailValid(String email) {

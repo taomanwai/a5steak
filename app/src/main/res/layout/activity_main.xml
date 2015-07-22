@@ -90,11 +90,16 @@
             android:layout_height="match_parent"/>
 
 
-
     </RelativeLayout>
 
 
 
+    <TextView
+        android:id="@+id/tvWhole"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:text="Ready"/>
 
 
 

@@ -14,6 +14,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -159,13 +161,13 @@ public class UxManager extends Foundation {
 
         final int halfDurationInMs = durationInMs / 2;
 
-        UxManager.getInstance().fadeOutView(textView, halfDurationInMs, new Listener() {
+        UxManager.getInstance().fadeOutView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
             @Override
             public void onComplete() {
 
                 textView.setText(text);
 
-                UxManager.getInstance().fadeInView(textView, halfDurationInMs, new Listener() {
+                UxManager.getInstance().fadeInView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
                     @Override
                     public void onComplete() {
 
@@ -199,76 +201,18 @@ public class UxManager extends Foundation {
 
     }
 
-    public void slideDownHideView(final View view, int durationInMs, final Listener listener) {
-
-//        if (null == view)
-//            return;
-//
-//        final Animation slideDown =
-//                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
-//                        TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 1.0f);
-//        slideDown.setDuration(durationInMs);
-//        slideDown.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                view.setVisibility(View.INVISIBLE);
-//
-//                if (listener != null)
-//                    listener.onComplete();
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//
-//        view.startAnimation(slideDown);
+    public void slideDownHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
 
-        slideView(view, 0, 0, 0, view.getHeight(), 1.0f, 0.0f, durationInMs, listener);
+        slideView(view, 0, 0, 0, view.getHeight(), 1.0f, 0.0f, durationInMs, interpolator, listener);
 
 
     }
 
-    public void slideUpShowView(final View view, int durationInMs, final Listener listener) {
+    public void slideUpShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
-//        if (null == view)
-//            return;
-//
-//
-//        final Animation slideUp =
-//                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
-//                        TranslateAnimation.RELATIVE_TO_SELF, 1.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f);
-//        slideUp.setDuration(durationInMs);
-//        slideUp.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//
-//                if (listener != null)
-//                    listener.onComplete();
-//
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//
-//        view.startAnimation(slideUp);
 
-        slideView(view, 0, 0, view.getHeight(), 0, 1.0f, 1.0f, durationInMs, listener);
+        slideView(view, 0, 0, view.getHeight(), 0, 1.0f, 1.0f, durationInMs, interpolator,  listener);
 
 
     }
@@ -276,77 +220,18 @@ public class UxManager extends Foundation {
 
     // ===
 
-    public void slideDownShowView(final View view, int durationInMs, final Listener listener) {
+    public void slideDownShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
-//        if (null == view)
-//            return;
-//
-//
-//        final Animation slideDown =
-//                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
-//                        TranslateAnimation.RELATIVE_TO_SELF, -1.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f);
-//        slideDown.setDuration(durationInMs);
-//        slideDown.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//
-//                if (listener != null)
-//                    listener.onComplete();
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//
-//        view.startAnimation(slideDown);
 
-        slideView(view, 0, 0, -view.getHeight(), 0, 1.0f, 1.0f, durationInMs, listener);
+        slideView(view, 0, 0, -view.getHeight(), 0, 1.0f, 1.0f, durationInMs, interpolator, listener);
 
 
     }
 
-    public void slideUpHideView(final View view, int durationInMs, final Listener listener) {
+    public void slideUpHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
-//        if (null == view)
-//            return;
-//
-//
-//        final Animation slideUp =
-//                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
-//                        TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, -1.0f);
-//        slideUp.setDuration(durationInMs);
-//        slideUp.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//
-//                view.setVisibility(View.INVISIBLE);
-//
-//                if (listener != null)
-//                    listener.onComplete();
-//
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//
-//        view.startAnimation(slideUp);
 
-        slideView(view, 0, 0, 0, -view.getHeight(), 1.0f, 0.0f, durationInMs, listener);
+        slideView(view, 0, 0, 0, -view.getHeight(), 1.0f, 0.0f, durationInMs, interpolator, listener);
 
 
     }
@@ -355,77 +240,18 @@ public class UxManager extends Foundation {
     // ===
 
 
-    public void slideLeftShowView(final View view, int durationInMs, final Listener listener) {
+    public void slideLeftShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
-//        if (null == view)
-//            return;
-//
-//
-//        final Animation slideDown =
-//                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 1.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
-//                        TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f);
-//        slideDown.setDuration(durationInMs);
-//        slideDown.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//
-//                if (listener != null)
-//                    listener.onComplete();
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//
-//        view.startAnimation(slideDown);
 
-        slideView(view, view.getWidth(), 0, 0, 0, 1.0f, 1.0f, durationInMs, listener);
+        slideView(view, view.getWidth(), 0, 0, 0, 1.0f, 1.0f, durationInMs, interpolator, listener);
 
 
     }
 
-    public void slideRightHideView(final View view, int durationInMs, final Listener listener) {
+    public void slideRightHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
-//        if (null == view)
-//            return;
-//
-//
-//        final Animation slideUp =
-//                new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 1.0f,
-//                        TranslateAnimation.RELATIVE_TO_SELF, 0.0f, TranslateAnimation.RELATIVE_TO_SELF, 0.0f);
-//        slideUp.setDuration(durationInMs);
-//        slideUp.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//
-//                view.setVisibility(View.INVISIBLE);
-//
-//                if (listener != null)
-//                    listener.onComplete();
-//
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//
-//        view.startAnimation(slideUp);
 
-        slideView(view, 0, view.getWidth(), 0, 0, 1.0f, 0.0f, durationInMs, listener);
+        slideView(view, 0, view.getWidth(), 0, 0, 1.0f, 0.0f, durationInMs, interpolator, listener);
 
     }
 
@@ -474,7 +300,7 @@ public class UxManager extends Foundation {
 //
 //    }
 
-    public void slideView(final View view, int fromXDelta, int toXDelta, int fromYDelta, int toYDelta, float fromAlpha, final float toAlpha, final long durationInMs, final Listener listener) {
+    public void slideView(final View view, int fromXDelta, int toXDelta, int fromYDelta, int toYDelta, float fromAlpha, final float toAlpha,  final long durationInMs, Interpolator interpolator, final Listener listener) {
 
         if (view == null)
             return;
@@ -488,6 +314,7 @@ public class UxManager extends Foundation {
         Animation fadeOutAnim = new AlphaAnimation(fromAlpha, toAlpha);
         fadeOutAnim.setDuration(durationInMs);
         animSet.addAnimation(fadeOutAnim);
+        animSet.setInterpolator(interpolator);
 
         animSet.setAnimationListener(new Animation.AnimationListener() {
 
@@ -518,15 +345,14 @@ public class UxManager extends Foundation {
     }
 
 
-    public void fadeInView(final View view, final long durationInMs, final Listener listener) {
+    public void fadeInView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
         if (null == view)
             return;
 
-
         Animation anim = new AlphaAnimation(0, 1.0f);
         anim.setDuration(durationInMs);
-
+        anim.setInterpolator(interpolator);
 
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -581,8 +407,8 @@ public class UxManager extends Foundation {
 
         view.startAnimation(anim);
 
-    }
 
+    }
 
 
     public void blastViewForTwoAndHalfSecond(final View view, final Listener listener) {
@@ -611,15 +437,15 @@ public class UxManager extends Foundation {
     }
 
 
-
     // TODO MVP seems having performance issue
-    public void fadeOutView(final View view, final long durationInMs, final Listener listener) {
+    public void fadeOutView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
         if (null == view)
             return;
 
         Animation anim = new AlphaAnimation(1.0f, 0);
         anim.setDuration(durationInMs);
+        anim.setInterpolator(interpolator);
 
 
         anim.setAnimationListener(new Animation.AnimationListener() {
@@ -655,27 +481,6 @@ public class UxManager extends Foundation {
 
         Animation anim = new AlphaAnimation(alphaValue, alphaValue);
         anim.setDuration(0);
-
-
-//        anim.setAnimationListener(new Animation.AnimationListener() {
-//
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                view.setVisibility(View.INVISIBLE);
-//                if (listener != null)
-//                    listener.onComplete();
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//            }
-//
-//        });
 
         view.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
         view.startAnimation(anim);

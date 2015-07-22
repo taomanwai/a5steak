@@ -65,6 +65,10 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.flFrag)
     FrameLayout flFrag;
 
+    @InjectView(R.id.tvWhole)
+    TextView tvWhole;
+
+
 
     Handler h;
 
@@ -95,9 +99,12 @@ public class MainActivity extends ActionBarActivity {
 
 //        UxManager.getInstance().spinViewInfinitely(tvMiddle, null);
 
-        getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.fade_in_300, R.anim.fade_out_300, R.anim.fade_in_300, R.anim.fade_out_300)
-                .replace(R.id.flFrag, TwoFragment.newInstance()).addToBackStack(null).commit();
+//        getSupportFragmentManager().beginTransaction()
+//                .setCustomAnimations(R.anim.fade_in_300, R.anim.fade_out_300, R.anim.fade_in_300, R.anim.fade_out_300)
+//                .replace(R.id.flFrag, TwoFragment.newInstance()).addToBackStack(null).commit();
+
+        tvWhole.setText(this.getString(R.string.test_str, 3, 5));
+
 
 
 

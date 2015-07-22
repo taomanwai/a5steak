@@ -2,6 +2,10 @@ package com.tommytao.a5steak.util;
 
 import android.content.Context;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -130,6 +134,24 @@ public class AntiHackManager extends Foundation {
 		}
 
 		return result;
+
+	}
+
+	public KeyPair genPublicSecretKeyPair(){
+		KeyPairGenerator keyPairGenerator = null;
+
+		try {
+			keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+		if (keyPairGenerator==null)
+			return null;
+
+		keyPairGenerator.initialize(1024);
+
+		return keyPairGenerator.generateKeyPair();
 
 	}
 
