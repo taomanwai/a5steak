@@ -92,7 +92,7 @@ public class Foundation {
 
     }
 
-    public final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 10000;
+    public final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 60000; // 10000
     public final int DEFAULT_READ_TIMEOUT_IN_MS = DEFAULT_CONNECT_TIMEOUT_IN_MS;
     public final int BUFFER_SIZE_IN_BYTE = 1024;
     public final String BOUNDARY_OF_HTTP_POST_BYTE_ARRAY = "&&3rewfwefwfewfhufrbewfuweriwefr"; // Not 0xKhTmLbOuNdArY
