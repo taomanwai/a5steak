@@ -204,6 +204,7 @@ public class UxManager extends Foundation {
     public void slideDownHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
 
+
         slideView(view, 0, 0, 0, view.getHeight(), 1.0f, 0.0f, durationInMs, interpolator, listener);
 
 
