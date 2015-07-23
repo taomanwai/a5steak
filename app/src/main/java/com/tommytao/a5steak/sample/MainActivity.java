@@ -28,6 +28,8 @@ import com.tommytao.a5steak.util.GSensor;
 import com.tommytao.a5steak.util.LBSManager;
 import com.tommytao.a5steak.util.MagneticSensor;
 import com.tommytao.a5steak.util.UxManager;
+import com.tommytao.a5steak.util.google.ActivitySensor;
+import com.tommytao.a5steak.util.google.ActivitySensor.OnConnectListener;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 
 import java.util.ArrayList;
@@ -38,7 +40,6 @@ import butterknife.OnClick;
 
 
 public class MainActivity extends ActionBarActivity {
-
 
 
     @InjectView(R.id.flMap)
@@ -69,31 +70,30 @@ public class MainActivity extends ActionBarActivity {
     TextView tvWhole;
 
 
-
-    Handler h;
+    Handler h = new Handler(Looper.getMainLooper());
 
     ArrayList<Double> bearList = new ArrayList<>();
 
     GMapAdapter mapAdapter;
 
     @OnClick(R.id.btnOne)
-    public void oneClicked(){
+    public void oneClicked() {
 //        UxManager.getInstance().fadeOutView(tvMiddle, 3000, null);
 
-        UxManager.getInstance().slideLeftShowView(rightBar, 3000, null);
+//        UxManager.getInstance().slideLeftShowView(rightBar, 3000, null);
 
 
     }
 
     @OnClick(R.id.btnTwo)
-    public void twoClicked(){
+    public void twoClicked() {
 //        UxManager.getInstance().fadeInView(tvMiddle, 3000, null);
 
-        UxManager.getInstance().slideRightHideView(rightBar, 3000, null);
+//        UxManager.getInstance().slideRightHideView(rightBar, 3000, null);
     }
 
     @OnClick(R.id.btnThree)
-    public void threeClicked(){
+    public void threeClicked() {
 
 //        UxManager.getInstance().clearAnimationTo(tvMiddle, true);
 
@@ -106,10 +106,7 @@ public class MainActivity extends ActionBarActivity {
         tvWhole.setText(this.getString(R.string.test_str, 3, 5));
 
 
-
-
     }
-
 
 
     @Override
@@ -147,6 +144,35 @@ public class MainActivity extends ActionBarActivity {
 
         FineOrientationManager.getInstance().init(this);
 
+        ActivitySensor.getInstance().init(this);
+
+        ActivitySensor.getInstance().connect(new OnConnectListener() {
+            @Override
+            public void onConnected(boolean succeed) {
+                if (!succeed) {
+                    return;
+                }
+
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+                            String s = "" +
+                                    ActivitySensor.getInstance().getLastKnownDetectedActivityFromGoogle().toString() + " "
+                                    + ActivitySensor.getInstance().getLastKnownDetectedActivityFromGoogle().getConfidence();
+
+                            Log.d("", "a_sense_t: " + s);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        h.postDelayed(this, 1000);
+                    }
+                }, 1000);
+
+            }
+        });
 
 
         MagneticSensor.getInstance().init(this);
@@ -601,14 +627,13 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int scrollState) {
 
-                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
 
                     Log.d("", "test_t: idle");
-                    UxManager.getInstance().fadeOutView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
+//                    UxManager.getInstance().fadeOutView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
 
 
-
-                } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
 
                     Log.d("", "test_t: touch");
 //                    tvMsg.clearAnimation();
@@ -617,7 +642,7 @@ public class MainActivity extends ActionBarActivity {
 
                     UxManager.getInstance().clearAnimationTo(tvMsg, true);
 
-                } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING){
+                } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
                     Log.d("", "test_t: fling");
 
                 }
@@ -628,7 +653,7 @@ public class MainActivity extends ActionBarActivity {
             public void onScroll(AbsListView absListView, int i, int i1, int i2) {
 
                 tvMsg.setText("" + listView.getFirstVisiblePosition() + "/" + listView.getAdapter().getCount() + " "
-                        +listView.computeVerticalScrollOffset() + " " + listView.computeVerticalScrollExtent() + " " +listView.computeVerticalScrollRange());
+                        + listView.computeVerticalScrollOffset() + " " + listView.computeVerticalScrollExtent() + " " + listView.computeVerticalScrollRange());
 
                 double ratioOfListView = (double) (listView.computeVerticalScrollOffset() + listView.computeVerticalScrollExtent() / 2) / listView.computeVerticalScrollRange();
 
@@ -639,10 +664,6 @@ public class MainActivity extends ActionBarActivity {
                 tvMsg.setLayoutParams(lp);
 
 
-
-
-
-
             }
         });
 
@@ -650,8 +671,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-
-    private void updateMap(){
+    private void updateMap() {
 
         double bear = 0;
 
@@ -676,12 +696,11 @@ public class MainActivity extends ActionBarActivity {
 
 
             ((GoogleMap) mapAdapter.getMap()).moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(17).bearing((float) bear).build()));
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-
 
 
     @Override
