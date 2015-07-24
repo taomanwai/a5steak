@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util;
 
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -7,44 +8,42 @@ import android.hardware.SensorManager;
 
 
 /**
- * Responsible for getting gravity field reading
+ * Responsible for getting gyroscope reading (calibrated)
+ *
+ * Note:
+ * Waiting to test
+ * Power consumption is around 3-30 times of that of accelerometer
+ * Ref: <a href="http://stackoverflow.com/questions/20693547/when-to-use-accelerometer-or-gyroscope-on-android">here</a>
+ * Not all phones have gyroscope (e.g. some HTC cheap phones has no gyroscope), please use exists() to check availability of gyroscope
  *
  */
-public class GSensor extends Foundation implements SensorEventListener {
+public class GyroSensor extends Foundation implements SensorEventListener {
 
-    private static GSensor instance;
+    private static GyroSensor instance;
 
-    public static GSensor getInstance() {
+    public static GyroSensor getInstance() {
 
         if (instance == null)
-            instance = new GSensor();
+            instance = new GyroSensor();
 
         return instance;
     }
 
-    private GSensor() {
+    private GyroSensor() {
 
     }
 
     // --
 
-
-    @Override
-    public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
-        super.addOnReadingChangeListener(onReadingChangeListener);
-    }
-
-    @Override
-    public boolean removeOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
-        return super.removeOnReadingChangeListener(onReadingChangeListener);
+    public boolean exists(){
+        PackageManager packageManager = appContext.getPackageManager();
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
     }
 
     private Sensor getSensor() {
 
         if (sensor == null)
-            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-
+            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
         return sensor;
     }
@@ -75,36 +74,24 @@ public class GSensor extends Foundation implements SensorEventListener {
 
     }
 
-    public double getVehicleMovingProbability(){
-
-        return 0;
-
-    }
-
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         // do nothing
     }
 
-    @Override
-    public float getLastKnownX() {
+    public float getLastKnownDeltaRotationX() {
         return super.getLastKnownX();
     }
 
-    @Override
-    public float getLastKnownY() {
+
+    public float getLastKnownDeltaRotationY() {
         return super.getLastKnownY();
     }
 
-    @Override
-    public float getLastKnownZ() {
+    public float getLastKnownDeltaRotationZ() {
         return super.getLastKnownZ();
     }
 
-    @Override
-    public double getLastKnownMagnitude() {
-        return super.getLastKnownMagnitude();
-    }
+
 
 }

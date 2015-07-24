@@ -25,6 +25,7 @@ import com.tommytao.a5steak.util.DataProcessor;
 import com.tommytao.a5steak.util.FineOrientationManager;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.GSensor;
+import com.tommytao.a5steak.util.GyroSensor;
 import com.tommytao.a5steak.util.LBSManager;
 import com.tommytao.a5steak.util.MagneticSensor;
 import com.tommytao.a5steak.util.SoundSensor;
@@ -123,6 +124,9 @@ public class MainActivity extends ActionBarActivity {
 
         UxManager.getInstance().init(this);
 
+        GyroSensor.getInstance().init(this);
+        GyroSensor.getInstance().connect();
+
 
         MapView mapView = new MapView(this);
         flMap.addView(mapView);
@@ -161,9 +165,13 @@ public class MainActivity extends ActionBarActivity {
                     public void run() {
 
                         try {
-                            String s = "" +
-                                    ActivitySensor.getInstance().getLastKnownDetectedActivityFromGoogle().toString() + " "
-                                    + ActivitySensor.getInstance().getLastKnownDetectedActivityFromGoogle().getConfidence();
+//                            String s = "" +
+//                                    ActivitySensor.getInstance().getLastKnownDetectedActivityFromGoogle().toString() + " "
+//                                    + ActivitySensor.getInstance().getLastKnownDetectedActivityFromGoogle().getConfidence();
+
+                            String s = GyroSensor.getInstance().getLastKnownDeltaRotationX() + " " +
+                                    GyroSensor.getInstance().getLastKnownDeltaRotationY() + " " +
+                                    GyroSensor.getInstance().getLastKnownDeltaRotationZ() + " " + GyroSensor.getInstance().exists();
 
                             Log.d("", "a_sense_t: " + s);
                         } catch (Exception e) {
