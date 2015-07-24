@@ -21,12 +21,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.tommytao.a5steak.customview.GMapAdapter;
 import com.tommytao.a5steak.customview.ScrollBarListView;
-import com.tommytao.a5steak.util.DataProcessor;
-import com.tommytao.a5steak.util.FineOrientationManager;
+import com.tommytao.a5steak.util.sensor.support.DataProcessor;
+import com.tommytao.a5steak.util.sensor.support.FineOrientationManager;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.sensor.GSensor;
 import com.tommytao.a5steak.util.sensor.GyroSensor;
-import com.tommytao.a5steak.util.sensor.LBSManager;
+import com.tommytao.a5steak.util.sensor.LocationSensor;
 import com.tommytao.a5steak.util.sensor.MagneticSensor;
 import com.tommytao.a5steak.util.sensor.SoundSensor;
 import com.tommytao.a5steak.util.UxManager;
@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity {
         mapAdapter = new GMapAdapter(mapView);
         mapAdapter.onCreate(savedInstanceState);
 
-        LBSManager.getInstance().init(this);
+        LocationSensor.getInstance().init(this);
 //        LBSManager.getInstance().connect(LBSManager.DEFAULT_UPDATE_INTERVAL_IN_MS, new LBSManager.OnConnectListener() {
 //
 //            @Override
@@ -199,7 +199,7 @@ public class MainActivity extends ActionBarActivity {
 
 //        GSensor.getInstance().connect();
 
-        LBSManager.getInstance().addOnLocationChangeListener(new LBSManager.OnLocationChangeListener() {
+        LocationSensor.getInstance().addOnLocationChangeListener(new LocationSensor.OnLocationChangeListener() {
             @Override
             public void onLocationChanged(Location location) {
                 Log.d("", "change_t: loc: " + location.getLatitude() + " " + location.getLongitude());
@@ -707,8 +707,8 @@ public class MainActivity extends ActionBarActivity {
             bear = Math.round(bear * 10000) / 10000;
 
 
-            double lat = LBSManager.getInstance().getLastKnownLocation().getLatitude();
-            double lng = LBSManager.getInstance().getLastKnownLocation().getLongitude();
+            double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
+            double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
 
 
             ((GoogleMap) mapAdapter.getMap()).moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(17).bearing((float) bear).build()));

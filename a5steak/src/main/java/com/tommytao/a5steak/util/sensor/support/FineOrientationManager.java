@@ -1,6 +1,8 @@
-package com.tommytao.a5steak.util;
+package com.tommytao.a5steak.util.sensor.support;
 
 import android.hardware.SensorManager;
+
+import com.tommytao.a5steak.util.Foundation;
 
 /**
  * Responsible for getting gravity field reading

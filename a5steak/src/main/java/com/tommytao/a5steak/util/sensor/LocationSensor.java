@@ -35,19 +35,19 @@ import java.util.ArrayList;
  * 
  */
 
-public class LBSManager extends Foundation implements LocationListener {
+public class LocationSensor extends Foundation implements LocationListener {
 
-	private static LBSManager instance;
+	private static LocationSensor instance;
 
-	public static LBSManager getInstance() {
+	public static LocationSensor getInstance() {
 
 		if (instance == null)
-			instance = new LBSManager();
+			instance = new LocationSensor();
 
 		return instance;
 	}
 
-	private LBSManager() {
+	private LocationSensor() {
 
 		super();
 

@@ -1,4 +1,6 @@
-package com.tommytao.a5steak.util;
+package com.tommytao.a5steak.util.sensor.support;
+
+import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
 
