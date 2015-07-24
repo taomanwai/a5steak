@@ -27,6 +27,7 @@ import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.GSensor;
 import com.tommytao.a5steak.util.LBSManager;
 import com.tommytao.a5steak.util.MagneticSensor;
+import com.tommytao.a5steak.util.SoundSensor;
 import com.tommytao.a5steak.util.UxManager;
 import com.tommytao.a5steak.util.google.ActivitySensor;
 import com.tommytao.a5steak.util.google.ActivitySensor.OnConnectListener;
@@ -140,6 +141,8 @@ public class MainActivity extends ActionBarActivity {
 
         h = new Handler(Looper.getMainLooper());
 
+        SoundSensor.getInstance().connect();
+
         DirectionsApiManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
 
         FineOrientationManager.getInstance().init(this);
@@ -166,6 +169,11 @@ public class MainActivity extends ActionBarActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
+                        tvWhole.setText("" + SoundSensor.getInstance().getMagnitude());
+
+
+
 
                         h.postDelayed(this, 1000);
                     }
@@ -722,6 +730,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onDestroy() {
 
         mapAdapter.onDestroy();
+
+        SoundSensor.getInstance().disconnect();
 
         super.onDestroy();
     }

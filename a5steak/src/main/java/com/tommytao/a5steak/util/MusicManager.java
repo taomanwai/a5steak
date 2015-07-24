@@ -20,7 +20,7 @@ public class MusicManager extends Foundation {
 
 	// --
 
-    public static final String BLINK_MP3_URL = "http://www.xamuel.com/blank-mp3-files/1sec.mp3";
+    public static final String BLINK_MP3_LINK = "http://www.xamuel.com/blank-mp3-files/1sec.mp3";
 
     @Override
     public MediaPlayer getMediaPlayer() {

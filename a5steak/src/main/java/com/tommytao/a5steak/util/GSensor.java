@@ -75,6 +75,13 @@ public class GSensor extends Foundation implements SensorEventListener {
 
     }
 
+    public double getInVehicleProbability(){
+
+        return 0;
+
+    }
+
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         // do nothing
