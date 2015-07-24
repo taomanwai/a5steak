@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.util;
+package com.tommytao.a5steak.util.sensor;
 
 import android.media.MediaRecorder;
 
@@ -6,7 +6,11 @@ import android.media.MediaRecorder;
  * Responsible to listen sound
  * <p/>
  * Note: Permission <uses-permission android:name="android.permission.RECORD_AUDIO" /> is required
- * Ref: <a href"http://androidexample.com/Detect_Noise_Or_Blow_Sound_-_Set_Sound_Frequency_Thersold/index.php?view=article_discription&aid=108&aaid=130">here</a>
+ *
+ * Ref:
+ * <a href"http://androidexample.com/Detect_Noise_Or_Blow_Sound_-_Set_Sound_Frequency_Thersold/index.php?view=article_discription&aid=108&aaid=130">here</a>
+ * <a href"http://stackoverflow.com/questions/10655703/what-does-androids-getmaxamplitude-function-for-the-mediarecorder-actually-gi">here</a>
+ *
  */
 public class SoundSensor {
 
@@ -25,6 +29,8 @@ public class SoundSensor {
     }
 
     // --
+
+    public static final double REFERENCE = 0.1;
 
     private MediaRecorder mediaRecorder;
 
@@ -69,11 +75,13 @@ public class SoundSensor {
 
     }
 
-    public double getMagnitude() {
+    public double getMagnitudeInDb() {
         if (!isConnected())
             return -1;
 
-        return (mediaRecorder.getMaxAmplitude() / 2700.0);
+        int amplitude = mediaRecorder.getMaxAmplitude();
+
+        return (20 * Math.log10(amplitude / REFERENCE));
     }
 
 

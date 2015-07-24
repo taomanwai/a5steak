@@ -1,9 +1,11 @@
-package com.tommytao.a5steak.util;
+package com.tommytao.a5steak.util.sensor;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
+import com.tommytao.a5steak.util.Foundation;
 
 
 /**
@@ -71,23 +73,21 @@ public class MagneticSensor extends Foundation implements SensorEventListener {
         // do nothing
     }
 
-    @Override
-    public float getLastKnownX() {
+
+    public float getLastKnownXInuT() {
         return super.getLastKnownX();
     }
 
-    @Override
-    public float getLastKnownY() {
+    public float getLastKnownYInuT() {
         return super.getLastKnownY();
     }
 
-    @Override
-    public float getLastKnownZ() {
+
+    public float getLastKnownZInuT() {
         return super.getLastKnownZ();
     }
 
-    @Override
-    public double getLastKnownMagnitude() {
+    public double getLastKnownMagnitudeInuT() {
         return super.getLastKnownMagnitude();
     }
 

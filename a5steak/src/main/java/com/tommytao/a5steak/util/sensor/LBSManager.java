@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.util;
+package com.tommytao.a5steak.util.sensor;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+
+import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
 

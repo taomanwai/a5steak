@@ -24,11 +24,11 @@ import com.tommytao.a5steak.customview.ScrollBarListView;
 import com.tommytao.a5steak.util.DataProcessor;
 import com.tommytao.a5steak.util.FineOrientationManager;
 import com.tommytao.a5steak.util.Foundation;
-import com.tommytao.a5steak.util.GSensor;
-import com.tommytao.a5steak.util.GyroSensor;
-import com.tommytao.a5steak.util.LBSManager;
-import com.tommytao.a5steak.util.MagneticSensor;
-import com.tommytao.a5steak.util.SoundSensor;
+import com.tommytao.a5steak.util.sensor.GSensor;
+import com.tommytao.a5steak.util.sensor.GyroSensor;
+import com.tommytao.a5steak.util.sensor.LBSManager;
+import com.tommytao.a5steak.util.sensor.MagneticSensor;
+import com.tommytao.a5steak.util.sensor.SoundSensor;
 import com.tommytao.a5steak.util.UxManager;
 import com.tommytao.a5steak.util.google.ActivitySensor;
 import com.tommytao.a5steak.util.google.ActivitySensor.OnConnectListener;
@@ -178,7 +178,7 @@ public class MainActivity extends ActionBarActivity {
                             e.printStackTrace();
                         }
 
-                        tvWhole.setText("" + SoundSensor.getInstance().getMagnitude());
+                        tvWhole.setText("" + SoundSensor.getInstance().getMagnitudeInDb());
 
 
 
@@ -694,7 +694,7 @@ public class MainActivity extends ActionBarActivity {
         try {
             bear = FineOrientationManager.getInstance().calculateYawPitchRoll(
                     GSensor.getInstance().getLastKnownX(), GSensor.getInstance().getLastKnownY(), GSensor.getInstance().getLastKnownZ(),
-                    MagneticSensor.getInstance().getLastKnownX(), MagneticSensor.getInstance().getLastKnownY(), MagneticSensor.getInstance().getLastKnownZ()).getYaw();
+                    MagneticSensor.getInstance().getLastKnownXInuT(), MagneticSensor.getInstance().getLastKnownYInuT(), MagneticSensor.getInstance().getLastKnownZInuT()).getYaw();
         } catch (Exception e) {
             e.printStackTrace();
         }
