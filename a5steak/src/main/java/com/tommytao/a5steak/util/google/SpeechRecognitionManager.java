@@ -19,19 +19,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class SpeechManager extends Foundation {
+public class SpeechRecognitionManager extends Foundation {
 
-    private static SpeechManager instance;
+    private static SpeechRecognitionManager instance;
 
-    public static SpeechManager getInstance() {
+    public static SpeechRecognitionManager getInstance() {
 
         if (instance == null)
-            instance = new SpeechManager();
+            instance = new SpeechRecognitionManager();
 
         return instance;
     }
 
-    private SpeechManager() {
+    private SpeechRecognitionManager() {
 
     }
 

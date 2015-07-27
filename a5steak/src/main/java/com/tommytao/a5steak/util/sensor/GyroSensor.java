@@ -52,7 +52,7 @@ public class GyroSensor extends Foundation implements SensorEventListener {
 
     public void connect() {
 
-        getSensorManager().registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_FASTEST);
+        getSensorManager().registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_GAME);
 
     }
 

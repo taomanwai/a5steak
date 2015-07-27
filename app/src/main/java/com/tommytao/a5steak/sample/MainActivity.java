@@ -21,19 +21,20 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.tommytao.a5steak.customview.GMapAdapter;
 import com.tommytao.a5steak.customview.ScrollBarListView;
-import com.tommytao.a5steak.util.google.LocationFusedSensor;
-import com.tommytao.a5steak.util.sensor.support.DataProcessor;
-import com.tommytao.a5steak.util.sensor.support.FineOrientationManager;
 import com.tommytao.a5steak.util.Foundation;
-import com.tommytao.a5steak.util.sensor.GSensor;
-import com.tommytao.a5steak.util.sensor.GyroSensor;
-import com.tommytao.a5steak.util.sensor.LocationSensor;
-import com.tommytao.a5steak.util.sensor.MagneticSensor;
-import com.tommytao.a5steak.util.sensor.SoundSensor;
 import com.tommytao.a5steak.util.UxManager;
 import com.tommytao.a5steak.util.google.ActivityGApiSensor;
 import com.tommytao.a5steak.util.google.ActivityGApiSensor.OnConnectListener;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
+import com.tommytao.a5steak.util.google.LocationFusedSensor;
+import com.tommytao.a5steak.util.sensor.GSensor;
+import com.tommytao.a5steak.util.sensor.GyroSensor;
+import com.tommytao.a5steak.util.sensor.LocationSensor;
+import com.tommytao.a5steak.util.sensor.MagneticSensor;
+import com.tommytao.a5steak.util.sensor.PressureSensor;
+import com.tommytao.a5steak.util.sensor.SoundSensor;
+import com.tommytao.a5steak.util.sensor.support.DataProcessor;
+import com.tommytao.a5steak.util.sensor.support.FineOrientationManager;
 
 import java.util.ArrayList;
 
@@ -128,6 +129,9 @@ public class MainActivity extends ActionBarActivity {
         GyroSensor.getInstance().init(this);
         GyroSensor.getInstance().connect();
 
+        PressureSensor.getInstance().init(this);
+        PressureSensor.getInstance().connect();
+
 
         MapView mapView = new MapView(this);
         flMap.addView(mapView);
@@ -192,11 +196,11 @@ public class MainActivity extends ActionBarActivity {
 
                             Log.d("rtemp", "loc_f_t: " + location.getLatitude() + " " + location.getLongitude());
 
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
-
+                        Log.d("rtemp", "p_t: " + PressureSensor.getInstance().getPressureInMBar());
 
 
                         h.postDelayed(this, 1000);

@@ -53,7 +53,7 @@ public class GSensor extends Foundation implements SensorEventListener {
 
     public void connect() {
 
-        getSensorManager().registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_FASTEST);
+        getSensorManager().registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_GAME);
 
     }
 
@@ -77,7 +77,15 @@ public class GSensor extends Foundation implements SensorEventListener {
 
     }
 
+
+    /**
+     *
+     * Note: Under construction
+     *
+     * @return
+     */
     public double getVehicleMovingProbability(){
+
 
         return 0;
 

@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util.sensor;
 
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,35 +10,48 @@ import com.tommytao.a5steak.util.Foundation;
 
 
 /**
- * Responsible for getting magnetic field reading (calibrated)
- *
- * Note:
- * Electrical devices usually emits 15 or 20 uT (<a href="http://www.magneticsciences.com/EMF-health/">Ref</a>)
- * Earth naturally emits 15 or 20 uT (<a href="https://en.wikipedia.org/wiki/Earth%27s_magnetic_field">Ref</a>)
+ * Responsible for reading pressure in mBar unit
  *
  */
-public class MagneticSensor extends Foundation implements SensorEventListener {
+public class PressureSensor extends Foundation implements SensorEventListener {
 
-    private static MagneticSensor instance;
+    private static PressureSensor instance;
 
-    public static MagneticSensor getInstance() {
+    public static PressureSensor getInstance() {
 
         if (instance == null)
-            instance = new MagneticSensor();
+            instance = new PressureSensor();
 
         return instance;
     }
 
-    private MagneticSensor() {
+    private PressureSensor() {
 
     }
 
     // --
 
+
+    @Override
+    public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
+        super.addOnReadingChangeListener(onReadingChangeListener);
+    }
+
+    @Override
+    public boolean removeOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
+        return super.removeOnReadingChangeListener(onReadingChangeListener);
+    }
+
+    public boolean exists(){
+        PackageManager packageManager = appContext.getPackageManager();
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_BAROMETER);
+    }
+
     private Sensor getSensor() {
 
         if (sensor == null)
-            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_PRESSURE);
+
 
         return sensor;
     }
@@ -68,28 +82,21 @@ public class MagneticSensor extends Foundation implements SensorEventListener {
 
     }
 
+    public float getPressureInMBar(){
+
+        return super.getLastKnownX();
+
+    }
+
+
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         // do nothing
     }
 
 
-    public float getLastKnownXInuT() {
-        return super.getLastKnownX();
-    }
 
-    public float getLastKnownYInuT() {
-        return super.getLastKnownY();
-    }
-
-
-    public float getLastKnownZInuT() {
-        return super.getLastKnownZ();
-    }
-
-    public double getLastKnownMagnitudeInuT() {
-        return super.getLastKnownMagnitude();
-    }
 
 
 }
