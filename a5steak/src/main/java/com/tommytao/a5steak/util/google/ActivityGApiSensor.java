@@ -25,19 +25,19 @@ import java.util.ArrayList;
  * 5. Network is required, it may consume significant amount of battery
  *
  */
-public class ActivitySensor extends Foundation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ActivityGApiSensor extends Foundation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static ActivitySensor instance;
+    private static ActivityGApiSensor instance;
 
-    public static ActivitySensor getInstance() {
+    public static ActivityGApiSensor getInstance() {
 
         if (instance == null)
-            instance = new ActivitySensor();
+            instance = new ActivityGApiSensor();
 
         return instance;
     }
 
-    private ActivitySensor() {
+    private ActivityGApiSensor() {
         // do nothing
     }
 
@@ -62,7 +62,7 @@ public class ActivitySensor extends Foundation implements GoogleApiClient.Connec
             }
 
             ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-            ActivitySensor.getInstance().setLastKnownDetectedActivityFromGoogle(result.getMostProbableActivity());
+            ActivityGApiSensor.getInstance().setLastKnownDetectedActivity(result.getMostProbableActivity());
 
         }
 
@@ -96,7 +96,7 @@ public class ActivitySensor extends Foundation implements GoogleApiClient.Connec
 
     private PendingIntent pendingIntent;
 
-    private DetectedActivity lastKnownDetectedActivityFromGoogle;
+    private DetectedActivity lastKnownDetectedActivity;
 
     private ArrayList<OnConnectListener> onConnectListenerList = new ArrayList<>();
 
@@ -125,7 +125,7 @@ public class ActivitySensor extends Foundation implements GoogleApiClient.Connec
         if (onConnectListener != null)
             onConnectListenerList.add(onConnectListener);
 
-        lastKnownDetectedActivityFromGoogle = null;
+        lastKnownDetectedActivity = null;
         getApiClient().connect();
 
     }
@@ -138,12 +138,12 @@ public class ActivitySensor extends Foundation implements GoogleApiClient.Connec
 
     }
 
-    private void setLastKnownDetectedActivityFromGoogle(DetectedActivity lastKnownDetectedActivityFromGoogle) {
-        this.lastKnownDetectedActivityFromGoogle = lastKnownDetectedActivityFromGoogle;
+    private void setLastKnownDetectedActivity(DetectedActivity lastKnownDetectedActivity) {
+        this.lastKnownDetectedActivity = lastKnownDetectedActivity;
     }
 
-    public DetectedActivity getLastKnownDetectedActivityFromGoogle() {
-        return lastKnownDetectedActivityFromGoogle;
+    public DetectedActivity getLastKnownDetectedActivity() {
+        return lastKnownDetectedActivity;
     }
 
     private void clearAndTriggerOnConnectListenerList(boolean succeed) {

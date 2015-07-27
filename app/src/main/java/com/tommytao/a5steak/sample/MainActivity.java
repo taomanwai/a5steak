@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.tommytao.a5steak.customview.GMapAdapter;
 import com.tommytao.a5steak.customview.ScrollBarListView;
+import com.tommytao.a5steak.util.google.LocationFusedSensor;
 import com.tommytao.a5steak.util.sensor.support.DataProcessor;
 import com.tommytao.a5steak.util.sensor.support.FineOrientationManager;
 import com.tommytao.a5steak.util.Foundation;
@@ -30,8 +31,8 @@ import com.tommytao.a5steak.util.sensor.LocationSensor;
 import com.tommytao.a5steak.util.sensor.MagneticSensor;
 import com.tommytao.a5steak.util.sensor.SoundSensor;
 import com.tommytao.a5steak.util.UxManager;
-import com.tommytao.a5steak.util.google.ActivitySensor;
-import com.tommytao.a5steak.util.google.ActivitySensor.OnConnectListener;
+import com.tommytao.a5steak.util.google.ActivityGApiSensor;
+import com.tommytao.a5steak.util.google.ActivityGApiSensor.OnConnectListener;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 
 import java.util.ArrayList;
@@ -151,9 +152,13 @@ public class MainActivity extends ActionBarActivity {
 
         FineOrientationManager.getInstance().init(this);
 
-        ActivitySensor.getInstance().init(this);
+        ActivityGApiSensor.getInstance().init(this);
 
-        ActivitySensor.getInstance().connect(new OnConnectListener() {
+        LocationFusedSensor.getInstance().init(this);
+
+        LocationFusedSensor.getInstance().connect(null);
+
+        ActivityGApiSensor.getInstance().connect(new OnConnectListener() {
             @Override
             public void onConnected(boolean succeed) {
                 if (!succeed) {
@@ -165,9 +170,10 @@ public class MainActivity extends ActionBarActivity {
                     public void run() {
 
                         try {
+
 //                            String s = "" +
-//                                    ActivitySensor.getInstance().getLastKnownDetectedActivityFromGoogle().toString() + " "
-//                                    + ActivitySensor.getInstance().getLastKnownDetectedActivityFromGoogle().getConfidence();
+//                                    ActivitySensor.getInstance().getLastKnownDetectedActivity().toString() + " "
+//                                    + ActivitySensor.getInstance().getLastKnownDetectedActivity().getConfidence();
 
                             String s = GyroSensor.getInstance().getLastKnownDeltaRotationX() + " " +
                                     GyroSensor.getInstance().getLastKnownDeltaRotationY() + " " +
@@ -179,6 +185,16 @@ public class MainActivity extends ActionBarActivity {
                         }
 
                         tvWhole.setText("" + SoundSensor.getInstance().getMagnitudeInDb());
+
+                        try {
+
+                            Location location = LocationFusedSensor.getInstance().getLastKnownLocation();
+
+                            Log.d("rtemp", "loc_f_t: " + location.getLatitude() + " " + location.getLongitude());
+
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
 
 
 

@@ -1630,7 +1630,22 @@ public class Foundation {
 
     }
 
+    // === Location ===
+    protected long lat2LatE6(double lat) {
+        return (long) (lat * 1000000);
+    }
 
+    protected double latE62Lat(long latE6) {
+        return (double) latE6 / 1000000;
+    }
+
+    protected long lng2LngE6(double lng) {
+        return lat2LatE6(lng); // just use back lat2LatE6()
+    }
+
+    protected double lngE62Lng(long lngE6) {
+        return latE62Lat(lngE6); // just use back latE62Lat()
+    }
 
 
 

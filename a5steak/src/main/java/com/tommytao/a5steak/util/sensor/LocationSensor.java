@@ -86,7 +86,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 
 	private int updateIntervalInMs = DEFAULT_UPDATE_INTERVAL_IN_MS;
 
-	private ArrayList<OnLocationChangeListener> onLocationChangeListenerList = new ArrayList<OnLocationChangeListener>();
+	private ArrayList<OnLocationChangeListener> onLocationChangeListenerList = new ArrayList<>();
 
 
 
@@ -155,7 +155,6 @@ public class LocationSensor extends Foundation implements LocationListener {
 
 		if (location == null)
 			return -1;
-
 
         return calculateDistance(location.getLatitude(), location.getLongitude(), lat, lng);
 
@@ -270,19 +269,20 @@ public class LocationSensor extends Foundation implements LocationListener {
 	}
 
 	public long lat2LatE6(double lat) {
-		return (long) (lat * 1000000);
+		return super.lat2LatE6(lat);
+
 	}
 
 	public double latE62Lat(long latE6) {
-		return (double) latE6 / 1000000;
+		return super.latE62Lat(latE6);
 	}
 
 	public long lng2LngE6(double lng) {
-		return lat2LatE6(lng); // just use back lat2LatE6()
+		return super.lat2LatE6(lng);
 	}
 
 	public double lngE62Lng(long lngE6) {
-		return latE62Lat(lngE6); // just use back latE62Lat()
+		return super.latE62Lat(lngE6);
 	}
 
 
