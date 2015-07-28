@@ -22,11 +22,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.tommytao.a5steak.customview.GMapAdapter;
 import com.tommytao.a5steak.customview.ScrollBarListView;
 import com.tommytao.a5steak.util.Foundation;
+import com.tommytao.a5steak.util.MusicManager;
 import com.tommytao.a5steak.util.UxManager;
 import com.tommytao.a5steak.util.google.ActivityGApiSensor;
 import com.tommytao.a5steak.util.google.ActivityGApiSensor.OnConnectListener;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 import com.tommytao.a5steak.util.google.LocationFusedSensor;
+import com.tommytao.a5steak.util.google.PlacesApiManager;
 import com.tommytao.a5steak.util.sensor.GSensor;
 import com.tommytao.a5steak.util.sensor.GyroSensor;
 import com.tommytao.a5steak.util.sensor.LocationSensor;
@@ -37,6 +39,7 @@ import com.tommytao.a5steak.util.sensor.support.DataProcessor;
 import com.tommytao.a5steak.util.sensor.support.FineOrientationManager;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -137,6 +140,29 @@ public class MainActivity extends ActionBarActivity {
         flMap.addView(mapView);
         mapAdapter = new GMapAdapter(mapView);
         mapAdapter.onCreate(savedInstanceState);
+
+
+        MusicManager.getInstance().init(this);
+
+//        MusicManager.getInstance().playSoundAtFreq(14000, 10);
+
+        PlacesApiManager.getInstance().init(this, "AIzaSyDho8iArjPHWI7GiY1xGhefeB6LplFucdI");
+
+
+        PlacesApiManager.getInstance().searchPlaces("soi suk", 13.733210, 100.565204, 50000, new Locale("th", "TH"), true, new PlacesApiManager.OnSearchPlacesListener() {
+            @Override
+            public void returnPlaces(ArrayList<PlacesApiManager.Place> places, String keyword, String status) {
+                Log.d("", "");
+            }
+        });
+
+        PlacesApiManager.getInstance().autoComplete("soi suk", new Locale("th", "TH"), new PlacesApiManager.OnAutoCompleteListener() {
+            @Override
+            public void returnAutoCompletes(ArrayList<PlacesApiManager.AutoComplete> autoCompletes, String input) {
+                Log.d("", "");
+            }
+        });
+
 
         LocationSensor.getInstance().init(this);
 //        LBSManager.getInstance().connect(LBSManager.DEFAULT_UPDATE_INTERVAL_IN_MS, new LBSManager.OnConnectListener() {

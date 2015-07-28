@@ -1,26 +1,33 @@
 package com.tommytao.a5steak.util;
 
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.MediaPlayer;
+import android.os.Handler;
+import android.os.Looper;
 
 public class MusicManager extends Foundation {
 
-	private static MusicManager instance;
+    private static MusicManager instance;
 
-	public static MusicManager getInstance() {
+    public static MusicManager getInstance() {
 
-		if (instance == null)
-			instance = new MusicManager();
+        if (instance == null)
+            instance = new MusicManager();
 
-		return instance;
-	}
+        return instance;
+    }
 
-	private MusicManager() {
+    private MusicManager() {
 
-	}
+    }
 
-	// --
+    // --
 
     public static final String BLINK_MP3_LINK = "http://www.xamuel.com/blank-mp3-files/1sec.mp3";
+
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     public MediaPlayer getMediaPlayer() {
@@ -41,9 +48,8 @@ public class MusicManager extends Foundation {
     }
 
     /**
-     *
      * Play sound from url
-     *
+     * <p/>
      * Note: Play it few seconds before requirement because prepareAsync() (i.e. buffering, etc.) takes time
      *
      * @param url
@@ -51,6 +57,131 @@ public class MusicManager extends Foundation {
     public void playUrl(final String url, OnPlayListener listener) {
 
         super.playUrl(url, listener);
+
+    }
+
+
+    /**
+     * Note: In MacBook Pro Genymotion simulator, max freq is 14,000
+     *
+     * @param freqInHz
+     * @param durationInMs
+     * @return
+     */
+    public void playSoundAtFreq(final double freqInHz, final double durationInMs, final OnPlayListener listener) {
+
+
+        new Thread() {
+
+            @Override
+            public void run() {
+                final int SAMPLE_RATE = 44100;
+
+                double dnumSamples = durationInMs * 1000 * SAMPLE_RATE;
+                dnumSamples = Math.ceil(dnumSamples);
+                int numSamples = (int) dnumSamples;
+                double sample[] = new double[numSamples];
+                byte generatedSnd[] = new byte[2 * numSamples];
+
+
+                for (int i = 0; i < numSamples; ++i) {      // Fill the sample array
+                    sample[i] = Math.sin(freqInHz * 2 * Math.PI * i / (SAMPLE_RATE));
+                }
+
+                // convert to 16 bit pcm sound array
+                // assumes the sample buffer is normalized.
+                // convert to 16 bit pcm sound array
+                // assumes the sample buffer is normalised.
+                int idx = 0;
+                int i = 0;
+
+                int ramp = numSamples / 20;                                    // Amplitude ramp as a percent of sample count
+
+
+                for (i = 0; i < ramp; ++i) {                                     // Ramp amplitude up (to avoid clicks)
+                    double dVal = sample[i];
+                    // Ramp up to maximum
+                    final short val = (short) ((dVal * 32767 * i / ramp));
+                    // in 16 bit wav PCM, first byte is the low order byte
+                    generatedSnd[idx++] = (byte) (val & 0x00ff);
+                    generatedSnd[idx++] = (byte) ((val & 0xff00) >>> 8);
+                }
+
+
+                for (i = i; i < numSamples - ramp; ++i) {                        // Max amplitude for most of the samples
+                    double dVal = sample[i];
+                    // scale to maximum amplitude
+                    final short val = (short) ((dVal * 32767));
+                    // in 16 bit wav PCM, first byte is the low order byte
+                    generatedSnd[idx++] = (byte) (val & 0x00ff);
+                    generatedSnd[idx++] = (byte) ((val & 0xff00) >>> 8);
+                }
+
+                for (i = i; i < numSamples; ++i) {                               // Ramp amplitude down
+                    double dVal = sample[i];
+                    // Ramp down to zero
+                    final short val = (short) ((dVal * 32767 * (numSamples - i) / ramp));
+                    // in 16 bit wav PCM, first byte is the low order byte
+                    generatedSnd[idx++] = (byte) (val & 0x00ff);
+                    generatedSnd[idx++] = (byte) ((val & 0xff00) >>> 8);
+                }
+
+                boolean succeed = true;
+                AudioTrack audioTrack = null;                                   // Get audio track
+                try {
+                    audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
+                            SAMPLE_RATE, AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                            AudioFormat.ENCODING_PCM_16BIT, (int) numSamples * 2,
+                            AudioTrack.MODE_STATIC);
+                    audioTrack.write(generatedSnd, 0, generatedSnd.length);     // Load the track
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            listener.onStart();
+
+                        }
+                    });
+
+                    audioTrack.play();                                          // Play the track
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    succeed = false;
+                }
+
+
+                if (succeed) {
+                    int x = 0;
+                    do
+                    {                                                     // Montior playback to find when done
+                        if (audioTrack != null)
+                            x = audioTrack.getPlaybackHeadPosition();
+                        else
+                            x = numSamples;
+                    } while (x < numSamples);
+
+                    if (audioTrack != null)
+                        audioTrack.release();           // Track play done. Release track.
+
+
+
+
+                }
+
+
+                final boolean succeedFinal = succeed;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        listener.onComplete(succeedFinal);
+
+                    }
+                });
+            }
+        }.start();
+
 
     }
 

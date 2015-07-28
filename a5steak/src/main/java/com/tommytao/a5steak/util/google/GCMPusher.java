@@ -32,19 +32,19 @@ import java.util.ArrayList;
  * @author tommytao
  * 
  */
-public class GCMManager extends Foundation {
+public class GCMPusher extends Foundation {
 
-	private static GCMManager instance;
+	private static GCMPusher instance;
 
-	public static GCMManager getInstance() {
+	public static GCMPusher getInstance() {
 
 		if (instance == null)
-			instance = new GCMManager();
+			instance = new GCMPusher();
 
 		return instance;
 	}
 
-	private GCMManager() {
+	private GCMPusher() {
 
 	}
 
