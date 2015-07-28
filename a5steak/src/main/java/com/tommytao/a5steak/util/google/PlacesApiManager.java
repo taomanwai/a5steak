@@ -141,7 +141,7 @@ public class PlacesApiManager extends Foundation {
 
     public static interface OnAutoCompleteListener {
 
-        public void returnAutoCompletes(ArrayList<AutoComplete> autoCompletes, String input );
+        public void returnAutoCompletes(ArrayList<AutoComplete> autoCompletes, String input, JSONObject response );
 
     }
 
@@ -454,7 +454,7 @@ public class PlacesApiManager extends Foundation {
 
 				@Override
 				public void run() {
-					listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input);
+					listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input, null);
 
 				}
 
@@ -470,7 +470,7 @@ public class PlacesApiManager extends Foundation {
 
 				@Override
 				public void run() {
-					listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input);
+					listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input, null);
 
 				}
 
@@ -658,13 +658,13 @@ public class PlacesApiManager extends Foundation {
 
 	}
 
-    private void response2AutoComplete(JSONObject responseJObj, String input, Locale locale, OnAutoCompleteListener listener) {
+    private void response2AutoComplete(JSONObject response, String input, Locale locale, OnAutoCompleteListener listener) {
 
         if (listener == null)
             return;
 
-        if (responseJObj == null)
-            listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input);
+        if (response == null)
+            listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input, response);
 
 		ArrayList<AutoComplete> results = new ArrayList<AutoComplete>();
 
@@ -683,13 +683,13 @@ public class PlacesApiManager extends Foundation {
         boolean hasException = false;
         try {
 
-            status = responseJObj.getString("status");
+            status = response.getString("status");
             if (!"OK".equals(status)) {
-                listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input);
+                listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input, response);
                 return;
             }
 
-            predictionsJArray = responseJObj.getJSONArray("predictions");
+            predictionsJArray = response.getJSONArray("predictions");
 
 			for (int i = 0; i < predictionsJArray.length(); i++) {
 				predictionJObj = predictionsJArray.getJSONObject(i);
@@ -736,7 +736,7 @@ public class PlacesApiManager extends Foundation {
 //        boolean isResultValid = !placeId.isEmpty() && !description.isEmpty() && location!=null;
 //        listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, description, location.getLatitude(), location.getLongitude()));
 
-		listener.returnAutoCompletes(hasException ? new ArrayList<AutoComplete>() : results, input);
+		listener.returnAutoCompletes(hasException ? new ArrayList<AutoComplete>() : results, input, response);
 
     }
 
