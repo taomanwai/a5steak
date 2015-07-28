@@ -1,8 +1,6 @@
 package com.tommytao.a5steak.util.google;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
@@ -129,7 +127,7 @@ public class TextSpeaker extends Foundation {
         }
 
         if (!isTtsInitialized()) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+            handler.post(new Runnable() {
 
                 @Override
                 public void run() {

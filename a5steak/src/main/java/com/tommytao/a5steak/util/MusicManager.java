@@ -4,8 +4,6 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.Looper;
 
 public class MusicManager extends Foundation {
 
@@ -27,7 +25,6 @@ public class MusicManager extends Foundation {
 
     public static final String BLINK_MP3_LINK = "http://www.xamuel.com/blank-mp3-files/1sec.mp3";
 
-    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     public MediaPlayer getMediaPlayer() {
@@ -135,16 +132,22 @@ public class MusicManager extends Foundation {
                             AudioTrack.MODE_STATIC);
                     audioTrack.write(generatedSnd, 0, generatedSnd.length);     // Load the track
 
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
+                    if (audioTrack.getState()==AudioTrack.STATE_INITIALIZED){
+                        // TODO MVP, 100ms is used to make listener.onStart(); running behind listener.onStart();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
 
-                            listener.onStart();
+                                listener.onStart();
 
-                        }
-                    });
+                            }
+                        }, 100);
+                        audioTrack.play();                                          // Play the track
+                    } else {
+                        succeed = false;
+                    }
 
-                    audioTrack.play();                                          // Play the track
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     succeed = false;
@@ -163,8 +166,6 @@ public class MusicManager extends Foundation {
 
                     if (audioTrack != null)
                         audioTrack.release();           // Track play done. Release track.
-
-
 
 
                 }

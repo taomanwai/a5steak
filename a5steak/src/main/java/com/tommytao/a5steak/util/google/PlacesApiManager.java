@@ -2,8 +2,6 @@ package com.tommytao.a5steak.util.google;
 
 import android.content.Context;
 import android.location.Location;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.tommytao.a5steak.util.Foundation;
 
@@ -42,9 +40,12 @@ public class PlacesApiManager extends Foundation {
 
 		private String placeId = "";
 		private String name = "";
+		private String formattedAddress = "";
 
 		private double latitude = Double.NaN;
 		private double longitude = Double.NaN;
+
+
 
 		public String getName() {
 			return name;
@@ -58,9 +59,10 @@ public class PlacesApiManager extends Foundation {
 			return longitude;
 		}
 
-		public Place(String placeId, String name, double latitude, double longitude) {
+		public Place(String placeId, String name, String formattedAddress, double latitude, double longitude) {
 			this.placeId = placeId;
 			this.name = name;
+			this.formattedAddress = formattedAddress;
 
 			this.latitude = latitude;
 			this.longitude = longitude;
@@ -68,6 +70,10 @@ public class PlacesApiManager extends Foundation {
 
 		public String getPlaceId() {
 			return placeId;
+		}
+
+		public String getFormattedAddress() {
+			return formattedAddress;
 		}
 
 		public float distanceBetween(double anotherLatitude, double anotherLongitude) {
@@ -80,6 +86,7 @@ public class PlacesApiManager extends Foundation {
 
 		}
 
+
 	}
 
     public static class AutoComplete {
@@ -89,12 +96,14 @@ public class PlacesApiManager extends Foundation {
          private String description = "";
          private int offset = -1;
          private int length = -1;
+		private ArrayList<String> terms = new ArrayList<String>();
 
-        public AutoComplete(String placeId, String description, int offset, int length) {
+        public AutoComplete(String placeId, String description, int offset, int length, ArrayList<String> terms) {
             this.placeId = placeId;
             this.description = description;
             this.offset = offset;
             this.length = length;
+			this.terms = new ArrayList<>(terms);
         }
 
         public String getPlaceId() {
@@ -112,7 +121,11 @@ public class PlacesApiManager extends Foundation {
         public int getLength() {
             return length;
         }
-    }
+
+		public ArrayList<String> getTerms() {
+			return terms;
+		}
+	}
 
 	public static interface OnGetPlaceListener {
 
@@ -173,18 +186,18 @@ public class PlacesApiManager extends Foundation {
 		double lat = 0;
 		double lng = 0;
 
-		boolean isSucceed = false;
+		boolean succeed = false;
 
 		try {
 			JSONObject locationJObj = geometryJObj.getJSONObject("location");
 			lat = locationJObj.getDouble("lat");
 			lng = locationJObj.getDouble("lng");
-			isSucceed = true;
+			succeed = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		if (!isSucceed)
+		if (!succeed)
 			return null;
 
 		Location location = new Location("");
@@ -295,7 +308,7 @@ public class PlacesApiManager extends Foundation {
 		String link = genQueryLink(latitude, longitude, GET_PLACE_FROM_LAT_LNG_IN_METER, "", locale, false);
 
 		if (link.isEmpty()) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
+			handler.post(new Runnable() {
 
 				@Override
 				public void run() {
@@ -328,7 +341,7 @@ public class PlacesApiManager extends Foundation {
 		String link = genPlaceIdLink(placeId, locale);
 
 		if (link.isEmpty()) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
+			handler.post(new Runnable() {
 
 				@Override
 				public void run() {
@@ -390,7 +403,7 @@ public class PlacesApiManager extends Foundation {
 			return;
 
 		if (keyword.isEmpty()) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
+			handler.post(new Runnable() {
 
 				@Override
 				public void run() {
@@ -406,7 +419,7 @@ public class PlacesApiManager extends Foundation {
 		String link = genQueryLink(latitude, longitude, radiusInMeter, keyword, locale, rankByDistance);
 
 		if (link.isEmpty()) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
+			handler.post(new Runnable() {
 
 				@Override
 				public void run() {
@@ -437,15 +450,15 @@ public class PlacesApiManager extends Foundation {
             return;
 
         if (input.isEmpty()) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+			handler.post(new Runnable() {
 
-                @Override
-                public void run() {
-                    listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input);
+				@Override
+				public void run() {
+					listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input);
 
-                }
+				}
 
-            });
+			});
 
             return;
         }
@@ -453,15 +466,15 @@ public class PlacesApiManager extends Foundation {
         String link = genAutoCompleteLink(input, locale);
 
         if (link.isEmpty()) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+			handler.post(new Runnable() {
 
-                @Override
-                public void run() {
-                    listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input);
+				@Override
+				public void run() {
+					listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input);
 
-                }
+				}
 
-            });
+			});
 
             return;
         }
@@ -516,16 +529,20 @@ public class PlacesApiManager extends Foundation {
 			resultsJArray = responseJObj.getJSONArray("results");
 
 			Location location = null;
+			String placeId = "";
+			String name = "";
+			String formattedAddress = "";
 
 			for (int i = 0; i < resultsJArray.length(); i++) {
 				resultJObj = resultsJArray.getJSONObject(i);
 
-				String placeId = resultJObj.getString("place_id");
-				String name = resultJObj.getString("name");
-				location = obtainLocationFromGeometryJObj(resultJObj.getJSONObject("geometry"));
+				placeId = resultJObj.optString("place_id");
+				name = resultJObj.optString("name");
+				location = obtainLocationFromGeometryJObj(resultJObj.optJSONObject("geometry"));
+				formattedAddress = resultJObj.optString("vicinity");
 
 				if (location != null)
-					results.add(new Place(placeId, name, location.getLatitude(), location.getLongitude()));
+					results.add(new Place(placeId, name, formattedAddress, location.getLatitude(), location.getLongitude() ));
 
 
 			}
@@ -553,8 +570,8 @@ public class PlacesApiManager extends Foundation {
 
 		String placeId = "";
 		String name = "";
-
 		Location location = null;
+		String formattedAddress = "";
 
 		boolean hasException = false;
 
@@ -568,12 +585,16 @@ public class PlacesApiManager extends Foundation {
 
 			resultsJArray = responseJObj.getJSONArray("results");
 
+
+
 			for (int i = 0; i < resultsJArray.length(); i++) {
 				resultJObj = resultsJArray.getJSONObject(i);
 
 				placeId = resultJObj.optString("place_id", "");
 				name = resultJObj.optString("name", "");
-				location = obtainLocationFromGeometryJObj(resultJObj.getJSONObject("geometry"));
+				formattedAddress = resultJObj.optString("vicinity", "");
+				location = obtainLocationFromGeometryJObj(resultJObj.optJSONObject("geometry"));
+
 
 				if (location != null)
 					break;
@@ -587,7 +608,7 @@ public class PlacesApiManager extends Foundation {
 
 		boolean isResultValid = !placeId.isEmpty() && !name.isEmpty() && location!=null;
 
-		listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, location.getLatitude(), location.getLongitude()));
+		listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, formattedAddress, location.getLatitude(), location.getLongitude()));
 
 	}
 
@@ -604,6 +625,7 @@ public class PlacesApiManager extends Foundation {
 
 		String placeId = "";
 		String name = "";
+		String formattedAddress = "";
 
 		Location location = null;
 
@@ -619,9 +641,10 @@ public class PlacesApiManager extends Foundation {
 
 			resultJObj = responseJObj.getJSONObject("result");
 
-			placeId = resultJObj.optString("place_id", "");
-			name = resultJObj.optString("name", "");
-			location = obtainLocationFromGeometryJObj(resultJObj.getJSONObject("geometry"));
+			placeId = resultJObj.optString("place_id");
+			name = resultJObj.optString("name");
+			formattedAddress = resultJObj.optString("formatted_address");
+			location = obtainLocationFromGeometryJObj(resultJObj.optJSONObject("geometry"));
 
 
 		} catch (Exception e) {
@@ -631,7 +654,7 @@ public class PlacesApiManager extends Foundation {
 
 		boolean isResultValid = !placeId.isEmpty() && !name.isEmpty() && location!=null;
 
-		listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, location.getLatitude(), location.getLongitude()));
+		listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, formattedAddress, location.getLatitude(), location.getLongitude()));
 
 	}
 
@@ -648,12 +671,14 @@ public class PlacesApiManager extends Foundation {
         JSONArray predictionsJArray = null;
 		JSONObject predictionJObj = null;
 		JSONObject firstMatchedSubstring = null;
+		JSONArray termJArray = null;
 
         String status = "";
         String placeId = "";
         String description = "";
         int offset = -1;
         int length = -1;
+		ArrayList<String> terms = new ArrayList<>();
 
         boolean hasException = false;
         try {
@@ -683,7 +708,23 @@ public class PlacesApiManager extends Foundation {
 					length = 0;
 				}
 
-				results.add(new AutoComplete(placeId, description, offset, length));
+				try {
+
+					terms = new ArrayList<>();
+					termJArray = predictionJObj.getJSONArray("terms");
+					for (int j=0; j <termJArray.length(); j++) {
+						terms.add(termJArray.getJSONObject(j).getString("value"));
+					}
+
+
+				} catch (Exception e){
+					e.printStackTrace();
+					terms = new ArrayList<>();
+				}
+
+
+
+				results.add(new AutoComplete(placeId, description, offset, length, terms));
 
 			}
 

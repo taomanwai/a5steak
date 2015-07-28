@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
-import android.os.Looper;
 
 import com.tommytao.a5steak.ext.net.ntp.NTPUDPClient;
 
@@ -45,7 +44,6 @@ public class TimeManager extends Foundation {
 		log( "time_manager: " + "create");
 
 		client = new NTPUDPClient();
-		handler = new Handler(Looper.getMainLooper());
 
 	}
 

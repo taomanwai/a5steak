@@ -8,8 +8,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 
 import com.tommytao.a5steak.util.Foundation;
@@ -59,14 +57,14 @@ public class LocationSensor extends Foundation implements LocationListener {
 
 	public static interface OnConnectListener {
 
-		public void onConnected(boolean succeed);
+		public void onConnect(boolean succeed);
 
 
 	}
 
 	public static interface OnLocationChangeListener {
 
-		public void onLocationChanged(Location location);
+		public void onLocationChange(Location location);
 
 	}
 
@@ -170,14 +168,13 @@ public class LocationSensor extends Foundation implements LocationListener {
 		if (onConnectListener == null)
 			return;
 
-		Handler h = new Handler(Looper.getMainLooper());
 
-		h.post(new Runnable() {
+		handler.post(new Runnable() {
 
 			@Override
 			public void run() {
 
-					onConnectListener.onConnected(isConnected);
+				onConnectListener.onConnect(isConnected);
 
 
 			}
@@ -304,7 +301,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 		editor.commit();
 
 		for (OnLocationChangeListener onLocationChangeListener : onLocationChangeListenerList){
-			onLocationChangeListener.onLocationChanged(location);
+			onLocationChangeListener.onLocationChange(location);
 		}
 
 	}

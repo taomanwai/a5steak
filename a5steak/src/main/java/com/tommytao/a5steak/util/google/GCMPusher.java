@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
@@ -50,7 +48,6 @@ public class GCMPusher extends Foundation {
 
 	// --
 
-	private Handler handler = new Handler(Looper.getMainLooper());
 
 	private GcmBroadcastReceiver receiver;
 

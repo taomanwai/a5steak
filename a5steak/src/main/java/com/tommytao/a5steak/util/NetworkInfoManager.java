@@ -3,8 +3,6 @@ package com.tommytao.a5steak.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
-import android.os.Looper;
 
 import org.json.JSONObject;
 
@@ -65,7 +63,6 @@ public class NetworkInfoManager extends Foundation {
 
 	}
 
-	private Handler handler = new Handler(Looper.getMainLooper());
 
 	private ConnectivityManager getConnectivityManager() {
 		if (connectivityManager == null)

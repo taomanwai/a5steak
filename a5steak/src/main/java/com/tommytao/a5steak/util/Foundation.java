@@ -99,6 +99,8 @@ public class Foundation {
 
     protected boolean debugMode = true;
 
+    protected Handler handler = new Handler(Looper.getMainLooper());
+
     public Context appContext;
 
     public boolean init(Context context) {
@@ -581,7 +583,7 @@ public class Foundation {
         if (listener == null)
             return;
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
 
@@ -597,7 +599,7 @@ public class Foundation {
         if (listener == null)
             return;
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
 
@@ -899,7 +901,6 @@ public class Foundation {
     protected String sha1(String input) {
         return genHash(input, "SHA-1");
     }
-
 
 
     // === file utils ===
@@ -1238,7 +1239,7 @@ public class Foundation {
 
             getMediaPlayer().start();
 
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+            handler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (listener != null)
@@ -1246,6 +1247,7 @@ public class Foundation {
 
                 }
             });
+
 
             getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -1267,7 +1269,7 @@ public class Foundation {
         } catch (Exception e) {
             e.printStackTrace();
 
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+            handler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (listener != null)
@@ -1291,9 +1293,11 @@ public class Foundation {
             getMediaPlayer().setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
             descriptor.close();
             getMediaPlayer().prepare();
+
+
             getMediaPlayer().start();
 
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+            handler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (listener != null)
@@ -1301,6 +1305,7 @@ public class Foundation {
 
                 }
             });
+
 
             getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -1322,7 +1327,7 @@ public class Foundation {
         } catch (Exception e) {
             e.printStackTrace();
 
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+            handler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (listener != null)
@@ -1348,14 +1353,19 @@ public class Foundation {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
 
+                    boolean succeed = true;
                     try {
                         mediaPlayer.start();
-                        if (listener != null)
-                            listener.onStart();
+
                     } catch (Exception e) {
                         e.printStackTrace();
+                        succeed = false;
                         if (listener != null)
                             listener.onComplete(false);
+                    }
+
+                    if (succeed && listener != null) {
+                        listener.onStart();
                     }
 
                 }
@@ -1377,7 +1387,7 @@ public class Foundation {
 
         } catch (Exception e) {
             e.printStackTrace();
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+            handler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (listener != null)
@@ -1484,7 +1494,7 @@ public class Foundation {
     }
 
     // === Directions API ===
-    protected ArrayList<Location> decodePolylinePointsToLocationList(String polylinePoints){
+    protected ArrayList<Location> decodePolylinePointsToLocationList(String polylinePoints) {
         ArrayList<Location> poly = new ArrayList<>();
         int index = 0, len = polylinePoints.length();
         int lat = 0, lng = 0;
@@ -1529,13 +1539,13 @@ public class Foundation {
 
     protected ArrayList<OnReadingChangeListener> onReadingChangeListenerList = new ArrayList<OnReadingChangeListener>();
 
-    public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener){
+    public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
 
         onReadingChangeListenerList.add(onReadingChangeListener);
 
     }
 
-    public boolean removeOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener){
+    public boolean removeOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
 
         return onReadingChangeListenerList.remove(onReadingChangeListener);
 
@@ -1599,15 +1609,15 @@ public class Foundation {
 
     }
 
-    protected double normalizeToOneLoopBearing(double value){
+    protected double normalizeToOneLoopBearing(double value) {
         return value % 360;
     }
 
-    protected double halfToWholeCircleBearing(double value){
+    protected double halfToWholeCircleBearing(double value) {
 
         value = normalizeToOneLoopBearing(value);
 
-        if (value < 0){
+        if (value < 0) {
             value = 360 + value;
         }
 
@@ -1615,17 +1625,15 @@ public class Foundation {
 
     }
 
-    protected double wholeToHalfCircleBearing(double value){
+    protected double wholeToHalfCircleBearing(double value) {
 
         value = normalizeToOneLoopBearing(value);
 
-        if (value > 180){
-            value = - (360-value);
+        if (value > 180) {
+            value = -(360 - value);
         }
 
-        return  value;
-
-
+        return value;
 
 
     }
@@ -1646,8 +1654,6 @@ public class Foundation {
     protected double lngE62Lng(long lngE6) {
         return latE62Lat(lngE6); // just use back latE62Lat()
     }
-
-
 
 
 }

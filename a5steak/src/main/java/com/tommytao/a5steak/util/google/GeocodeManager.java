@@ -383,7 +383,7 @@ public class GeocodeManager extends Foundation {
 		// listener should have weak ref to its parent (e.g. activity)
 		if (link.isEmpty()) {
 
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
+			handler.post(new Runnable() {
 
 				@Override
 				public void run() {

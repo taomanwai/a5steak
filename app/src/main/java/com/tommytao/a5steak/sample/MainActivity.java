@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -63,6 +64,10 @@ public class MainActivity extends ActionBarActivity {
 
     @InjectView(R.id.topBar)
     View topBar;
+
+    @InjectView(R.id.btnTwo)
+    Button btnTwo;
+
 
     @InjectView(R.id.rightBar)
     View rightBar;
@@ -144,6 +149,7 @@ public class MainActivity extends ActionBarActivity {
 
         MusicManager.getInstance().init(this);
 
+
 //        MusicManager.getInstance().playSoundAtFreq(14000, 10);
 
         PlacesApiManager.getInstance().init(this, "AIzaSyDho8iArjPHWI7GiY1xGhefeB6LplFucdI");
@@ -163,122 +169,183 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        PlacesApiManager.getInstance().getPlaceFromPlaceId("ElNTb2kgU3VraHVtdml0IDEg4LiB4Lij4Li44LiH4LmA4LiX4Lie4Lih4Lir4Liy4LiZ4LiE4LijIOC4m-C4o-C4sOC5gOC4l-C4qOC5hOC4l-C4og",
+                new Locale("th", "TH"), new PlacesApiManager.OnGetPlaceListener() {
+                    @Override
+                    public void returnPlace(PlacesApiManager.Place place) {
 
-        LocationSensor.getInstance().init(this);
+                        Log.d("", "");
+
+                    }
+                });
+
+        PlacesApiManager.getInstance().getPlaceFromLatLng(13.7455391, 100.5514212, new Locale("th", "TH"), new PlacesApiManager.OnGetPlaceListener() {
+            @Override
+            public void returnPlace(PlacesApiManager.Place place) {
+                Log.d("", "");
+            }
+
+
+        });
+
+
+        LocationSensor.getInstance().
+
+                init(this);
 //        LBSManager.getInstance().connect(LBSManager.DEFAULT_UPDATE_INTERVAL_IN_MS, new LBSManager.OnConnectListener() {
 //
 //            @Override
-//            public void onConnected(boolean succeed) {
+//            public void onConnect(boolean succeed) {
 //                Log.d("", "");
 //            }
 //
 //        });
 
-        h = new Handler(Looper.getMainLooper());
+        h = new
 
-        SoundSensor.getInstance().connect();
+                Handler(Looper.getMainLooper()
 
-        DirectionsApiManager.getInstance().init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
+        );
 
-        FineOrientationManager.getInstance().init(this);
+        SoundSensor.getInstance().
 
-        ActivityGApiSensor.getInstance().init(this);
+                connect();
 
-        LocationFusedSensor.getInstance().init(this);
+        DirectionsApiManager.getInstance().
 
-        LocationFusedSensor.getInstance().connect(null);
+                init(this, "gme-easyvanhongkonglimited", "RglSWAR2KO9R2OghAMwyj4WqIXg=");
 
-        ActivityGApiSensor.getInstance().connect(new OnConnectListener() {
-            @Override
-            public void onConnected(boolean succeed) {
-                if (!succeed) {
-                    return;
-                }
+        FineOrientationManager.getInstance().
 
-                h.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                init(this);
 
-                        try {
+        ActivityGApiSensor.getInstance().
+
+                init(this);
+
+        LocationFusedSensor.getInstance().
+
+                init(this);
+
+        LocationFusedSensor.getInstance().
+
+                connect(null);
+
+        ActivityGApiSensor.getInstance().
+
+                connect(new OnConnectListener() {
+                            @Override
+                            public void onConnected(boolean succeed) {
+                                if (!succeed) {
+                                    return;
+                                }
+
+                                h.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        try {
 
 //                            String s = "" +
 //                                    ActivitySensor.getInstance().getLastKnownDetectedActivity().toString() + " "
 //                                    + ActivitySensor.getInstance().getLastKnownDetectedActivity().getConfidence();
 
-                            String s = GyroSensor.getInstance().getLastKnownDeltaRotationX() + " " +
-                                    GyroSensor.getInstance().getLastKnownDeltaRotationY() + " " +
-                                    GyroSensor.getInstance().getLastKnownDeltaRotationZ() + " " + GyroSensor.getInstance().exists();
+                                            String s = GyroSensor.getInstance().getLastKnownDeltaRotationX() + " " +
+                                                    GyroSensor.getInstance().getLastKnownDeltaRotationY() + " " +
+                                                    GyroSensor.getInstance().getLastKnownDeltaRotationZ() + " " + GyroSensor.getInstance().exists();
 
-                            Log.d("", "a_sense_t: " + s);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                                            Log.d("", "a_sense_t: " + s);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        tvWhole.setText("" + SoundSensor.getInstance().getMagnitudeInDb());
+
+                                        try {
+
+                                            Location location = LocationFusedSensor.getInstance().getLastKnownLocation();
+
+                                            Log.d("rtemp", "loc_f_t: " + location.getLatitude() + " " + location.getLongitude());
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        Log.d("rtemp", "p_t: " + PressureSensor.getInstance().getPressureInMBar());
+
+
+                                        h.postDelayed(this, 1000);
+                                    }
+                                }, 1000);
+
+                            }
                         }
 
-                        tvWhole.setText("" + SoundSensor.getInstance().getMagnitudeInDb());
-
-                        try {
-
-                            Location location = LocationFusedSensor.getInstance().getLastKnownLocation();
-
-                            Log.d("rtemp", "loc_f_t: " + location.getLatitude() + " " + location.getLongitude());
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        Log.d("rtemp", "p_t: " + PressureSensor.getInstance().getPressureInMBar());
+                );
 
 
-                        h.postDelayed(this, 1000);
-                    }
-                }, 1000);
+        MagneticSensor.getInstance().
 
-            }
-        });
-
-
-        MagneticSensor.getInstance().init(this);
+                init(this);
 
 //        MagneticSensor.getInstance().connect();
 
-        GSensor.getInstance().init(this);
+        GSensor.getInstance().
+
+                init(this);
 
 //        GSensor.getInstance().connect();
 
-        LocationSensor.getInstance().addOnLocationChangeListener(new LocationSensor.OnLocationChangeListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                Log.d("", "change_t: loc: " + location.getLatitude() + " " + location.getLongitude());
+        LocationSensor.getInstance().
+
+                addOnLocationChangeListener(new LocationSensor.OnLocationChangeListener() {
+                                                @Override
+                                                public void onLocationChange(Location location) {
+                                                    Log.d("", "change_t: loc: " + location.getLatitude() + " " + location.getLongitude());
 //                updateMap();
-            }
-        });
+                                                }
+                                            }
 
-        GSensor.getInstance().addOnReadingChangeListener(new Foundation.OnReadingChangeListener() {
-            @Override
-            public void onReadingChanged(float x, float y, float z) {
-                Log.d("", "change_t: g: " + x + " " + y + " " + z);
+                );
+
+        GSensor.getInstance().
+
+                addOnReadingChangeListener(new Foundation.OnReadingChangeListener() {
+                                               @Override
+                                               public void onReadingChanged(float x, float y, float z) {
+                                                   Log.d("", "change_t: g: " + x + " " + y + " " + z);
 //                updateMap();
-            }
-        });
+                                               }
+                                           }
 
-        MagneticSensor.getInstance().addOnReadingChangeListener(new Foundation.OnReadingChangeListener() {
-            @Override
-            public void onReadingChanged(float x, float y, float z) {
-                Log.d("", "change_t: mag: " + x + " " + y + " " + z);
+                );
+
+        MagneticSensor.getInstance().
+
+                addOnReadingChangeListener(new Foundation.OnReadingChangeListener() {
+                                               @Override
+                                               public void onReadingChanged(float x, float y, float z) {
+                                                   Log.d("", "change_t: mag: " + x + " " + y + " " + z);
 //                updateMap();
-            }
-        });
+                                               }
+                                           }
 
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+                );
+
+        h.postDelayed(new
+
+                              Runnable() {
+                                  @Override
+                                  public void run() {
 
 //                updateMap();
 
-                h.postDelayed(this, 30);
+                                      h.postDelayed(this, 30);
 
-            }
-        }, 30);
+                                  }
+                              }
+
+                , 30);
 
         ArrayList<String> strList = new ArrayList<String>();
         strList.add("abc");
@@ -685,49 +752,53 @@ public class MainActivity extends ActionBarActivity {
 
         listView.setAdapter(itemsAdapter);
 
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+        listView.setOnScrollListener(new AbsListView.OnScrollListener()
 
-                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                                     {
+                                         @Override
+                                         public void onScrollStateChanged(AbsListView absListView, int scrollState) {
 
-                    Log.d("", "test_t: idle");
+                                             if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+
+                                                 Log.d("", "test_t: idle");
 //                    UxManager.getInstance().fadeOutView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
 
 
-                } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                                             } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
 
-                    Log.d("", "test_t: touch");
+                                                 Log.d("", "test_t: touch");
 //                    tvMsg.clearAnimation();
 
 //                    UxManager.getInstance().fadeInView(tvMsg, listView.getScrollBarDefaultDelayBeforeFade() + listView.getScrollBarFadeDuration(), null);
 
-                    UxManager.getInstance().clearAnimationTo(tvMsg, true);
+                                                 UxManager.getInstance().clearAnimationTo(tvMsg, true);
 
-                } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-                    Log.d("", "test_t: fling");
+                                             } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+                                                 Log.d("", "test_t: fling");
 
-                }
+                                             }
 
-            }
+                                         }
 
-            @Override
-            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+                                         @Override
+                                         public void onScroll(AbsListView absListView, int i, int i1, int i2) {
 
-                tvMsg.setText("" + listView.getFirstVisiblePosition() + "/" + listView.getAdapter().getCount() + " "
-                        + listView.computeVerticalScrollOffset() + " " + listView.computeVerticalScrollExtent() + " " + listView.computeVerticalScrollRange());
+                                             tvMsg.setText("" + listView.getFirstVisiblePosition() + "/" + listView.getAdapter().getCount() + " "
+                                                     + listView.computeVerticalScrollOffset() + " " + listView.computeVerticalScrollExtent() + " " + listView.computeVerticalScrollRange());
 
-                double ratioOfListView = (double) (listView.computeVerticalScrollOffset() + listView.computeVerticalScrollExtent() / 2) / listView.computeVerticalScrollRange();
+                                             double ratioOfListView = (double) (listView.computeVerticalScrollOffset() + listView.computeVerticalScrollExtent() / 2) / listView.computeVerticalScrollRange();
 
-                int offset = (int) (listView.getHeight() * ratioOfListView);
+                                             int offset = (int) (listView.getHeight() * ratioOfListView);
 
-                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) tvMsg.getLayoutParams();
-                lp.topMargin = offset - tvMsg.getHeight() / 2;
-                tvMsg.setLayoutParams(lp);
+                                             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) tvMsg.getLayoutParams();
+                                             lp.topMargin = offset - tvMsg.getHeight() / 2;
+                                             tvMsg.setLayoutParams(lp);
 
 
-            }
-        });
+                                         }
+                                     }
+
+        );
 
 
     }

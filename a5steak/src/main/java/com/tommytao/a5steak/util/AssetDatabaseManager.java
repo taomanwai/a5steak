@@ -2,8 +2,6 @@ package com.tommytao.a5steak.util;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
@@ -69,7 +67,7 @@ public class AssetDatabaseManager extends Foundation {
 
                 final Cursor cursor = database.rawQuery(query, selectionArgs);
 
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
 
