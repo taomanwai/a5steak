@@ -1,26 +1,25 @@
-package com.tommytao.a5steak.util.sensor.support;
+package com.tommytao.a5steak.util.sensor.analyzer;
 
 import android.hardware.SensorManager;
-
 import com.tommytao.a5steak.util.Foundation;
 
 /**
  * Responsible for getting gravity field reading
  *
  */
-public class FineOrientationManager extends Foundation {
+public class OrientationAnalyzer extends Foundation {
 
-    private static FineOrientationManager instance;
+    private static OrientationAnalyzer instance;
 
-    public static FineOrientationManager getInstance() {
+    public static OrientationAnalyzer getInstance() {
 
         if (instance == null)
-            instance = new FineOrientationManager();
+            instance = new OrientationAnalyzer();
 
         return instance;
     }
 
-    private FineOrientationManager() {
+    private OrientationAnalyzer() {
 
     }
 

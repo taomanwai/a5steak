@@ -8,35 +8,44 @@ import com.tommytao.a5steak.util.Foundation;
 
 
 /**
- * Responsible for getting magnetic field reading (calibrated)
- *
- * Note:
- * Electrical devices usually emits 15 or 20 uT (<a href="http://www.magneticsciences.com/EMF-health/">Ref</a>)
- * Earth naturally emits 15 or 20 uT (<a href="https://en.wikipedia.org/wiki/Earth%27s_magnetic_field">Ref</a>)
+ * Responsible for getting gravity field reading
  *
  */
-public class MagneticSensor extends Foundation implements SensorEventListener {
+public class OrientationSensor extends Foundation implements SensorEventListener {
 
-    private static MagneticSensor instance;
+    private static OrientationSensor instance;
 
-    public static MagneticSensor getInstance() {
+    public static OrientationSensor getInstance() {
 
         if (instance == null)
-            instance = new MagneticSensor();
+            instance = new OrientationSensor();
 
         return instance;
     }
 
-    private MagneticSensor() {
+    private OrientationSensor() {
 
     }
 
     // --
 
+
+    @Override
+    public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
+        super.addOnReadingChangeListener(onReadingChangeListener);
+    }
+
+    @Override
+    public boolean removeOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
+        return super.removeOnReadingChangeListener(onReadingChangeListener);
+    }
+
     private Sensor getSensor() {
 
         if (sensor == null)
-            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_ORIENTATION);
+
+
 
         return sensor;
     }
@@ -50,6 +59,7 @@ public class MagneticSensor extends Foundation implements SensorEventListener {
     public void disconnect() {
         getSensorManager().unregisterListener(this);
     }
+
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -67,27 +77,39 @@ public class MagneticSensor extends Foundation implements SensorEventListener {
 
     }
 
+
+    /**
+     *
+     * Note: Under construction
+     *
+     * @return
+     */
+    public double getVehicleMovingProbability(){
+
+
+        return 0;
+
+    }
+
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         // do nothing
     }
 
 
-    public float getLastKnownXInuT() {
+    public float getLastKnownYaw() {
         return super.getLastKnownX();
     }
 
-    public float getLastKnownYInuT() {
+
+    public float getLastKnownPitch() {
         return super.getLastKnownY();
     }
 
 
-    public float getLastKnownZInuT() {
+    public float getLastKnownRoll() {
         return super.getLastKnownZ();
-    }
-
-    public double getLastKnownMagnitudeInuT() {
-        return super.getLastKnownMagnitude();
     }
 
 

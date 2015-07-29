@@ -1537,7 +1537,9 @@ public class Foundation {
 
     }
 
-    protected ArrayList<OnReadingChangeListener> onReadingChangeListenerList = new ArrayList<OnReadingChangeListener>();
+    protected final int DEFAULT_SENSOR_DELAY_LEVEL = SensorManager.SENSOR_DELAY_GAME;
+
+    protected ArrayList<OnReadingChangeListener> onReadingChangeListenerList = new ArrayList<>();
 
     public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
 

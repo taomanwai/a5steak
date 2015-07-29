@@ -37,9 +37,10 @@ public class Encyclopedia {
 
 	public static final double SHENZHEN_LAT = 22.615017;
 	public static final double SHENZHEN_LNG = 114.055951;
-	public static final int SHENZHEN_RADIUS_IN_METER = 30000; 
-	
-	
+	public static final int SHENZHEN_RADIUS_IN_METER = 30000;
+
+	public static final int WHOLE_WORLD_RADIUS_IN_METER = 20000000; // i.e. 20,000 km
+
 	public static final double HKSIL_LAT = 22.394190;
 	public static final double HKSIL_LNG = 114.202048; 
 	
@@ -48,6 +49,8 @@ public class Encyclopedia {
 
 	public static final String GUANGZHOU_IN_SC = "广州";
 	public static final String SHENZHEN_IN_SC = "深圳";
+
+
 	
 	
 	

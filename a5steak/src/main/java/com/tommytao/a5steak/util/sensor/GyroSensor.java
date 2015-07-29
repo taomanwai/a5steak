@@ -4,7 +4,6 @@ import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 
 import com.tommytao.a5steak.util.Foundation;
 
@@ -52,7 +51,7 @@ public class GyroSensor extends Foundation implements SensorEventListener {
 
     public void connect() {
 
-        getSensorManager().registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_GAME);
+        getSensorManager().registerListener(this, getSensor(), DEFAULT_SENSOR_DELAY_LEVEL);
 
     }
 

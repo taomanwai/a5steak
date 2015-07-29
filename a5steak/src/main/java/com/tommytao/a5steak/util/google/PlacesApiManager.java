@@ -294,6 +294,8 @@ public class PlacesApiManager extends Foundation {
         String result = String.format("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=%s&language=%s&key=%s",
                 inputURLEncoded, localeStr, getKey());
 
+		result += "&components=country:" + locale.getCountry().toString().toLowerCase();
+
         return result;
 
     }
