@@ -251,18 +251,22 @@ public class AnimMapView extends MapView {
 
     public AnimMapView(Context context) {
         super(context);
+        init();
     }
 
     public AnimMapView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public AnimMapView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
     }
 
     public AnimMapView(Context context, GoogleMapOptions options) {
         super(context, options);
+        init();
     }
 
 
@@ -284,7 +288,9 @@ public class AnimMapView extends MapView {
 
     }
 
-    private void init(){
+    private void init() {
+
+        LocaleManager.getInstance().init(getContext());
 
     }
 
@@ -305,18 +311,18 @@ public class AnimMapView extends MapView {
         }
     }
 
-    public void slideAndRotateAnimMarker(int index, double latitude, double longitude, float rotation, int durationInMs, final AnimMapView.Listener listener) {
+    public void slideAndRotateAnimMarker(int index, double latitude, double longitude, float rotation, int durationInMs, final Listener listener) {
 
         final AnimMarker animMarker = animMarkers.get(index);
 
         MapViewAnimator.getInstance().slideAndRotateMarker(animMarker.marker, latitude, longitude, rotation, durationInMs, new MapViewAnimator.LinearLocationInterpolator(),
-                new MapViewAnimator.OnMapAnimListener() {
+                new MapViewAnimator.Listener() {
                     @Override
                     public void onUpdate() {
 
                         animMarker.syncMarkerToAnimMarker();
 
-                        if (listener!=null)
+                        if (listener != null)
                             listener.onUpdate();
 
 
@@ -336,7 +342,7 @@ public class AnimMapView extends MapView {
     public void slideAnimMarkerFollowingDrivingRoad(final int index,
                                                     double latitude, double longitude,
                                                     int durationInMs,
-                                                    final AnimMapView.Listener listener){
+                                                    final Listener listener) {
 
         final AnimMarker animMarker = animMarkers.get(index);
 
@@ -349,17 +355,32 @@ public class AnimMapView extends MapView {
                     @Override
                     public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
 
-                        slideAnimMarkerFollowingSteps(index, stepList, 3000, true, null);
+                        slideAnimMarkerFollowingSteps(index, stepList, 3000, true, new Listener() {
+
+                            @Override
+                            public void onUpdate() {
+
+                                if (listener != null)
+                                    listener.onUpdate();
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                                if (listener != null)
+                                    listener.onComplete();
+
+
+                            }
+                        });
                     }
                 });
 
 
-
-
-
     }
 
-    public void slideAnimMarkerFollowingSteps(int index, ArrayList<DirectionsApiManager.Step> steps, int durationInMs, final boolean followRotation, final AnimMapView.Listener listener) {
+    public void slideAnimMarkerFollowingSteps(int index, ArrayList<DirectionsApiManager.Step> steps, int durationInMs, final boolean followRotation, final Listener listener) {
 
         final AnimMarker animMarker = animMarkers.get(index);
 

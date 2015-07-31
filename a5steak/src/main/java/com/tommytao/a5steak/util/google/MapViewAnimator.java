@@ -2,6 +2,7 @@ package com.tommytao.a5steak.util.google;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -29,7 +30,7 @@ public class MapViewAnimator extends Foundation {
 
     // --
 
-    public static interface OnMapAnimListener {
+    public static interface Listener {
 
         public void onUpdate();
 
@@ -121,8 +122,13 @@ public class MapViewAnimator extends Foundation {
         }
     }
 
+    @Deprecated
+    public boolean init(Context appContext) {
+        return super.init(appContext);
+    }
 
-    public void slideAndRotateMarker(final Marker marker, double latitude, double longitude, final float rotation, int durationInMs, final BaseLocationInterpolator baseLocationInterpolator, final OnMapAnimListener listener) {
+
+    public void slideAndRotateMarker(final Marker marker, double latitude, double longitude, final float rotation, int durationInMs, final BaseLocationInterpolator baseLocationInterpolator, final Listener listener) {
 
         final LatLng startPosition = marker.getPosition();
         final LatLng finalPosition = new LatLng(latitude, longitude);
