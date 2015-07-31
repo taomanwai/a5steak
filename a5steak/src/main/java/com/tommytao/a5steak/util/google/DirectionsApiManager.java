@@ -94,7 +94,7 @@ public class DirectionsApiManager extends Foundation {
         private double endLongitude = Double.NaN;
 
         private String polylinePoints = "";
-        private ArrayList<Location> polylineLocationList = new ArrayList<Location>();
+        private ArrayList<Location> polylineLocations = new ArrayList<Location>();
 
         private String instructionsInHtml = "";
         private int maneuver = MANEUVER_NONE;
@@ -167,12 +167,12 @@ public class DirectionsApiManager extends Foundation {
             return polylinePoints;
         }
 
-        public ArrayList<Location> getPolylineLocationList() {
+        public ArrayList<Location> getPolylineLocations() {
 
-            if (polylineLocationList.isEmpty())
-                polylineLocationList = decodePolylinePointsToLocationList(polylinePoints);
+            if (polylineLocations.isEmpty())
+                polylineLocations = decodePolylinePointsToLocationList(polylinePoints);
 
-            return polylineLocationList;
+            return polylineLocations;
 
         }
 
@@ -202,7 +202,7 @@ public class DirectionsApiManager extends Foundation {
         return true;
     }
 
-    private boolean isForWork() {
+    private boolean forWork() {
         return !TextUtils.isEmpty(clientIdForWork) && !TextUtils.isEmpty(cryptoForWork);
     }
 
@@ -213,7 +213,7 @@ public class DirectionsApiManager extends Foundation {
         String result = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%.6f,%.6f&destination=%.6f,%.6f&language=%s", startLatitude, startLongitude, endLatitude, endLongitude,
                 localeString);
 
-        result = isForWork() ? signToForWork(result, API_DOMAIN_FOR_WORK, clientIdForWork, cryptoForWork) : result;
+        result = forWork() ? signToForWork(result, API_DOMAIN_FOR_WORK, clientIdForWork, cryptoForWork) : result;
 
         if (result.endsWith("\r\n"))
             result = result.substring(0, result.length() - 3);

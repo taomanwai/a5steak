@@ -16,6 +16,7 @@ import java.util.Locale;
  *
  * Responsible for get or search location info through Google Places API
  *
+ * Ref: <a href="https://developers.google.com/places/webservice/autocomplete#location_biasing">here</a>
  *
  */
 public class PlacesApiManager extends Foundation {

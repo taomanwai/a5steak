@@ -137,6 +137,16 @@ public class Foundation {
 
     }
 
+    // === tag ===
+    private Object tag;
+
+    public Object getTag() {
+        return tag;
+    }
+
+    public void setTag(Object tag) {
+        this.tag = tag;
+    }
 
     // === log ===
 
@@ -1656,6 +1666,80 @@ public class Foundation {
     protected double lngE62Lng(long lngE6) {
         return latE62Lat(lngE6); // just use back latE62Lat()
     }
+
+
+    // === MathManager ===
+
+    protected double calculateAngleDerivation(double from, double to) {
+
+        from = halfToWholeCircleBearing(from);
+        to = halfToWholeCircleBearing(to);
+
+        double choice1 = to - from;
+        double choice2 = (to >= from) ? (-(from + 360 - to)) : (360 - from + to);
+
+        return (Math.abs(choice1) <= Math.abs(choice2)) ? choice1 : choice2;
+
+
+
+    }
+
+
+    // === Data processor ===
+
+
+    protected void lowPassFilter(ArrayList<Double> lowPassHistoryList, int maxHistorySize, double latestValue, double strength) {
+
+
+        if (maxHistorySize == 0) {
+            lowPassHistoryList.clear();
+            return;
+        }
+
+        if (lowPassHistoryList.isEmpty()) {
+            lowPassHistoryList.add(latestValue);
+            return;
+        }
+
+
+        double revisedLatestValue = lowPassHistoryList.get(0) * strength + latestValue * (1 - strength);
+
+
+        lowPassHistoryList.add(0, revisedLatestValue);
+
+        while (lowPassHistoryList.size() > maxHistorySize)
+            lowPassHistoryList.remove(lowPassHistoryList.size() - 1);
+
+
+    }
+
+
+    protected void lowPassFilterForAngle(ArrayList<Double> lowPassHistoryList, int maxHistorySize, double latestValue, double strength) {
+
+        if (maxHistorySize == 0) {
+            lowPassHistoryList.clear();
+            return;
+        }
+
+        if (lowPassHistoryList.isEmpty()) {
+            lowPassHistoryList.add(latestValue);
+            return;
+        }
+
+        double revisedLatestValue = halfToWholeCircleBearing(lowPassHistoryList.get(0)) + calculateAngleDerivation(lowPassHistoryList.get(0), latestValue) * (1 - strength);
+//        revisedLatestValue = normalizeToOneLoopBearing(revisedLatestValue);
+        revisedLatestValue = wholeToHalfCircleBearing(revisedLatestValue);
+
+
+        lowPassHistoryList.add(0, revisedLatestValue);
+
+        while (lowPassHistoryList.size() > maxHistorySize)
+            lowPassHistoryList.remove(lowPassHistoryList.size() - 1);
+
+
+    }
+
+    // === MapView animation ===
 
 
 }

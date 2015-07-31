@@ -77,18 +77,7 @@ public class GSensor extends Foundation implements SensorEventListener {
     }
 
 
-    /**
-     *
-     * Note: Under construction
-     *
-     * @return
-     */
-    public double getVehicleMovingProbability(){
 
-
-        return 0;
-
-    }
 
 
     @Override

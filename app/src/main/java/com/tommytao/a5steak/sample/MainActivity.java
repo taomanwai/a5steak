@@ -14,11 +14,12 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.tommytao.a5steak.customview.GMapAdapter;
+import com.google.android.gms.maps.model.Marker;
 import com.tommytao.a5steak.customview.ScrollBarListView;
+import com.tommytao.a5steak.customview.google.AnimMapView;
+import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.util.MusicManager;
 import com.tommytao.a5steak.util.UxManager;
 import com.tommytao.a5steak.util.google.PlacesApiManager;
@@ -74,6 +75,10 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.tvWhole)
     TextView tvWhole;
 
+    Marker marker;
+
+    AnimMapView animMapView;
+
 
     Handler handler = new Handler(Looper.getMainLooper());
 
@@ -108,8 +113,30 @@ public class MainActivity extends ActionBarActivity {
 //                .setCustomAnimations(R.anim.fade_in_300, R.anim.fade_out_300, R.anim.fade_in_300, R.anim.fade_out_300)
 //                .replace(R.id.flFrag, TwoFragment.newInstance()).addToBackStack(null).commit();
 
-        tvWhole.setText(this.getString(R.string.test_str, 3, 5));
+//        tvWhole.setText(this.getString(R.string.test_str, 3, 5));
 
+//        MapViewAnimator.getInstance().slideAndRotateMarker(marker, 22.335453, 114.156343,  90, 2000, new MapViewAnimator.LinearLocationInterpolator(), null);
+//
+//
+//        MapViewAnimator.getInstance().rotateMarker(marker, 90, 2000, null);
+
+//        DirectionsApiManager.getInstance().route(
+//                22.337080, 114.147331,
+//                22.335453, 114.156343,
+//                new Locale("zh", "HK"),
+//                new DirectionsApiManager.OnRouteListener() {
+//                    @Override
+//                    public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
+//
+//                        animMapView.slideAnimMarkerFollowingSteps(0,stepList , 3000, false, null);
+//
+//
+//
+//                    }
+//                }
+//        );
+
+        animMapView.slideAndRotateAnimMarker(0, 22.335453, 114.156343, 90, 3000, null);
 
     }
 
@@ -130,9 +157,9 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-        MapView mapView = new MapView(this);
-        flMap.addView(mapView);
-        mapAdapter = new GMapAdapter(mapView);
+         animMapView = new AnimMapView(this);
+        flMap.addView(animMapView);
+        mapAdapter = new GMapAdapter(animMapView);
         mapAdapter.onCreate(savedInstanceState);
 
 
@@ -147,9 +174,8 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void run() {
 
-                Log.d("", "yaw=" + OrientationSensor.getInstance().getLastKnownYaw() +
-                        " pitch=" + OrientationSensor.getInstance().getLastKnownPitch() +
-                        " roll=" + OrientationSensor.getInstance().getLastKnownRoll());
+
+                handler.postDelayed(this, 1000);
 
             }
         }, 1000);
@@ -166,410 +192,19 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-        ArrayList<String> strList = new ArrayList<String>();
+        ArrayList<String> strList = new ArrayList<>();
         strList.add("abc");
         strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        strList.add("abc");
-        strList.add("efg");
-        ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strList);
+
+        ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, strList);
 
         listView.setAdapter(itemsAdapter);
+
+//        marker = (Marker) mapAdapter.addMarker(22.337080, 114.147331,R.drawable.ic_plusone_small_off_client, "", "");
+
+        animMapView.addAnimMarker(22.337080, 114.147331, 0, R.drawable.ic_plusone_small_off_client);
+
+        mapAdapter.animateCamera(22.337080, 114.147331, 17, 300, null);
 
 
 
@@ -590,7 +225,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         try {
-            DataProcessor.getInstance().lowPassFilterForAngle(bearList, 40, bear);
+            DataProcessor.getInstance().lowPassFilterForAngle(bearList, 40, bear, DataProcessor.DEFAULT_STRENGTH_OF_LPF);
 
             bear = bearList.get(0);
 

@@ -182,8 +182,8 @@ public class SpeechRecognitionManager extends Foundation {
             public void onResults(Bundle results) {
 
                 ArrayList<String> recognitionResults = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-
                 listener.onComplete(recognitionResults.isEmpty() ? "" : recognitionResults.get(0));
+
 
             }
 

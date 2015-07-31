@@ -32,13 +32,13 @@ public class MusicManager extends Foundation {
     }
 
     @Override
-    public void playRaw(final int resId, OnPlayListener listener) {
+    public void playRaw(final int resId, MusicManager.OnPlayListener listener) {
 
         super.playRaw(resId, listener);
 
     }
 
-    public void playAssets(final String fileName, OnPlayListener listener) {
+    public void playAssets(final String fileName, MusicManager.OnPlayListener listener) {
 
         super.playAssets(fileName, listener);
 
@@ -51,7 +51,7 @@ public class MusicManager extends Foundation {
      *
      * @param url
      */
-    public void playUrl(final String url, OnPlayListener listener) {
+    public void playUrl(final String url, MusicManager.OnPlayListener listener) {
 
         super.playUrl(url, listener);
 
@@ -65,7 +65,7 @@ public class MusicManager extends Foundation {
      * @param durationInMs
      * @return
      */
-    public void playSoundAtFreq(final double freqInHz, final double durationInMs, final OnPlayListener listener) {
+    public void playSoundAtFreq(final double freqInHz, final double durationInMs, final MusicManager.OnPlayListener listener) {
 
 
         new Thread() {

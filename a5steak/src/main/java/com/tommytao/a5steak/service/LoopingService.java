@@ -13,6 +13,10 @@ import android.os.IBinder;
  *
  * Warning: Permission android.permission.WAKE_LOCK is required
  *
+ * Note: In Android 5.1 or above, AlarmManager cannot be set lower than 1 min.
+ *
+ * Ref: https://commonsware.com/blog/2015/03/23/alarmmanager-regression-android-5p1.html
+ *
  * Created by tommytao on 10/4/15.
  */
 public abstract class LoopingService extends Service {

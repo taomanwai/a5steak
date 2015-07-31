@@ -227,6 +227,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         editor.putLong(PREFS_LNG_E6, lng2LngE6(location.getLongitude()));
         editor.commit();
 
+
     }
 
 

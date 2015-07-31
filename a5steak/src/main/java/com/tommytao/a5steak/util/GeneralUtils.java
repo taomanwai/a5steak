@@ -30,11 +30,6 @@ public class GeneralUtils {
         return Html.fromHtml("<a href=\"" + link + "\">" + label + "</a>");
     }
 
-//    private static String appendLocaleToFieldNameInGlobalStyle(String fieldName, String lang, String country, boolean forceCountryToBeLowerCase) {
-//        return fieldName + (fieldName.isEmpty() ? "" : "_") + lang + "_" + (forceCountryToBeLowerCase ? country.toLowerCase(Locale.US) : country);
-//    }
-
-
     public static long timeToNextNextOneSixthHourTime(long time) {
 
         final int INTERVAL_IN_MIN = 10;
@@ -65,14 +60,8 @@ public class GeneralUtils {
 
     }
 
-//    private static String appendLocaleToFieldNameInHKStyle(String fieldName, String lang) {
-//        return fieldName + (fieldName.isEmpty() ? "" : "_") + lang;
-//    }
 
     public static String appendLocaleToFieldName(String fieldName) {
-
-//        return "HK".equalsIgnoreCase(country) ? GeneralUtils.appendLocaleToFieldNameInHKStyle(hasFieldNameInHKStyle ? fieldName : "", lang) : GeneralUtils
-//                .appendLocaleToFieldNameInGlobalStyle(fieldName, lang, country, forceCountryToBeLowerCase);
 
         return fieldName.isEmpty() ? "zh_cn" : (fieldName + "_zh_cn");
 
@@ -141,23 +130,6 @@ public class GeneralUtils {
 
 
 
-//        LocalTime ref = new LocalTime(timestamp);
-//        LocalTime lt1 = new LocalTime(7, 00);
-//        LocalTime lt2 = new LocalTime(12, 00);
-//        LocalTime lt3 = new LocalTime(21, 00);
-//
-//        if (ref.isBefore(lt1)) { // 0-7
-//            return ctx.getString(R.string.order__time__midnight);
-//        } else if (ref.isBefore(lt2) && ref.isAfter(lt1)) { // 7-12
-//            return ctx.getString(R.string.order__time__morning);
-//        } else if (ref.isBefore(lt3) && ref.isAfter(lt2)) { //12-21
-//            return ctx.getString(R.string.order__time__afternoon);
-//        } else if (ref.isAfter(lt3)) {//21-24
-//            return ctx.getString(R.string.order__time__night);
-//        } else {
-//            return "";
-//        }
-
     }
 
     public static long calculateNoOfDaysFromToday(long timestamp) {
@@ -224,5 +196,6 @@ public class GeneralUtils {
 
 
     }
+
 
 }

@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.customview;
+package com.tommytao.a5steak.customview.google;
 
 import android.app.Activity;
 import android.location.Location;
@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.tommytao.a5steak.customview.IMapAdapter;
 
 import java.util.ArrayList;
 

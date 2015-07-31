@@ -78,20 +78,6 @@ public class OrientationSensor extends Foundation implements SensorEventListener
     }
 
 
-    /**
-     *
-     * Note: Under construction
-     *
-     * @return
-     */
-    public double getVehicleMovingProbability(){
-
-
-        return 0;
-
-    }
-
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         // do nothing

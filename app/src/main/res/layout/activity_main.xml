@@ -2,13 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/flMap"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
 
-    </FrameLayout>
+
 
     <com.tommytao.a5steak.customview.ScrollBarListView
         android:id="@+id/listView"
@@ -100,6 +96,11 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:text="Ready"/>
+
+    <FrameLayout
+        android:id="@+id/flMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 
 
