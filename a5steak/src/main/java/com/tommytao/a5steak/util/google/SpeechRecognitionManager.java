@@ -48,9 +48,9 @@ public class SpeechRecognitionManager extends Foundation {
 
     }
 
-    private SpeechRecognizer speechRecognizer;
+    private SpeechRecognizer speechRecognizer; // static
 
-    private SpeechRecognizer getSpeechRecognizer() {
+    private SpeechRecognizer getSpeechRecognizer() { // synchronized
 
         if (speechRecognizer == null)
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(appContext);

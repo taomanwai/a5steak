@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.tommytao.a5steak.util.LocaleManager;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 import com.tommytao.a5steak.util.google.MapViewAnimator;
@@ -283,6 +284,10 @@ public class AnimMapView extends MapView {
 
     }
 
+    private void init(){
+
+    }
+
     public void removeAnimMarker(int index) {
 
         animMarkers.get(index).recycle();
@@ -328,10 +333,35 @@ public class AnimMapView extends MapView {
 
     }
 
-    public void slideAnimMarkerFollowingSteps(int index, ArrayList<DirectionsApiManager.Step> steps, long durationInMs, final boolean followRotation, final AnimMapView.Listener listener) {
+    public void slideAnimMarkerFollowingDrivingRoad(final int index,
+                                                    double latitude, double longitude,
+                                                    int durationInMs,
+                                                    final AnimMapView.Listener listener){
 
         final AnimMarker animMarker = animMarkers.get(index);
 
+        final Location startLocation = animMarker.getLocation();
+
+        DirectionsApiManager.getInstance().route(
+                startLocation.getLatitude(), startLocation.getLongitude(),
+                latitude, longitude,
+                LocaleManager.getInstance().getSystemLocale(), new DirectionsApiManager.OnRouteListener() {
+                    @Override
+                    public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
+
+                        slideAnimMarkerFollowingSteps(index, stepList, 3000, true, null);
+                    }
+                });
+
+
+
+
+
+    }
+
+    public void slideAnimMarkerFollowingSteps(int index, ArrayList<DirectionsApiManager.Step> steps, int durationInMs, final boolean followRotation, final AnimMapView.Listener listener) {
+
+        final AnimMarker animMarker = animMarkers.get(index);
 
         final StepInterpolator stepInterpolator = new StepInterpolator(steps, followRotation);
 
