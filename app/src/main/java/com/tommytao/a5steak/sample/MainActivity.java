@@ -43,6 +43,8 @@ import butterknife.OnClick;
 
 public class MainActivity extends ActionBarActivity {
 
+    public final static int DEFAULT_ZOOM = 14;
+
 
     @InjectView(R.id.flMap)
     FrameLayout flMap;
@@ -157,9 +159,7 @@ public class MainActivity extends ActionBarActivity {
         UxManager.getInstance().init(this);
 
 
-
-
-         animMapView = new AnimMapView(this);
+        animMapView = new AnimMapView(this);
         flMap.addView(animMapView);
         mapAdapter = new GMapAdapter(animMapView);
         mapAdapter.onCreate(savedInstanceState);
@@ -169,7 +169,6 @@ public class MainActivity extends ActionBarActivity {
 
         OrientationSensor.getInstance().init(this);
         OrientationSensor.getInstance().connect();
-
 
 
         handler.postDelayed(new Runnable() {
@@ -191,9 +190,6 @@ public class MainActivity extends ActionBarActivity {
         });
 
 
-
-
-
         ArrayList<String> strList = new ArrayList<>();
         strList.add("abc");
         strList.add("efg");
@@ -206,9 +202,7 @@ public class MainActivity extends ActionBarActivity {
 
         animMapView.addAnimMarker(22.337080, 114.147331, 0, R.drawable.ic_plusone_small_off_client);
 
-        mapAdapter.animateCamera(22.337080, 114.147331, 17, 300, null);
-
-
+        mapAdapter.animateCamera(22.337080, 114.147331, DEFAULT_ZOOM, 300, null);
 
 
     }
@@ -238,7 +232,7 @@ public class MainActivity extends ActionBarActivity {
             double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
 
 
-            ((GoogleMap) mapAdapter.getMap()).moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(17).bearing((float) bear).build()));
+            ((GoogleMap) mapAdapter.getMap()).moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(DEFAULT_ZOOM).bearing((float) bear).build()));
         } catch (Exception e) {
             e.printStackTrace();
         }

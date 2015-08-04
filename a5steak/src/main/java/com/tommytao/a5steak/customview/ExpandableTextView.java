@@ -63,15 +63,6 @@ public class ExpandableTextView extends TextView {
         this.onExpandStateChangedListener = onExpandStateChangedListener;
     }
 
-//    protected void triggerExpandStateChangedListenerOnUiThread(final boolean expanded, int delayInMs) {
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (onExpandStateChangedListener != null)
-//                    onExpandStateChangedListener.onChanged(expanded);
-//            }
-//        }, delayInMs);
-//    }
 
     public int getCollapsedLineCount() {
         return collapsedLineCount;

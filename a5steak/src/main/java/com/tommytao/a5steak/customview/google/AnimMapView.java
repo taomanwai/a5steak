@@ -145,7 +145,8 @@ public class AnimMapView extends MapView {
             int startDistance = ((Pair<Integer, Integer>) step.getTag()).first;
             int endDistance = ((Pair<Integer, Integer>) step.getTag()).second;
 
-            return startDistance <= distance && includeEndDistance ? (distance <= endDistance) : (distance < endDistance);
+            boolean result = (startDistance <= distance) && (includeEndDistance ? (distance <= endDistance) : (distance < endDistance));
+            return result;
         }
 
         private int getStepIndexAtDistance(int distance) {
@@ -164,7 +165,7 @@ public class AnimMapView extends MapView {
 
             int leftBound = 0;
             int rightBound = steps.size() - 1;
-            int guessIndex = rightBound - leftBound / 2;
+            int guessIndex = (rightBound + leftBound) / 2;
             while (true) {
 
                 if (isWithinStep(distance, steps.get(guessIndex), guessIndex == (steps.size() - 1))) {
@@ -173,11 +174,11 @@ public class AnimMapView extends MapView {
 
                 // update left & right bound, oh also guessIndex !
                 if (distance < ((Pair<Integer, Integer>) steps.get(guessIndex).getTag()).first)
-                    rightBound = guessIndex;
-                else
-                    leftBound = guessIndex;
+                    rightBound = guessIndex - 1;
+                else if (distance > ((Pair<Integer, Integer>) steps.get(guessIndex).getTag()).second)
+                    leftBound = guessIndex + 1;
 
-                guessIndex = rightBound - leftBound / 2;
+                guessIndex = (rightBound + leftBound) / 2;
 
             }
 
