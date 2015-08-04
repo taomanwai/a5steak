@@ -140,7 +140,7 @@ public class MainActivity extends ActionBarActivity {
 
 //        animMapView.slideAndRotateAnimMarker(0, 22.335453, 114.156343, 90, 3000, null);
 
-        animMapView.slideAnimMarkerFollowingDrivingRoad(0, 22.335453, 114.156343, 3000, null);
+        animMapView.slideAnimMarkerFollowingDrivingRoad(0, 22.335453, 114.156343, 3000, true, null);
 
     }
 

@@ -18,6 +18,7 @@ import com.tommytao.a5steak.util.LocaleManager;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 import com.tommytao.a5steak.util.google.MapViewAnimator;
+import com.tommytao.a5steak.util.sensor.LocationSensor;
 
 import java.util.ArrayList;
 
@@ -228,7 +229,7 @@ public class AnimMapView extends MapView {
 
 
             // TODO rotation at boundary of Step may not be accurate, fix it later
-            float rotation = 0;
+            float rotation = Float.NaN;
             if (interpolateRotation) {
                 if (previousLocation != null && nextLocation != null) {
                     float previousRotation = previousLocation.bearingTo(targetLocation);
@@ -239,7 +240,7 @@ public class AnimMapView extends MapView {
                 } else if (nextLocation != null) {
                     rotation = targetLocation.bearingTo(nextLocation);
                 } else {
-                    // do nothing, i.e. rotation = 0
+                    // do nothing, i.e. rotation = Float.NaN
                 }
             }
 
@@ -292,6 +293,7 @@ public class AnimMapView extends MapView {
     private void init() {
 
         LocaleManager.getInstance().init(getContext());
+        LocationSensor.getInstance().init(getContext());
 
     }
 
@@ -341,8 +343,8 @@ public class AnimMapView extends MapView {
     }
 
     public void slideAnimMarkerFollowingDrivingRoad(final int index,
-                                                    double latitude, double longitude,
-                                                    int durationInMs,
+                                                    final double latitude, final double longitude,
+                                                    final int durationInMs, final boolean filterOutUnreasonableRoute,
                                                     final Listener listener) {
 
         final AnimMarker animMarker = animMarkers.get(index);
@@ -356,7 +358,53 @@ public class AnimMapView extends MapView {
                     @Override
                     public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
 
-                        slideAnimMarkerFollowingSteps(index, stepList, 3000, true, new Listener() {
+
+                        if (filterOutUnreasonableRoute) {
+                            int routeDistance = 0;
+                            for (DirectionsApiManager.Step step : stepList) {
+                                routeDistance += step.getDistanceInMeter();
+                            }
+
+                            float straightLineDistance = LocationSensor.getInstance().calculateDistanceInMeter(
+                                    startLocation.getLatitude(), startLocation.getLongitude(),
+                                    latitude, longitude);
+
+                            if ((straightLineDistance / routeDistance) < 0.1) {
+                                // abnormal case occurs
+                                float rotation = animMarker.getRotation();
+
+                                try {
+                                    rotation = stepList.get(stepList.size() - 1).getEndRotation();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                if (Float.isNaN(rotation))
+                                    rotation = animMarker.getRotation();
+
+
+                                slideAndRotateAnimMarker(index, latitude, longitude, rotation, durationInMs, new Listener() {
+                                    @Override
+                                    public void onUpdate() {
+                                        if (listener != null)
+                                            listener.onUpdate();
+                                    }
+
+                                    @Override
+                                    public void onComplete() {
+                                        if (listener != null)
+                                            listener.onComplete();
+
+                                    }
+                                });
+
+                                return;
+                            } else {
+                                // do nothing, then run slideAnimMarkerFollowingSteps()
+                            }
+
+                        }
+
+                        slideAnimMarkerFollowingSteps(index, stepList, durationInMs, true, new Listener() {
 
                             @Override
                             public void onUpdate() {
@@ -396,8 +444,12 @@ public class AnimMapView extends MapView {
                 Location newLocation = locationRotation.first;
                 float rotation = locationRotation.second;
                 animMarker.setLocation(newLocation.getLatitude(), newLocation.getLongitude());
-                if (followRotation)
-                    animMarker.setRotation(rotation);
+                if (followRotation) {
+
+                    if (!Float.isNaN(rotation))
+                        animMarker.setRotation(rotation);
+
+                }
 
                 if (listener != null)
                     listener.onUpdate();

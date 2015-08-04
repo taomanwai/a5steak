@@ -176,6 +176,36 @@ public class DirectionsApiManager extends Foundation {
 
         }
 
+        public float getEndRotation() {
+
+            if (getPolylineLocations().size() >= 2) {
+
+                Location seconLastLocation = getPolylineLocations().get(getPolylineLocations().size() - 1 - 1);
+                Location lastLocation = getPolylineLocations().get(getPolylineLocations().size() - 1);
+
+                return seconLastLocation.bearingTo(lastLocation);
+            }
+
+            if (!Double.isNaN(startLatitude) &&
+                    !Double.isNaN(startLongitude) &&
+                    !Double.isNaN(endLatitude) &&
+                    !Double.isNaN(endLongitude)){
+
+                Location startLocation = new Location("");
+                Location endLocation = new Location("");
+                startLocation.setLatitude(startLatitude);
+                startLocation.setLongitude(startLongitude);
+                endLocation.setLatitude(endLatitude);
+                endLocation.setLongitude(endLongitude);
+
+                return startLocation.bearingTo(endLocation);
+
+            }
+
+            return Float.NaN;
+
+        }
+
         public int getManeuver() {
             return maneuver;
         }

@@ -138,12 +138,13 @@ public class LocationSensor extends Foundation implements LocationListener {
 		return updateIntervalInMs;
 	}
 
-	public float calculateDistance(double lat1, double lng1, double lat2, double lng2){
+	public float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2){
 
-        float[] distance = new float[3];
-        Location.distanceBetween(lat1, lng1, lat2, lng2, distance);
+//        float[] distance = new float[3];
+//        Location.distanceBetween(lat1, lng1, lat2, lng2, distance);
+//        return distance[0];
 
-        return distance[0];
+		return super.calculateDistanceInMeter(lat1, lng1, lat2, lng2 );
 
     }
 
@@ -154,7 +155,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 		if (location == null)
 			return -1;
 
-        return calculateDistance(location.getLatitude(), location.getLongitude(), lat, lng);
+        return calculateDistanceInMeter(location.getLatitude(), location.getLongitude(), lat, lng);
 
 	}
 
