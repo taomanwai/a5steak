@@ -23,6 +23,7 @@ import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.util.MusicManager;
 import com.tommytao.a5steak.util.UxManager;
 import com.tommytao.a5steak.util.google.PlacesApiManager;
+import com.tommytao.a5steak.util.google.TextSpeaker;
 import com.tommytao.a5steak.util.sensor.GSensor;
 import com.tommytao.a5steak.util.sensor.LocationSensor;
 import com.tommytao.a5steak.util.sensor.MagneticSensor;
@@ -145,6 +146,7 @@ public class MainActivity extends ActionBarActivity {
 //        animMapView.driveAnimMarker("1", 22.336956, 114.147377, 70, 3000, false, null); // 22.335453, 114.156343
 
 
+        TextSpeaker.getInstance().speak("你好嗎", null);
 
     }
 
@@ -155,6 +157,12 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.inject(this);
+
+        TextSpeaker.getInstance().init(this);
+
+        TextSpeaker.getInstance().connect(null);
+
+        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
 
         getSupportFragmentManager().beginTransaction().replace(R.id.flFrag, OneFragment.newInstance()).commit();
 

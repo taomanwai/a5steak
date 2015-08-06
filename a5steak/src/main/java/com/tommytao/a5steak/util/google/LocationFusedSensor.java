@@ -38,17 +38,15 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     }
 
     private LocationFusedSensor() {
-
+        // do nothing
     }
 
 
     // --
 
-    public static interface Listener {
+    public static interface OnConnectListener {
 
-        public void onConnected();
-
-        public void onError();
+        public void onConnected(boolean succeed);
 
     }
 
@@ -62,7 +60,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     private final long INVALID_LAT_E6_EXAMPLE = 999999999;
     private final long INVALID_LNG_E6_EXAMPLE = 999999999;
 
-    private ArrayList<Listener> listeners = new ArrayList<Listener>();
+    private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<OnConnectListener>();
 
     private GoogleApiClient client;
 
@@ -70,9 +68,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
 
     public void disconnect() {
-
         getClient().disconnect();
-
     }
 
     public float distanceFromLastKnownLatLng(double latitude, double longitude) {
@@ -89,10 +85,10 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     }
 
-    public void connect(Listener listener) {
+    public void connect(OnConnectListener onConnectListener) {
 
-        if (listener != null)
-            listeners.add(listener);
+        if (onConnectListener != null)
+            onConnectListeners.add(onConnectListener);
 
         lastKnownLocation = null;
 
@@ -171,16 +167,18 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     @Override
     public void onConnectionFailed(ConnectionResult arg0) {
 
+        triggerAndClearListeners(false);
+
     }
 
-    private void triggerAndClearListeners() {
+    private void triggerAndClearListeners(boolean succeed) {
 
-        ArrayList<Listener> pendingListeners = new ArrayList<>(listeners);
+        ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
 
-        listeners.clear();
+        onConnectListeners.clear();
 
-        for (Listener pendingListener : pendingListeners)
-            pendingListener.onConnected();
+        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners)
+            pendingOnConnectListener.onConnected(succeed);
     }
 
     public void startDetectingLocation(int priority, int intervalInMs){
@@ -204,7 +202,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
         startDetectingLocation(DEFAULT_PRIORITY, DEFAULT_INTERVAL_IN_MS);
 
-        triggerAndClearListeners();
+        triggerAndClearListeners(true);
     }
 
 

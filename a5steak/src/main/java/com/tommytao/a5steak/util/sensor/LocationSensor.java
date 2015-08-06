@@ -84,9 +84,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 
 	private int updateIntervalInMs = DEFAULT_UPDATE_INTERVAL_IN_MS;
 
-	private ArrayList<OnLocationChangeListener> onLocationChangeListenerList = new ArrayList<>();
-
-
+	private ArrayList<OnLocationChangeListener> onLocationChangeListeners = new ArrayList<>();
 
 
 	@Override
@@ -108,11 +106,11 @@ public class LocationSensor extends Foundation implements LocationListener {
 
 
 	public void addOnLocationChangeListener(OnLocationChangeListener onLocationChangeListener){
-		onLocationChangeListenerList.add(onLocationChangeListener);
+		onLocationChangeListeners.add(onLocationChangeListener);
 	}
 
 	public boolean removeOnLocationChangeListener(OnLocationChangeListener onLocationChangeListener){
-		return onLocationChangeListenerList.remove(onLocationChangeListener);
+		return onLocationChangeListeners.remove(onLocationChangeListener);
 	}
 
 	public void disconnect() {
@@ -306,7 +304,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 		editor.putLong(PREFS_LNG_E6, lng2LngE6(location.getLongitude()));
 		editor.commit();
 
-		for (OnLocationChangeListener onLocationChangeListener : onLocationChangeListenerList){
+		for (OnLocationChangeListener onLocationChangeListener : onLocationChangeListeners){
 			onLocationChangeListener.onLocationChange(location);
 		}
 

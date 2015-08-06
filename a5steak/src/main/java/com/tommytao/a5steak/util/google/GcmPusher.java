@@ -159,17 +159,15 @@ public class GcmPusher extends Foundation {
 
 	private ArrayList<OnRegisterListener> onRegisterListeners = new ArrayList<OnRegisterListener>();
 
-	private void clearAndTriggerOnRegisterListeners(boolean isSucceed) {
+	private void clearAndTriggerOnRegisterListeners(boolean succeed) {
 
 		ArrayList<OnRegisterListener> pendingOnRegisterListeners = new ArrayList<OnRegisterListener>(onRegisterListeners);
 
 		onRegisterListeners.clear();
 
-		if (pendingOnRegisterListeners.isEmpty())
-			return;
 
 		for (OnRegisterListener pendingOnRegisterListener : pendingOnRegisterListeners)
-			pendingOnRegisterListener.onComplete(isSucceed);
+			pendingOnRegisterListener.onComplete(succeed);
 
 	}
 

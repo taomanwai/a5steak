@@ -1,12 +1,12 @@
 package com.tommytao.a5steak.util.google;
 
-import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
 import com.tommytao.a5steak.util.Foundation;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class TextSpeaker extends Foundation {
@@ -27,14 +27,15 @@ public class TextSpeaker extends Foundation {
 
     // --
 
-    public static interface OnSpeakListener{
+    public static interface OnSpeakListener {
         public void onStart();
+
         public void onComplete(boolean succeed);
     }
 
     public static interface OnConnectListener {
 
-        public void onConnect(boolean succeed);
+        public void onConnected(boolean succeed);
 
 
     }
@@ -43,32 +44,17 @@ public class TextSpeaker extends Foundation {
 
     private TextToSpeech tts;
 
-    private boolean ttsInitialized;
+    private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
+
+    private boolean connected;
 
     private Locale locale = new Locale("en", "US");
 
-    @Deprecated
-    public boolean init(Context appContext) {
-        return super.init(appContext);
-    }
-
-    public boolean init(Context context, Locale locale) {
-        if (!super.init(context)) {
-            return false;
-        }
-
-//        if (isLocaleBeingHK(locale) || isLocaleBeingMacau(locale))
-//            initCantonese();
-//        else
-
-        initTts(locale);
-
-        return true;
-
-    }
-
-    public void setLocale(Locale locale){
+    public void setLocale(Locale locale) {
         this.locale = locale;
+
+        if (isConnected())
+            tts.setLanguage(this.locale);
     }
 
     public Locale getLocale() {
@@ -76,7 +62,7 @@ public class TextSpeaker extends Foundation {
     }
 
 
-    private boolean shouldUseCantonese(){
+    private boolean shouldUseCantonese() {
 
         if (!"zh".equals(locale.getLanguage()))
             return false;
@@ -89,87 +75,81 @@ public class TextSpeaker extends Foundation {
 
     }
 
+    public void connect(final OnConnectListener onConnectListener) {
 
+        if (isConnecting()) {
 
-    private void initTts(final Locale locale) {
+            if (onConnectListener != null)
+                onConnectListeners.add(onConnectListener);
 
-        tts = new TextToSpeech(appContext, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    tts.setLanguage(locale);
-                    ttsInitialized = true;
-                }
-            }
-        });
+            return;
+        }
 
+        if (isConnected()){
+            disconnect();
+        }
 
-    }
-
-
-    public void connect(final OnConnectListener onConnectListener){
+        if (onConnectListener != null)
+            onConnectListeners.add(onConnectListener);
 
         tts = new TextToSpeech(appContext, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (status != TextToSpeech.ERROR) {
+
                     tts.setLanguage(locale);
-                    ttsInitialized = true;
+                    connected = true;
+
+                    clearAndTriggerOnConnectListeners(true);
+                } else {
+
+                    clearAndTriggerOnConnectListeners(false);
+
                 }
             }
         });
 
     }
 
-    public void disconnect(){
+    public void disconnect() {
+
+        if (!(isConnecting() || isConnected()))
+            return;
+
         tts.shutdown();
-
         tts = null;
+
+        connected = false;
     }
 
-
-
-    public boolean isTtsInitialized() {
-        return ttsInitialized;
+    public boolean isConnecting() {
+        return tts != null && !connected;
     }
 
+    public boolean isConnected() {
+        return tts != null && connected;
+    }
 
+    private void clearAndTriggerOnConnectListeners(boolean succeed) {
+
+        ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
+
+        onConnectListeners.clear();
+
+        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners)
+            pendingOnConnectListener.onConnected(succeed);
+
+    }
 
 
     public void speak(String text, final OnSpeakListener listener) {
 
-        String urlEncodedText = text;
-
-        try{
-            urlEncodedText = URLEncoder.encode(text, "UTF-8");
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        if (shouldUseCantonese()) {
-            playUrl(SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText, new OnPlayListener() {
-                @Override
-                public void onStart() {
-                    if (listener!=null)
-                        listener.onStart();
-                }
-
-                @Override
-                public void onComplete(boolean succeed) {
-
-                    if (listener!=null)
-                        listener.onComplete(succeed);
-                }
-            });
-            return;
-        }
-
-        if (!isTtsInitialized()) {
+        if (!isConnected()) {
             handler.post(new Runnable() {
 
                 @Override
                 public void run() {
-                    if (listener!=null)
+                    if (listener != null)
                         listener.onComplete(false);
                 }
             });
@@ -177,17 +157,44 @@ public class TextSpeaker extends Foundation {
             return;
         }
 
-        tts.setOnUtteranceProgressListener(new UtteranceProgressListener(){
+        String urlEncodedText = text;
+
+        try {
+            urlEncodedText = URLEncoder.encode(text, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (shouldUseCantonese()) {
+            playUrl(SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText, new OnPlayListener() {
+                @Override
+                public void onStart() {
+                    if (listener != null)
+                        listener.onStart();
+                }
+
+                @Override
+                public void onComplete(boolean succeed) {
+
+                    if (listener != null)
+                        listener.onComplete(succeed);
+                }
+            });
+            return;
+        }
+
+
+        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
 
             @Override
             public void onStart(String s) {
-                if (listener!=null)
+                if (listener != null)
                     listener.onStart();
             }
 
             @Override
             public void onDone(String s) {
-                if (listener!=null)
+                if (listener != null)
                     listener.onComplete(true);
 
 
@@ -195,7 +202,7 @@ public class TextSpeaker extends Foundation {
 
             @Override
             public void onError(String s) {
-                if (listener!=null)
+                if (listener != null)
                     listener.onComplete(false);
 
             }
