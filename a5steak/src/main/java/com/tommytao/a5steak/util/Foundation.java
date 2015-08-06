@@ -1264,15 +1264,16 @@ public class Foundation {
     }
 
 
-    protected void playUrl(final String url, final OnPlayListener listener) {
+    protected void playLink(final String link, final OnPlayListener listener) {
 
         releaseMediaPlayer();
 
         try {
 
+
             mediaPlayer = new MediaPlayer();
             getMediaPlayer().setAudioStreamType(AudioManager.STREAM_MUSIC);
-            getMediaPlayer().setDataSource(url);
+            getMediaPlayer().setDataSource(link);
             getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {

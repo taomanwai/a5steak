@@ -9,6 +9,14 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Locale;
 
+
+/**
+ *
+ * Responsible for speak text
+ *
+ * Note: Cantonese speaking may not work coz Google blocks robot access sometimes. Still fixing ...
+ *
+ */
 public class TextSpeaker extends Foundation {
 
     private static TextSpeaker instance;
@@ -166,7 +174,7 @@ public class TextSpeaker extends Foundation {
         }
 
         if (shouldUseCantonese()) {
-            playUrl(SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText, new OnPlayListener() {
+            playLink(SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText, new OnPlayListener() {
                 @Override
                 public void onStart() {
                     if (listener != null)

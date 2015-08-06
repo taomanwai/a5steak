@@ -49,11 +49,11 @@ public class MusicManager extends Foundation {
      * <p/>
      * Note: Play it few seconds before requirement because prepareAsync() (i.e. buffering, etc.) takes time
      *
-     * @param url
+     * @param link
      */
-    public void playUrl(final String url, MusicManager.OnPlayListener listener) {
+    public void playLink(final String link, MusicManager.OnPlayListener listener) {
 
-        super.playUrl(url, listener);
+        super.playLink(link, listener);
 
     }
 
