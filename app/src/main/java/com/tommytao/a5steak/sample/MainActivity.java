@@ -142,7 +142,9 @@ public class MainActivity extends ActionBarActivity {
 //        animMapView.flyAnimMarker(0, 22.335453, 114.156343, 90, 3000, null);
 
         // 22.337080, 114.147331, 70
-        animMapView.driveAnimMarker("1", 22.336956, 114.147377, 70, 3000, false, null); // 22.335453, 114.156343
+//        animMapView.driveAnimMarker("1", 22.336956, 114.147377, 70, 3000, false, null); // 22.335453, 114.156343
+
+
 
     }
 

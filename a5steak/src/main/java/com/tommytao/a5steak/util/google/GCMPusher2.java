@@ -30,19 +30,19 @@ import java.util.ArrayList;
  * @author tommytao
  * 
  */
-public class GCMPusher extends Foundation {
+public class GCMPusher2 extends Foundation {
 
-	private static GCMPusher instance;
+	private static GCMPusher2 instance;
 
-	public static GCMPusher getInstance() {
+	public static GCMPusher2 getInstance() {
 
 		if (instance == null)
-			instance = new GCMPusher();
+			instance = new GCMPusher2();
 
 		return instance;
 	}
 
-	private GCMPusher() {
+	private GCMPusher2() {
 
 	}
 

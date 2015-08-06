@@ -32,13 +32,20 @@ public class TextSpeaker extends Foundation {
         public void onComplete(boolean succeed);
     }
 
+    public static interface OnConnectListener {
+
+        public void onConnect(boolean succeed);
+
+
+    }
+
     public static final String SERVER_CANTONESE_SPEAKER_PREFIX = "http://translate.google.com/translate_tts?&tl=zh-yue&ie=UTF-8&q=";
 
     private TextToSpeech tts;
 
     private boolean ttsInitialized;
 
-    private boolean cantonese;
+    private Locale locale = new Locale("en", "US");
 
     @Deprecated
     public boolean init(Context appContext) {
@@ -50,21 +57,36 @@ public class TextSpeaker extends Foundation {
             return false;
         }
 
-        if (isLocaleBeingHK(locale) || isLocaleBeingMacau(locale))
-            initCantonese();
-        else
-            initTts(locale);
+//        if (isLocaleBeingHK(locale) || isLocaleBeingMacau(locale))
+//            initCantonese();
+//        else
+
+        initTts(locale);
 
         return true;
 
     }
 
-    private boolean isLocaleBeingHK(Locale locale){
-        return "zh".equals(locale.getLanguage()) && "HK".equals(locale.getCountry());
+    public void setLocale(Locale locale){
+        this.locale = locale;
     }
 
-    private boolean isLocaleBeingMacau(Locale locale){
-        return "zh".equals(locale.getLanguage()) && "MO".equals(locale.getCountry());
+    public Locale getLocale() {
+        return locale;
+    }
+
+
+    private boolean shouldUseCantonese(){
+
+        if (!"zh".equals(locale.getLanguage()))
+            return false;
+
+
+        if (!"HK".equals(locale.getCountry()) && !"MO".equals(locale.getCountry()))
+            return false;
+
+        return true;
+
     }
 
 
@@ -84,19 +106,35 @@ public class TextSpeaker extends Foundation {
 
     }
 
-    private void initCantonese() {
 
-        cantonese = true;
+    public void connect(final OnConnectListener onConnectListener){
+
+        tts = new TextToSpeech(appContext, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    tts.setLanguage(locale);
+                    ttsInitialized = true;
+                }
+            }
+        });
 
     }
+
+    public void disconnect(){
+        tts.shutdown();
+
+        tts = null;
+    }
+
+
 
     public boolean isTtsInitialized() {
         return ttsInitialized;
     }
 
-    public boolean isCantonese() {
-        return cantonese;
-    }
+
+
 
     public void speak(String text, final OnSpeakListener listener) {
 
@@ -108,7 +146,7 @@ public class TextSpeaker extends Foundation {
             e.printStackTrace();
         }
 
-        if (cantonese) {
+        if (shouldUseCantonese()) {
             playUrl(SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText, new OnPlayListener() {
                 @Override
                 public void onStart() {
