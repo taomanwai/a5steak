@@ -101,7 +101,7 @@ public class Foundation {
 
     protected Handler handler = new Handler(Looper.getMainLooper());
 
-    public Context appContext;
+    protected Context appContext;
 
     public boolean init(Context context) {
 
@@ -225,7 +225,6 @@ public class Foundation {
                         fos.write(buffer, 0, readLength);
                         countOfRead++;
                         publishProgress(calculateDownloadPercentage(BUFFER_SIZE_IN_BYTE * countOfRead, connContentLength));
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -976,11 +975,42 @@ public class Foundation {
     }
 
     // === Location sensor ===
-    public float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2){
+    protected float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2){
 
         float[] distance = new float[3];
         Location.distanceBetween(lat1, lng1, lat2, lng2, distance);
         return distance[0];
+
+    }
+
+    protected float calculateBearingInDegree(double lat1, double lng1, double lat2, double lng2){
+
+        float result = Float.NaN;
+
+        if (Double.isNaN(lat1) ||
+                Double.isNaN(lng1) ||
+                Double.isNaN(lat2) ||
+                Double.isNaN(lng2)){
+            return result;
+        }
+
+        if (lat1==lat2 && lng1==lng2){
+            return result;
+        }
+
+
+        Location startLocation = new Location("");
+        Location endLocation = new Location("");
+        startLocation.setLatitude(lat1);
+        startLocation.setLongitude(lng1);
+        endLocation.setLatitude(lat2);
+        endLocation.setLongitude(lng2);
+
+        result = startLocation.bearingTo(endLocation);
+
+        result = (float) wholeToHalfCircleBearing(result);
+
+        return result;
 
     }
 
@@ -1051,7 +1081,7 @@ public class Foundation {
     }
 
 
-    // === GCJ02 conversion (using U algorithm) ===
+    // === GCJ02 conversion (using simplified algorithm) ===
 
     protected double latitudeOffsetForWgs84ToGcj02(double d, double d1) {
         return -100D + 2D * d + 3D * d1 + d1 * (0.20000000000000001D * d1) + d1 * (0.10000000000000001D * d) + 0.20000000000000001D * Math.sqrt(Math.abs(d)) + (2D * (20D * Math.sin(3.1415926535897931D * (6D * d)) + 20D * Math.sin(3.1415926535897931D * (2D * d)))) / 3D + (2D * (20D * Math.sin(3.1415926535897931D * d1) + 40D * Math.sin(3.1415926535897931D * (d1 / 3D)))) / 3D + (2D * (160D * Math.sin(3.1415926535897931D * (d1 / 12D)) + 320D * Math.sin((3.1415926535897931D * d1) / 30D))) / 3D;
@@ -1097,131 +1127,6 @@ public class Foundation {
     }
 
 
-//    // ==== GCJ02 conversion ===
-//
-//
-//    protected Location gcj02ToWgs84(double gcjLat, double gcjLng) {
-//
-//        if (Double.isNaN(gcjLat) || Double.isNaN(gcjLng)) {
-//            return null;
-//        }
-//
-//        Location result = new Location("");
-//
-////        if (!isInChinaWgs84(gcjLat, gcjLng)) {
-////            result.setLatitude(gcjLat);
-////            result.setLongitude(gcjLng);
-////            log("lbsamap: " + "gcj02ToWgs84 outside China - output directly - no conversion");
-////            return result;
-////        }
-//
-//        Location d = delta(gcjLat, gcjLng);
-//
-//        result.setLatitude(gcjLat - d.getLatitude());
-//        result.setLongitude(gcjLng - d.getLongitude());
-//
-//
-//        return result;
-//
-//    }
-//
-//
-//    protected Location wgs84ToGcj02(double lat, double lng) {
-//
-//        if (Double.isNaN(lat) || Double.isNaN(lng))
-//            return null;
-//
-//        Location result = new Location("");
-//
-//        double mgLat;
-//        double mgLon;
-//
-////        if (!isInChinaWgs84(lat, lng)) {
-////            mgLat = lat;
-////            mgLon = lng;
-////        }
-//
-//        double dLat = transformLat(lng - 105.0, lat - 35.0);
-//
-//        double dLon = transformLon(lng - 105.0, lat - 35.0);
-//
-//        double radLat = lat / 180.0 * Math.PI;
-//
-//        double magic = Math.sin(radLat);
-//
-//        magic = 1 - ee * magic * magic;
-//
-//        double sqrtMagic = Math.sqrt(magic);
-//
-//        dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
-//
-//        dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
-//
-//        mgLat = lat + dLat;
-//
-//        mgLon = lng + dLon;
-//
-//        result.setLatitude(mgLat);
-//
-//        result.setLongitude(mgLon);
-//
-//        return result;
-//    }
-//
-//    private double a = 6378245.0;
-//
-//    private double ee = 0.00669342162296594323;
-//
-//    private Location delta(double lat, double lng) {
-//
-//        if (Double.isNaN(lat) || Double.isNaN(lng)) {
-//            return null;
-//        }
-//
-//        double dLat = transformLat(lng - 105.0, lat - 35.0);
-//        double dLng = transformLon(lng - 105.0, lat - 35.0);
-//        double radLat = lat / 180.0 * Math.PI;
-//        double magic = Math.sin(radLat);
-//        magic = 1 - ee * magic * magic;
-//        double sqrtMagic = Math.sqrt(magic);
-//        dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
-//        dLng = (dLng * 180.0) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
-//
-//        Location result = new Location("");
-//        result.setLatitude(dLat);
-//        result.setLongitude(dLng);
-//
-//        return result;
-//
-//    }
-//
-//    private double transformLat(double x, double y) {
-//
-//        double ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
-//
-//        ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
-//
-//        ret += (20.0 * Math.sin(y * Math.PI) + 40.0 * Math.sin(y / 3.0 * Math.PI)) * 2.0 / 3.0;
-//
-//        ret += (160.0 * Math.sin(y / 12.0 * Math.PI) + 320 * Math.sin(y * Math.PI / 30.0)) * 2.0 / 3.0;
-//
-//        return ret;
-//
-//    }
-//
-//    private double transformLon(double x, double y) {
-//
-//        double ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
-//
-//        ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
-//
-//        ret += (20.0 * Math.sin(x * Math.PI) + 40.0 * Math.sin(x / 3.0 * Math.PI)) * 2.0 / 3.0;
-//
-//        ret += (150.0 * Math.sin(x / 12.0 * Math.PI) + 300.0 * Math.sin(x / 30.0 * Math.PI)) * 2.0 / 3.0;
-//
-//        return ret;
-//
-//    }
 
     // ==== Media player  ===
 
@@ -1513,9 +1418,9 @@ public class Foundation {
     }
 
     // === Directions API ===
-    protected ArrayList<Location> decodePolylinePointsToLocationList(String polylinePoints) {
+    protected ArrayList<Location> encodedPolylineToLocations(String encodedPolyline) {
         ArrayList<Location> poly = new ArrayList<>();
-        int index = 0, len = polylinePoints.length();
+        int index = 0, len = encodedPolyline.length();
         int lat = 0, lng = 0;
 
         Location location = null;
@@ -1523,7 +1428,7 @@ public class Foundation {
         while (index < len) {
             int b, shift = 0, result = 0;
             do {
-                b = polylinePoints.charAt(index++) - 63;
+                b = encodedPolyline.charAt(index++) - 63;
                 result |= (b & 0x1f) << shift;
                 shift += 5;
             } while (b >= 0x20);
@@ -1533,7 +1438,7 @@ public class Foundation {
             shift = 0;
             result = 0;
             do {
-                b = polylinePoints.charAt(index++) - 63;
+                b = encodedPolyline.charAt(index++) - 63;
                 result |= (b & 0x1f) << shift;
                 shift += 5;
             } while (b >= 0x20);
@@ -1556,21 +1461,9 @@ public class Foundation {
 
     }
 
-    protected final int DEFAULT_SENSOR_DELAY_LEVEL = SensorManager.SENSOR_DELAY_GAME;
+    public final int DEFAULT_SENSOR_DELAY_LEVEL = SensorManager.SENSOR_DELAY_GAME;
 
     protected ArrayList<OnReadingChangeListener> onReadingChangeListenerList = new ArrayList<>();
-
-    public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
-
-        onReadingChangeListenerList.add(onReadingChangeListener);
-
-    }
-
-    public boolean removeOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
-
-        return onReadingChangeListenerList.remove(onReadingChangeListener);
-
-    }
 
     protected float lastKnownX = Float.NaN;
     protected float lastKnownY = Float.NaN;
@@ -1578,6 +1471,20 @@ public class Foundation {
 
     protected SensorManager sensorManager;
     protected Sensor sensor;
+
+    protected void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
+
+        onReadingChangeListenerList.add(onReadingChangeListener);
+
+    }
+
+    protected boolean removeOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {
+
+        return onReadingChangeListenerList.remove(onReadingChangeListener);
+
+    }
+
+
 
 
     protected SensorManager getSensorManager() {
@@ -1736,7 +1643,6 @@ public class Foundation {
         }
 
         double revisedLatestValue = halfToWholeCircleBearing(lowPassHistoryList.get(0)) + calculateAngleDerivation(lowPassHistoryList.get(0), latestValue) * (1 - strength);
-//        revisedLatestValue = normalizeToOneLoopBearing(revisedLatestValue);
         revisedLatestValue = wholeToHalfCircleBearing(revisedLatestValue);
 
 
@@ -1748,7 +1654,6 @@ public class Foundation {
 
     }
 
-    // === MapView animation ===
 
 
 }

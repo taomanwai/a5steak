@@ -3,6 +3,7 @@ package com.tommytao.a5steak.util.google;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -52,7 +53,112 @@ public class DirectionsApiManager extends Foundation {
 
     public static interface OnRouteListener {
 
-        public void returnStepList(ArrayList<Step> stepList, ArrayList<Location> overviewPolylineLocationList);
+        public void returnSteps(ArrayList<Step> steps, Polyline polyline);
+
+    }
+
+    public static class Polyline extends Foundation {
+
+        String encodedPolyline = "";
+        ArrayList<Location> locations = new ArrayList<>();
+
+        @Deprecated
+        public boolean init(Context appContext) {
+            return super.init(appContext);
+        }
+
+        public Polyline(String encodedPolyline) {
+            this.encodedPolyline = encodedPolyline;
+            this.locations = encodedPolylineToLocations(this.encodedPolyline);
+            addBearingToLocations();
+        }
+
+        @Override
+        public String toString() {
+            return encodedPolyline;
+        }
+
+        public ArrayList<Location> getLocations() {
+            return locations;
+        }
+
+        public Location getLocationAtFraction(float fraction) {
+
+            Location result = null;
+
+            if (getLocations().isEmpty())
+                return result;
+
+            result = getLocations().get((int) ((getLocations().size() - 1) * fraction));
+
+            return result;
+
+        }
+
+        private void addBearingToLocations(){
+
+            if (locations.size()==1){
+
+                locations.get(0).setBearing(Float.NaN);
+
+                return;
+            }
+
+
+            int index = 0;
+            for (Location location : locations){
+
+                Location targetLocation = getLocations().get(index);
+
+                Location previousLocation = null;
+                Location nextLocation = null;
+
+                try {
+                    previousLocation = getLocations().get(index - 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    nextLocation = getLocations().get(index + 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                float rotation = Float.NaN;
+                if (previousLocation != null && nextLocation != null) {
+
+                    float previousRotation = calculateBearingInDegree(previousLocation.getLatitude(), previousLocation.getLongitude(), targetLocation.getLatitude(), targetLocation.getLongitude());
+                    float nextRotation = calculateBearingInDegree(targetLocation.getLatitude(), targetLocation.getLongitude(), nextLocation.getLatitude(), nextLocation.getLongitude());
+
+
+                    if (!Float.isNaN(previousRotation) && !Float.isNaN(nextRotation))
+                        rotation = (float) (previousRotation + calculateAngleDerivation(previousRotation, nextRotation) / 2);
+                    else if (!Float.isNaN(previousRotation)) {
+                        rotation = previousRotation;
+                    } else if (!Float.isNaN(nextRotation)) {
+                        rotation = nextRotation;
+                    } else {
+                        // do nothing, i.e. rotation = Float.NaN
+                    }
+
+
+                } else if (previousLocation != null) {
+                    rotation = calculateBearingInDegree(previousLocation.getLatitude(), previousLocation.getLongitude(), targetLocation.getLatitude(), targetLocation.getLongitude());
+                } else if (nextLocation != null) {
+                    rotation = calculateBearingInDegree(targetLocation.getLatitude(), targetLocation.getLongitude(), nextLocation.getLatitude(), nextLocation.getLongitude());
+                } else {
+                    // do nothing, i.e. rotation = Float.NaN
+                }
+
+                location.setBearing(rotation);
+
+                index++;
+
+            }
+        }
+
+
 
     }
 
@@ -93,15 +199,15 @@ public class DirectionsApiManager extends Foundation {
         private double endLatitude = Double.NaN;
         private double endLongitude = Double.NaN;
 
-        private String polylinePoints = "";
-        private ArrayList<Location> polylineLocations = new ArrayList<Location>();
+        private Polyline polyline;
+        private ArrayList<Location> polylineLocations = new ArrayList<>();
 
         private String instructionsInHtml = "";
         private int maneuver = MANEUVER_NONE;
 
         private String travelMode = "";
 
-        public Step(int distanceInMeter, String distanceInText, int durationInMs, String durationInText, double startLatitude, double startLongitude, double endLatitude, double endLongitude, String polylinePoints, String instructionsInHtml, int maneuver, String travelMode) {
+        public Step(int distanceInMeter, String distanceInText, int durationInMs, String durationInText, double startLatitude, double startLongitude, double endLatitude, double endLongitude, String encodedPolyline, String instructionsInHtml, int maneuver, String travelMode) {
             this.distanceInMeter = distanceInMeter;
             this.distanceInText = distanceInText;
             this.durationInMs = durationInMs;
@@ -110,7 +216,7 @@ public class DirectionsApiManager extends Foundation {
             this.startLongitude = startLongitude;
             this.endLatitude = endLatitude;
             this.endLongitude = endLongitude;
-            this.polylinePoints = polylinePoints;
+            this.polyline = new Polyline(encodedPolyline);
             this.instructionsInHtml = instructionsInHtml;
             this.maneuver = maneuver;
             this.travelMode = travelMode;
@@ -163,48 +269,10 @@ public class DirectionsApiManager extends Foundation {
             return travelMode;
         }
 
-        public String getPolylinePoints() {
-            return polylinePoints;
+        public Polyline getPolyline() {
+            return polyline;
         }
 
-        public ArrayList<Location> getPolylineLocations() {
-
-            if (polylineLocations.isEmpty())
-                polylineLocations = decodePolylinePointsToLocationList(polylinePoints);
-
-            return polylineLocations;
-
-        }
-
-        public float getEndRotation() {
-
-            if (getPolylineLocations().size() >= 2) {
-
-                Location seconLastLocation = getPolylineLocations().get(getPolylineLocations().size() - 1 - 1);
-                Location lastLocation = getPolylineLocations().get(getPolylineLocations().size() - 1);
-
-                return seconLastLocation.bearingTo(lastLocation);
-            }
-
-            if (!Double.isNaN(startLatitude) &&
-                    !Double.isNaN(startLongitude) &&
-                    !Double.isNaN(endLatitude) &&
-                    !Double.isNaN(endLongitude)){
-
-                Location startLocation = new Location("");
-                Location endLocation = new Location("");
-                startLocation.setLatitude(startLatitude);
-                startLocation.setLongitude(startLongitude);
-                endLocation.setLatitude(endLatitude);
-                endLocation.setLongitude(endLongitude);
-
-                return startLocation.bearingTo(endLocation);
-
-            }
-
-            return Float.NaN;
-
-        }
 
         public int getManeuver() {
             return maneuver;
@@ -213,7 +281,25 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
-    public final int DEFAULT_MAX_NO_OF_RETRIES = 3;
+    public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
+
+    public final int EXPIRY_PERIOD_OF_CACHED_ROUTE_RESPONSE_IN_MS = 15 * 60 * 1000; // 15 min
+
+    public final String PREFS_NAME = "DirectionsApiManager";
+
+    public final String PREFS_JSON_PREFIX = "DirectionsApiManager.JSON.LatLngLocale_";
+
+    public final String PREFS_TIMESTAMP_PREFIX = "DirectionsApiManager.Timestamp.LatLngLocale_";
+
+    private SharedPreferences prefs;
+
+    public SharedPreferences getPrefs() {
+
+        if (prefs==null)
+            prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+
+        return prefs;
+    }
 
     @Deprecated
     public boolean init(Context appContext) {
@@ -228,6 +314,8 @@ public class DirectionsApiManager extends Foundation {
 
         this.clientIdForWork = clientIdForWork;
         this.cryptoForWork = cryptoForWork;
+
+        getPrefs().edit().clear().commit();
 
         return true;
     }
@@ -257,44 +345,38 @@ public class DirectionsApiManager extends Foundation {
         if (listener == null)
             return;
 
-        String overviewPolylinePoints = "";
-
         if (responseJObj == null) {
-            listener.returnStepList(new ArrayList<Step>(), decodePolylinePointsToLocationList(overviewPolylinePoints));
+            listener.returnSteps(new ArrayList<Step>(), null);
             return;
         }
 
-
-        ArrayList<Step> stepList = new ArrayList<>();
+        String overviewPolylinePoints = "";
+        ArrayList<Step> steps = new ArrayList<>();
 
         boolean hasException = false;
         try {
 
             String status = "";
-
-
-            Step step;
-
-            int distanceInMeter;
+            Step step = null;
+            int distanceInMeter = -1;
             String distanceInText = "";
-            int durationInMs;
+            int durationInMs = -1;
             String durationInText = "";
             double startLatitude = Double.NaN;
             double startLongitude = Double.NaN;
             double endLatitude = Double.NaN;
             double endLongitude = Double.NaN;
-            String polylinePoints = "";
+            String encodedPolyline = "";
             String instructionsInHtml = "";
             int maneuver = Step.MANEUVER_NONE;
             String maneuverStr = "";
             String travelMode = "";
-
-            JSONObject stepJObj;
+            JSONObject stepJObj = null;
 
             status = responseJObj.getString("status");
 
             if (!"OK".equals(status)) {
-                listener.returnStepList(new ArrayList<Step>(), decodePolylinePointsToLocationList(overviewPolylinePoints));
+                listener.returnSteps(new ArrayList<Step>(), null);
                 return;
             }
 
@@ -317,7 +399,7 @@ public class DirectionsApiManager extends Foundation {
                 endLatitude = stepJObj.getJSONObject("end_location").getDouble("lat");
                 endLongitude = stepJObj.getJSONObject("end_location").getDouble("lng");
 
-                polylinePoints = stepJObj.getJSONObject("polyline").getString("points");
+                encodedPolyline = stepJObj.getJSONObject("polyline").getString("points");
                 instructionsInHtml = stepJObj.getString("html_instructions");
 
                 maneuverStr = stepJObj.optString("maneuver", "");
@@ -413,10 +495,10 @@ public class DirectionsApiManager extends Foundation {
 
                 step = new Step(distanceInMeter, distanceInText, durationInMs, durationInText,
                         startLatitude, startLongitude, endLatitude, endLongitude,
-                        polylinePoints, instructionsInHtml,
+                        encodedPolyline, instructionsInHtml,
                         maneuver, travelMode);
 
-                stepList.add(step);
+                steps.add(step);
 
             }
 
@@ -427,23 +509,45 @@ public class DirectionsApiManager extends Foundation {
 
         }
 
-        listener.returnStepList(hasException ? new ArrayList<Step>() : stepList, decodePolylinePointsToLocationList(overviewPolylinePoints));
+        listener.returnSteps(hasException ? new ArrayList<Step>() : steps, new Polyline(overviewPolylinePoints));
+
+    }
+
+    public void cache( double startLatitude,  double startLongitude,  double endLatitude,  double endLongitude, final Locale locale){
+
+        route(startLatitude, startLongitude, endLatitude, endLongitude, locale, null);
 
     }
 
 
-    public void route(double startLatitude, double startLongitude, double endLatitude, double endLongitude, final Locale locale, final OnRouteListener listener) {
+    public void route(final double startLatitude, final double startLongitude, final double endLatitude, final double endLongitude, final Locale locale, final OnRouteListener listener) {
 
-        if (listener == null)
+//        if (listener == null)
+//            return;
+
+        final JSONObject cachedRouteResponse = loadRouteResponseFromPrefs(startLatitude, startLongitude, endLatitude, endLongitude, locale);
+
+        if (cachedRouteResponse!=null){
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    response2Route(cachedRouteResponse, listener);
+                }
+            });
+
             return;
+        }
+
 
         String link = genRouteLink(startLatitude, startLongitude, endLatitude, endLongitude, locale);
 
-        httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
+        httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
             @Override
             public void onComplete(JSONObject response) {
 
+                saveRouteResponseToPrefs(response, startLatitude, startLongitude, endLatitude, endLongitude, locale);
                 response2Route(response, listener);
 
             }
@@ -453,12 +557,61 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
+    private String buildPrefsSuffix(double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale){
+        return String.format("%.6f", startLatitude) + "," +
+                String.format("%.6f", startLongitude) + "," +
+                String.format("%.6f", endLatitude) + "," +
+                String.format("%.6f", endLongitude) + "," +
+                locale.getLanguage() + "-"  + locale.getCountry();
+    }
+
+    private void saveRouteResponseToPrefs(JSONObject response, double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale){
+
+        String suffix = buildPrefsSuffix(startLatitude, startLongitude, endLatitude, endLongitude, locale);
+        String jsonKey = PREFS_JSON_PREFIX + suffix;
+        String timestampKey = PREFS_TIMESTAMP_PREFIX + suffix;
+
+        SharedPreferences.Editor edit = getPrefs().edit();
+        edit.putString(jsonKey, "" + response);
+        edit.putLong(timestampKey, System.currentTimeMillis());
+        edit.commit();
+
+    }
+
+    private JSONObject loadRouteResponseFromPrefs(double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale){
+
+        String suffix = buildPrefsSuffix(startLatitude, startLongitude, endLatitude, endLongitude, locale);
+        String jsonKey = PREFS_JSON_PREFIX + suffix;
+        String timestampKey = PREFS_TIMESTAMP_PREFIX + suffix;
+
+        long timestamp = getPrefs().getLong(timestampKey, -1);
+
+        if ((System.currentTimeMillis()-timestamp) > EXPIRY_PERIOD_OF_CACHED_ROUTE_RESPONSE_IN_MS)
+            return null;
+
+        JSONObject result = null;
+        String responseStr = getPrefs().getString(jsonKey, "");
+        try{
+            result = new JSONObject(responseStr);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        return result;
+
+
+
+
+    }
+
+
+
 
     public void goToNav(Activity activity, double latitude, double longitude, String errMsgWhenNoNavApp) {
 
 
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:ll=" + latitude + "," + longitude));
-//        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?daddr=" + latitude + "," + longitude));
 
         // Check intent
         PackageManager packageManager = activity.getPackageManager();

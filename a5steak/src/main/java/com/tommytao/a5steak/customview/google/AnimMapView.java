@@ -5,7 +5,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.location.Location;
 import android.util.AttributeSet;
-import android.util.Pair;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -14,6 +13,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.tommytao.a5steak.util.Converter;
 import com.tommytao.a5steak.util.LocaleManager;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
@@ -21,6 +21,8 @@ import com.tommytao.a5steak.util.google.MapViewAnimator;
 import com.tommytao.a5steak.util.sensor.LocationSensor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by tommytao on 30/7/15.
@@ -37,12 +39,14 @@ public class AnimMapView extends MapView {
 
     public static class AnimMarker {
 
+        private String id = "";
         private Location location = new Location("");
         private float rotation;
         private Marker marker;
 
-        public AnimMarker(double latitude, double longitude, float rotation, Marker marker) {
+        public AnimMarker(String id, double latitude, double longitude, float rotation, Marker marker) {
 
+            this.id = id;
             this.marker = marker;
 
             if (isRecycled())
@@ -59,6 +63,10 @@ public class AnimMapView extends MapView {
             this.marker.setRotation(rotation);
 
 
+        }
+
+        public String getId() {
+            return id;
         }
 
         public Location getLocation() {
@@ -121,135 +129,28 @@ public class AnimMapView extends MapView {
 
     }
 
-    public static class StepInterpolator {
+    public static class PolylineInterpolator {
 
-        private ArrayList<DirectionsApiManager.Step> steps = new ArrayList<>();
-        private int totalDistance;
-        private boolean interpolateRotation;
+        public Location interpolate(float fraction, DirectionsApiManager.Polyline polyline) {
 
-        public StepInterpolator(ArrayList<DirectionsApiManager.Step> steps, boolean interpolateRotation) {
-
-            this.steps = new ArrayList<>(steps);
-            this.interpolateRotation = interpolateRotation;
-
-            totalDistance = 0;
-            int totalDistanceB4InMeter = 0;
-            for (DirectionsApiManager.Step step : steps) {
-                totalDistanceB4InMeter = totalDistance;
-                totalDistance += step.getDistanceInMeter();
-                step.setTag(new Pair<Integer, Integer>(totalDistanceB4InMeter, totalDistance));
-            }
+            return polyline.getLocationAtFraction(fraction);
 
         }
 
-        private boolean isWithinStep(int distance, DirectionsApiManager.Step step, boolean includeEndDistance) {
-            int startDistance = ((Pair<Integer, Integer>) step.getTag()).first;
-            int endDistance = ((Pair<Integer, Integer>) step.getTag()).second;
-
-            boolean result = (startDistance <= distance) && (includeEndDistance ? (distance <= endDistance) : (distance < endDistance));
-            return result;
-        }
-
-        private int getStepIndexAtDistance(int distance) {
-
-            if (distance < 0 || distance > totalDistance)
-                return -1;
-
-            if (steps.isEmpty())
-                return -1;
-
-            if (steps.size() == 1)
-                return (distance <= steps.get(0).getDistanceInMeter()) ? 0 : -1;
-
-
-            // use binary search to search step index
-
-            int leftBound = 0;
-            int rightBound = steps.size() - 1;
-            int guessIndex = (rightBound + leftBound) / 2;
-            while (true) {
-
-                if (isWithinStep(distance, steps.get(guessIndex), guessIndex == (steps.size() - 1))) {
-                    break;
-                }
-
-                // update left & right bound, oh also guessIndex !
-                if (distance < ((Pair<Integer, Integer>) steps.get(guessIndex).getTag()).first)
-                    rightBound = guessIndex - 1;
-                else if (distance > ((Pair<Integer, Integer>) steps.get(guessIndex).getTag()).second)
-                    leftBound = guessIndex + 1;
-
-                guessIndex = (rightBound + leftBound) / 2;
-
-            }
-
-            return guessIndex;
-
-
-        }
-
-        public Pair<Location, Float> interpolate(float fraction) {
-
-            int targetDistance = (int) (totalDistance * fraction);
-            int stepIndex = getStepIndexAtDistance(targetDistance);
-
-            if (stepIndex == -1) {
-                return null;
-            }
-
-            Location stepFrom = new Location("");
-            stepFrom.setLatitude(steps.get(stepIndex).getStartLatitude());
-            stepFrom.setLongitude(steps.get(stepIndex).getStartLongitude());
-            Location stepTo = new Location("");
-            stepTo.setLatitude(steps.get(stepIndex).getEndLatitude());
-            stepTo.setLongitude(steps.get(stepIndex).getEndLongitude());
-            ArrayList<Location> stepPolylineLocations = steps.get(stepIndex).getPolylineLocations();
-
-            int stepStartDistance = ((Pair<Integer, Integer>) steps.get(stepIndex).getTag()).first;
-            int stepEndDistance = ((Pair<Integer, Integer>) steps.get(stepIndex).getTag()).second;
-            float fractionInsideStep = (float) (targetDistance - stepStartDistance) / (stepEndDistance - stepStartDistance);
-
-            int targetLocationIndex = (int) ((stepPolylineLocations.size() - 1) * fractionInsideStep);
-            Location targetLocation = stepPolylineLocations.get(targetLocationIndex);
-
-            Location previousLocation = null;
-            Location nextLocation = null;
-
-            try {
-                previousLocation = stepPolylineLocations.get(targetLocationIndex - 1);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                nextLocation = stepPolylineLocations.get(targetLocationIndex + 1);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            // TODO rotation at boundary of Step may not be accurate, fix it later
-            float rotation = Float.NaN;
-            if (interpolateRotation) {
-                if (previousLocation != null && nextLocation != null) {
-                    float previousRotation = previousLocation.bearingTo(targetLocation);
-                    float nextRotation = targetLocation.bearingTo(nextLocation);
-                    rotation = (float) (previousRotation + MathManager.getInstance().calculateAngleDerivation(previousRotation, nextRotation) / 2);
-                } else if (previousLocation != null) {
-                    rotation = previousLocation.bearingTo(targetLocation);
-                } else if (nextLocation != null) {
-                    rotation = targetLocation.bearingTo(nextLocation);
-                } else {
-                    // do nothing, i.e. rotation = Float.NaN
-                }
-            }
-
-            return new Pair<>(targetLocation, rotation);
-        }
     }
 
+    public static final float MAX_RATIO_ROUTE_DISTANCE_TO_ST_LINE_DISTANCE = 10;
 
-    private ArrayList<AnimMarker> animMarkers = new ArrayList<>();
+    public static final int MAX_DURATION_TURN_TO_PATH_IN_MS = 300;
+    public static final double MAX_RATIO_TURN_TO_PATH = 0.05;
+
+    public static final int MAX_DURATION_TURN_TO_FINAL_ROTATION_IN_MS = 300;
+    public static final double MAX_RATIO_TURN_TO_FINAL_ROTATION = 0.05;
+
+
+//    private ArrayList<AnimMarker> hashMapAnimMarker = new ArrayList<>();
+
+    private HashMap<String, AnimMarker> hashMapAnimMarker = new HashMap<>();
 
     public AnimMapView(Context context) {
         super(context);
@@ -272,21 +173,28 @@ public class AnimMapView extends MapView {
     }
 
 
-    public void addAnimMarker(double lat, double lng, float rotation, int iconResId) {
+    public boolean addAnimMarker(String id, double lat, double lng, float rotation, int iconResId) {
 
+        if (containAnimMarker(id))
+            return false;
 
         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(lat, lng));
 
-        if (iconResId != 0)
+        if (iconResId != 0) {
             markerOptions = markerOptions.icon(
                     BitmapDescriptorFactory.fromResource(iconResId));
+            markerOptions.anchor(0.5f, 0.5f);
+        }
+
 
         Marker marker = ((GoogleMap) getMap()).addMarker(markerOptions);
 
 
-        AnimMarker animMarker = new AnimMarker(lat, lng, rotation, marker);
+        AnimMarker animMarker = new AnimMarker(id, lat, lng, rotation, marker);
 
-        animMarkers.add(animMarker);
+        hashMapAnimMarker.put(id, animMarker);
+
+        return true;
 
     }
 
@@ -294,29 +202,87 @@ public class AnimMapView extends MapView {
 
         LocaleManager.getInstance().init(getContext());
         LocationSensor.getInstance().init(getContext());
+        Converter.getInstance().init(getContext());
+
+        DirectionsApiManager.getInstance().init(getContext(), "", "");
 
     }
 
-    public void removeAnimMarker(int index) {
+    public boolean removeAnimMarker(String id) {
 
-        animMarkers.get(index).recycle();
-        animMarkers.remove(index);
+        if (!containAnimMarker(id))
+            return false;
+
+        hashMapAnimMarker.get(id).recycle();
+        hashMapAnimMarker.remove(id);
+
+        return true;
 
 
+    }
+
+    public float getMinDistanceTriggerDirectionsApiInMeter(float rotation) {
+
+        rotation = (float) Converter.getInstance().wholeToHalfCircleBearing(rotation);
+
+        float result = 4.5f; // 4.5
+
+        double ratio = Math.abs(Math.cos(Math.toRadians(rotation)));
+        if (ratio < ((float) 1 / 3))
+            ratio = ((float) 1 / 3);
+
+        result *= ratio;
+
+        return result;
+
+
+    }
+
+
+    public HashMap<String, AnimMarker> getHashMapAnimMarker() {
+        return new HashMap<>(hashMapAnimMarker);
     }
 
     public void clearAllAnimMarkers() {
 
-        for (int i = 0; i < animMarkers.size(); i++) {
+        Set<String> keys = hashMapAnimMarker.keySet();
+        for (String key : keys) {
 
-            animMarkers.remove(i);
+            hashMapAnimMarker.remove(key);
 
         }
     }
 
-    public void slideAndRotateAnimMarker(int index, double latitude, double longitude, float rotation, int durationInMs, final Listener listener) {
+    private boolean isRouteReasonable(ArrayList<DirectionsApiManager.Step> steps) {
 
-        final AnimMarker animMarker = animMarkers.get(index);
+        if (steps.isEmpty())
+            return false;
+
+        int lastIndex = steps.size() - 1;
+        Location startLocation = Converter.getInstance().latLngToLocation(steps.get(0).getStartLatitude(), steps.get(0).getStartLongitude());
+        Location endLocation = Converter.getInstance().latLngToLocation(steps.get(lastIndex).getEndLatitude(), steps.get(lastIndex).getEndLongitude());
+
+        int routeDistance = 0;
+        for (DirectionsApiManager.Step step : steps) {
+            routeDistance += step.getDistanceInMeter();
+        }
+
+        float straightLineDistance = LocationSensor.getInstance().calculateDistanceInMeter(
+                startLocation.getLatitude(), startLocation.getLongitude(),
+                endLocation.getLatitude(), endLocation.getLongitude());
+
+        return !(((float) routeDistance / straightLineDistance) > MAX_RATIO_ROUTE_DISTANCE_TO_ST_LINE_DISTANCE);
+
+
+    }
+
+    public boolean flyAnimMarker(String id, double latitude, double longitude, float rotation, int durationInMs, final Listener listener) {
+
+        if (!containAnimMarker(id))
+            return false;
+
+        final AnimMarker animMarker = hashMapAnimMarker.get(id);
+
 
         MapViewAnimator.getInstance().slideAndRotateMarker(animMarker.marker, latitude, longitude, rotation, durationInMs, new MapViewAnimator.LinearLocationInterpolator(),
                 new MapViewAnimator.Listener() {
@@ -334,129 +300,341 @@ public class AnimMapView extends MapView {
                     @Override
                     public void onComplete() {
 
+
                         if (listener != null)
                             listener.onComplete();
 
                     }
                 });
 
+        return true;
+
     }
 
-    public void slideAnimMarkerFollowingDrivingRoad(final int index,
-                                                    final double latitude, final double longitude,
-                                                    final int durationInMs, final boolean filterOutUnreasonableRoute,
-                                                    final Listener listener) {
+    private int getDurationTurnToPathInMs(int totalDriveDuration, float from, float to) {
 
-        final AnimMarker animMarker = animMarkers.get(index);
+        if (Float.isNaN(from) || Float.isNaN(to)) {
+            return 0;
+        }
+
+
+        final float rotationDiff = (float) MathManager.getInstance().calculateAngleDerivation(from, to);
+        int result = (int) (totalDriveDuration * MAX_RATIO_TURN_TO_PATH);
+        result *= Math.abs(rotationDiff) / 180;
+        if (result > MAX_DURATION_TURN_TO_PATH_IN_MS)
+            result = MAX_DURATION_TURN_TO_PATH_IN_MS;
+
+        return result;
+
+    }
+
+    private int getDurationTurnToFinalRotationInMs(int totalDriveDuration, float from, float to) {
+
+        if (Float.isNaN(from) || Float.isNaN(to)) {
+            return 0;
+        }
+
+
+        final float rotationDiff = (float) MathManager.getInstance().calculateAngleDerivation(from, to);
+        int result = (int) (totalDriveDuration * MAX_RATIO_TURN_TO_FINAL_ROTATION);
+        result *= Math.abs(rotationDiff) / 180;
+        if (result > MAX_DURATION_TURN_TO_FINAL_ROTATION_IN_MS)
+            result = MAX_DURATION_TURN_TO_FINAL_ROTATION_IN_MS;
+
+        return result;
+
+    }
+
+    public boolean shotAnimMarker(final String id,
+                                  final double latitude, final double longitude,
+                                  final int durationInMs,
+                                  final Listener listener) {
+
+        if (!containAnimMarker(id))
+            return false;
+
+        final AnimMarker animMarker = hashMapAnimMarker.get(id);
 
         final Location startLocation = animMarker.getLocation();
+        final Location endLocation = Converter.getInstance().latLngToLocation(latitude, longitude);
+
+        final float targetRotation = LocationSensor.getInstance().calculateBearingInDegree(startLocation.getLatitude(), startLocation.getLongitude(), endLocation.getLatitude(), endLocation.getLongitude());
+        int rotationTime = getDurationTurnToPathInMs(durationInMs, animMarker.getRotation(), targetRotation);
+        final int guideTime = durationInMs - rotationTime;
+
+        flyAnimMarker(id, startLocation.getLatitude(), startLocation.getLongitude(), targetRotation, rotationTime, new Listener() {
+            @Override
+            public void onUpdate() {
+                if (listener != null)
+                    listener.onUpdate();
+            }
+
+            @Override
+            public void onComplete() {
+
+                flyAnimMarker(id, endLocation.getLatitude(), endLocation.getLongitude(), targetRotation, guideTime, new Listener() {
+                    @Override
+                    public void onUpdate() {
+                        if (listener != null)
+                            listener.onUpdate();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (listener != null)
+                            listener.onComplete();
+                    }
+                });
+
+            }
+        });
+
+        return true;
+    }
+
+    private boolean shouldBypassDirectionsApi(AnimMarker animMarker, double targetLatitude, double targetLongitude, double targetRotation) {
+
+
+        float distanceDiff = LocationSensor.getInstance().calculateDistanceInMeter(animMarker.getLocation().getLatitude(), animMarker.getLocation().getLongitude(),
+                targetLatitude, targetLongitude);
+        float eyeSightBearingDiffFromCurrentAnimMarkerBearing = (float) MathManager.getInstance().calculateAngleDerivation(animMarker.getRotation(), LocationSensor.getInstance().calculateBearingInDegree(animMarker.getLocation().getLatitude(), animMarker.getLocation().getLongitude(),
+                targetLatitude, targetLongitude));
+
+        if (distanceDiff==0)
+            return true;
+
+        float rotationDiffAbs = Math.abs((float) MathManager.getInstance().calculateAngleDerivation(animMarker.getRotation(), targetRotation));
+
+        float distanceLimit = getMinDistanceTriggerDirectionsApiInMeter(eyeSightBearingDiffFromCurrentAnimMarkerBearing);
+
+
+        if (rotationDiffAbs >= 90)
+            distanceLimit = 0;
+        else {
+            distanceLimit *= (90 - rotationDiffAbs) / 90;
+        }
+
+        return (distanceDiff < distanceLimit);
+
+    }
+
+
+    public boolean driveAnimMarker(final String id,
+                                   final double latitude, final double longitude, final float rotation,
+                                   final int durationInMs, final boolean filterOutUnreasonableRoute,
+                                   final Listener listener) {
+
+        if (!containAnimMarker(id))
+            return false;
+
+        final AnimMarker animMarker = hashMapAnimMarker.get(id);
+
+        final Location startLocation = animMarker.getLocation();
+
+        if (!Float.isNaN(rotation) && shouldBypassDirectionsApi(animMarker, latitude, longitude, rotation)) {
+
+
+            flyAnimMarker(id, latitude, longitude, rotation, durationInMs, new Listener() {
+                @Override
+                public void onUpdate() {
+
+                    if (listener != null)
+                        listener.onUpdate();
+
+                }
+
+                @Override
+                public void onComplete() {
+                    if (listener != null)
+                        listener.onComplete();
+
+                }
+            });
+
+
+            return true;
+        }
 
         DirectionsApiManager.getInstance().route(
                 startLocation.getLatitude(), startLocation.getLongitude(),
                 latitude, longitude,
                 LocaleManager.getInstance().getSystemLocale(), new DirectionsApiManager.OnRouteListener() {
                     @Override
-                    public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
+                    public void returnSteps(final ArrayList<DirectionsApiManager.Step> steps, final DirectionsApiManager.Polyline polyline) {
 
 
-                        if (filterOutUnreasonableRoute) {
-                            int routeDistance = 0;
-                            for (DirectionsApiManager.Step step : stepList) {
-                                routeDistance += step.getDistanceInMeter();
-                            }
+                        // Route cannot be got
+                        if (steps.isEmpty() || polyline == null || polyline.getLocations().isEmpty()) {
 
-                            float straightLineDistance = LocationSensor.getInstance().calculateDistanceInMeter(
-                                    startLocation.getLatitude(), startLocation.getLongitude(),
-                                    latitude, longitude);
+                            shotAnimMarker(id, latitude, longitude,
+                                    durationInMs,
+                                    new Listener() {
 
-                            if ((straightLineDistance / routeDistance) < 0.1) {
-                                // abnormal case occurs
-                                float rotation = animMarker.getRotation();
+                                        @Override
+                                        public void onUpdate() {
+                                            if (listener != null)
+                                                listener.onUpdate();
 
-                                try {
-                                    rotation = stepList.get(stepList.size() - 1).getEndRotation();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                if (Float.isNaN(rotation))
-                                    rotation = animMarker.getRotation();
+                                        }
 
+                                        @Override
+                                        public void onComplete() {
 
-                                slideAndRotateAnimMarker(index, latitude, longitude, rotation, durationInMs, new Listener() {
-                                    @Override
-                                    public void onUpdate() {
-                                        if (listener != null)
-                                            listener.onUpdate();
-                                    }
+                                            if (Float.isNaN(rotation)) {
+                                                if (listener != null)
+                                                    listener.onComplete();
+                                            } else {
 
-                                    @Override
-                                    public void onComplete() {
-                                        if (listener != null)
-                                            listener.onComplete();
+                                                int rotationTime = getDurationTurnToFinalRotationInMs(durationInMs, animMarker.getRotation(), rotation);
 
-                                    }
-                                });
+                                                flyAnimMarker(id, animMarker.getLocation().getLatitude(), animMarker.getLocation().getLongitude(), rotation, rotationTime, new Listener() {
+                                                    @Override
+                                                    public void onUpdate() {
+                                                        if (listener != null)
+                                                            listener.onUpdate();
+                                                    }
 
-                                return;
-                            } else {
-                                // do nothing, then run slideAnimMarkerFollowingSteps()
-                            }
+                                                    @Override
+                                                    public void onComplete() {
+                                                        if (listener != null)
+                                                            listener.onComplete();
 
+                                                    }
+                                                });
+
+                                            }
+
+                                        }
+                                    });
+
+                            return;
                         }
 
-                        slideAnimMarkerFollowingSteps(index, stepList, durationInMs, true, new Listener() {
+
+                        // Unreasonable route
+                        if (filterOutUnreasonableRoute && !isRouteReasonable(steps)) {
+
+                            // abnormal case occurs
+                            flyAnimMarker(id, latitude, longitude, Float.isNaN(rotation) ? polyline.getLocationAtFraction(1).getBearing() : rotation, durationInMs, new Listener() {
+                                @Override
+                                public void onUpdate() {
+                                    if (listener != null)
+                                        listener.onUpdate();
+                                }
+
+                                @Override
+                                public void onComplete() {
+
+
+                                    if (listener != null)
+                                        listener.onComplete();
+
+                                }
+                            });
+
+                            return;
+                        }
+
+
+                        // Normal
+                        float targetRotation = polyline.getLocationAtFraction(0).getBearing();
+                        int rotationTime = getDurationTurnToPathInMs(durationInMs, animMarker.getRotation(), targetRotation);
+                        final int guideTime = durationInMs - rotationTime;
+
+                        flyAnimMarker(id, animMarker.getLocation().getLatitude(), animMarker.getLocation().getLongitude(), targetRotation, rotationTime, new AnimMapView.Listener() {
 
                             @Override
                             public void onUpdate() {
-
                                 if (listener != null)
                                     listener.onUpdate();
-
                             }
 
                             @Override
                             public void onComplete() {
 
-                                if (listener != null)
-                                    listener.onComplete();
+                                guideAnimMarker(id, polyline, guideTime, true, new Listener() {
 
+                                    @Override
+                                    public void onUpdate() {
+
+                                        if (listener != null)
+                                            listener.onUpdate();
+
+                                    }
+
+                                    @Override
+                                    public void onComplete() {
+
+                                        if (Float.isNaN(rotation)) {
+                                            if (listener != null)
+                                                listener.onComplete();
+                                        } else {
+                                            int rotationTime = getDurationTurnToFinalRotationInMs(durationInMs, animMarker.getRotation(), rotation);
+
+                                            flyAnimMarker(id, animMarker.getLocation().getLatitude(), animMarker.getLocation().getLongitude(), rotation, rotationTime, new Listener() {
+                                                @Override
+                                                public void onUpdate() {
+                                                    if (listener != null)
+                                                        listener.onUpdate();
+                                                }
+
+                                                @Override
+                                                public void onComplete() {
+                                                    if (listener != null)
+                                                        listener.onComplete();
+
+                                                }
+                                            });
+                                        }
+
+
+                                    }
+                                });
 
                             }
+
                         });
+
+
                     }
                 });
+
+        return true;
 
 
     }
 
-    public void slideAnimMarkerFollowingSteps(int index, ArrayList<DirectionsApiManager.Step> steps, int durationInMs, final boolean followRotation, final Listener listener) {
+    public boolean containAnimMarker(String id) {
 
-        final AnimMarker animMarker = animMarkers.get(index);
+        return hashMapAnimMarker.containsKey(id);
 
-        final StepInterpolator stepInterpolator = new StepInterpolator(steps, followRotation);
+    }
+
+    public boolean guideAnimMarker(String id, final DirectionsApiManager.Polyline polyline, int durationInMs, final boolean followRotation, final Listener listener) {
+        if (!containAnimMarker(id))
+            return false;
+
+        final AnimMarker animMarker = hashMapAnimMarker.get(id);
+
+        final PolylineInterpolator interpolator = new PolylineInterpolator();
 
         ValueAnimator valueAnimator = new ValueAnimator();
+        valueAnimator.setFloatValues(0, 1); // Ignored.
+        valueAnimator.setDuration(durationInMs);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                float v = animation.getAnimatedFraction();
-                Pair<Location, Float> locationRotation = stepInterpolator.interpolate(v);
-                Location newLocation = locationRotation.first;
-                float rotation = locationRotation.second;
+                Location newLocation = interpolator.interpolate(animation.getAnimatedFraction(), polyline);
                 animMarker.setLocation(newLocation.getLatitude(), newLocation.getLongitude());
                 if (followRotation) {
-
-                    if (!Float.isNaN(rotation))
-                        animMarker.setRotation(rotation);
-
+                    if (!Float.isNaN(newLocation.getBearing()))
+                        animMarker.setRotation(newLocation.getBearing());
                 }
 
                 if (listener != null)
                     listener.onUpdate();
             }
         });
-        valueAnimator.setFloatValues(0, 1); // Ignored.
-        valueAnimator.setDuration(durationInMs);
         valueAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -465,6 +643,7 @@ public class AnimMapView extends MapView {
 
             @Override
             public void onAnimationEnd(Animator animation) {
+
 
                 if (listener != null)
                     listener.onComplete();
@@ -481,7 +660,10 @@ public class AnimMapView extends MapView {
 
             }
         });
+
         valueAnimator.start();
+
+        return true;
 
     }
 

@@ -26,6 +26,7 @@ public class MathManager extends Foundation {
         return super.init(appContext);
     }
 
+    @Override
     public double calculateAngleDerivation(double from, double to){
         return super.calculateAngleDerivation(from, to);
     }

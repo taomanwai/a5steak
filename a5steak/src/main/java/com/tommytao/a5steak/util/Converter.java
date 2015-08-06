@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.util;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.DisplayMetrics;
 
 import java.text.DateFormat;
@@ -172,6 +173,15 @@ public class Converter extends Foundation {
 
     }
 
+    public Location latLngToLocation(double lat, double lng){
+        Location result = new Location("");
+
+        result.setLatitude(lat);
+        result.setLongitude(lng);
+
+        return  result;
+    }
+
 
     public byte[] hexStrToByteArray(String input) {
 
@@ -192,18 +202,20 @@ public class Converter extends Foundation {
 
     }
 
+
+
     @Override
-    protected double normalizeToOneLoopBearing(double value) {
+    public double normalizeToOneLoopBearing(double value) {
         return super.normalizeToOneLoopBearing(value);
     }
 
     @Override
-    protected double halfToWholeCircleBearing(double value) {
+    public double halfToWholeCircleBearing(double value) {
         return super.halfToWholeCircleBearing(value);
     }
 
     @Override
-    protected double wholeToHalfCircleBearing(double value) {
+    public double wholeToHalfCircleBearing(double value) {
         return super.wholeToHalfCircleBearing(value);
     }
 }

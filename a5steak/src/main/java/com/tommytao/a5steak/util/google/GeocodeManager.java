@@ -2,8 +2,6 @@ package com.tommytao.a5steak.util.google;
 
 import android.content.Context;
 import android.location.Location;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 
 import com.tommytao.a5steak.util.Foundation;
@@ -200,7 +198,7 @@ public class GeocodeManager extends Foundation {
 		}
 	}
 
-	public final int DEFAULT_MAX_NO_OF_RETRIES = 3;
+	public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
 
 	@Deprecated
 	public boolean init(Context appContext) {
@@ -396,7 +394,7 @@ public class GeocodeManager extends Foundation {
 
 		}
 
-		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
+		httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
 			public void onComplete(JSONObject response) {
@@ -430,7 +428,7 @@ public class GeocodeManager extends Foundation {
 
 		String link = genSearchByBoundsLink(keyword, bounds, locale);
 
-		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() { 
+		httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
 			public void onComplete(JSONObject response) {
@@ -450,7 +448,7 @@ public class GeocodeManager extends Foundation {
 		String link = genSearchByCountryLink(keyword, country, locale);
 
 
-		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
+		httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
 			public void onComplete(JSONObject response) {

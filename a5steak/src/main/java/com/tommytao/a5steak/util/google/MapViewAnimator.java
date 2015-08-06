@@ -141,6 +141,7 @@ public class MapViewAnimator extends Foundation {
         finalLocation.setLatitude(finalPosition.latitude);
         finalLocation.setLongitude(finalPosition.longitude);
 
+        // TODO maybe able to simplified
         final float startRotation = marker.getRotation();
 
         ValueAnimator valueAnimator = new ValueAnimator();
@@ -151,7 +152,9 @@ public class MapViewAnimator extends Foundation {
                 Location newLocation = baseLocationInterpolator.interpolate(v, startLocation, finalLocation);
                 LatLng newPosition = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
                 marker.setPosition(newPosition);
-                marker.setRotation(new RotationInterpolator().interpolate(v, startRotation, rotation));
+
+                if (!Float.isNaN(rotation))
+                    marker.setRotation(new RotationInterpolator().interpolate(v, startRotation, rotation));
 
                 if (listener != null)
                     listener.onUpdate();
@@ -186,46 +189,6 @@ public class MapViewAnimator extends Foundation {
         valueAnimator.start();
     }
 
-//    public void rotateMarker(final Marker marker, final float rotation, int durationInMs, final OnMapAnimListener listener) {
-//
-//        final float startRotation = marker.getRotation();
-//
-//        ValueAnimator valueAnimator = new ValueAnimator();
-//        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                float v = animation.getAnimatedFraction();
-//                marker.setRotation(new RotationInterpolator().interpolate(v, startRotation, rotation));
-//
-//            }
-//        });
-//        valueAnimator.setFloatValues(0, 1); // Ignored.
-//        valueAnimator.setDuration(durationInMs);
-//        valueAnimator.addListener(new Animator.AnimatorListener() {
-//            @Override
-//            public void onAnimationStart(Animator animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                if (listener != null)
-//                    listener.onComplete();
-//            }
-//
-//            @Override
-//            public void onAnimationCancel(Animator animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animator animation) {
-//
-//            }
-//        });
-//        valueAnimator.start();
-//
-//    }
 
 
 }

@@ -146,7 +146,7 @@ public class PlacesApiManager extends Foundation {
 
     }
 
-    public final int DEFAULT_MAX_NO_OF_RETRIES = 3;
+    public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
 
     public static final int GET_PLACE_FROM_LAT_LNG_IN_METER = 5;
 
@@ -323,7 +323,7 @@ public class PlacesApiManager extends Foundation {
 		}
 
 
-		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
+		httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
 			public void onComplete(JSONObject response) {
@@ -355,7 +355,7 @@ public class PlacesApiManager extends Foundation {
 			return;
 		}
 
-		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
+		httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
 			public void onComplete(JSONObject response) {
@@ -434,7 +434,7 @@ public class PlacesApiManager extends Foundation {
 			return;
 		}
 
-		httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
+		httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
 			@Override
 			public void onComplete(JSONObject response) {
@@ -482,7 +482,7 @@ public class PlacesApiManager extends Foundation {
             return;
         }
 
-        httpGetJSON(link, DEFAULT_MAX_NO_OF_RETRIES, new OnHttpGetJSONListener() {
+        httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
             @Override
             public void onComplete(JSONObject response) {

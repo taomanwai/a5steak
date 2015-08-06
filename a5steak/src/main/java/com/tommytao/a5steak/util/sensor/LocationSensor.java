@@ -148,6 +148,11 @@ public class LocationSensor extends Foundation implements LocationListener {
 
     }
 
+	@Override
+	public float calculateBearingInDegree(double lat1, double lng1, double lat2, double lng2) {
+		return super.calculateBearingInDegree(lat1, lng1, lat2, lng2);
+	}
+
 	public float distanceFromLastKnownLatLng(double lat, double lng) {
 
 		Location location = getLocationManager().getLastKnownLocation(PROVIDER);

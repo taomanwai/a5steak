@@ -31,6 +31,7 @@ import com.tommytao.a5steak.util.sensor.SoundSensor;
 import com.tommytao.a5steak.util.sensor.analyzer.OrientationAnalyzer;
 import com.tommytao.a5steak.util.sensor.support.DataProcessor;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -128,9 +129,9 @@ public class MainActivity extends ActionBarActivity {
 //                new Locale("zh", "HK"),
 //                new DirectionsApiManager.OnRouteListener() {
 //                    @Override
-//                    public void returnStepList(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
+//                    public void returnSteps(ArrayList<DirectionsApiManager.Step> stepList, ArrayList<Location> overviewPolylineLocationList) {
 //
-//                        animMapView.slideAnimMarkerFollowingSteps(0,stepList , 3000, false, null);
+//                        animMapView.guideAnimMarker(0,stepList , 3000, false, null);
 //
 //
 //
@@ -138,9 +139,10 @@ public class MainActivity extends ActionBarActivity {
 //                }
 //        );
 
-//        animMapView.slideAndRotateAnimMarker(0, 22.335453, 114.156343, 90, 3000, null);
+//        animMapView.flyAnimMarker(0, 22.335453, 114.156343, 90, 3000, null);
 
-        animMapView.slideAnimMarkerFollowingDrivingRoad(0, 22.335453, 114.156343, 3000, true, null);
+        // 22.337080, 114.147331, 70
+        animMapView.driveAnimMarker("1", 22.336956, 114.147377, 70, 3000, false, null); // 22.335453, 114.156343
 
     }
 
@@ -152,11 +154,16 @@ public class MainActivity extends ActionBarActivity {
 
         ButterKnife.inject(this);
 
-
         getSupportFragmentManager().beginTransaction().replace(R.id.flFrag, OneFragment.newInstance()).commit();
 
-
         UxManager.getInstance().init(this);
+
+        JSONObject jo = null;
+        try {
+            jo = new JSONObject("null");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
         animMapView = new AnimMapView(this);
@@ -174,7 +181,6 @@ public class MainActivity extends ActionBarActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
 
                 handler.postDelayed(this, 1000);
 
@@ -200,7 +206,7 @@ public class MainActivity extends ActionBarActivity {
 
 //        marker = (Marker) mapAdapter.addMarker(22.337080, 114.147331,R.drawable.ic_plusone_small_off_client, "", "");
 
-        animMapView.addAnimMarker(22.337080, 114.147331, 0, R.drawable.ic_plusone_small_off_client);
+        animMapView.addAnimMarker("1", 22.337080, 114.147331, 70, R.drawable.ic_plusone_small_off_client);
 
         mapAdapter.animateCamera(22.337080, 114.147331, DEFAULT_ZOOM, 300, null);
 
