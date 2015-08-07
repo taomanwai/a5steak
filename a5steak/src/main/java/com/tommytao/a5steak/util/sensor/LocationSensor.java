@@ -27,6 +27,8 @@ import java.util.ArrayList;
  * http://stackoverflow
  * .com/questions/9507557/android-requestlocationupdates-updates
  * -location-at-most-every-45-seconds
+ *
+ * But tested in Android 4.x in 2015, these bug cannot be reproduced
  * 
  * 
  * @author tommytao
@@ -80,9 +82,9 @@ public class LocationSensor extends Foundation implements LocationListener {
 
 	private boolean connected;
 
-	private LocationManager locationManager;
-
 	private int updateIntervalInMs = DEFAULT_UPDATE_INTERVAL_IN_MS;
+
+	private LocationManager locationManager;
 
 	private ArrayList<OnLocationChangeListener> onLocationChangeListeners = new ArrayList<>();
 
@@ -198,7 +200,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 			return;
 		}
 
-		if (isConnected()) {
+		if (isConnected() && (this.updateIntervalInMs == updateIntervalInMs)) {
 
 			log("lbs: " + "connect rejected: already connected");
 
@@ -207,13 +209,15 @@ public class LocationSensor extends Foundation implements LocationListener {
 			return;
 		}
 
+
 		log("lbs: " + "connect");
 
-		this.getLocationManager().requestLocationUpdates(PROVIDER, updateIntervalInMs, 0, this);
+		getLocationManager().requestLocationUpdates(PROVIDER, updateIntervalInMs, 0, this);
 
 		this.updateIntervalInMs = updateIntervalInMs;
 
-		connected = true;
+		this.connected = true;
+
 
 		triggerListener(onConnectListener, true);
 

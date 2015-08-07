@@ -25,13 +25,13 @@ public class OrientationAnalyzer extends Foundation {
 
     // --
 
-    public static class FineOrientation {
+    public static class OrientationAnalyzed {
 
         private double yaw;
         private double pitch;
         private double roll;
 
-        public FineOrientation(double yaw, double pitch, double roll) {
+        public OrientationAnalyzed(double yaw, double pitch, double roll) {
             this.yaw = yaw;
             this.pitch = pitch;
             this.roll = roll;
@@ -50,7 +50,7 @@ public class OrientationAnalyzer extends Foundation {
         }
     }
 
-    public FineOrientation calculateYawPitchRoll(float gravityX, float gravityY, float gravityZ, float geoMagneticX, float geoMagneticY, float geoMagneticZ ){
+    public OrientationAnalyzed calculateYawPitchRoll(float gravityX, float gravityY, float gravityZ, float geoMagneticX, float geoMagneticY, float geoMagneticZ ){
 
         float R[] = new float[9];
         float I[] = new float[9];
@@ -73,7 +73,7 @@ public class OrientationAnalyzer extends Foundation {
 
 
 
-        return new FineOrientation(yaw, pitch, row);
+        return new OrientationAnalyzed(yaw, pitch, row);
 
 
 
