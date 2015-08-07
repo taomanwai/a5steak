@@ -144,7 +144,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 //        Location.distanceBetween(lat1, lng1, lat2, lng2, distance);
 //        return distance[0];
 
-		return super.calculateDistanceInMeter(lat1, lng1, lat2, lng2 );
+		return super.calculateDistanceInMeter(lat1, lng1, lat2, lng2);
 
     }
 
@@ -200,13 +200,19 @@ public class LocationSensor extends Foundation implements LocationListener {
 			return;
 		}
 
-		if (isConnected() && (this.updateIntervalInMs == updateIntervalInMs)) {
+		if (isConnected()) {
 
-			log("lbs: " + "connect rejected: already connected");
+			if (this.updateIntervalInMs == updateIntervalInMs) {
+				log("lbs: " + "connect rejected: already connected");
 
-			triggerListener(onConnectListener, true);
+				triggerListener(onConnectListener, true);
 
-			return;
+				return;
+			} else {
+
+				disconnect();
+
+			}
 		}
 
 
