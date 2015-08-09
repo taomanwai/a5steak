@@ -204,18 +204,5 @@ public class Converter extends Foundation {
 
 
 
-    @Override
-    public double normalizeToOneLoopBearing(double value) {
-        return super.normalizeToOneLoopBearing(value);
-    }
 
-    @Override
-    public double halfToWholeCircleBearing(double value) {
-        return super.halfToWholeCircleBearing(value);
-    }
-
-    @Override
-    public double wholeToHalfCircleBearing(double value) {
-        return super.wholeToHalfCircleBearing(value);
-    }
 }
