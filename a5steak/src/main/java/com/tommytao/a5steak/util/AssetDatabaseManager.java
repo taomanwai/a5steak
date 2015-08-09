@@ -35,7 +35,7 @@ public class AssetDatabaseManager extends Foundation {
     private static final int DATABASE_VERSION = 1;
 
 
-    private HashMap<String, SQLiteDatabase> hashMapSqliteDatabase = new HashMap<String, SQLiteDatabase>();
+    private HashMap<String, SQLiteDatabase> hashMapSqliteDatabase = new HashMap<>();
 
 
     private SQLiteDatabase getDatabase(String databaseName) {
