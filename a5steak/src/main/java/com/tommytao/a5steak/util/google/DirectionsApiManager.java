@@ -164,28 +164,28 @@ public class DirectionsApiManager extends Foundation {
 
     public static class Step extends Foundation {
 
-        public static int MANEUVER_NONE = -1;
+        public static final int MANEUVER_NONE = -1;
 
-        public static int MANEUVER_TURN_SHARP_LEFT = 0;
-        public static int MANEUVER_UTURN_RIGHT = 1;
-        public static int MANEUVER_TURN_SLIGHT_RIGHT = 2;
-        public static int MANEUVER_MERGE = 3;
-        public static int MANEUVER_ROUNDABOUT_LEFT = 4;
-        public static int MANEUVER_ROUNDABOUT_RIGHT = 5;
-        public static int MANEUVER_UTURN_LEFT = 6;
-        public static int MANEUVER_TURN_SLIGHT_LEFT = 7;
-        public static int MANEUVER_TURN_LEFT = 8;
-        public static int MANEUVER_RAMP_RIGHT = 9;
-        public static int MANEUVER_TURN_RIGHT = 10;
-        public static int MANEUVER_FORK_RIGHT = 11;
-        public static int MANEUVER_STRAIGHT = 12;
-        public static int MANEUVER_FORK_LEFT = 13;
-        public static int MANEUVER_FERRY_TRAIN = 14;
-        public static int MANEUVER_TURN_SHARP_RIGHT = 15;
-        public static int MANEUVER_RAMP_LEFT = 16;
-        public static int MANEUVER_FERRY = 17;
-        public static int MANEUVER_KEEP_LEFT = 18;
-        public static int MANEUVER_KEEP_RIGHT = 19;
+        public static final int MANEUVER_TURN_SHARP_LEFT = 0;
+        public static final int MANEUVER_UTURN_RIGHT = 1;
+        public static final int MANEUVER_TURN_SLIGHT_RIGHT = 2;
+        public static final int MANEUVER_MERGE = 3;
+        public static final int MANEUVER_ROUNDABOUT_LEFT = 4;
+        public static final int MANEUVER_ROUNDABOUT_RIGHT = 5;
+        public static final int MANEUVER_UTURN_LEFT = 6;
+        public static final int MANEUVER_TURN_SLIGHT_LEFT = 7;
+        public static final int MANEUVER_TURN_LEFT = 8;
+        public static final int MANEUVER_RAMP_RIGHT = 9;
+        public static final int MANEUVER_TURN_RIGHT = 10;
+        public static final int MANEUVER_FORK_RIGHT = 11;
+        public static final int MANEUVER_STRAIGHT = 12;
+        public static final int MANEUVER_FORK_LEFT = 13;
+        public static final int MANEUVER_FERRY_TRAIN = 14;
+        public static final int MANEUVER_TURN_SHARP_RIGHT = 15;
+        public static final int MANEUVER_RAMP_LEFT = 16;
+        public static final int MANEUVER_FERRY = 17;
+        public static final int MANEUVER_KEEP_LEFT = 18;
+        public static final int MANEUVER_KEEP_RIGHT = 19;
 
         private int distanceInMeter;
         private String distanceInText = "";
