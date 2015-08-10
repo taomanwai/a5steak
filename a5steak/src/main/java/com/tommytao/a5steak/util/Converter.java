@@ -173,13 +173,8 @@ public class Converter extends Foundation {
 
     }
 
-    public Location latLngToLocation(double lat, double lng){
-        Location result = new Location("");
-
-        result.setLatitude(lat);
-        result.setLongitude(lng);
-
-        return  result;
+    public Location latLngToLocation(double latitude, double longitude){
+        return super.latLngToLocation(latitude, longitude);
     }
 
 

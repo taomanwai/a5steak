@@ -223,7 +223,7 @@ public class AnimMapView extends MapView {
 
     public float getMinDistanceTriggerDirectionsApiInMeter(float rotation) {
 
-        rotation = (float) Converter.getInstance().wholeToHalfCircleBearing(rotation);
+        rotation = (float) MathManager.getInstance().wholeToHalfCircleBearing(rotation);
 
         float result = 4.5f; // 4.5
 
@@ -259,8 +259,8 @@ public class AnimMapView extends MapView {
             return false;
 
         int lastIndex = steps.size() - 1;
-        Location startLocation = Converter.getInstance().latLngToLocation(steps.get(0).getStartLatitude(), steps.get(0).getStartLongitude());
-        Location endLocation = Converter.getInstance().latLngToLocation(steps.get(lastIndex).getEndLatitude(), steps.get(lastIndex).getEndLongitude());
+        Location startLocation = MathManager.getInstance().latLngToLocation(steps.get(0).getStartLocation().getLatitude(), steps.get(0).getStartLocation().getLongitude());
+        Location endLocation = MathManager.getInstance().latLngToLocation(steps.get(lastIndex).getEndLocation().getLatitude(), steps.get(lastIndex).getEndLocation().getLongitude());
 
         int routeDistance = 0;
         for (DirectionsApiManager.Step step : steps) {

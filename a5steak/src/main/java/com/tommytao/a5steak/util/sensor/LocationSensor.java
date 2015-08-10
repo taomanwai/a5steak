@@ -279,21 +279,21 @@ public class LocationSensor extends Foundation implements LocationListener {
 		return this.connected;
 	}
 
-	public long lat2LatE6(double lat) {
-		return super.lat2LatE6(lat);
+	public long lat2LatE6(double latitude) {
+		return super.lat2LatE6(latitude);
 
 	}
 
-	public double latE62Lat(long latE6) {
-		return super.latE62Lat(latE6);
+	public double latE62Lat(long latitudeE6) {
+		return super.latE62Lat(latitudeE6);
 	}
 
-	public long lng2LngE6(double lng) {
-		return super.lat2LatE6(lng);
+	public long lng2LngE6(double longitude) {
+		return super.lat2LatE6(longitude);
 	}
 
-	public double lngE62Lng(long lngE6) {
-		return super.latE62Lat(lngE6);
+	public double lngE62Lng(long longitudeE6) {
+		return super.latE62Lat(longitudeE6);
 	}
 
 

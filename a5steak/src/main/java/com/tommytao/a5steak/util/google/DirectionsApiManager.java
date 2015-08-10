@@ -193,11 +193,8 @@ public class DirectionsApiManager extends Foundation {
         private int durationInMs;
         private String durationInText = "";
 
-        private double startLatitude = Double.NaN;
-        private double startLongitude = Double.NaN;
-
-        private double endLatitude = Double.NaN;
-        private double endLongitude = Double.NaN;
+        private Location startLocation;
+        private Location endLocation;
 
         private Polyline polyline;
         private ArrayList<Location> polylineLocations = new ArrayList<>();
@@ -211,11 +208,10 @@ public class DirectionsApiManager extends Foundation {
             this.distanceInMeter = distanceInMeter;
             this.distanceInText = distanceInText;
             this.durationInMs = durationInMs;
-            this.durationInText = durationInText;
-            this.startLatitude = startLatitude;
-            this.startLongitude = startLongitude;
-            this.endLatitude = endLatitude;
-            this.endLongitude = endLongitude;
+
+            this.startLocation = latLngToLocation(startLatitude, startLongitude);
+            this.endLocation = latLngToLocation(endLatitude, endLongitude);
+
             this.polyline = new Polyline(encodedPolyline);
             this.instructionsInHtml = instructionsInHtml;
             this.maneuver = maneuver;
@@ -235,30 +231,20 @@ public class DirectionsApiManager extends Foundation {
             return distanceInText;
         }
 
+        public Location getStartLocation() {
+            return startLocation;
+        }
+
+        public Location getEndLocation() {
+            return endLocation;
+        }
+
         public int getDurationInMs() {
             return durationInMs;
         }
 
         public String getDurationInText() {
             return durationInText;
-        }
-
-
-        public double getStartLatitude() {
-            return startLatitude;
-        }
-
-        public double getStartLongitude() {
-            return startLongitude;
-        }
-
-
-        public double getEndLatitude() {
-            return endLatitude;
-        }
-
-        public double getEndLongitude() {
-            return endLongitude;
         }
 
         public String getInstructionsInHtml() {

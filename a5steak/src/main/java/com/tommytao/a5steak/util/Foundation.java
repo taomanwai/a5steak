@@ -1538,23 +1538,32 @@ public class Foundation {
 
     }
 
+    public Location latLngToLocation(double latitude, double longitude){
+        Location result = new Location("");
+
+        result.setLatitude(latitude);
+        result.setLongitude(longitude);
+
+        return  result;
+    }
+
 
 
     // === Location ===
-    protected long lat2LatE6(double lat) {
-        return (long) (lat * 1000000);
+    protected long lat2LatE6(double latitude) {
+        return (long) (latitude * 1000000);
     }
 
-    protected double latE62Lat(long latE6) {
-        return (double) latE6 / 1000000;
+    protected double latE62Lat(long latitudeE6) {
+        return (double) latitudeE6 / 1000000;
     }
 
-    protected long lng2LngE6(double lng) {
-        return lat2LatE6(lng); // just use back lat2LatE6()
+    protected long lng2LngE6(double longitude) {
+        return lat2LatE6(longitude); // just use back lat2LatE6()
     }
 
-    protected double lngE62Lng(long lngE6) {
-        return latE62Lat(lngE6); // just use back latE62Lat()
+    protected double lngE62Lng(long longitudeE6) {
+        return latE62Lat(longitudeE6); // just use back latE62Lat()
     }
 
 
