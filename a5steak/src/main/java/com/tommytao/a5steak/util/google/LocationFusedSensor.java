@@ -52,6 +52,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     public final static int DEFAULT_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
     public final static int DEFAULT_INTERVAL_IN_MS = 5000; // 5s (5000ms) = Google Maps interval
+    public final static int DEFAULT_FASTEST_INTERVAL_IN_MS = 1000;
 
 
     public final static String PREFS_LAT_E6 = "LocationFusedSensor.PREFS_LAT_E6";
@@ -181,7 +182,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
             pendingOnConnectListener.onConnected(succeed);
     }
 
-    private void startDetectingLocation(int priority, int intervalInMs){
+    private void startDetectingLocation(int priority, int intervalInMs, int fastestIntervalInMs){
 
         if (!isConnected())
             return;
@@ -189,18 +190,14 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         LocationServices.FusedLocationApi.requestLocationUpdates(client,
                 LocationRequest.create()
                         .setPriority(priority)
-                        .setInterval(intervalInMs), this);
+                        .setInterval(intervalInMs)
+                        .setFastestInterval(fastestIntervalInMs), this);
     }
 
     @Override
     public void onConnected(Bundle arg0) {
 
-//        LocationServices.FusedLocationApi.requestLocationUpdates(client,
-//                LocationRequest.create()
-//                        .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
-//                        .setInterval(5000), this);
-
-        startDetectingLocation(DEFAULT_PRIORITY, DEFAULT_INTERVAL_IN_MS);
+        startDetectingLocation(DEFAULT_PRIORITY, DEFAULT_INTERVAL_IN_MS, DEFAULT_FASTEST_INTERVAL_IN_MS);
 
         triggerAndClearListeners(true);
     }
