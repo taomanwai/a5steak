@@ -122,7 +122,7 @@ public class DirectionsApiManager extends Foundation {
 
         }
 
-        public boolean isOnPolyline(double latitude, double longitude, double toleranceInMeter){
+        public boolean isPassing(double latitude, double longitude, double toleranceInMeter){
 
             // TODO MVP too much copy & paste
             double closestDistance = WHOLE_WORLD_RADIUS_IN_METER + 1; // plus 1 to make it as max impossible to reach value !
