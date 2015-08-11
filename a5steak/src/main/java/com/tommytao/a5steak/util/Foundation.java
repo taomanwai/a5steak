@@ -1568,10 +1568,17 @@ public class Foundation {
     // === MathManager ===
 
     protected double normalizeToOneLoopBearing(double value) {
+
+        if (Double.isNaN(value))
+            return Double.NaN;
+
         return value % 360;
     }
 
     protected double halfToWholeCircleBearing(double value) {
+
+        if (Double.isNaN(value))
+            return Double.NaN;
 
         value = normalizeToOneLoopBearing(value);
 
@@ -1585,6 +1592,9 @@ public class Foundation {
 
     protected double wholeToHalfCircleBearing(double value) {
 
+        if (Double.isNaN(value))
+            return Double.NaN;
+
         value = normalizeToOneLoopBearing(value);
 
         if (value > 180) {
@@ -1597,6 +1607,12 @@ public class Foundation {
     }
 
     protected double calculateAngleDerivation(double from, double to) {
+
+        if (Double.isNaN(from))
+            return Double.NaN;
+
+        if (Double.isNaN(to))
+            return Double.NaN;
 
         from = halfToWholeCircleBearing(from);
         to = halfToWholeCircleBearing(to);
