@@ -24,6 +24,26 @@ import java.util.ArrayList;
 
 public class GMapAdapter implements IMapAdapter {
 
+    public static interface OnAnimationCameraCallback {
+
+        public void onCancel();
+
+        public void onFinish();
+
+    }
+
+    public static interface OnCameraChangeCallback {
+
+        public void onCameraChange(Location location);
+
+    }
+
+    public static interface OnMapLoadedCallback {
+
+        public void onMapLoaded();
+
+    }
+
     private com.google.android.gms.maps.MapView mapView;
 
     public GMapAdapter(com.google.android.gms.maps.MapView mapView) {
@@ -32,14 +52,12 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public Object getMapView() {
 
         return mapView;
 
     }
 
-    @Override
     public Object getMap() {
 
         if (mapView == null)
@@ -49,7 +67,6 @@ public class GMapAdapter implements IMapAdapter {
         return result;
     }
 
-    @Override
     public void moveCameraByLatLng(double latitude, double longitude, float zoom) {
 
         ((GoogleMap) getMap()).moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), zoom));
@@ -63,7 +80,6 @@ public class GMapAdapter implements IMapAdapter {
         ((GoogleMap) getMap()).moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, paddingInPx));
     }
 
-    @Override
     public void animateCamera(double latitude, double longitude, float zoomTo, int durationInMs, final OnAnimationCameraCallback callback) {
 
         ((GoogleMap) getMap()).animateCamera(
@@ -90,21 +106,18 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void setZoomControlsEnabled(boolean enabled) {
 
         ((GoogleMap) getMap()).getUiSettings().setZoomControlsEnabled(enabled);
 
     }
 
-    @Override
     public void setTrafficEnabled(boolean enabled) {
 
         ((GoogleMap) getMap()).setTrafficEnabled(enabled);
 
     }
 
-    @Override
     public Object addMarker(double latitude, double longitude, int iconResId, String title , String snippet) {
 
         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(latitude, longitude)).title(title).snippet(snippet);
@@ -117,7 +130,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void notifyMarkerShowInfoWindow(Object marker) {
 
         if (marker == null)
@@ -130,7 +142,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public Object addPolyline(ArrayList<Location> locations, float width, int color) {
 
         PolylineOptions lineOptions = new PolylineOptions();
@@ -149,7 +160,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public Location getCameraLocation() {
 
         LatLng latLng = ((GoogleMap) getMap()).getCameraPosition().target;
@@ -164,7 +174,6 @@ public class GMapAdapter implements IMapAdapter {
         return result;
     }
 
-    @Override
     public void setOnCameraChangeListener(final OnCameraChangeCallback callback) {
 
         ((GoogleMap) getMap()).setOnCameraChangeListener(new OnCameraChangeListener() {
@@ -192,7 +201,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void init(Activity activity, final OnMapLoadedCallback callback) {
 
         mapView.getMap().setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
@@ -213,7 +221,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void onCreate(Bundle savedInstanceState) {
 
         if (mapView == null)
@@ -223,7 +230,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void onResume() {
 
         if (mapView == null)
@@ -233,7 +239,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void onDestroy() {
 
         if (mapView == null)
@@ -243,7 +248,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void onPause() {
 
         if (mapView == null)
@@ -253,7 +257,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void onLowMemory() {
 
         if (mapView == null)
@@ -261,10 +264,8 @@ public class GMapAdapter implements IMapAdapter {
 
         mapView.onLowMemory();
 
-
     }
 
-    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
         if (mapView == null)
@@ -275,8 +276,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-
-    @Override
     public void notifyMarkerRemoveItself(Object marker) {
 
         if (marker == null)
@@ -289,7 +288,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void notifyPolylineRemoveItself(Object polyline) {
 
         if (polyline == null)
@@ -302,7 +300,6 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    @Override
     public void setInfoWindowAdapter(Object adapter) {
 
         if (!(adapter instanceof InfoWindowAdapter))
