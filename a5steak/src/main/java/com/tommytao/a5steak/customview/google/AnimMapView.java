@@ -457,7 +457,7 @@ public class AnimMapView extends MapView {
 
         DirectionsApiManager.getInstance().route(
                 startLocation.getLatitude(), startLocation.getLongitude(),
-                latitude, longitude,
+                latitude, longitude, DirectionsApiManager.AVOID_NONE,
                 LocaleManager.getInstance().getSystemLocale(), new DirectionsApiManager.OnRouteListener() {
                     @Override
                     public void returnSteps(final ArrayList<DirectionsApiManager.Step> steps, final DirectionsApiManager.Polyline polyline) {

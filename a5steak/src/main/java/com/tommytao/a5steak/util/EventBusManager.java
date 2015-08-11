@@ -37,7 +37,7 @@ public class EventBusManager {
 
         public String event;
 
-        private HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        private HashMap<String, Object> hashMap = new HashMap<>();
 
         public BundledEvent(String event) {
 

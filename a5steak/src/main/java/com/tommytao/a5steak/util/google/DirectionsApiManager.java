@@ -322,6 +322,13 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
+    public static final String AVOID_NONE = "";
+    public static final String AVOID_TOLLS = "tolls";
+    public static final String AVOID_HIGHWAYS = "highways";
+    public static final String AVOID_FERRIES = "ferries";
+    public static final String AVOID_INDOOR = "indoor";
+
+
     public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
 
     public final int EXPIRY_PERIOD_OF_CACHED_ROUTE_RESPONSE_IN_MS = 15 * 60 * 1000; // 15 min
@@ -365,12 +372,16 @@ public class DirectionsApiManager extends Foundation {
         return !TextUtils.isEmpty(clientIdForWork) && !TextUtils.isEmpty(cryptoForWork);
     }
 
-    private String genRouteLink(double startLatitude, double startLongitude, double endLatitude, double endLongitude, final Locale locale) {
+    private String genRouteLink(double startLatitude, double startLongitude, double endLatitude, double endLongitude, String avoid, final Locale locale) {
 
         String localeString = locale.getLanguage() + "-" + locale.getCountry();
 
-        String result = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%.6f,%.6f&destination=%.6f,%.6f&language=%s", startLatitude, startLongitude, endLatitude, endLongitude,
+        String result = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%.6f,%.6f&destination=%.6f,%.6f&avoid=%s&language=%s", startLatitude, startLongitude, endLatitude, endLongitude,
                 localeString);
+
+        if (!TextUtils.isEmpty(avoid)){
+            result += "&avoid=" + avoid;
+        }
 
         result = forWork() ? signToForWork(result, API_DOMAIN_FOR_WORK, clientIdForWork, cryptoForWork) : result;
 
@@ -554,19 +565,19 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
-    public void cache(double startLatitude, double startLongitude, double endLatitude, double endLongitude, final Locale locale) {
+    public void cache(double startLatitude, double startLongitude, double endLatitude, double endLongitude, String avoid, final Locale locale) {
 
-        route(startLatitude, startLongitude, endLatitude, endLongitude, locale, null);
+        route(startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale, null);
 
     }
 
 
-    public void route(final double startLatitude, final double startLongitude, final double endLatitude, final double endLongitude, final Locale locale, final OnRouteListener listener) {
+    public void route(final double startLatitude, final double startLongitude, final double endLatitude, final double endLongitude, final String avoid, final Locale locale,  final OnRouteListener listener) {
 
 //        if (listener == null)
 //            return;
 
-        final JSONObject cachedRouteResponse = loadRouteResponseFromPrefs(startLatitude, startLongitude, endLatitude, endLongitude, locale);
+        final JSONObject cachedRouteResponse = loadRouteResponseFromPrefs(startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale);
 
         if (cachedRouteResponse != null) {
 
@@ -581,14 +592,14 @@ public class DirectionsApiManager extends Foundation {
         }
 
 
-        String link = genRouteLink(startLatitude, startLongitude, endLatitude, endLongitude, locale);
+        String link = genRouteLink(startLatitude, startLongitude, endLatitude, endLongitude, avoid , locale);
 
         httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
             @Override
             public void onComplete(JSONObject response) {
 
-                saveRouteResponseToPrefs(response, startLatitude, startLongitude, endLatitude, endLongitude, locale);
+                saveRouteResponseToPrefs(response, startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale);
                 response2Route(response, listener);
 
             }
@@ -598,17 +609,18 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
-    private String buildPrefsSuffix(double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale) {
+    private String buildPrefsSuffix(double startLatitude, double startLongitude, double endLatitude, double endLongitude, String avoid, Locale locale) {
         return String.format("%.6f", startLatitude) + "," +
                 String.format("%.6f", startLongitude) + "," +
                 String.format("%.6f", endLatitude) + "," +
                 String.format("%.6f", endLongitude) + "," +
+                avoid + "," +
                 locale.getLanguage() + "-" + locale.getCountry();
     }
 
-    private void saveRouteResponseToPrefs(JSONObject response, double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale) {
+    private void saveRouteResponseToPrefs(JSONObject response, double startLatitude, double startLongitude, double endLatitude, double endLongitude, String avoid, Locale locale) {
 
-        String suffix = buildPrefsSuffix(startLatitude, startLongitude, endLatitude, endLongitude, locale);
+        String suffix = buildPrefsSuffix(startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale);
         String jsonKey = PREFS_JSON_PREFIX + suffix;
         String timestampKey = PREFS_TIMESTAMP_PREFIX + suffix;
 
@@ -619,9 +631,9 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
-    private JSONObject loadRouteResponseFromPrefs(double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale) {
+    private JSONObject loadRouteResponseFromPrefs(double startLatitude, double startLongitude, double endLatitude, double endLongitude, String avoid, Locale locale) {
 
-        String suffix = buildPrefsSuffix(startLatitude, startLongitude, endLatitude, endLongitude, locale);
+        String suffix = buildPrefsSuffix(startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale);
         String jsonKey = PREFS_JSON_PREFIX + suffix;
         String timestampKey = PREFS_TIMESTAMP_PREFIX + suffix;
 
