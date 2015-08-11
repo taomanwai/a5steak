@@ -95,9 +95,65 @@ public class DirectionsApiManager extends Foundation {
 
         }
 
-        private void addBearingToLocations(){
+        public int getClosestPointIndexFromLatLng(double latitude, double longitude) {
 
-            if (locations.size()==1){
+            int closestPtIndex = -1;
+            double closestDistance = WHOLE_WORLD_RADIUS_IN_METER + 1; // plus 1 to make it as max impossible to reach value !
+            double distanceInTesting = -1;
+
+            int i = 0;
+            for (Location location : locations) {
+
+                distanceInTesting = calculateDistanceInMeter(location.getLatitude(), location.getLongitude(), latitude, longitude);
+                if (distanceInTesting < closestDistance) {
+
+                    closestPtIndex = i;
+                    closestDistance = (int) distanceInTesting;
+
+                } else {
+                    // do nothing
+                }
+
+                i++;
+            }
+
+            return closestPtIndex;
+
+
+        }
+
+        public boolean isOnPolyline(double latitude, double longitude, double toleranceInMeter){
+
+            // TODO MVP too much copy & paste
+            double closestDistance = WHOLE_WORLD_RADIUS_IN_METER + 1; // plus 1 to make it as max impossible to reach value !
+            double distanceInTesting = -1;
+
+            for (Location location : locations) {
+
+                distanceInTesting = calculateDistanceInMeter(location.getLatitude(), location.getLongitude(), latitude, longitude);
+                if (distanceInTesting < closestDistance) {
+
+                    closestDistance = (int) distanceInTesting;
+
+                } else {
+                    // do nothing
+                }
+
+                if (closestDistance <= toleranceInMeter){
+                    return true;
+                }
+            }
+
+            return false;
+
+
+
+        }
+
+
+        private void addBearingToLocations() {
+
+            if (locations.size() == 1) {
 
                 locations.get(0).setBearing(Float.NaN);
 
@@ -106,7 +162,7 @@ public class DirectionsApiManager extends Foundation {
 
 
             int index = 0;
-            for (Location location : locations){
+            for (Location location : locations) {
 
                 Location targetLocation = getLocations().get(index);
 
@@ -157,7 +213,6 @@ public class DirectionsApiManager extends Foundation {
 
             }
         }
-
 
 
     }
@@ -281,7 +336,7 @@ public class DirectionsApiManager extends Foundation {
 
     public SharedPreferences getPrefs() {
 
-        if (prefs==null)
+        if (prefs == null)
             prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
         return prefs;
@@ -499,7 +554,7 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
-    public void cache( double startLatitude,  double startLongitude,  double endLatitude,  double endLongitude, final Locale locale){
+    public void cache(double startLatitude, double startLongitude, double endLatitude, double endLongitude, final Locale locale) {
 
         route(startLatitude, startLongitude, endLatitude, endLongitude, locale, null);
 
@@ -513,7 +568,7 @@ public class DirectionsApiManager extends Foundation {
 
         final JSONObject cachedRouteResponse = loadRouteResponseFromPrefs(startLatitude, startLongitude, endLatitude, endLongitude, locale);
 
-        if (cachedRouteResponse!=null){
+        if (cachedRouteResponse != null) {
 
             handler.post(new Runnable() {
                 @Override
@@ -543,15 +598,15 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
-    private String buildPrefsSuffix(double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale){
+    private String buildPrefsSuffix(double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale) {
         return String.format("%.6f", startLatitude) + "," +
                 String.format("%.6f", startLongitude) + "," +
                 String.format("%.6f", endLatitude) + "," +
                 String.format("%.6f", endLongitude) + "," +
-                locale.getLanguage() + "-"  + locale.getCountry();
+                locale.getLanguage() + "-" + locale.getCountry();
     }
 
-    private void saveRouteResponseToPrefs(JSONObject response, double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale){
+    private void saveRouteResponseToPrefs(JSONObject response, double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale) {
 
         String suffix = buildPrefsSuffix(startLatitude, startLongitude, endLatitude, endLongitude, locale);
         String jsonKey = PREFS_JSON_PREFIX + suffix;
@@ -564,7 +619,7 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
-    private JSONObject loadRouteResponseFromPrefs(double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale){
+    private JSONObject loadRouteResponseFromPrefs(double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale) {
 
         String suffix = buildPrefsSuffix(startLatitude, startLongitude, endLatitude, endLongitude, locale);
         String jsonKey = PREFS_JSON_PREFIX + suffix;
@@ -572,14 +627,14 @@ public class DirectionsApiManager extends Foundation {
 
         long timestamp = getPrefs().getLong(timestampKey, -1);
 
-        if ((System.currentTimeMillis()-timestamp) > EXPIRY_PERIOD_OF_CACHED_ROUTE_RESPONSE_IN_MS)
+        if ((System.currentTimeMillis() - timestamp) > EXPIRY_PERIOD_OF_CACHED_ROUTE_RESPONSE_IN_MS)
             return null;
 
         JSONObject result = null;
         String responseStr = getPrefs().getString(jsonKey, "");
-        try{
+        try {
             result = new JSONObject(responseStr);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -587,11 +642,7 @@ public class DirectionsApiManager extends Foundation {
         return result;
 
 
-
-
     }
-
-
 
 
     public void goToNav(Activity activity, double latitude, double longitude, String errMsgWhenNoNavApp) {

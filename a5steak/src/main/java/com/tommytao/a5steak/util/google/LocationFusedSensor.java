@@ -181,7 +181,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
             pendingOnConnectListener.onConnected(succeed);
     }
 
-    public void startDetectingLocation(int priority, int intervalInMs){
+    private void startDetectingLocation(int priority, int intervalInMs){
 
         if (!isConnected())
             return;

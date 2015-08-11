@@ -1403,6 +1403,8 @@ public class Foundation {
         return result;
     }
 
+    public static final int WHOLE_WORLD_RADIUS_IN_METER = 20000000; // i.e. 20,000 km
+
     public static final String API_DOMAIN_FOR_WORK = "https://maps.google.com";
 
     public static final String WORLD_BOUNDS = "-90,-180|90,180";
