@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util.sensor.analyzer;
 
+import android.content.Context;
 import android.hardware.SensorManager;
 import com.tommytao.a5steak.util.Foundation;
 
@@ -48,6 +49,11 @@ public class OrientationAnalyzer extends Foundation {
         public double getRoll() {
             return roll;
         }
+    }
+
+    @Deprecated
+    public boolean init(Context context) {
+        return super.init(context);
     }
 
     public OrientationAnalyzed calculateYawPitchRoll(float gravityX, float gravityY, float gravityZ, float geoMagneticX, float geoMagneticY, float geoMagneticZ ){

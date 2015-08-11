@@ -25,6 +25,7 @@ public class DataProcessor extends Foundation {
     public static final double DEFAULT_STRENGTH_OF_LPF = 0.9f;
 
 
+
     /**
      *
      * Low pass filter

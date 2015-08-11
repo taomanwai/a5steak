@@ -975,7 +975,7 @@ public class Foundation {
     }
 
     // === Location sensor ===
-    protected float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2){
+    protected float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2) {
 
         float[] distance = new float[3];
         Location.distanceBetween(lat1, lng1, lat2, lng2, distance);
@@ -983,18 +983,18 @@ public class Foundation {
 
     }
 
-    protected float calculateBearingInDegree(double lat1, double lng1, double lat2, double lng2){
+    protected float calculateBearingInDegree(double lat1, double lng1, double lat2, double lng2) {
 
         float result = Float.NaN;
 
         if (Double.isNaN(lat1) ||
                 Double.isNaN(lng1) ||
                 Double.isNaN(lat2) ||
-                Double.isNaN(lng2)){
+                Double.isNaN(lng2)) {
             return result;
         }
 
-        if (lat1==lat2 && lng1==lng2){
+        if (lat1 == lat2 && lng1 == lng2) {
             return result;
         }
 
@@ -1125,7 +1125,6 @@ public class Foundation {
         return result;
 
     }
-
 
 
     // ==== Media player  ===
@@ -1488,8 +1487,6 @@ public class Foundation {
     }
 
 
-
-
     protected SensorManager getSensorManager() {
 
         if (sensorManager == null)
@@ -1540,15 +1537,14 @@ public class Foundation {
 
     }
 
-    public Location latLngToLocation(double latitude, double longitude){
+    public Location latLngToLocation(double latitude, double longitude) {
         Location result = new Location("");
 
         result.setLatitude(latitude);
         result.setLongitude(longitude);
 
-        return  result;
+        return result;
     }
-
 
 
     // === Location ===
@@ -1611,7 +1607,6 @@ public class Foundation {
         return (Math.abs(choice1) <= Math.abs(choice2)) ? choice1 : choice2;
 
 
-
     }
 
 
@@ -1631,11 +1626,11 @@ public class Foundation {
             return;
         }
 
+        if (!Double.isNaN(latestValue)) {
+            double revisedLatestValue = lowPassHistoryList.get(0) * strength + latestValue * (1 - strength);
+            lowPassHistoryList.add(0, revisedLatestValue);
+        }
 
-        double revisedLatestValue = lowPassHistoryList.get(0) * strength + latestValue * (1 - strength);
-
-
-        lowPassHistoryList.add(0, revisedLatestValue);
 
         while (lowPassHistoryList.size() > maxHistorySize)
             lowPassHistoryList.remove(lowPassHistoryList.size() - 1);
@@ -1646,6 +1641,7 @@ public class Foundation {
 
     protected void lowPassFilterForAngle(ArrayList<Double> lowPassHistoryList, int maxHistorySize, double latestValue, double strength) {
 
+        // TODO MVP too much copy
         if (maxHistorySize == 0) {
             lowPassHistoryList.clear();
             return;
@@ -1656,18 +1652,18 @@ public class Foundation {
             return;
         }
 
-        double revisedLatestValue = halfToWholeCircleBearing(lowPassHistoryList.get(0)) + calculateAngleDerivation(lowPassHistoryList.get(0), latestValue) * (1 - strength);
-        revisedLatestValue = wholeToHalfCircleBearing(revisedLatestValue);
+        if (!Double.isNaN(latestValue)) {
+            double revisedLatestValue = halfToWholeCircleBearing(lowPassHistoryList.get(0)) + calculateAngleDerivation(lowPassHistoryList.get(0), latestValue) * (1 - strength);
+            revisedLatestValue = wholeToHalfCircleBearing(revisedLatestValue);
+            lowPassHistoryList.add(0, revisedLatestValue);
+        }
 
-
-        lowPassHistoryList.add(0, revisedLatestValue);
 
         while (lowPassHistoryList.size() > maxHistorySize)
             lowPassHistoryList.remove(lowPassHistoryList.size() - 1);
 
 
     }
-
 
 
 }
