@@ -21,7 +21,7 @@ public class OrientationAnalyzer extends Foundation {
     }
 
     private OrientationAnalyzer() {
-
+        //
     }
 
     // --
@@ -51,7 +51,7 @@ public class OrientationAnalyzer extends Foundation {
         }
     }
 
-    @Deprecated
+    @Override
     public boolean init(Context context) {
         return super.init(context);
     }

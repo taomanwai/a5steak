@@ -187,7 +187,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 
 	}
 
-	public void connect(int updateIntervalInMs,final OnConnectListener onConnectListener) {
+	public void connect(int updateIntervalInMs, final OnConnectListener onConnectListener) {
 
 		if (!this.isAvailable()) {
 
