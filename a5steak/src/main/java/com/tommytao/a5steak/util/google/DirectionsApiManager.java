@@ -95,16 +95,33 @@ public class DirectionsApiManager extends Foundation {
 
         }
 
-        public int getClosestPointIndexFromLatLng(double latitude, double longitude) {
+        public int getClosestPointIndexFromLatLng(double latitude, double longitude, int start, int end) {
+
+            if (locations.isEmpty())
+                return -1;
 
             int closestPtIndex = -1;
             double closestDistance = WHOLE_WORLD_RADIUS_IN_METER + 1; // plus 1 to make it as max impossible to reach value !
             double distanceInTesting = -1;
 
-            int i = 0;
-            for (Location location : locations) {
+//            int i = 0;
+//            for (Location location : locations) {
+//
+//                distanceInTesting = calculateDistanceInMeter(location.getLatitude(), location.getLongitude(), latitude, longitude);
+//                if (distanceInTesting < closestDistance) {
+//
+//                    closestPtIndex = i;
+//                    closestDistance = (int) distanceInTesting;
+//
+//                } else {
+//                    // do nothing
+//                }
+//
+//                i++;
+//            }
 
-                distanceInTesting = calculateDistanceInMeter(location.getLatitude(), location.getLongitude(), latitude, longitude);
+            for (int i = start; i <= end; i++) {
+                distanceInTesting = calculateDistanceInMeter(locations.get(i).getLatitude(), locations.get(i).getLongitude(), latitude, longitude);
                 if (distanceInTesting < closestDistance) {
 
                     closestPtIndex = i;
@@ -114,7 +131,7 @@ public class DirectionsApiManager extends Foundation {
                     // do nothing
                 }
 
-                i++;
+
             }
 
             return closestPtIndex;
@@ -122,7 +139,7 @@ public class DirectionsApiManager extends Foundation {
 
         }
 
-        public boolean isPassing(double latitude, double longitude, double toleranceInMeter){
+        public boolean isPassing(double latitude, double longitude, double toleranceInMeter) {
 
             // TODO MVP too much copy & paste
             double closestDistance = WHOLE_WORLD_RADIUS_IN_METER + 1; // plus 1 to make it as max impossible to reach value !
@@ -139,13 +156,12 @@ public class DirectionsApiManager extends Foundation {
                     // do nothing
                 }
 
-                if (closestDistance <= toleranceInMeter){
+                if (closestDistance <= toleranceInMeter) {
                     return true;
                 }
             }
 
             return false;
-
 
 
         }
@@ -379,7 +395,7 @@ public class DirectionsApiManager extends Foundation {
         String result = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%.6f,%.6f&destination=%.6f,%.6f&avoid=%s&language=%s", startLatitude, startLongitude, endLatitude, endLongitude,
                 localeString);
 
-        if (!TextUtils.isEmpty(avoid)){
+        if (!TextUtils.isEmpty(avoid)) {
             result += "&avoid=" + avoid;
         }
 
@@ -572,7 +588,7 @@ public class DirectionsApiManager extends Foundation {
     }
 
 
-    public void route(final double startLatitude, final double startLongitude, final double endLatitude, final double endLongitude, final String avoid, final Locale locale,  final OnRouteListener listener) {
+    public void route(final double startLatitude, final double startLongitude, final double endLatitude, final double endLongitude, final String avoid, final Locale locale, final OnRouteListener listener) {
 
 //        if (listener == null)
 //            return;
@@ -592,7 +608,7 @@ public class DirectionsApiManager extends Foundation {
         }
 
 
-        String link = genRouteLink(startLatitude, startLongitude, endLatitude, endLongitude, avoid , locale);
+        String link = genRouteLink(startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale);
 
         httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
