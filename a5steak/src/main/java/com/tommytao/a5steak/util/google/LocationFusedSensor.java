@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util.google;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -67,6 +68,10 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     private Location lastKnownLocation;
 
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
     public void disconnect() {
         getClient().disconnect();

@@ -71,6 +71,8 @@ public class LocationSensor extends Foundation implements LocationListener {
 	}
 
 
+
+
 	public final static String PROVIDER = LocationManager.NETWORK_PROVIDER;
 	public final static int DEFAULT_UPDATE_INTERVAL_IN_MS = 5 * 1000;
 

@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util.google;
 
+import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
@@ -36,15 +37,16 @@ public class TextSpeaker extends Foundation {
     // --
 
     public static interface OnSpeakListener {
+
         public void onStart();
 
         public void onComplete(boolean succeed);
+
     }
 
     public static interface OnConnectListener {
 
         public void onConnected(boolean succeed);
-
 
     }
 
@@ -69,6 +71,10 @@ public class TextSpeaker extends Foundation {
         return locale;
     }
 
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
     private boolean shouldUseCantonese() {
 

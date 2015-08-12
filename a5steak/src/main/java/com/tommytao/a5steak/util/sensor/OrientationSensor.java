@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util.sensor;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -29,6 +30,10 @@ public class OrientationSensor extends Foundation implements SensorEventListener
 
     // --
 
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
     @Override
     public void addOnReadingChangeListener(OnReadingChangeListener onReadingChangeListener) {

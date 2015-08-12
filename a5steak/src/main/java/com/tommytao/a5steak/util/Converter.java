@@ -33,6 +33,11 @@ public class Converter extends Foundation {
 
     private DateFormat ddMMyyyyDateFormat = null;
 
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
+
     public String timeInSecond2FriendlyStr(int timeInSecond, String minUnit, String secondUnit) {
 
         if (timeInSecond == -1)

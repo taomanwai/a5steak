@@ -68,7 +68,7 @@ public class GcmPusher extends Foundation {
 
 	private GoogleCloudMessaging gcm;
 
-	@Deprecated
+	@Override
 	public boolean init(Context appContext) {
 		return super.init(appContext);
 	}

@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util;
 
+import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -24,6 +25,11 @@ public class MusicManager extends Foundation {
     // --
 
     public static final String BLINK_MP3_LINK = "http://www.xamuel.com/blank-mp3-files/1sec.mp3";
+
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
 
     @Override

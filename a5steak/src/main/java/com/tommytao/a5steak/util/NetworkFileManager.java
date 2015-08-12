@@ -32,22 +32,6 @@ public class NetworkFileManager extends Foundation {
 
     // --
 
-//    @Override
-//    public boolean init(Context appContext) {
-//
-//        if (!super.init(appContext)) {
-//
-//            log("network_file_manager: " + "init REJECTED: already initialized");
-//
-//            return false;
-//
-//        }
-//
-//        log("network_file_manager: " + "init");
-//
-//        return true;
-//
-//    }
 
     @Deprecated
     public boolean init(Context appContext) {

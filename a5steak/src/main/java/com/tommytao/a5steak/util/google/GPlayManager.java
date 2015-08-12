@@ -2,6 +2,7 @@ package com.tommytao.a5steak.util.google;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
@@ -41,8 +42,12 @@ public class GPlayManager extends Foundation {
 	public static final String HTTP_PREFIX = "http://play.google.com/store/apps/details?id=";
 	
 	public final static int PLAY_SERVICES_UPDATE_REQUEST = 9000;
-	
-	
+
+	@Override
+	public boolean init(Context context) {
+		return super.init(context);
+	}
+
 	public boolean isGPlayExistAndUpToDate() {
 
 		return (GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SUCCESS);

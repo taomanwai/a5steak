@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util.sensor;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -29,6 +30,11 @@ public class PressureSensor extends Foundation implements SensorEventListener {
     }
 
     // --
+
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
 
     @Override

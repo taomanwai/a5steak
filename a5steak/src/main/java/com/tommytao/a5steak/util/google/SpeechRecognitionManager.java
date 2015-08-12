@@ -77,15 +77,7 @@ public class SpeechRecognitionManager extends Foundation {
 
     @Override
     public boolean init(Context appContext) {
-
-        if (!super.init(appContext)) {
-
-            return false;
-
-        }
-
-        return true;
-
+        return super.init(appContext);
     }
 
     private Intent genIntent(boolean isWebSearchOnly, Locale locale) {

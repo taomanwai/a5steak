@@ -24,6 +24,7 @@ public class Thinker {
 
 	// --
 
+
 	/**
 	 * Check if email valid
 	 *

@@ -4,103 +4,12 @@
 
 
 
-
-
-    <com.tommytao.a5steak.customview.ScrollBarListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:visibility="gone"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/tvMsg"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:visibility="invisible"/>
-
-    <Button
-        android:id="@+id/btnOne"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:visibility="invisible"/>
-
-    <Button
-        android:id="@+id/btnTwo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"/>
-
-    <Button
-        android:id="@+id/btnThree"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
-
-
-
-    <TextView
-        android:id="@+id/tvMiddle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="middle"/>
-
-    <View
-        android:id="@+id/topBar"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="#FF0000"/>
-
-    <View
-        android:id="@+id/rightBar"
-        android:layout_width="30dp"
-        android:layout_height="match_parent"
-        android:background="#00FF00"
-        android:layout_alignParentRight="true"/>
-
-
-    <View
-        android:id="@+id/bottomBar"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_alignParentBottom="true"
-        android:background="#FF0000"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:visibility="visible">
-
-        <FrameLayout
-            android:id="@+id/flFrag"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-
-    </RelativeLayout>
-
-
-
-    <TextView
-        android:id="@+id/tvWhole"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:text="Ready"/>
-
     <FrameLayout
         android:id="@+id/flMap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+
 
 
 

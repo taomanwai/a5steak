@@ -31,6 +31,11 @@ public class PhoneManager extends Foundation {
 
     // --
 
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
+
     /**
      * Get SIM card phone number (may not work)
      * <p/>

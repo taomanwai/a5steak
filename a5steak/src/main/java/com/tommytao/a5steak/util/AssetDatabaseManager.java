@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -37,6 +38,10 @@ public class AssetDatabaseManager extends Foundation {
 
     private HashMap<String, SQLiteDatabase> hashMapSqliteDatabase = new HashMap<>();
 
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
     private SQLiteDatabase getDatabase(String databaseName) {
 

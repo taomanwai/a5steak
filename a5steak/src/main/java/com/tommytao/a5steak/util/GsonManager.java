@@ -32,12 +32,10 @@ public class GsonManager {
 	}
 
 	private GsonManager() {
-
+		// do nothing
 	}
 
 	// --
-
-   
 	
 	public static class LocationSerializer implements JsonSerializer<Location> {
 

@@ -49,10 +49,9 @@ public class SmsMonitor extends Foundation {
 		if (!super.init(context))
 			return false;
 		
-		log( "sms_monitor: init");
+		log("sms_monitor: init");
 
 		return true;
-
 		
 	}
 	

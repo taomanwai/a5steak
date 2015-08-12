@@ -2,6 +2,7 @@ package com.tommytao.a5steak.util.google;
 
 import android.app.IntentService;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -99,6 +100,11 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
     private DetectedActivity lastKnownDetectedActivity;
 
     private ArrayList<OnConnectListener> onConnectListenerList = new ArrayList<>();
+
+    @Override
+    public boolean init(Context context) {
+        return super.init(appContext);
+    }
 
     public boolean isConnecting() {
 

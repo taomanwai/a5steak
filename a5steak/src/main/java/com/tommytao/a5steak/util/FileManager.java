@@ -1,5 +1,7 @@
 package com.tommytao.a5steak.util;
 
+import android.content.Context;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -22,7 +24,10 @@ public class FileManager extends Foundation {
 
     // --
 
-
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
     @Override
     public boolean deleteFolder(File folder) {

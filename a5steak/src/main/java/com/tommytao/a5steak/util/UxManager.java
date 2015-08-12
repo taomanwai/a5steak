@@ -61,6 +61,11 @@ public class UxManager extends Foundation {
     public static int DEFAULT_ANIM_DURATION_IN_MS = 300;
     public static float DEFAULT_ALPHA_SEMI_TRANSPARENT = 0.7f;
 
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
+
     public static boolean setNumberPickerTextColor(NumberPicker numberPicker, int color) {
         final int count = numberPicker.getChildCount();
         for (int i = 0; i < count; i++) {

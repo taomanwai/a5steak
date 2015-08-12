@@ -27,6 +27,11 @@ public class AlarmSetter extends Foundation {
 
     // --
 
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
+
 
     protected AlarmManager am;
 

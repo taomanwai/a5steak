@@ -1,5 +1,7 @@
 package com.tommytao.a5steak.util;
 
+import android.content.Context;
+
 /**
  * Responsible for getting gravity field reading
  *
@@ -21,6 +23,11 @@ public class BluetoothConnector extends Foundation  {
     }
 
     // --
+
+    @Override
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
 
 
