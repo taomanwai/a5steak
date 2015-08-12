@@ -1,5 +1,7 @@
 package com.tommytao.a5steak.util.sensor.support;
 
+import android.content.Context;
+
 import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
@@ -24,7 +26,10 @@ public class DataProcessor extends Foundation {
 
     public static final double DEFAULT_STRENGTH_OF_LPF = 0.9f;
 
-
+    @Deprecated
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
     /**
      *
@@ -43,9 +48,7 @@ public class DataProcessor extends Foundation {
      */
     @Override
     public void lowPassFilter(ArrayList<Double> lowPassHistoryList, int maxHistorySize, double latestValue, double strength) {
-
         super.lowPassFilter(lowPassHistoryList, maxHistorySize, latestValue, strength);
-
     }
 
     /**

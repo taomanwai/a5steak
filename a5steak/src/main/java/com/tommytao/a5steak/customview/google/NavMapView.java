@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
+import com.tommytao.a5steak.util.google.DirectionsApiManager;
 
 /**
  * Created by tommytao on 12/8/15.
@@ -33,8 +34,7 @@ public class NavMapView extends MapView {
 
     private void init(){
 
-//        getMap().setMyLocationEnabled(true);
-//        getMap().getUiSettings().setMyLocationButtonEnabled(true);
+        DirectionsApiManager.getInstance().init()
 
     }
 
