@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.widget.Toast;
 
 import com.tommytao.a5steak.util.Foundation;
@@ -408,7 +410,7 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
-    private void response2Route(JSONObject responseJObj, OnRouteListener listener) {
+    private void response2Route(JSONObject responseJObj, final OnRouteListener listener) {
 
         if (listener == null)
             return;
@@ -418,166 +420,360 @@ public class DirectionsApiManager extends Foundation {
             return;
         }
 
-        String overviewPolylinePoints = "";
-        ArrayList<Step> steps = new ArrayList<>();
+        // == run in bg ==
 
-        boolean hasException = false;
-        try {
+        new AsyncTask<JSONObject, Void, Pair<ArrayList<Step>, Polyline>>() {
 
-            String status = "";
-            Step step = null;
-            int distanceInMeter = -1;
-            String distanceInText = "";
-            int durationInMs = -1;
-            String durationInText = "";
-            double startLatitude = Double.NaN;
-            double startLongitude = Double.NaN;
-            double endLatitude = Double.NaN;
-            double endLongitude = Double.NaN;
-            String encodedPolyline = "";
-            String instructionsInHtml = "";
-            int maneuver = Step.MANEUVER_NONE;
-            String maneuverStr = "";
-            String travelMode = "";
-            JSONObject stepJObj = null;
+            @Override
+            protected Pair<ArrayList<Step>, Polyline> doInBackground(JSONObject... responsesJObj) {
 
-            status = responseJObj.getString("status");
-
-            if (!"OK".equals(status)) {
-                listener.returnSteps(new ArrayList<Step>(), null);
-                return;
-            }
-
-            JSONArray routesJArray = responseJObj.getJSONArray("routes");
-            JSONArray legsJArray = routesJArray.getJSONObject(0).getJSONArray("legs");
-            JSONArray stepsJArray = legsJArray.getJSONObject(0).getJSONArray("steps");
-            overviewPolylinePoints = routesJArray.getJSONObject(0).getJSONObject("overview_polyline").getString("points");
-
-
-            for (int i = 0; i < stepsJArray.length(); i++) {
-
-                stepJObj = stepsJArray.getJSONObject(i);
-                distanceInMeter = stepJObj.getJSONObject("distance").getInt("value");
-                distanceInText = stepJObj.getJSONObject("distance").getString("text");
-                durationInMs = stepJObj.getJSONObject("duration").getInt("value") * 1000;
-                durationInText = stepJObj.getJSONObject("duration").getString("text");
-
-                startLatitude = stepJObj.getJSONObject("start_location").getDouble("lat");
-                startLongitude = stepJObj.getJSONObject("start_location").getDouble("lng");
-                endLatitude = stepJObj.getJSONObject("end_location").getDouble("lat");
-                endLongitude = stepJObj.getJSONObject("end_location").getDouble("lng");
-
-                encodedPolyline = stepJObj.getJSONObject("polyline").getString("points");
-                instructionsInHtml = stepJObj.getString("html_instructions");
-
-                maneuverStr = stepJObj.optString("maneuver", "");
-                switch (maneuverStr) {
-                    case "turn-sharp-left":
-                        maneuver = Step.MANEUVER_TURN_SHARP_LEFT;
-                        break;
-
-                    case "uturn-right":
-                        maneuver = Step.MANEUVER_UTURN_RIGHT;
-                        break;
-
-                    case "turn-slight-right":
-                        maneuver = Step.MANEUVER_TURN_SLIGHT_RIGHT;
-                        break;
-
-                    case "merge":
-                        maneuver = Step.MANEUVER_MERGE;
-                        break;
-
-                    case "roundabout-left":
-                        maneuver = Step.MANEUVER_ROUNDABOUT_LEFT;
-                        break;
-
-                    case "roundabout-right":
-                        maneuver = Step.MANEUVER_ROUNDABOUT_RIGHT;
-                        break;
-
-                    case "uturn-left":
-                        maneuver = Step.MANEUVER_UTURN_LEFT;
-                        break;
-
-                    case "turn-slight-left":
-                        maneuver = Step.MANEUVER_TURN_SLIGHT_LEFT;
-                        break;
-
-                    case "turn-left":
-                        maneuver = Step.MANEUVER_TURN_LEFT;
-                        break;
-
-                    case "ramp-right":
-                        maneuver = Step.MANEUVER_RAMP_RIGHT;
-                        break;
-
-                    case "turn-right":
-                        maneuver = Step.MANEUVER_TURN_RIGHT;
-                        break;
-
-                    case "fork-right":
-                        maneuver = Step.MANEUVER_FORK_RIGHT;
-                        break;
-
-                    case "straight":
-                        maneuver = Step.MANEUVER_STRAIGHT;
-                        break;
-
-                    case "fork-left":
-                        maneuver = Step.MANEUVER_FORK_LEFT;
-                        break;
-
-
-                    case "ferry-train":
-                        maneuver = Step.MANEUVER_FERRY_TRAIN;
-                        break;
-
-                    case "turn-sharp-right":
-                        maneuver = Step.MANEUVER_TURN_SHARP_RIGHT;
-                        break;
-
-                    case "ramp-left":
-                        maneuver = Step.MANEUVER_RAMP_LEFT;
-                        break;
-
-                    case "ferry":
-                        maneuver = Step.MANEUVER_FERRY;
-                        break;
-
-                    case "keep-left":
-                        maneuver = Step.MANEUVER_KEEP_LEFT;
-                        break;
-
-                    case "keep-right":
-                        maneuver = Step.MANEUVER_KEEP_RIGHT;
-                        break;
-
-
-                    default:
-                        maneuver = Step.MANEUVER_NONE;
-                        break;
+                if (responsesJObj.length != 1) {
+                    return null;
                 }
 
-                travelMode = stepJObj.getString("travel_mode");
+                JSONObject responseJObj = responsesJObj[0];
 
-                step = new Step(distanceInMeter, distanceInText, durationInMs, durationInText,
-                        startLatitude, startLongitude, endLatitude, endLongitude,
-                        encodedPolyline, instructionsInHtml,
-                        maneuver, travelMode);
+                String overviewPolylinePoints = "";
+                ArrayList<Step> steps = new ArrayList<>();
 
-                steps.add(step);
+                boolean hasException = false;
+                try {
+
+                    String status = "";
+                    Step step = null;
+                    int distanceInMeter = -1;
+                    String distanceInText = "";
+                    int durationInMs = -1;
+                    String durationInText = "";
+                    double startLatitude = Double.NaN;
+                    double startLongitude = Double.NaN;
+                    double endLatitude = Double.NaN;
+                    double endLongitude = Double.NaN;
+                    String encodedPolyline = "";
+                    String instructionsInHtml = "";
+                    int maneuver = Step.MANEUVER_NONE;
+                    String maneuverStr = "";
+                    String travelMode = "";
+                    JSONObject stepJObj = null;
+
+                    status = responseJObj.getString("status");
+
+                    if (!"OK".equals(status)) {
+                        return null;
+                    }
+
+                    JSONArray routesJArray = responseJObj.getJSONArray("routes");
+                    JSONArray legsJArray = routesJArray.getJSONObject(0).getJSONArray("legs");
+                    JSONArray stepsJArray = legsJArray.getJSONObject(0).getJSONArray("steps");
+                    overviewPolylinePoints = routesJArray.getJSONObject(0).getJSONObject("overview_polyline").getString("points");
+
+
+                    for (int i = 0; i < stepsJArray.length(); i++) {
+
+                        stepJObj = stepsJArray.getJSONObject(i);
+                        distanceInMeter = stepJObj.getJSONObject("distance").getInt("value");
+                        distanceInText = stepJObj.getJSONObject("distance").getString("text");
+                        durationInMs = stepJObj.getJSONObject("duration").getInt("value") * 1000;
+                        durationInText = stepJObj.getJSONObject("duration").getString("text");
+
+                        startLatitude = stepJObj.getJSONObject("start_location").getDouble("lat");
+                        startLongitude = stepJObj.getJSONObject("start_location").getDouble("lng");
+                        endLatitude = stepJObj.getJSONObject("end_location").getDouble("lat");
+                        endLongitude = stepJObj.getJSONObject("end_location").getDouble("lng");
+
+                        encodedPolyline = stepJObj.getJSONObject("polyline").getString("points");
+                        instructionsInHtml = stepJObj.getString("html_instructions");
+
+                        maneuverStr = stepJObj.optString("maneuver", "");
+                        switch (maneuverStr) {
+                            case "turn-sharp-left":
+                                maneuver = Step.MANEUVER_TURN_SHARP_LEFT;
+                                break;
+
+                            case "uturn-right":
+                                maneuver = Step.MANEUVER_UTURN_RIGHT;
+                                break;
+
+                            case "turn-slight-right":
+                                maneuver = Step.MANEUVER_TURN_SLIGHT_RIGHT;
+                                break;
+
+                            case "merge":
+                                maneuver = Step.MANEUVER_MERGE;
+                                break;
+
+                            case "roundabout-left":
+                                maneuver = Step.MANEUVER_ROUNDABOUT_LEFT;
+                                break;
+
+                            case "roundabout-right":
+                                maneuver = Step.MANEUVER_ROUNDABOUT_RIGHT;
+                                break;
+
+                            case "uturn-left":
+                                maneuver = Step.MANEUVER_UTURN_LEFT;
+                                break;
+
+                            case "turn-slight-left":
+                                maneuver = Step.MANEUVER_TURN_SLIGHT_LEFT;
+                                break;
+
+                            case "turn-left":
+                                maneuver = Step.MANEUVER_TURN_LEFT;
+                                break;
+
+                            case "ramp-right":
+                                maneuver = Step.MANEUVER_RAMP_RIGHT;
+                                break;
+
+                            case "turn-right":
+                                maneuver = Step.MANEUVER_TURN_RIGHT;
+                                break;
+
+                            case "fork-right":
+                                maneuver = Step.MANEUVER_FORK_RIGHT;
+                                break;
+
+                            case "straight":
+                                maneuver = Step.MANEUVER_STRAIGHT;
+                                break;
+
+                            case "fork-left":
+                                maneuver = Step.MANEUVER_FORK_LEFT;
+                                break;
+
+
+                            case "ferry-train":
+                                maneuver = Step.MANEUVER_FERRY_TRAIN;
+                                break;
+
+                            case "turn-sharp-right":
+                                maneuver = Step.MANEUVER_TURN_SHARP_RIGHT;
+                                break;
+
+                            case "ramp-left":
+                                maneuver = Step.MANEUVER_RAMP_LEFT;
+                                break;
+
+                            case "ferry":
+                                maneuver = Step.MANEUVER_FERRY;
+                                break;
+
+                            case "keep-left":
+                                maneuver = Step.MANEUVER_KEEP_LEFT;
+                                break;
+
+                            case "keep-right":
+                                maneuver = Step.MANEUVER_KEEP_RIGHT;
+                                break;
+
+
+                            default:
+                                maneuver = Step.MANEUVER_NONE;
+                                break;
+                        }
+
+                        travelMode = stepJObj.getString("travel_mode");
+
+                        step = new Step(distanceInMeter, distanceInText, durationInMs, durationInText,
+                                startLatitude, startLongitude, endLatitude, endLongitude,
+                                encodedPolyline, instructionsInHtml,
+                                maneuver, travelMode);
+
+                        steps.add(step);
+
+                    }
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+                    hasException = true;
+
+                }
+
+                Pair<ArrayList<Step>, Polyline> result =
+                        new Pair<ArrayList<Step>, Polyline>(hasException ? new ArrayList<Step>() : steps, new Polyline(overviewPolylinePoints) );
+
+                return result;
 
             }
 
-        } catch (Exception e) {
+            @Override
+            protected void onPostExecute(Pair<ArrayList<Step>, Polyline> result) {
 
-            e.printStackTrace();
-            hasException = true;
+                if (result == null) {
+                    listener.returnSteps(new ArrayList<Step>(), null);
+                    return;
+                }
 
-        }
+                listener.returnSteps(result.first, result.second);
+            }
 
-        listener.returnSteps(hasException ? new ArrayList<Step>() : steps, new Polyline(overviewPolylinePoints));
+        }.execute(responseJObj);
+
+        // == End of run in bg ==
+
+
+//        String overviewPolylinePoints = "";
+//        ArrayList<Step> steps = new ArrayList<>();
+//
+//        boolean hasException = false;
+//        try {
+//
+//            String status = "";
+//            Step step = null;
+//            int distanceInMeter = -1;
+//            String distanceInText = "";
+//            int durationInMs = -1;
+//            String durationInText = "";
+//            double startLatitude = Double.NaN;
+//            double startLongitude = Double.NaN;
+//            double endLatitude = Double.NaN;
+//            double endLongitude = Double.NaN;
+//            String encodedPolyline = "";
+//            String instructionsInHtml = "";
+//            int maneuver = Step.MANEUVER_NONE;
+//            String maneuverStr = "";
+//            String travelMode = "";
+//            JSONObject stepJObj = null;
+//
+//            status = responseJObj.getString("status");
+//
+//            if (!"OK".equals(status)) {
+//                listener.returnSteps(new ArrayList<Step>(), null);
+//                return;
+//            }
+//
+//            JSONArray routesJArray = responseJObj.getJSONArray("routes");
+//            JSONArray legsJArray = routesJArray.getJSONObject(0).getJSONArray("legs");
+//            JSONArray stepsJArray = legsJArray.getJSONObject(0).getJSONArray("steps");
+//            overviewPolylinePoints = routesJArray.getJSONObject(0).getJSONObject("overview_polyline").getString("points");
+//
+//
+//            for (int i = 0; i < stepsJArray.length(); i++) {
+//
+//                stepJObj = stepsJArray.getJSONObject(i);
+//                distanceInMeter = stepJObj.getJSONObject("distance").getInt("value");
+//                distanceInText = stepJObj.getJSONObject("distance").getString("text");
+//                durationInMs = stepJObj.getJSONObject("duration").getInt("value") * 1000;
+//                durationInText = stepJObj.getJSONObject("duration").getString("text");
+//
+//                startLatitude = stepJObj.getJSONObject("start_location").getDouble("lat");
+//                startLongitude = stepJObj.getJSONObject("start_location").getDouble("lng");
+//                endLatitude = stepJObj.getJSONObject("end_location").getDouble("lat");
+//                endLongitude = stepJObj.getJSONObject("end_location").getDouble("lng");
+//
+//                encodedPolyline = stepJObj.getJSONObject("polyline").getString("points");
+//                instructionsInHtml = stepJObj.getString("html_instructions");
+//
+//                maneuverStr = stepJObj.optString("maneuver", "");
+//                switch (maneuverStr) {
+//                    case "turn-sharp-left":
+//                        maneuver = Step.MANEUVER_TURN_SHARP_LEFT;
+//                        break;
+//
+//                    case "uturn-right":
+//                        maneuver = Step.MANEUVER_UTURN_RIGHT;
+//                        break;
+//
+//                    case "turn-slight-right":
+//                        maneuver = Step.MANEUVER_TURN_SLIGHT_RIGHT;
+//                        break;
+//
+//                    case "merge":
+//                        maneuver = Step.MANEUVER_MERGE;
+//                        break;
+//
+//                    case "roundabout-left":
+//                        maneuver = Step.MANEUVER_ROUNDABOUT_LEFT;
+//                        break;
+//
+//                    case "roundabout-right":
+//                        maneuver = Step.MANEUVER_ROUNDABOUT_RIGHT;
+//                        break;
+//
+//                    case "uturn-left":
+//                        maneuver = Step.MANEUVER_UTURN_LEFT;
+//                        break;
+//
+//                    case "turn-slight-left":
+//                        maneuver = Step.MANEUVER_TURN_SLIGHT_LEFT;
+//                        break;
+//
+//                    case "turn-left":
+//                        maneuver = Step.MANEUVER_TURN_LEFT;
+//                        break;
+//
+//                    case "ramp-right":
+//                        maneuver = Step.MANEUVER_RAMP_RIGHT;
+//                        break;
+//
+//                    case "turn-right":
+//                        maneuver = Step.MANEUVER_TURN_RIGHT;
+//                        break;
+//
+//                    case "fork-right":
+//                        maneuver = Step.MANEUVER_FORK_RIGHT;
+//                        break;
+//
+//                    case "straight":
+//                        maneuver = Step.MANEUVER_STRAIGHT;
+//                        break;
+//
+//                    case "fork-left":
+//                        maneuver = Step.MANEUVER_FORK_LEFT;
+//                        break;
+//
+//
+//                    case "ferry-train":
+//                        maneuver = Step.MANEUVER_FERRY_TRAIN;
+//                        break;
+//
+//                    case "turn-sharp-right":
+//                        maneuver = Step.MANEUVER_TURN_SHARP_RIGHT;
+//                        break;
+//
+//                    case "ramp-left":
+//                        maneuver = Step.MANEUVER_RAMP_LEFT;
+//                        break;
+//
+//                    case "ferry":
+//                        maneuver = Step.MANEUVER_FERRY;
+//                        break;
+//
+//                    case "keep-left":
+//                        maneuver = Step.MANEUVER_KEEP_LEFT;
+//                        break;
+//
+//                    case "keep-right":
+//                        maneuver = Step.MANEUVER_KEEP_RIGHT;
+//                        break;
+//
+//
+//                    default:
+//                        maneuver = Step.MANEUVER_NONE;
+//                        break;
+//                }
+//
+//                travelMode = stepJObj.getString("travel_mode");
+//
+//                step = new Step(distanceInMeter, distanceInText, durationInMs, durationInText,
+//                        startLatitude, startLongitude, endLatitude, endLongitude,
+//                        encodedPolyline, instructionsInHtml,
+//                        maneuver, travelMode);
+//
+//                steps.add(step);
+//
+//            }
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//            hasException = true;
+//
+//        }
+//
+//        listener.returnSteps(hasException ? new ArrayList<Step>() : steps, new Polyline(overviewPolylinePoints));
 
     }
 
