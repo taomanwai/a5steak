@@ -12,11 +12,9 @@ import java.util.Locale;
 
 
 /**
- *
  * Responsible for speak text
- *
+ * <p/>
  * Note: Cantonese speaking may not work coz Google blocks robot access sometimes. Still fixing ...
- *
  */
 public class TextSpeaker extends Foundation {
 
@@ -93,18 +91,16 @@ public class TextSpeaker extends Foundation {
 
         if (isConnecting()) {
 
-            if (onConnectListener != null)
-                onConnectListeners.add(onConnectListener);
+            onConnectListeners.add(onConnectListener);
 
             return;
         }
 
-        if (isConnected()){
+        if (isConnected()) {
             disconnect();
         }
 
-        if (onConnectListener != null)
-            onConnectListeners.add(onConnectListener);
+        onConnectListeners.add(onConnectListener);
 
         tts = new TextToSpeech(appContext, new TextToSpeech.OnInitListener() {
             @Override
@@ -150,8 +146,10 @@ public class TextSpeaker extends Foundation {
 
         onConnectListeners.clear();
 
-        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners)
-            pendingOnConnectListener.onConnected(succeed);
+        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
+            if (pendingOnConnectListener != null)
+                pendingOnConnectListener.onConnected(succeed);
+        }
 
     }
 

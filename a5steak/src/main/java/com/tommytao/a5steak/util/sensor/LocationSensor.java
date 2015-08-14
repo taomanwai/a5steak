@@ -140,10 +140,9 @@ public class LocationSensor extends Foundation implements LocationListener {
 		return updateIntervalInMs;
 	}
 
+	@Override
 	public float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2){
-
 		return super.calculateDistanceInMeter(lat1, lng1, lat2, lng2);
-
     }
 
 	@Override
@@ -156,7 +155,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 		Location location = getLocationManager().getLastKnownLocation(PROVIDER);
 
 		if (location == null)
-			return -1;
+			return Float.NaN;
 
         return calculateDistanceInMeter(location.getLatitude(), location.getLongitude(), lat, lng);
 
@@ -167,7 +166,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 		activity.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 	}
 
-	private void triggerListener(final OnConnectListener onConnectListener, final boolean isConnected) {
+	private void triggerListener(final OnConnectListener onConnectListener, final boolean connected) {
 
 		if (onConnectListener == null)
 			return;
@@ -178,7 +177,7 @@ public class LocationSensor extends Foundation implements LocationListener {
 			@Override
 			public void run() {
 
-				onConnectListener.onConnect(isConnected);
+				onConnectListener.onConnect(connected);
 
 
 			}
@@ -277,21 +276,29 @@ public class LocationSensor extends Foundation implements LocationListener {
 		return this.connected;
 	}
 
+	@Override
 	public long lat2LatE6(double latitude) {
 		return super.lat2LatE6(latitude);
-
 	}
 
+	@Override
 	public double latE62Lat(long latitudeE6) {
 		return super.latE62Lat(latitudeE6);
 	}
 
+	@Override
 	public long lng2LngE6(double longitude) {
 		return super.lat2LatE6(longitude);
 	}
 
+	@Override
 	public double lngE62Lng(long longitudeE6) {
 		return super.latE62Lat(longitudeE6);
+	}
+
+	@Override
+	public Location latLngToLocation(double latitude, double longitude){
+		return super.latLngToLocation(latitude, longitude);
 	}
 
 

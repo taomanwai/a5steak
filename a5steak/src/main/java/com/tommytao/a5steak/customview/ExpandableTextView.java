@@ -173,8 +173,6 @@ public class ExpandableTextView extends TextView {
 
         if (initHeight <= (collapsedLineCount * getLineHeight())){
 
-//            triggerExpandStateChangedListenerOnUiThread(false, DEFAULT_ANIM_DURATION_IN_MS);
-
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

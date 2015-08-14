@@ -77,24 +77,30 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         getClient().disconnect();
     }
 
-    public float distanceFromLastKnownLatLng(double latitude, double longitude) {
+    @Override
+    public float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2){
+        return super.calculateDistanceInMeter(lat1, lng1, lat2, lng2);
+    }
+
+    public float distanceFromLastKnownLatLng(double lat, double lng) {
 
         Location location = this.getLastKnownLocation();
 
         if (location == null)
             return Float.NaN;
 
-        float[] distance = new float[3];
-        Location.distanceBetween(location.getLatitude(), location.getLongitude(), latitude, longitude, distance);
+//        float[] distance = new float[3];
+//        Location.distanceBetween(location.getLatitude(), location.getLongitude(), latitude, longitude, distance);
+//
+//        return distance[0];
 
-        return distance[0];
+        return calculateDistanceInMeter(location.getLatitude(), location.getLongitude(), lat, lng);
 
     }
 
     public void connect(OnConnectListener onConnectListener) {
 
-        if (onConnectListener != null)
-            onConnectListeners.add(onConnectListener);
+        onConnectListeners.add(onConnectListener);
 
         lastKnownLocation = null;
 
@@ -183,11 +189,13 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
         onConnectListeners.clear();
 
-        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners)
-            pendingOnConnectListener.onConnected(succeed);
+        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
+            if (pendingOnConnectListener != null)
+                pendingOnConnectListener.onConnected(succeed);
+        }
     }
 
-    private void startDetectingLocation(int priority, int intervalInMs, int fastestIntervalInMs){
+    private void startDetectingLocation(int priority, int intervalInMs, int fastestIntervalInMs) {
 
         if (!isConnected())
             return;
@@ -199,6 +207,10 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
                         .setFastestInterval(fastestIntervalInMs), this);
     }
 
+    public Location latLngToLocation(double latitude, double longitude) {
+        return super.latLngToLocation(latitude, longitude);
+    }
+
     @Override
     public void onConnected(Bundle arg0) {
 
@@ -206,7 +218,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
         triggerAndClearListeners(true);
     }
-
 
 
     @Override

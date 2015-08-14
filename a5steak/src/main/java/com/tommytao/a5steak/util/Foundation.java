@@ -1537,7 +1537,7 @@ public class Foundation {
 
     }
 
-    public Location latLngToLocation(double latitude, double longitude) {
+    protected Location latLngToLocation(double latitude, double longitude) {
         Location result = new Location("");
 
         result.setLatitude(latitude);

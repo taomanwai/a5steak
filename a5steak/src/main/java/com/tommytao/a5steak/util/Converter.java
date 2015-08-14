@@ -1,7 +1,6 @@
 package com.tommytao.a5steak.util;
 
 import android.content.Context;
-import android.location.Location;
 import android.util.DisplayMetrics;
 
 import java.text.DateFormat;
@@ -178,9 +177,7 @@ public class Converter extends Foundation {
 
     }
 
-    public Location latLngToLocation(double latitude, double longitude){
-        return super.latLngToLocation(latitude, longitude);
-    }
+
 
 
     public byte[] hexStrToByteArray(String input) {

@@ -24,7 +24,6 @@ import java.util.ArrayList;
  * 3. Reading may have few seconds delay
  * 4. Reading may stick to old values for long time
  * 5. Network is required, it may consume significant amount of battery
- *
  */
 public class ActivityGApiSensor extends Foundation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -122,14 +121,13 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
 
         if (isConnecting()) {
 
-            if (onConnectListener != null)
-                onConnectListenerList.add(onConnectListener);
+            onConnectListenerList.add(onConnectListener);
 
             return;
         }
 
-        if (onConnectListener != null)
-            onConnectListenerList.add(onConnectListener);
+
+        onConnectListenerList.add(onConnectListener);
 
         lastKnownDetectedActivity = null;
         getApiClient().connect();
@@ -159,7 +157,6 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
         onConnectListenerList.clear();
 
         for (OnConnectListener pendingOnConnectListener : pendingOnConnectListenerList) {
-
             if (pendingOnConnectListener != null)
                 pendingOnConnectListener.onConnected(succeed);
         }
@@ -181,7 +178,6 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
         connected = true;
 
         clearAndTriggerOnConnectListenerList(true);
-
 
 
     }

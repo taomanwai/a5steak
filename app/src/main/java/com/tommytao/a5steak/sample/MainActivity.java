@@ -2,7 +2,6 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.tommytao.a5steak.customview.google.GMapAdapter;
@@ -21,8 +20,6 @@ public class MainActivity extends Activity {
     @Bind(R.id.flMap)
     FrameLayout flMap;
 
-    @Bind(R.id.btnGo)
-    Button btnGo;
 
 
     private NavMapView navMapView;
@@ -54,7 +51,7 @@ public class MainActivity extends Activity {
 
 
 
-        navMapView.connectNavigation(null);
+
 
 
     }
@@ -64,8 +61,12 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go(){
 
-        navMapView.startNavigation(22.339662, 114.154811, new Locale("zh", "HK"), null);
-
+        navMapView.connectNavigation(new NavMapView.OnConnectListener() {
+            @Override
+            public void onConnected(boolean succeed) {
+                navMapView.startNavigation(22.339662, 114.154811, new Locale("zh", "HK"), null);
+            }
+        });
 
 
 
@@ -74,9 +75,20 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnStop)
     public void stop(){
 
-        navMapView.stopNavigation(null);
+        navMapView.disconnectNavigation();
 
     }
+
+    @OnClick(R.id.btnResume)
+    public void resume(){
+        navMapView.resumeNavigation(null);
+    }
+
+    @OnClick(R.id.btnPause)
+    public void pause(){
+        navMapView.pauseNavigation();
+    }
+
 
     @Override
     protected void onResume() {

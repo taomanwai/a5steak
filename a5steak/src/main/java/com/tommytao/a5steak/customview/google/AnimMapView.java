@@ -259,8 +259,8 @@ public class AnimMapView extends MapView {
             return false;
 
         int lastIndex = steps.size() - 1;
-        Location startLocation = MathManager.getInstance().latLngToLocation(steps.get(0).getStartLocation().getLatitude(), steps.get(0).getStartLocation().getLongitude());
-        Location endLocation = MathManager.getInstance().latLngToLocation(steps.get(lastIndex).getEndLocation().getLatitude(), steps.get(lastIndex).getEndLocation().getLongitude());
+        Location startLocation = LocationSensor.getInstance().latLngToLocation(steps.get(0).getStartLocation().getLatitude(), steps.get(0).getStartLocation().getLongitude());
+        Location endLocation = LocationSensor.getInstance().latLngToLocation(steps.get(lastIndex).getEndLocation().getLatitude(), steps.get(lastIndex).getEndLocation().getLongitude());
 
         int routeDistance = 0;
         for (DirectionsApiManager.Step step : steps) {
@@ -356,7 +356,7 @@ public class AnimMapView extends MapView {
         final AnimMarker animMarker = hashMapAnimMarker.get(id);
 
         final Location startLocation = animMarker.getLocation();
-        final Location endLocation = Converter.getInstance().latLngToLocation(latitude, longitude);
+        final Location endLocation = LocationSensor.getInstance().latLngToLocation(latitude, longitude);
 
         final float targetRotation = LocationSensor.getInstance().calculateBearingInDegree(startLocation.getLatitude(), startLocation.getLongitude(), endLocation.getLatitude(), endLocation.getLongitude());
         int rotationTime = getDurationTurnToPathInMs(durationInMs, animMarker.getRotation(), targetRotation);

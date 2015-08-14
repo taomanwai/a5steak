@@ -590,9 +590,6 @@ public class DirectionsApiManager extends Foundation {
 
     public void route(final double startLatitude, final double startLongitude, final double endLatitude, final double endLongitude, final String avoid, final Locale locale, final OnRouteListener listener) {
 
-//        if (listener == null)
-//            return;
-
         final JSONObject cachedRouteResponse = loadRouteResponseFromPrefs(startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale);
 
         if (cachedRouteResponse != null) {
