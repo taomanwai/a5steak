@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.util.google;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -39,7 +40,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     }
 
     private LocationFusedSensor() {
-        // do nothing
     }
 
 
@@ -62,7 +62,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     private final long INVALID_LAT_E6_EXAMPLE = 999999999;
     private final long INVALID_LNG_E6_EXAMPLE = 999999999;
 
-    private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<OnConnectListener>();
+    private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
 
     private GoogleApiClient client;
 
@@ -88,11 +88,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
         if (location == null)
             return Float.NaN;
-
-//        float[] distance = new float[3];
-//        Location.distanceBetween(location.getLatitude(), location.getLongitude(), latitude, longitude, distance);
-//
-//        return distance[0];
 
         return calculateDistanceInMeter(location.getLatitude(), location.getLongitude(), lat, lng);
 
@@ -181,6 +176,11 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
         triggerAndClearListeners(false);
 
+    }
+
+    @Override
+    public void goToLocationSourceSettings(Activity activity) {
+        super.goToLocationSourceSettings(activity);
     }
 
     private void triggerAndClearListeners(boolean succeed) {

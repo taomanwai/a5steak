@@ -2,7 +2,6 @@ package com.tommytao.a5steak.util.sensor;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.location.LocationListener;
@@ -161,9 +160,9 @@ public class LocationSensor extends Foundation implements LocationListener {
 
 	}
 
+	@Override
 	public void goToLocationSourceSettings(Activity activity) {
-
-		activity.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+		super.goToLocationSourceSettings(activity);
 	}
 
 	private void triggerListener(final OnConnectListener onConnectListener, final boolean connected) {

@@ -1,7 +1,9 @@
 package com.tommytao.a5steak.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -975,6 +977,11 @@ public class Foundation {
     }
 
     // === Location sensor ===
+
+    protected void goToLocationSourceSettings(Activity activity) {
+        activity.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+    }
+
     protected float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2) {
 
         float[] distance = new float[3];
