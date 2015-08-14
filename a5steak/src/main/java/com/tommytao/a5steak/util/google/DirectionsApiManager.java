@@ -270,12 +270,13 @@ public class DirectionsApiManager extends Foundation {
         private Location endLocation;
 
         private Polyline polyline;
-        private ArrayList<Location> polylineLocations = new ArrayList<>();
 
         private String instructionsInHtml = "";
         private int maneuver = MANEUVER_NONE;
 
         private String travelMode = "";
+
+        private boolean spoken;
 
         public Step(int distanceInMeter, String distanceInText, int durationInMs, String durationInText, double startLatitude, double startLongitude, double endLatitude, double endLongitude, String encodedPolyline, String instructionsInHtml, int maneuver, String travelMode) {
             this.distanceInMeter = distanceInMeter;
@@ -326,6 +327,14 @@ public class DirectionsApiManager extends Foundation {
 
         public String getTravelMode() {
             return travelMode;
+        }
+
+        public boolean isSpoken() {
+            return spoken;
+        }
+
+        public void setSpoken(boolean spoken) {
+            this.spoken = spoken;
         }
 
         public Polyline getPolyline() {
@@ -612,7 +621,6 @@ public class DirectionsApiManager extends Foundation {
         }.execute(responseJObj);
 
         // == End of run in bg ==
-
 
 //        String overviewPolylinePoints = "";
 //        ArrayList<Step> steps = new ArrayList<>();

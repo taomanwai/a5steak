@@ -2,10 +2,12 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.customview.google.NavMapView;
+import com.tommytao.a5steak.util.Converter;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 
 import java.util.Locale;
@@ -38,6 +40,8 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
+        Converter.getInstance().init(this);
+
         DirectionsApiManager.getInstance().init(this, CLIENT_ID_FOR_BUSINESS, CRYPTO_FOR_BUSINESS);
 
         navMapView = new NavMapView(this);
@@ -48,6 +52,11 @@ public class MainActivity extends Activity {
 
         mapAdapter.onCreate(savedInstanceState);
         mapAdapter.init(this, null);
+
+
+        String s = Converter.getInstance().htmlToText("朝<b>東</b>，走<b>青山道</b>，往<b>醫局西街</b>前進<div style=\"font-size:0.9em\">目的地將在左邊</div>");
+
+        Log.d(s, s);
 
 
 

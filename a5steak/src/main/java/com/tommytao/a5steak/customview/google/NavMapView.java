@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
+import com.tommytao.a5steak.util.google.TextSpeaker;
 import com.tommytao.a5steak.util.sensor.GSensor;
 import com.tommytao.a5steak.util.sensor.LocationSensor;
 import com.tommytao.a5steak.util.sensor.MagneticSensor;
@@ -66,6 +67,7 @@ public class NavMapView extends MapView {
 
         public static final int MAX_DERIVATION_ALLOWED_IN_METER = 30;
         public static final int MIN_ANGLE_FROM_ROUTE_FOR_FREE_ROTATION_IN_DEGREE = 45;
+        public static final int MAX_DISTANCE_BEFORE_SPEAK_IN_METER = 200;
         private DirectionsApiManager.Polyline polyline; // just for backup
         private ArrayList<DirectionsApiManager.Step> steps = new ArrayList<>();
         private Location currentRouteLocation;
@@ -171,6 +173,49 @@ public class NavMapView extends MapView {
             return currentRouteLocation.getBearing();
         }
 
+        public DirectionsApiManager.Step getCurrentRouteStep() {
+            DirectionsApiManager.Step result = null;
+
+            try {
+                result = getSteps().get(getCurrentRouteStepIndex());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        public boolean isCurrentRouteStepSpoken() {
+
+            boolean result = false;
+
+            try {
+                result = getCurrentRouteStep().isSpoken();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+
+            return result;
+        }
+
+        public void speakCurrentRouteStep(boolean withoutRepeat) {
+
+            DirectionsApiManager.Step step = getCurrentRouteStep();
+
+            if (step == null)
+                return;
+
+            if (step.isSpoken() && withoutRepeat)
+                return;
+
+            TextSpeaker.getInstance().setLocale(getLocale());
+            TextSpeaker.getInstance().speak(step.getInstructionsInHtml(), null);
+            step.setSpoken(true);
+
+        }
+
+
         public double getCurrentRouteDerivation() {
 
             if (currentRouteLocation == null || currentLocation == null)
@@ -269,6 +314,7 @@ public class NavMapView extends MapView {
             if (currentRouteStepIndex < 0 || currentRouteLocationIndex < 0)
                 return;
 
+            // TODO can further optimized (e.g. skip batch 2 when batch 1 is just started
             // Batch 1 scanning
             int batch1StepIndex = currentRouteStepIndex;
             int batch1StartIndex = currentRouteLocationIndex;
@@ -462,7 +508,7 @@ public class NavMapView extends MapView {
         // TODO MVP try catch
         try {
             route.setPrepareToBeReplaced(false);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -494,6 +540,11 @@ public class NavMapView extends MapView {
                     return;
                 }
 
+
+                if (route.getCurrentRouteDistanceFromEndOfStep() < Route.MAX_DISTANCE_BEFORE_SPEAK_IN_METER){
+                    route.speakCurrentRouteStep(true);
+                }
+
                 if (!route.isCurrentlyPassing() && !route.isPrepareToBeReplaced()) {
 
                     route.setPrepareToBeReplaced(true);
@@ -505,7 +556,7 @@ public class NavMapView extends MapView {
                                 @Override
                                 public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale) {
 
-                                    if (route==null)
+                                    if (route == null)
                                         return;
 
                                     if (!route.isPrepareToBeReplaced())
@@ -593,16 +644,48 @@ public class NavMapView extends MapView {
         GSensor.getInstance().init(getContext());
         MagneticSensor.getInstance().init(getContext());
         OrientationAnalyzer.getInstance().init(getContext());
+        TextSpeaker.getInstance().init(getContext());
 
         GSensor.getInstance().connect();
         MagneticSensor.getInstance().connect();
+
+        final ArrayList<Integer> numOfConnections = new ArrayList<>();
+        numOfConnections.add(0);
+        numOfConnections.add(1);
         LocationSensor.getInstance().connect(LocationSensor.DEFAULT_UPDATE_INTERVAL_IN_MS, new LocationSensor.OnConnectListener() {
             @Override
             public void onConnect(boolean succeed) {
-                connectedNavigation = succeed;
-                triggerAndClearOnConnectListeners(succeed);
+
+                if (numOfConnections.size() > 0) {
+                    numOfConnections.remove(numOfConnections.size() - 1);
+                }
+
+                if (numOfConnections.isEmpty()) {
+                    connectedNavigation = succeed;
+                    triggerAndClearOnConnectListeners(succeed);
+                }
+
             }
         });
+        TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
+            @Override
+            public void onConnected(boolean succeed) {
+
+
+
+                // TODO MVP too much copy
+                if (numOfConnections.size() > 0) {
+                    numOfConnections.remove(numOfConnections.size() - 1);
+                }
+
+                if (numOfConnections.isEmpty()) {
+                    connectedNavigation = succeed;
+                    triggerAndClearOnConnectListeners(succeed);
+                }
+
+            }
+        });
+
 
     }
 

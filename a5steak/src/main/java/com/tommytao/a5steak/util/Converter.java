@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.util;
 
 import android.content.Context;
+import android.text.Html;
 import android.util.DisplayMetrics;
 
 import java.text.DateFormat;
@@ -177,6 +178,12 @@ public class Converter extends Foundation {
 
     }
 
+    public String htmlToText(String html) {
+
+        return "" + Html.fromHtml(html);
+
+
+    }
 
 
 
