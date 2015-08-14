@@ -183,6 +183,10 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         super.goToLocationSourceSettings(activity);
     }
 
+    public void showResolveLocationSourceDialog(){
+        // TODO under construction
+    }
+
     private void triggerAndClearListeners(boolean succeed) {
 
         ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);

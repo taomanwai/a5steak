@@ -180,6 +180,7 @@ public class Converter extends Foundation {
 
     public String htmlToText(String html) {
 
+        // TODO slow, should enhance
         return "" + Html.fromHtml(html);
 
 

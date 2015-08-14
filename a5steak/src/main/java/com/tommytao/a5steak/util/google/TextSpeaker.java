@@ -44,7 +44,7 @@ public class TextSpeaker extends Foundation {
 
     public static interface OnConnectListener {
 
-        public void onConnected(boolean succeed);
+        public void onConnect(boolean succeed);
 
     }
 
@@ -148,7 +148,7 @@ public class TextSpeaker extends Foundation {
 
         for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
             if (pendingOnConnectListener != null)
-                pendingOnConnectListener.onConnected(succeed);
+                pendingOnConnectListener.onConnect(succeed);
         }
 
     }

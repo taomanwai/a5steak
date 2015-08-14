@@ -25,6 +25,7 @@ import com.tommytao.a5steak.util.sensor.MagneticSensor;
 import com.tommytao.a5steak.util.sensor.analyzer.OrientationAnalyzer;
 import com.tommytao.a5steak.util.sensor.support.DataProcessor;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -42,7 +43,6 @@ public class NavMapView extends MapView {
 
         public void onIgnored();
 
-        public void onAnimEnded();
     }
 
     public interface OnStopListener {
@@ -55,13 +55,163 @@ public class NavMapView extends MapView {
         public void onComplete(Route route, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale);
     }
 
-    public interface OnResumeListener {
+    public static class ResponseToConnect implements LocationSensor.OnConnectListener, TextSpeaker.OnConnectListener {
 
-        public void onAnimEnded();
+        private WeakReference<NavMapView> navMapViewWeakReference;
+        private ArrayList<Integer> numOfConnections;
 
-        public void onResumed();
+        public ResponseToConnect(NavMapView navMapView, ArrayList<Integer> numOfConnections) {
+            this.navMapViewWeakReference = new WeakReference<>(navMapView);
+            this.numOfConnections = numOfConnections;
+        }
 
+        @Override
+        public void onConnect(boolean succeed) {
+            final NavMapView navMapView = navMapViewWeakReference.get();
+
+            if (navMapView == null)
+                return;
+
+            if (numOfConnections.size() > 0) {
+                numOfConnections.remove(numOfConnections.size() - 1);
+            }
+
+            if (numOfConnections.isEmpty()) {
+                navMapView.connectedNavigation = succeed;
+                navMapView.triggerAndClearOnConnectListeners(succeed);
+            }
+
+
+        }
     }
+
+    public static class ResponseToStartNavigationMockRoute implements OnMockRouteListener {
+
+        private WeakReference<NavMapView> navMapViewWeakReference;
+        private OnStartListener onStartListener;
+
+        public ResponseToStartNavigationMockRoute(NavMapView navMapView, OnStartListener onStartListener) {
+
+            navMapViewWeakReference = new WeakReference<NavMapView>(navMapView);
+            this.onStartListener = onStartListener;
+
+        }
+
+        @Override
+        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale) {
+
+            final NavMapView navMapView = navMapViewWeakReference.get();
+
+            if (navMapView == null)
+                return;
+
+            if (queryStartLatitude != navMapView.startLocation.getLatitude() ||
+                    queryStartLongitude != navMapView.startLocation.getLongitude() ||
+                    queryDestLatitude != navMapView.destLocation.getLatitude() ||
+                    queryDestLongitude != navMapView.destLocation.getLongitude() ||
+                    !queryLocale.equals(navMapView.locale)) {
+
+                if (onStartListener != null)
+                    onStartListener.onIgnored();
+
+                return;
+            }
+
+            if (r == null) {
+
+                navMapView.startLocation = null;
+                navMapView.destLocation = null;
+                navMapView.rerouteLocation = null;
+                navMapView.locale = null;
+
+                if (onStartListener != null)
+                    onStartListener.onStarted(false);
+
+                return;
+
+            }
+
+            navMapView.route = r;
+
+            navMapView.getMap().clear();
+            navMapView.route.drawToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
+
+            if (onStartListener != null)
+                onStartListener.onStarted(true);
+
+            if (navMapView.isFrameUpdating()) {
+                return;
+            }
+
+            // anim map to current
+            double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
+            double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
+            final double rotation = navMapView.getProcessedRotation(false);
+
+            navMapView.getMap().animateCamera(
+                    CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(DEFAULT_ZOOM).bearing((float) rotation).tilt(DEFAULT_PITCH).build()), DEFAULT_ANIM_DURATION_IN_MS,
+                    new GoogleMap.CancelableCallback() {
+
+                        @Override
+                        public void onCancel() {
+                            // do nothing
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            navMapView.enableFrameUpdate();
+                        }
+                    });
+
+
+        }
+    }
+
+    public static class ResponseToRerouteMockRoute implements OnMockRouteListener {
+
+        private WeakReference<NavMapView> navMapViewWeakReference;
+
+        public ResponseToRerouteMockRoute(NavMapView navMapView) {
+
+            navMapViewWeakReference = new WeakReference<NavMapView>(navMapView);
+
+        }
+
+        @Override
+        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale) {
+
+            NavMapView navMapView = navMapViewWeakReference.get();
+
+            if (navMapView == null)
+                return;
+
+            if (r == null)
+                return;
+
+            if (!r.isPrepareToBeReplaced())
+                return;
+
+            if (queryStartLatitude != navMapView.rerouteLocation.getLatitude() ||
+                    queryStartLongitude != navMapView.rerouteLocation.getLongitude() ||
+                    queryDestLatitude != navMapView.destLocation.getLatitude() ||
+                    queryDestLongitude != navMapView.destLocation.getLongitude() ||
+                    !queryLocale.equals(navMapView.locale))
+                return;
+
+            if (r == null) {
+                navMapView.route.setPrepareToBeReplaced(false);
+                return;
+            }
+
+            navMapView.route = r;
+
+            navMapView.getMap().clear();
+            navMapView.route.drawToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
+
+
+        }
+    }
+
 
     public class Route extends Foundation {
 
@@ -193,7 +343,6 @@ public class NavMapView extends MapView {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
 
 
             return result;
@@ -396,9 +545,7 @@ public class NavMapView extends MapView {
 
         }
 
-
     }
-
 
     public static final int DEFAULT_ZOOM = 16;
     public static final int DEFAULT_PITCH = 45;
@@ -540,8 +687,7 @@ public class NavMapView extends MapView {
                     return;
                 }
 
-
-                if (route.getCurrentRouteDistanceFromEndOfStep() < Route.MAX_DISTANCE_BEFORE_SPEAK_IN_METER){
+                if (route.getCurrentRouteDistanceFromEndOfStep() < Route.MAX_DISTANCE_BEFORE_SPEAK_IN_METER) {
                     route.speakCurrentRouteStep(true);
                 }
 
@@ -551,37 +697,7 @@ public class NavMapView extends MapView {
                     rerouteLocation = LocationSensor.getInstance().getLastKnownLocation();
 
                     mockRoute(rerouteLocation.getLatitude(), rerouteLocation.getLongitude(),
-                            destLocation.getLatitude(), destLocation.getLongitude(), locale, new OnMockRouteListener() {
-
-                                @Override
-                                public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale) {
-
-                                    if (route == null)
-                                        return;
-
-                                    if (!route.isPrepareToBeReplaced())
-                                        return;
-
-                                    if (queryStartLatitude != rerouteLocation.getLatitude() ||
-                                            queryStartLongitude != rerouteLocation.getLongitude() ||
-                                            queryDestLatitude != destLocation.getLatitude() ||
-                                            queryDestLongitude != destLocation.getLongitude() ||
-                                            !queryLocale.equals(locale))
-                                        return;
-
-                                    if (r == null) {
-                                        route.setPrepareToBeReplaced(false);
-                                        return;
-                                    }
-
-                                    route = r;
-
-                                    getMap().clear();
-                                    route.drawToMap(getMap(), 11.0f, Color.parseColor("#FB4E0A"));
-
-                                }
-
-                            });
+                            destLocation.getLatitude(), destLocation.getLongitude(), locale, new ResponseToRerouteMockRoute(NavMapView.this));
                 }
 
                 handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
@@ -652,40 +768,8 @@ public class NavMapView extends MapView {
         final ArrayList<Integer> numOfConnections = new ArrayList<>();
         numOfConnections.add(0);
         numOfConnections.add(1);
-        LocationSensor.getInstance().connect(LocationSensor.DEFAULT_UPDATE_INTERVAL_IN_MS, new LocationSensor.OnConnectListener() {
-            @Override
-            public void onConnect(boolean succeed) {
-
-                if (numOfConnections.size() > 0) {
-                    numOfConnections.remove(numOfConnections.size() - 1);
-                }
-
-                if (numOfConnections.isEmpty()) {
-                    connectedNavigation = succeed;
-                    triggerAndClearOnConnectListeners(succeed);
-                }
-
-            }
-        });
-        TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
-            @Override
-            public void onConnected(boolean succeed) {
-
-
-
-                // TODO MVP too much copy
-                if (numOfConnections.size() > 0) {
-                    numOfConnections.remove(numOfConnections.size() - 1);
-                }
-
-                if (numOfConnections.isEmpty()) {
-                    connectedNavigation = succeed;
-                    triggerAndClearOnConnectListeners(succeed);
-                }
-
-            }
-        });
-
+        LocationSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, new ResponseToConnect(this, numOfConnections));
+        TextSpeaker.getInstance().connect(new ResponseToConnect(this, numOfConnections));
 
     }
 
@@ -734,7 +818,7 @@ public class NavMapView extends MapView {
 
     // == Start ==
 
-    public void startNavigation(final double latitude, final double longitude, final Locale locale, final OnStartListener listener) {
+    public void startNavigation(double latitude, double longitude, Locale locale, final OnStartListener listener) {
 
         if (!isConnectedNavigation()) {
             if (listener != null) {
@@ -756,80 +840,7 @@ public class NavMapView extends MapView {
         getMap().clear();
 
         mockRoute(startLocation.getLatitude(), startLocation.getLongitude(),
-                destLocation.getLatitude(), destLocation.getLongitude(), locale, new OnMockRouteListener() {
-
-                    @Override
-                    public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale) {
-
-                        if (queryStartLatitude != startLocation.getLatitude() ||
-                                queryStartLongitude != startLocation.getLongitude() ||
-                                queryDestLatitude != destLocation.getLatitude() ||
-                                queryDestLongitude != destLocation.getLongitude() ||
-                                !queryLocale.equals(locale)) {
-
-                            if (listener != null)
-                                listener.onIgnored();
-
-                            return;
-                        }
-
-                        if (r == null) {
-
-                            NavMapView.this.startLocation = null;
-                            NavMapView.this.destLocation = null;
-                            NavMapView.this.rerouteLocation = null;
-                            NavMapView.this.locale = null;
-
-                            if (listener != null)
-                                listener.onStarted(false);
-
-                            return;
-
-                        }
-
-                        route = r;
-
-                        getMap().clear();
-                        route.drawToMap(getMap(), 11.0f, Color.parseColor("#FB4E0A"));
-
-                        if (listener != null)
-                            listener.onStarted(true);
-
-                        if (isFrameUpdating()) {
-
-                            if (listener != null)
-                                listener.onAnimEnded();
-
-                            return;
-                        }
-
-                        // anim map to current
-                        double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
-                        double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
-                        final double rotation = getProcessedRotation(false);
-
-                        getMap().animateCamera(
-                                CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(DEFAULT_ZOOM).bearing((float) rotation).tilt(DEFAULT_PITCH).build()), DEFAULT_ANIM_DURATION_IN_MS,
-                                new GoogleMap.CancelableCallback() {
-
-                                    @Override
-                                    public void onCancel() {
-                                        // do nothing
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-
-                                        enableFrameUpdate();
-
-                                        if (listener != null)
-                                            listener.onAnimEnded();
-
-                                    }
-                                });
-
-                    }
-                });
+                destLocation.getLatitude(), destLocation.getLongitude(), locale, new ResponseToStartNavigationMockRoute(NavMapView.this, listener));
     }
 
 
@@ -900,12 +911,15 @@ public class NavMapView extends MapView {
 
     private boolean resumeAnimRunning;
 
-    public void resumeNavigation(final OnResumeListener listener) {
-
-        if (!isStartedNavigation())
-            return;
+    public void resumeNavigation() {
 
         if (!isPausedNavigation())
+            return;
+
+        // NavMapView not ready to resume (no route).
+        // PS: When no route, NavMapView may still following clients (e.g. car), it happens when clients change dest during moving.
+        // In this situation, resume is cancelled by "!isPausedNavigation() checking"
+        if (!isStartedNavigation())
             return;
 
         double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
@@ -923,17 +937,8 @@ public class NavMapView extends MapView {
 
                     @Override
                     public void onFinish() {
-
                         resumeAnimRunning = false;
-
-                        if (listener != null)
-                            listener.onAnimEnded();
-
                         enableFrameUpdate();
-
-                        if (listener != null)
-                            listener.onResumed();
-
                     }
 
                 });
@@ -941,9 +946,6 @@ public class NavMapView extends MapView {
     }
 
     public void pauseNavigation() {
-        if (!isStartedNavigation() && !isStartingNavigation()) // totally stopped
-            return;
-
         if (isPausedNavigation())
             return;
 
@@ -960,4 +962,5 @@ public class NavMapView extends MapView {
             pauseNavigation();
         return super.dispatchTouchEvent(ev);
     }
+
 }

@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnResume)
     public void resume(){
-        navMapView.resumeNavigation(null);
+        navMapView.resumeNavigation();
     }
 
     @OnClick(R.id.btnPause)
