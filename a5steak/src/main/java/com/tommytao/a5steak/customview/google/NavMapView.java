@@ -81,19 +81,18 @@ public class NavMapView extends MapView {
                 navMapView.triggerAndClearOnConnectListeners(succeed);
             }
 
-
         }
     }
 
     public static class ResponseToStartNavigationMockRoute implements OnMockRouteListener {
 
         private WeakReference<NavMapView> navMapViewWeakReference;
-        private OnStartListener onStartListener;
+        private WeakReference<OnStartListener> onStartListenerWeakReference;
 
         public ResponseToStartNavigationMockRoute(NavMapView navMapView, OnStartListener onStartListener) {
 
-            navMapViewWeakReference = new WeakReference<NavMapView>(navMapView);
-            this.onStartListener = onStartListener;
+            navMapViewWeakReference = new WeakReference<>(navMapView);
+            onStartListenerWeakReference = new WeakReference<>(onStartListener);
 
         }
 
@@ -101,9 +100,12 @@ public class NavMapView extends MapView {
         public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale) {
 
             final NavMapView navMapView = navMapViewWeakReference.get();
+            OnStartListener onStartListener = onStartListenerWeakReference.get();
 
             if (navMapView == null)
                 return;
+
+            navMapView.onStartListeners.remove(onStartListener);
 
             if (queryStartLatitude != navMapView.startLocation.getLatitude() ||
                     queryStartLongitude != navMapView.startLocation.getLongitude() ||
@@ -576,8 +578,8 @@ public class NavMapView extends MapView {
     }
 
     // == Mock route ==
-    public void mockRoute(final double startLatitude, final double startLongitude,
-                          final double endLatitude, final double endLongitude, final Locale locale, final OnMockRouteListener listener) {
+    private void mockRoute(final double startLatitude, final double startLongitude,
+                           final double endLatitude, final double endLongitude, final Locale locale, final OnMockRouteListener listener) {
 
         DirectionsApiManager.getInstance().route(startLatitude, startLongitude,
                 endLatitude, endLongitude, DirectionsApiManager.AVOID_NONE, locale, new DirectionsApiManager.OnRouteListener() {
@@ -594,7 +596,6 @@ public class NavMapView extends MapView {
 
                         if (listener != null)
                             listener.onComplete(route, startLatitude, startLongitude, endLatitude, endLongitude, locale);
-
 
                     }
                 });
@@ -773,6 +774,13 @@ public class NavMapView extends MapView {
 
     }
 
+    /**
+     *
+     * Disconnect all resources (e.g. Singletons) used by NavMapView
+     *
+     * Note: It will close all Singletons (e.g. GSensor, MagneticSensor, LocationSensor, TextSpeaker), use it before ensuring such Singletons are totally not in use
+     *
+     */
     public void disconnectNavigation() {
 
         if (isStartingNavigation() || isStartedNavigation()) {
@@ -818,6 +826,11 @@ public class NavMapView extends MapView {
 
     // == Start ==
 
+    /**
+     * To hold onStartListener by NavMapView not by DirectionsApiManager (to avoid potential OOM)
+     */
+    private ArrayList<OnStartListener> onStartListeners = new ArrayList<>();
+
     public void startNavigation(double latitude, double longitude, Locale locale, final OnStartListener listener) {
 
         if (!isConnectedNavigation()) {
@@ -839,6 +852,7 @@ public class NavMapView extends MapView {
         this.route = null;
         getMap().clear();
 
+        onStartListeners.add(listener);
         mockRoute(startLocation.getLatitude(), startLocation.getLongitude(),
                 destLocation.getLatitude(), destLocation.getLongitude(), locale, new ResponseToStartNavigationMockRoute(NavMapView.this, listener));
     }

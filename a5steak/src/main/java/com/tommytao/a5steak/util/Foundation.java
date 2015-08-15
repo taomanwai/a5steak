@@ -13,6 +13,7 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Html;
 import android.util.Base64;
 import android.util.Log;
 
@@ -1551,6 +1552,13 @@ public class Foundation {
         result.setLongitude(longitude);
 
         return result;
+    }
+
+    protected String htmlToText(String html) {
+
+        // TODO slow, should enhance
+        return "" + Html.fromHtml(html);
+
     }
 
 

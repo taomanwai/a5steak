@@ -272,6 +272,8 @@ public class DirectionsApiManager extends Foundation {
         private Polyline polyline;
 
         private String instructionsInHtml = "";
+        private String instructionsInText = "";
+
         private int maneuver = MANEUVER_NONE;
 
         private String travelMode = "";
@@ -288,6 +290,7 @@ public class DirectionsApiManager extends Foundation {
 
             this.polyline = new Polyline(encodedPolyline);
             this.instructionsInHtml = instructionsInHtml;
+            this.instructionsInText = htmlToText(instructionsInHtml);
             this.maneuver = maneuver;
             this.travelMode = travelMode;
         }
@@ -323,6 +326,10 @@ public class DirectionsApiManager extends Foundation {
 
         public String getInstructionsInHtml() {
             return instructionsInHtml;
+        }
+
+        public String getInstructionsInText() {
+            return instructionsInText;
         }
 
         public String getTravelMode() {
