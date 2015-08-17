@@ -98,8 +98,7 @@ public class Thinker {
 
 		}
 		
-		if (Double.isNaN(cityLat)
-				|| Double.isNaN(cityLng)){
+		if (Double.isNaN(cityLat) || Double.isNaN(cityLng)){
 			
 			return false;
 			

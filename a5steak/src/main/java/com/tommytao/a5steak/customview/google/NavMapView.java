@@ -55,6 +55,11 @@ public class NavMapView extends MapView {
         public void onComplete(Route route, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale);
     }
 
+
+    public interface OnUpdateListener {
+        public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, Route route);
+    }
+
     public static class ResponseToConnect implements LocationSensor.OnConnectListener, TextSpeaker.OnConnectListener {
 
         private WeakReference<NavMapView> navMapViewWeakReference;
@@ -220,7 +225,7 @@ public class NavMapView extends MapView {
         public static final int MAX_DERIVATION_ALLOWED_IN_METER = 30;
         public static final int MIN_ANGLE_FROM_ROUTE_FOR_FREE_ROTATION_IN_DEGREE = 45;
         public static final int MAX_DISTANCE_BEFORE_SPEAK_IN_METER = 200;
-        private DirectionsApiManager.Polyline polyline; // just for backup
+        private DirectionsApiManager.Polyline polyline = new DirectionsApiManager.Polyline("");
         private ArrayList<DirectionsApiManager.Step> steps = new ArrayList<>();
         private Location currentRouteLocation;
         private Location currentLocation;
@@ -236,9 +241,11 @@ public class NavMapView extends MapView {
             this.currentLocation = latLngToLocation(startLatitude, startLongitude);
             this.startLocation = latLngToLocation(startLatitude, startLongitude);
             this.destLocation = latLngToLocation(endLatitude, endLongitude);
-            this.polyline = polyline;
 
             this.locale = locale;
+
+            if (polyline != null)
+                this.polyline = polyline;
 
             if (steps.isEmpty())
                 return;
@@ -420,7 +427,8 @@ public class NavMapView extends MapView {
                 return Double.NaN;
 
             double diffOfAngle = MathManager.getInstance().calculateAngleDerivation(getCurrentRouteRotation(), rotation);
-            return (Double.isNaN(diffOfAngle) || Math.abs(diffOfAngle) >= MIN_ANGLE_FROM_ROUTE_FOR_FREE_ROTATION_IN_DEGREE) ? rotation : getCurrentRouteRotation();
+            return (Math.abs(diffOfAngle) < MIN_ANGLE_FROM_ROUTE_FOR_FREE_ROTATION_IN_DEGREE) ?  getCurrentRouteRotation() : rotation;
+
 
         }
 
@@ -443,7 +451,12 @@ public class NavMapView extends MapView {
 
         public double getCurrentRouteDistanceFromEndOfStep() {
 
-            int sizeOfLocations = getSteps().get(getCurrentRouteStepIndex()).getPolyline().getLocations().size();
+            DirectionsApiManager.Step step = getCurrentRouteStep();
+
+            if (step == null)
+                return Double.NaN;
+
+            int sizeOfLocations = step.getPolyline().getLocations().size();
 
             if (sizeOfLocations == 0)
                 return 0;
@@ -451,7 +464,7 @@ public class NavMapView extends MapView {
             int sizeOfPassedLocations = getCurrentRouteLocationIndex() + 1;
             int sizeOfRemainedLocations = sizeOfLocations - sizeOfPassedLocations;
 
-            return (double) getSteps().get(getCurrentRouteStepIndex()).getDistanceInMeter() * sizeOfRemainedLocations / sizeOfLocations;
+            return (double) step.getDistanceInMeter() * sizeOfRemainedLocations / sizeOfLocations;
 
         }
 
@@ -533,17 +546,14 @@ public class NavMapView extends MapView {
                     targetApproxLocationIndex = batch2ApproxLocationIndex;
                     targetDerivation = batch2Derivation;
                     targetApproxLocation = batch2ApproxLocation;
-
                 }
-
             }
 
-            if (Double.isNaN(targetDerivation) || targetDerivation > MAX_DERIVATION_ALLOWED_IN_METER)
-                return;
-
-            currentRouteStepIndex = targetStepIndex;
-            currentRouteLocationIndex = targetApproxLocationIndex;
-            currentRouteLocation = targetApproxLocation;
+            if (targetDerivation <= MAX_DERIVATION_ALLOWED_IN_METER) {
+                currentRouteStepIndex = targetStepIndex;
+                currentRouteLocationIndex = targetApproxLocationIndex;
+                currentRouteLocation = targetApproxLocation;
+            }
 
         }
 
@@ -561,6 +571,7 @@ public class NavMapView extends MapView {
     private Locale locale;
     private Route route;
 
+
     public NavMapView(Context context) {
         super(context);
     }
@@ -576,6 +587,25 @@ public class NavMapView extends MapView {
     public NavMapView(Context context, GoogleMapOptions options) {
         super(context, options);
     }
+
+    // == OnUpdateListener ==
+    private ArrayList<OnUpdateListener> onUpdateListeners = new ArrayList<>();
+
+    public void addOnUpdateListener(OnUpdateListener listener) {
+        onUpdateListeners.add(listener);
+
+    }
+
+    public void removeOnUpdateListener(OnUpdateListener listener) {
+        onUpdateListeners.remove(listener);
+    }
+
+    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, Route route){
+        for (OnUpdateListener onUpdateListener : onUpdateListeners) {
+            onUpdateListener.onUpdate(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, route);
+        }
+    }
+
 
     // == Mock route ==
     private void mockRoute(final double startLatitude, final double startLongitude,
@@ -685,6 +715,8 @@ public class NavMapView extends MapView {
                         new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(DEFAULT_ZOOM).bearing((float) rotation).tilt((float) DEFAULT_PITCH).build()));
 
                 if (route == null) {
+                    triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", route);
+                    handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
                     return;
                 }
 
@@ -700,6 +732,21 @@ public class NavMapView extends MapView {
                     mockRoute(rerouteLocation.getLatitude(), rerouteLocation.getLongitude(),
                             destLocation.getLatitude(), destLocation.getLongitude(), locale, new ResponseToRerouteMockRoute(NavMapView.this));
                 }
+
+                DirectionsApiManager.Step currentStep = route.getCurrentRouteStep();
+
+                if (currentStep==null){
+                    triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", route);
+                    handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
+                    return;
+                }
+
+                int maneuver = currentStep.getManeuver();
+                double distanceFromEndOfStep = route.getCurrentRouteDistanceFromEndOfStep();
+                String instructionsInHtml = currentStep.getInstructionsInHtml();
+                String instructionsInText = currentStep.getInstructionsInText();
+                triggerOnUpdateListeners(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, route);
+
 
                 handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
 
@@ -775,11 +822,9 @@ public class NavMapView extends MapView {
     }
 
     /**
-     *
      * Disconnect all resources (e.g. Singletons) used by NavMapView
-     *
+     * <p/>
      * Note: It will close all Singletons (e.g. GSensor, MagneticSensor, LocationSensor, TextSpeaker), use it before ensuring such Singletons are totally not in use
-     *
      */
     public void disconnectNavigation() {
 

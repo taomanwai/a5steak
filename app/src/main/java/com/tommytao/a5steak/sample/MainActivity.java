@@ -2,13 +2,13 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.customview.google.NavMapView;
 import com.tommytao.a5steak.util.Converter;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
+import com.tommytao.a5steak.util.google.TextSpeaker;
 
 import java.util.Locale;
 
@@ -54,9 +54,15 @@ public class MainActivity extends Activity {
         mapAdapter.init(this, null);
 
 
-        String s = Converter.getInstance().htmlToText("朝<b>東</b>，走<b>青山道</b>，往<b>醫局西街</b>前進<div style=\"font-size:0.9em\">目的地將在左邊</div>");
+        TextSpeaker.getInstance().init(this);
+        TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
+            @Override
+            public void onConnect(boolean succeed) {
+                TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
+                TextSpeaker.getInstance().speak("測試", null);
+            }
+        });
 
-        Log.d(s, s);
 
 
 

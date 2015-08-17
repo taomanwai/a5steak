@@ -177,23 +177,28 @@ public class TextSpeaker extends Foundation {
             e.printStackTrace();
         }
 
-//        if (shouldUseCantonese()) {
-//            playLink(SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText, new OnPlayListener() {
-//                @Override
-//                public void onStart() {
-//                    if (listener != null)
-//                        listener.onStart();
-//                }
-//
-//                @Override
-//                public void onComplete(boolean succeed) {
-//
-//                    if (listener != null)
-//                        listener.onComplete(succeed);
-//                }
-//            });
-//            return;
-//        }
+        if (shouldUseCantonese()) {
+
+            String link = SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText + "&client=t";
+
+            log("text_speaker: speak cantonese: link: " + link);
+
+            playLink(link, new OnPlayListener() {
+                @Override
+                public void onStart() {
+                    if (listener != null)
+                        listener.onStart();
+                }
+
+                @Override
+                public void onComplete(boolean succeed) {
+
+                    if (listener != null)
+                        listener.onComplete(succeed);
+                }
+            });
+            return;
+        }
 
         tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
 
