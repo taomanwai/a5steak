@@ -49,12 +49,15 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
         public void onConnected(boolean succeed);
 
+        public void onIgnored();
+
     }
 
-    public final static int DEFAULT_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
-    public final static int DEFAULT_INTERVAL_IN_MS = 5000; // 5s (5000ms) = Google Maps interval
-    public final static int DEFAULT_FASTEST_INTERVAL_IN_MS = 1000;
 
+    public final static int DEFAULT_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY; // PRIORITY_BALANCED_POWER_ACCURACY
+    public final static int DEFAULT_INTERVAL_IN_MS = 5000; // 5s (5000ms) = Google Maps interval
+
+    private int intervalInMs = DEFAULT_INTERVAL_IN_MS;
 
     public final static String PREFS_LAT_E6 = "LocationFusedSensor.PREFS_LAT_E6";
     public final static String PREFS_LNG_E6 = "LocationFusedSensor.PREFS_LNG_E6";
@@ -62,11 +65,9 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     private final long INVALID_LAT_E6_EXAMPLE = 999999999;
     private final long INVALID_LNG_E6_EXAMPLE = 999999999;
 
-    private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
 
     private GoogleApiClient client;
 
-    private Location lastKnownLocation;
 
     @Override
     public boolean init(Context context) {
@@ -75,10 +76,11 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     public void disconnect() {
         getClient().disconnect();
+        clearAndOnUiThreadTriggerOnConnectListeners(false);
     }
 
     @Override
-    public float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2){
+    public float calculateDistanceInMeter(double lat1, double lng1, double lat2, double lng2) {
         return super.calculateDistanceInMeter(lat1, lng1, lat2, lng2);
     }
 
@@ -93,11 +95,61 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     }
 
-    public void connect(OnConnectListener onConnectListener) {
+    // == onConnectListener ==
+
+    private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
+
+    private void clearAndTriggerOnConnectListeners(boolean succeed) {
+
+        ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
+        onConnectListeners.clear();
+        int i = 0;
+        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
+            if (pendingOnConnectListener != null) {
+                if (i == (pendingOnConnectListeners.size() - 1))
+                    pendingOnConnectListener.onConnected(succeed);
+                else
+                    pendingOnConnectListener.onIgnored();
+            }
+            i++;
+        }
+
+    }
+
+    private void clearAndOnUiThreadTriggerOnConnectListeners(final boolean succeed) {
+
+        final ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
+        onConnectListeners.clear();
+        if (pendingOnConnectListeners.isEmpty())
+            return;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                int i = 0;
+                for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
+                    if (pendingOnConnectListener != null) {
+                        if (i == (pendingOnConnectListeners.size() - 1))
+                            pendingOnConnectListener.onConnected(succeed);
+                        else
+                            pendingOnConnectListener.onIgnored();
+                    }
+                    i++;
+                }
+            }
+        });
+
+    }
+
+    // == END of onConnectListener ==
+
+    public void connect(int intervalInMs, OnConnectListener onConnectListener) {
+
+        if (isConnected())
+            disconnect();
+
+        this.intervalInMs = intervalInMs;
 
         onConnectListeners.add(onConnectListener);
-
-        lastKnownLocation = null;
 
         this.getClient().connect();
 
@@ -123,15 +175,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
         Location result = LocationServices.FusedLocationApi.getLastLocation(client);
 
-        // ==
-
-        if (result == null)
-            result = lastKnownLocation;
-
-
-        // ==
-
-
         if (result == null) {
 
             long latE6 = PreferenceManager.getDefaultSharedPreferences(appContext).getLong(PREFS_LAT_E6, INVALID_LAT_E6_EXAMPLE);
@@ -145,6 +188,12 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
             }
 
+        } else {
+            PreferenceManager.getDefaultSharedPreferences(appContext)
+                    .edit()
+                    .putLong(PREFS_LAT_E6, lat2LatE6(result.getLatitude()))
+                    .putLong(PREFS_LNG_E6, lng2LngE6(result.getLongitude()))
+                    .commit();
         }
 
 
@@ -171,11 +220,15 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     }
 
+    public boolean isConnecting() {
+
+        return !isConnected() && !onConnectListeners.isEmpty();
+
+    }
+
     @Override
     public void onConnectionFailed(ConnectionResult arg0) {
-
-        triggerAndClearListeners(false);
-
+        clearAndTriggerOnConnectListeners(false);
     }
 
     @Override
@@ -183,21 +236,10 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         super.goToLocationSourceSettings(activity);
     }
 
-    public void showResolveLocationSourceDialog(){
+    public void showResolveLocationSourceDialog() {
         // TODO under construction
     }
 
-    private void triggerAndClearListeners(boolean succeed) {
-
-        ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
-
-        onConnectListeners.clear();
-
-        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
-            if (pendingOnConnectListener != null)
-                pendingOnConnectListener.onConnected(succeed);
-        }
-    }
 
     private void startDetectingLocation(int priority, int intervalInMs, int fastestIntervalInMs) {
 
@@ -218,11 +260,17 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     @Override
     public void onConnected(Bundle arg0) {
 
-        startDetectingLocation(DEFAULT_PRIORITY, DEFAULT_INTERVAL_IN_MS, DEFAULT_FASTEST_INTERVAL_IN_MS);
+        // coz onConnected will be run in async style. Ref: https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient.ConnectionCallbacks
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                startDetectingLocation(DEFAULT_PRIORITY, intervalInMs, intervalInMs);
+                clearAndTriggerOnConnectListeners(true);
+            }
+        });
 
-        triggerAndClearListeners(true);
+
     }
-
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -231,8 +279,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     @Override
     public void onLocationChanged(Location location) {
-
-        lastKnownLocation = location;
 
         if (location == null)
             return;

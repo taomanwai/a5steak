@@ -166,18 +166,26 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
     @Override
     public void onConnected(Bundle bundle) {
 
+        // coz onConnected will be run in async style. Ref: https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient.ConnectionCallbacks
 
-        Intent intent = new Intent(appContext, SenseService.class);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(appContext, SenseService.class);
 
-        pendingIntent = PendingIntent
-                .getService(appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                pendingIntent = PendingIntent
+                        .getService(appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        ActivityRecognition.
-                ActivityRecognitionApi.requestActivityUpdates(getApiClient(), 0, pendingIntent);
+                ActivityRecognition.
+                        ActivityRecognitionApi.requestActivityUpdates(getApiClient(), 0, pendingIntent);
 
-        connected = true;
+                connected = true;
 
-        clearAndTriggerOnConnectListenerList(true);
+                clearAndTriggerOnConnectListenerList(true);
+            }
+        });
+
+
 
 
     }

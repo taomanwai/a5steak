@@ -8,7 +8,6 @@ import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.customview.google.NavMapView;
 import com.tommytao.a5steak.util.Converter;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
-import com.tommytao.a5steak.util.google.TextSpeaker;
 
 import java.util.Locale;
 
@@ -54,14 +53,14 @@ public class MainActivity extends Activity {
         mapAdapter.init(this, null);
 
 
-        TextSpeaker.getInstance().init(this);
-        TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
-            @Override
-            public void onConnect(boolean succeed) {
-                TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-                TextSpeaker.getInstance().speak("測試", null);
-            }
-        });
+//        TextSpeaker.getInstance().init(this);
+//        TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
+//            @Override
+//            public void onConnected(boolean succeed) {
+//                TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
+//                TextSpeaker.getInstance().speak("測試", null);
+//            }
+//        });
 
 
 

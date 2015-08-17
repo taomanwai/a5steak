@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -18,9 +19,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
+import com.tommytao.a5steak.util.google.LocationFusedSensor;
 import com.tommytao.a5steak.util.google.TextSpeaker;
 import com.tommytao.a5steak.util.sensor.GSensor;
-import com.tommytao.a5steak.util.sensor.LocationSensor;
 import com.tommytao.a5steak.util.sensor.MagneticSensor;
 import com.tommytao.a5steak.util.sensor.analyzer.OrientationAnalyzer;
 import com.tommytao.a5steak.util.sensor.support.DataProcessor;
@@ -28,6 +29,8 @@ import com.tommytao.a5steak.util.sensor.support.DataProcessor;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Locale;
+
+;
 
 /**
  * Created by tommytao on 12/8/15.
@@ -43,6 +46,8 @@ public class NavMapView extends MapView {
 
         public void onIgnored();
 
+        public void onIgnoredByInvalidLatLng();
+
     }
 
     public interface OnStopListener {
@@ -51,16 +56,27 @@ public class NavMapView extends MapView {
         public void onAnimEnded();
     }
 
-    public interface OnMockRouteListener {
-        public void onComplete(Route route, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale);
+    private interface OnMockRouteListener {
+        public void onComplete(Route route, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale, long queryElapsedTimestamp);
     }
 
 
     public interface OnUpdateListener {
+
+        /**
+         *
+         * Note: to check if update succeed or not, check if distanceFromEndOfStep being Double.NaN
+         *
+         * @param maneuver
+         * @param distanceFromEndOfStep
+         * @param instructionsInHtml
+         * @param instructionsInText
+         * @param route
+         */
         public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, Route route);
     }
 
-    public static class ResponseToConnect implements LocationSensor.OnConnectListener, TextSpeaker.OnConnectListener {
+    public static class ResponseToConnect implements LocationFusedSensor.OnConnectListener, TextSpeaker.OnConnectListener {
 
         private WeakReference<NavMapView> navMapViewWeakReference;
         private ArrayList<Integer> numOfConnections;
@@ -71,7 +87,7 @@ public class NavMapView extends MapView {
         }
 
         @Override
-        public void onConnect(boolean succeed) {
+        public void onConnected(boolean succeed) {
             final NavMapView navMapView = navMapViewWeakReference.get();
 
             if (navMapView == null)
@@ -85,6 +101,11 @@ public class NavMapView extends MapView {
                 navMapView.connectedNavigation = succeed;
                 navMapView.triggerAndClearOnConnectListeners(succeed);
             }
+
+        }
+
+        @Override
+        public void onIgnored() {
 
         }
     }
@@ -102,13 +123,16 @@ public class NavMapView extends MapView {
         }
 
         @Override
-        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale) {
+        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale, long queryElapsedTimestamp) {
 
             final NavMapView navMapView = navMapViewWeakReference.get();
             OnStartListener onStartListener = onStartListenerWeakReference.get();
 
             if (navMapView == null)
                 return;
+
+
+
 
             navMapView.onStartListeners.remove(onStartListener);
 
@@ -151,8 +175,8 @@ public class NavMapView extends MapView {
             }
 
             // anim map to current
-            double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
-            double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
+            double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
+            double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
             final double rotation = navMapView.getProcessedRotation(false);
 
             navMapView.getMap().animateCamera(
@@ -180,12 +204,12 @@ public class NavMapView extends MapView {
 
         public ResponseToRerouteMockRoute(NavMapView navMapView) {
 
-            navMapViewWeakReference = new WeakReference<NavMapView>(navMapView);
+            navMapViewWeakReference = new WeakReference<>(navMapView);
 
         }
 
         @Override
-        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale) {
+        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale, long queryElapsedTimestamp) {
 
             NavMapView navMapView = navMapViewWeakReference.get();
 
@@ -202,7 +226,9 @@ public class NavMapView extends MapView {
                     queryStartLongitude != navMapView.rerouteLocation.getLongitude() ||
                     queryDestLatitude != navMapView.destLocation.getLatitude() ||
                     queryDestLongitude != navMapView.destLocation.getLongitude() ||
-                    !queryLocale.equals(navMapView.locale))
+                    !queryLocale.equals(navMapView.locale) ||
+                    queryElapsedTimestamp != navMapView.latestMockRouteElapsedTimestamp
+                    )
                 return;
 
             if (r == null) {
@@ -260,7 +286,7 @@ public class NavMapView extends MapView {
             Location approxLocation = this.steps.get(0).getPolyline().getLocations().get(index);
             double approxLat = approxLocation.getLatitude();
             double approxLng = approxLocation.getLongitude();
-            double derivation = LocationSensor.getInstance().calculateDistanceInMeter(
+            double derivation = LocationFusedSensor.getInstance().calculateDistanceInMeter(
                     approxLat, approxLng,
                     startLatitude, startLongitude
             );
@@ -379,7 +405,7 @@ public class NavMapView extends MapView {
             if (currentRouteLocation == null || currentLocation == null)
                 return Float.NaN;
 
-            return LocationSensor.getInstance().calculateDistanceInMeter(currentRouteLocation.getLatitude(), currentRouteLocation.getLongitude(),
+            return LocationFusedSensor.getInstance().calculateDistanceInMeter(currentRouteLocation.getLatitude(), currentRouteLocation.getLongitude(),
                     currentLocation.getLatitude(), currentLocation.getLongitude());
 
         }
@@ -427,7 +453,7 @@ public class NavMapView extends MapView {
                 return Double.NaN;
 
             double diffOfAngle = MathManager.getInstance().calculateAngleDerivation(getCurrentRouteRotation(), rotation);
-            return (Math.abs(diffOfAngle) < MIN_ANGLE_FROM_ROUTE_FOR_FREE_ROTATION_IN_DEGREE) ?  getCurrentRouteRotation() : rotation;
+            return (Math.abs(diffOfAngle) < MIN_ANGLE_FROM_ROUTE_FOR_FREE_ROTATION_IN_DEGREE) ? getCurrentRouteRotation() : rotation;
 
 
         }
@@ -570,6 +596,7 @@ public class NavMapView extends MapView {
     private Location rerouteLocation;
     private Locale locale;
     private Route route;
+    private long latestMockRouteElapsedTimestamp = -1;
 
 
     public NavMapView(Context context) {
@@ -600,7 +627,7 @@ public class NavMapView extends MapView {
         onUpdateListeners.remove(listener);
     }
 
-    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, Route route){
+    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, Route route) {
         for (OnUpdateListener onUpdateListener : onUpdateListeners) {
             onUpdateListener.onUpdate(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, route);
         }
@@ -608,9 +635,10 @@ public class NavMapView extends MapView {
 
 
     // == Mock route ==
-    private void mockRoute(final double startLatitude, final double startLongitude,
+    private long mockRoute(final double startLatitude, final double startLongitude,
                            final double endLatitude, final double endLongitude, final Locale locale, final OnMockRouteListener listener) {
 
+        final long elapsedTimestamp = SystemClock.elapsedRealtime();
         DirectionsApiManager.getInstance().route(startLatitude, startLongitude,
                 endLatitude, endLongitude, DirectionsApiManager.AVOID_NONE, locale, new DirectionsApiManager.OnRouteListener() {
                     @Override
@@ -618,18 +646,21 @@ public class NavMapView extends MapView {
 
                         if (steps.isEmpty() || polyline == null) {
                             if (listener != null)
-                                listener.onComplete(null, startLatitude, startLongitude, endLatitude, endLongitude, locale);
+                                listener.onComplete(null, startLatitude, startLongitude, endLatitude, endLongitude, locale, elapsedTimestamp);
                             return;
                         }
 
                         Route route = new Route(steps, startLatitude, startLongitude, endLatitude, endLongitude, locale, polyline);
 
                         if (listener != null)
-                            listener.onComplete(route, startLatitude, startLongitude, endLatitude, endLongitude, locale);
+                            listener.onComplete(route, startLatitude, startLongitude, endLatitude, endLongitude, locale, elapsedTimestamp);
 
                     }
                 });
 
+
+
+        return elapsedTimestamp;
     }
 
     // == Process yaw ==
@@ -701,8 +732,8 @@ public class NavMapView extends MapView {
             @Override
             public void run() {
 
-                double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
-                double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
+                double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
+                double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
 
                 try {
                     route.update(lat, lng);
@@ -727,15 +758,15 @@ public class NavMapView extends MapView {
                 if (!route.isCurrentlyPassing() && !route.isPrepareToBeReplaced()) {
 
                     route.setPrepareToBeReplaced(true);
-                    rerouteLocation = LocationSensor.getInstance().getLastKnownLocation();
+                    rerouteLocation = LocationFusedSensor.getInstance().getLastKnownLocation();
 
-                    mockRoute(rerouteLocation.getLatitude(), rerouteLocation.getLongitude(),
+                    latestMockRouteElapsedTimestamp = mockRoute(rerouteLocation.getLatitude(), rerouteLocation.getLongitude(),
                             destLocation.getLatitude(), destLocation.getLongitude(), locale, new ResponseToRerouteMockRoute(NavMapView.this));
                 }
 
                 DirectionsApiManager.Step currentStep = route.getCurrentRouteStep();
 
-                if (currentStep==null){
+                if (currentStep == null) {
                     triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", route);
                     handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
                     return;
@@ -804,7 +835,7 @@ public class NavMapView extends MapView {
         onConnectListeners.add(onConnectListener);
 
         DirectionsApiManager.getInstance().init(getContext(), "", "");
-        LocationSensor.getInstance().init(getContext());
+        LocationFusedSensor.getInstance().init(getContext());
         GSensor.getInstance().init(getContext());
         MagneticSensor.getInstance().init(getContext());
         OrientationAnalyzer.getInstance().init(getContext());
@@ -816,7 +847,7 @@ public class NavMapView extends MapView {
         final ArrayList<Integer> numOfConnections = new ArrayList<>();
         numOfConnections.add(0);
         numOfConnections.add(1);
-        LocationSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, new ResponseToConnect(this, numOfConnections));
+        LocationFusedSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, new ResponseToConnect(this, numOfConnections));
         TextSpeaker.getInstance().connect(new ResponseToConnect(this, numOfConnections));
 
     }
@@ -824,7 +855,7 @@ public class NavMapView extends MapView {
     /**
      * Disconnect all resources (e.g. Singletons) used by NavMapView
      * <p/>
-     * Note: It will close all Singletons (e.g. GSensor, MagneticSensor, LocationSensor, TextSpeaker), use it before ensuring such Singletons are totally not in use
+     * Note: It will close all Singletons (e.g. GSensor, MagneticSensor, LocationFusedSensor, TextSpeaker), use it before ensuring such Singletons are totally not in use
      */
     public void disconnectNavigation() {
 
@@ -841,7 +872,7 @@ public class NavMapView extends MapView {
         connectedNavigation = false;
         GSensor.getInstance().disconnect();
         MagneticSensor.getInstance().disconnect();
-        LocationSensor.getInstance().disconnect();
+        LocationFusedSensor.getInstance().disconnect();
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -890,15 +921,29 @@ public class NavMapView extends MapView {
             return;
         }
 
-        this.startLocation = LocationSensor.getInstance().getLastKnownLocation();
-        this.destLocation = LocationSensor.getInstance().latLngToLocation(latitude, longitude);
+        if (LocationFusedSensor.getInstance().getLastKnownLocation()==null){
+
+            if (listener != null) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onIgnoredByInvalidLatLng();
+                    }
+                });
+            }
+
+            return;
+        }
+
+        this.startLocation = LocationFusedSensor.getInstance().getLastKnownLocation();
+        this.destLocation = LocationFusedSensor.getInstance().latLngToLocation(latitude, longitude);
         this.rerouteLocation = null;
         this.locale = locale;
         this.route = null;
         getMap().clear();
 
         onStartListeners.add(listener);
-        mockRoute(startLocation.getLatitude(), startLocation.getLongitude(),
+        latestMockRouteElapsedTimestamp = mockRoute(startLocation.getLatitude(), startLocation.getLongitude(),
                 destLocation.getLatitude(), destLocation.getLongitude(), locale, new ResponseToStartNavigationMockRoute(NavMapView.this, listener));
     }
 
@@ -981,8 +1026,8 @@ public class NavMapView extends MapView {
         if (!isStartedNavigation())
             return;
 
-        double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
-        double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
+        double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
+        double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
         final double bearing = getProcessedRotation(false);
         resumeAnimRunning = true;
         getMap().animateCamera(
