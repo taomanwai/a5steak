@@ -64,7 +64,6 @@ public class NavMapView extends MapView {
     public interface OnUpdateListener {
 
         /**
-         *
          * Note: to check if update succeed or not, check if distanceFromEndOfStep being Double.NaN
          *
          * @param maneuver
@@ -73,7 +72,7 @@ public class NavMapView extends MapView {
          * @param instructionsInText
          * @param route
          */
-        public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, Route route);
+        public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long eta, Route route);
     }
 
     public static class ResponseToConnect implements LocationFusedSensor.OnConnectListener, TextSpeaker.OnConnectListener {
@@ -130,8 +129,6 @@ public class NavMapView extends MapView {
 
             if (navMapView == null)
                 return;
-
-
 
 
             navMapView.onStartListeners.remove(onStartListener);
@@ -475,7 +472,7 @@ public class NavMapView extends MapView {
             gmap.addPolyline(lineOptions);
         }
 
-        public double getCurrentRouteDistanceFromEndOfStep() {
+        public double getCurrentRouteRatioFromEndOfStep() {
 
             DirectionsApiManager.Step step = getCurrentRouteStep();
 
@@ -490,7 +487,32 @@ public class NavMapView extends MapView {
             int sizeOfPassedLocations = getCurrentRouteLocationIndex() + 1;
             int sizeOfRemainedLocations = sizeOfLocations - sizeOfPassedLocations;
 
-            return (double) step.getDistanceInMeter() * sizeOfRemainedLocations / sizeOfLocations;
+            return (double) sizeOfRemainedLocations / sizeOfLocations;
+
+        }
+
+        public double getCurrentRouteDistanceFromEndOfStepInMeter() {
+
+            DirectionsApiManager.Step step = getCurrentRouteStep();
+
+            if (step == null)
+                return Double.NaN;
+
+            return step.getDistanceInMeter() * getCurrentRouteRatioFromEndOfStep();
+
+        }
+
+        public long getCurrentRouteDurationFromEndOfStepInMs() {
+
+            DirectionsApiManager.Step step = getCurrentRouteStep();
+
+            if (step == null)
+                return -1;
+
+            double resultInDouble = step.getDurationInMs() * getCurrentRouteRatioFromEndOfStep();
+
+
+            return Double.isNaN(resultInDouble) ? -1 : (long) resultInDouble ;
 
         }
 
@@ -583,6 +605,33 @@ public class NavMapView extends MapView {
 
         }
 
+        public long getCurrentRouteEtaInMs() {
+
+            int currentStepIndex = getCurrentRouteStepIndex();
+
+            if (currentStepIndex < 0 || currentStepIndex >= getSteps().size())
+                return -1;
+
+            long eta = 0;
+
+            for (int i = currentStepIndex; i < (getSteps().size() - 1); i++) {
+
+                if (i == currentStepIndex) {
+
+                    eta += getCurrentRouteDurationFromEndOfStepInMs();
+
+                    continue;
+                }
+                eta += getSteps().get(i).getDurationInMs();
+
+
+            }
+
+            return eta;
+
+
+        }
+
     }
 
     public static final int DEFAULT_ZOOM = 16;
@@ -627,9 +676,9 @@ public class NavMapView extends MapView {
         onUpdateListeners.remove(listener);
     }
 
-    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, Route route) {
+    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long eta, Route route) {
         for (OnUpdateListener onUpdateListener : onUpdateListeners) {
-            onUpdateListener.onUpdate(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, route);
+            onUpdateListener.onUpdate(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, eta, route);
         }
     }
 
@@ -657,7 +706,6 @@ public class NavMapView extends MapView {
 
                     }
                 });
-
 
 
         return elapsedTimestamp;
@@ -746,12 +794,12 @@ public class NavMapView extends MapView {
                         new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(DEFAULT_ZOOM).bearing((float) rotation).tilt((float) DEFAULT_PITCH).build()));
 
                 if (route == null) {
-                    triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", route);
+                    triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", -1, route);
                     handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
                     return;
                 }
 
-                if (route.getCurrentRouteDistanceFromEndOfStep() < Route.MAX_DISTANCE_BEFORE_SPEAK_IN_METER) {
+                if (route.getCurrentRouteDistanceFromEndOfStepInMeter() < Route.MAX_DISTANCE_BEFORE_SPEAK_IN_METER) {
                     route.speakCurrentRouteStep(true);
                 }
 
@@ -767,16 +815,17 @@ public class NavMapView extends MapView {
                 DirectionsApiManager.Step currentStep = route.getCurrentRouteStep();
 
                 if (currentStep == null) {
-                    triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", route);
+                    triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", -1, route);
                     handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
                     return;
                 }
 
                 int maneuver = currentStep.getManeuver();
-                double distanceFromEndOfStep = route.getCurrentRouteDistanceFromEndOfStep();
+                double distanceFromEndOfStep = route.getCurrentRouteDistanceFromEndOfStepInMeter();
                 String instructionsInHtml = currentStep.getInstructionsInHtml();
                 String instructionsInText = currentStep.getInstructionsInText();
-                triggerOnUpdateListeners(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, route);
+                long etaFromEndOfStep = route.getCurrentRouteDurationFromEndOfStepInMs();
+                triggerOnUpdateListeners(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, etaFromEndOfStep, route);
 
 
                 handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
@@ -921,7 +970,7 @@ public class NavMapView extends MapView {
             return;
         }
 
-        if (LocationFusedSensor.getInstance().getLastKnownLocation()==null){
+        if (LocationFusedSensor.getInstance().getLastKnownLocation() == null) {
 
             if (listener != null) {
                 handler.post(new Runnable() {

@@ -142,10 +142,22 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     // == END of onConnectListener ==
 
-    public void connect(int intervalInMs, OnConnectListener onConnectListener) {
+    public void connect(int intervalInMs, final OnConnectListener onConnectListener) {
 
-        if (isConnected())
-            disconnect();
+        if (isConnected()) {
+            this.intervalInMs = intervalInMs;
+            startDetectingLocation(DEFAULT_PRIORITY, intervalInMs, intervalInMs);
+
+            if (onConnectListener != null)
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onConnectListener.onConnected(true);
+                    }
+                });
+
+            return;
+        }
 
         this.intervalInMs = intervalInMs;
 
