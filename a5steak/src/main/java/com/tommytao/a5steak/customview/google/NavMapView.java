@@ -106,7 +106,7 @@ public class NavMapView extends MapView {
                 return;
             }
 
-            if (numOfConnections.size() > 0) {
+            if (numOfConnections.isEmpty()) {
                return;
             }
 
@@ -1009,6 +1009,7 @@ public class NavMapView extends MapView {
                 });
             }
             return;
+
         }
 
         if (LocationFusedSensor.getInstance().getLastKnownLocation() == null) {
