@@ -636,6 +636,23 @@ public class DirectionsApiManager extends Foundation {
 
     }
 
+    public String getCombinedAvoids(ArrayList<String> avoids){
+
+        StringBuffer sbResult = new StringBuffer();
+
+
+        int i=0;
+        for (String avoid : avoids){
+
+            sbResult.append(avoid + ((i==(avoids.size()-1)) ? "" : "|"));
+
+            i++;
+        }
+
+        return "" + sbResult;
+
+    }
+
 
     public void route(final double startLatitude, final double startLongitude, final double endLatitude, final double endLongitude, final String avoid, final Locale locale, final OnRouteListener listener) {
 

@@ -7,9 +7,10 @@ import android.widget.Toast;
 
 import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.customview.google.NavMapView;
+import com.tommytao.a5steak.util.AppManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
-import com.tommytao.a5steak.util.google.TextSpeaker;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.Bind;
@@ -44,6 +45,12 @@ public class MainActivity extends Activity {
         mapAdapter.init(this, null);
 
         mapAdapter = new GMapAdapter(navMapView);
+
+        AppManager.getInstance().init(this);
+
+        ArrayList<String> sl = AppManager.getInstance().getInstalledApps();
+
+        Log.d("","");
 
 
     }
