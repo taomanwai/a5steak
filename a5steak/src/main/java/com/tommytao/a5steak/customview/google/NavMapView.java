@@ -55,6 +55,15 @@ public class NavMapView extends MapView {
         public void onAnimEnded();
     }
 
+    public interface OnResumeListener {
+        public void onResumed();
+    }
+
+    public interface OnPauseListener {
+        public void onPaused();
+    }
+
+
     private interface OnMockRouteListener {
         public void onComplete(Route route, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, String queryAvoid, Locale queryLocale, long queryElapsedTimestamp);
     }
@@ -91,7 +100,7 @@ public class NavMapView extends MapView {
             if (navMapView == null)
                 return;
 
-            if (!succeed){
+            if (!succeed) {
 
                 GSensor.getInstance().disconnect();
                 MagneticSensor.getInstance().disconnect();
@@ -107,7 +116,7 @@ public class NavMapView extends MapView {
             }
 
             if (numOfConnections.isEmpty()) {
-               return;
+                return;
             }
 
             numOfConnections.remove(numOfConnections.size() - 1);
@@ -715,7 +724,8 @@ public class NavMapView extends MapView {
 
     private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long eta, Route route) {
         for (OnUpdateListener onUpdateListener : onUpdateListeners) {
-            onUpdateListener.onUpdate(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, eta, route);
+            if (onUpdateListener != null)
+                onUpdateListener.onUpdate(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, eta, route);
         }
     }
 
@@ -1109,11 +1119,45 @@ public class NavMapView extends MapView {
 
     // == Resume & pause ==
 
+    private ArrayList<OnResumeListener> onResumeListeners = new ArrayList<>();
+    private ArrayList<OnPauseListener> onPauseListeners = new ArrayList<>();
+
     private boolean resumeAnimRunning;
+
+    public void addOnResumeListener(OnResumeListener listener) {
+        onResumeListeners.add(listener);
+    }
+
+    public void removeOnResumeListener(OnResumeListener listener) {
+        onResumeListeners.remove(listener);
+    }
+
+    public void addOnPauseListener(OnPauseListener listener) {
+        onPauseListeners.add(listener);
+    }
+
+    public void removeOnPauseListener(OnPauseListener listener) {
+        onPauseListeners.remove(listener);
+    }
+
+    private void triggerOnResumeListeners() {
+        for (OnResumeListener onResumeListener : onResumeListeners) {
+            if (onResumeListener != null)
+                onResumeListener.onResumed();
+        }
+    }
+
+    private void triggerOnPauseListeners() {
+        for (OnPauseListener onPauseListener : onPauseListeners) {
+            if (onPauseListener != null)
+                onPauseListener.onPaused();
+        }
+    }
+
 
     public void resumeNavigation() {
 
-        if (!isPausedNavigation())
+        if (isResumedNavigation())
             return;
 
         // NavMapView not ready to resume (no route).
@@ -1124,13 +1168,20 @@ public class NavMapView extends MapView {
 
         GSensor.getInstance().connect();
         MagneticSensor.getInstance().connect();
-        LocationFusedSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, null);
-        TextSpeaker.getInstance().connect(null);
-
         // LocationFusedSensor and TextSpeaker may not be fully connected,
         // but it is Ok!
         // Coz getLastKnownLocation() must not be null (coz checked in startNavigation) and
         // TextSpeaker will skip speaking and speak again in the upcoming frame or when TextSpeaker is fully connected
+        LocationFusedSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, null);
+        TextSpeaker.getInstance().connect(null);
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                triggerOnResumeListeners();
+            }
+        });
+
 
         double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
         double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
@@ -1158,7 +1209,7 @@ public class NavMapView extends MapView {
     public void pauseNavigation() {
 
 
-        if (isPausedNavigation())
+        if (!isResumedNavigation())
             return;
 
         disableFrameUpdate();
@@ -1167,10 +1218,20 @@ public class NavMapView extends MapView {
         MagneticSensor.getInstance().disconnect();
         LocationFusedSensor.getInstance().disconnect();
         TextSpeaker.getInstance().disconnect();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                triggerOnPauseListeners();
+            }
+        });
+
+
+
     }
 
-    public boolean isPausedNavigation() {
-        return !isFrameUpdating() && !resumeAnimRunning;
+    public boolean isResumedNavigation() {
+        return isFrameUpdating() || resumeAnimRunning;
     }
 
     @Override
