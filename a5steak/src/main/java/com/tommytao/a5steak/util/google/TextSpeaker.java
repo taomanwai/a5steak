@@ -50,19 +50,25 @@ public class TextSpeaker extends Foundation {
 
     public static final String SERVER_CANTONESE_SPEAKER_PREFIX = "http://translate.google.com/translate_tts?&tl=zh-yue&ie=UTF-8&q=";
 
+    public static final Locale DEFAULT_LOCALE = new Locale("en", "US");
+
     private TextToSpeech tts;
 
     private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
 
     private boolean connected;
 
-    private Locale locale = new Locale("en", "US");
+    private Locale locale = DEFAULT_LOCALE;
 
     public void setLocale(Locale locale) {
         this.locale = locale;
 
-        if (isConnected())
-            tts.setLanguage(this.locale);
+        if (isConnected()) {
+            int setLangResult = tts.setLanguage(this.locale);
+            if (setLangResult == TextToSpeech.LANG_NOT_SUPPORTED){
+                tts.setLanguage(DEFAULT_LOCALE);
+            }
+        }
     }
 
     public Locale getLocale() {
@@ -107,8 +113,8 @@ public class TextSpeaker extends Foundation {
             public void onInit(int status) {
                 if (status != TextToSpeech.ERROR) {
 
-                    tts.setLanguage(locale);
                     connected = true;
+                    setLocale(locale);
 
                     clearAndTriggerOnConnectListeners(true);
                 } else {
