@@ -385,7 +385,7 @@ public class NavMapView extends MapView {
 
         public void speakCurrentRouteStep(boolean withoutRepeat) {
 
-            DirectionsApiManager.Step step = getCurrentRouteStep();
+            final DirectionsApiManager.Step step = getCurrentRouteStep();
 
             if (step == null)
                 return;
@@ -394,7 +394,20 @@ public class NavMapView extends MapView {
                 return;
 
             TextSpeaker.getInstance().setLocale(getLocale());
-            TextSpeaker.getInstance().speak(step.getInstructionsInHtml(), null);
+            TextSpeaker.getInstance().speak(step.getInstructionsInText(), new TextSpeaker.OnSpeakListener() {
+                @Override
+                public void onStart() {
+
+                }
+
+                @Override
+                public void onComplete(boolean succeed) {
+
+                    if (!succeed)
+                        step.setSpoken(false);
+
+                }
+            });
             step.setSpoken(true);
 
         }
@@ -515,7 +528,7 @@ public class NavMapView extends MapView {
             double resultInDouble = step.getDurationInMs() * getCurrentRouteRatioFromEndOfStep();
 
 
-            return Double.isNaN(resultInDouble) ? -1 : (long) resultInDouble ;
+            return Double.isNaN(resultInDouble) ? -1 : (long) resultInDouble;
 
         }
 
@@ -860,7 +873,7 @@ public class NavMapView extends MapView {
     }
 
     // == Init ==
-    private void init(){
+    private void init() {
         DirectionsApiManager.getInstance().init(getContext(), "", "");
         LocationFusedSensor.getInstance().init(getContext());
         GSensor.getInstance().init(getContext());
@@ -1083,6 +1096,16 @@ public class NavMapView extends MapView {
         if (!isStartedNavigation())
             return;
 
+        GSensor.getInstance().connect();
+        MagneticSensor.getInstance().connect();
+        LocationFusedSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, null);
+        TextSpeaker.getInstance().connect(null);
+
+        // LocationFusedSensor and TextSpeaker may not be fully connected,
+        // but it is Ok!
+        // Coz getLastKnownLocation() must not be null (coz checked in startNavigation) and
+        // TextSpeaker will skip speaking and speak again in the upcoming frame or when TextSpeaker is fully connected
+
         double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
         double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
         final double bearing = getProcessedRotation(false);
@@ -1111,6 +1134,11 @@ public class NavMapView extends MapView {
             return;
 
         disableFrameUpdate();
+
+        GSensor.getInstance().disconnect();
+        MagneticSensor.getInstance().disconnect();
+        LocationFusedSensor.getInstance().disconnect();
+        TextSpeaker.getInstance().disconnect();
     }
 
     public boolean isPausedNavigation() {
