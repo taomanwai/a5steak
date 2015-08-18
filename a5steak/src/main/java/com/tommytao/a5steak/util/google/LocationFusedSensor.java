@@ -40,8 +40,8 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     }
 
     private LocationFusedSensor() {
-    }
 
+    }
 
     // --
 
@@ -59,15 +59,15 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     private int intervalInMs = DEFAULT_INTERVAL_IN_MS;
 
+    private boolean connected;
+
     public final static String PREFS_LAT_E6 = "LocationFusedSensor.PREFS_LAT_E6";
     public final static String PREFS_LNG_E6 = "LocationFusedSensor.PREFS_LNG_E6";
 
     private final long INVALID_LAT_E6_EXAMPLE = 999999999;
     private final long INVALID_LNG_E6_EXAMPLE = 999999999;
 
-
     private GoogleApiClient client;
-
 
     @Override
     public boolean init(Context context) {
@@ -76,6 +76,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     public void disconnect() {
         getClient().disconnect();
+        connected = false;
         clearAndOnUiThreadTriggerOnConnectListeners(false);
     }
 
@@ -163,7 +164,8 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
         onConnectListeners.add(onConnectListener);
 
-        this.getClient().connect();
+        if (!isConnecting())
+            this.getClient().connect();
 
     }
 
@@ -228,8 +230,9 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     public boolean isConnected() {
 
-        return (this.getClient() != null && this.getClient().isConnected());
+//        return (this.getClient() != null && this.getClient().isConnected());
 
+        return connected;
     }
 
     public boolean isConnecting() {
@@ -277,6 +280,9 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
             @Override
             public void run() {
                 startDetectingLocation(DEFAULT_PRIORITY, intervalInMs, intervalInMs);
+
+                connected = true;
+
                 clearAndTriggerOnConnectListeners(true);
             }
         });
