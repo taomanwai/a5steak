@@ -2,12 +2,9 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.FrameLayout;
 
 import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.customview.google.NavMapView;
-import com.tommytao.a5steak.util.Converter;
-import com.tommytao.a5steak.util.google.DirectionsApiManager;
 
 import java.util.Locale;
 
@@ -18,12 +15,8 @@ import butterknife.OnClick;
 
 public class MainActivity extends Activity {
 
-    @Bind(R.id.flMap)
-    FrameLayout flMap;
-
-
-
-    private NavMapView navMapView;
+    @Bind(R.id.navMapView)
+    NavMapView navMapView;
 
     private GMapAdapter mapAdapter;
 
@@ -39,28 +32,17 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
-        Converter.getInstance().init(this);
 
-        DirectionsApiManager.getInstance().init(this, CLIENT_ID_FOR_BUSINESS, CRYPTO_FOR_BUSINESS);
-
-        navMapView = new NavMapView(this);
-        flMap.addView(navMapView);
         mapAdapter = new GMapAdapter(navMapView);
-
 
 
         mapAdapter.onCreate(savedInstanceState);
         mapAdapter.init(this, null);
 
+        mapAdapter = new GMapAdapter(navMapView);
 
-//        TextSpeaker.getInstance().init(this);
-//        TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
-//            @Override
-//            public void onConnected(boolean succeed) {
-//                TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-//                TextSpeaker.getInstance().speak("測試", null);
-//            }
-//        });
+
+
 
 
 

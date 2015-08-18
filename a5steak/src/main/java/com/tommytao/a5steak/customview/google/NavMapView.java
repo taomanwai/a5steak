@@ -30,7 +30,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Locale;
 
-;
 
 /**
  * Created by tommytao on 12/8/15.
@@ -57,7 +56,7 @@ public class NavMapView extends MapView {
     }
 
     private interface OnMockRouteListener {
-        public void onComplete(Route route, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale, long queryElapsedTimestamp);
+        public void onComplete(Route route, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, String queryAvoid, Locale queryLocale, long queryElapsedTimestamp);
     }
 
 
@@ -122,7 +121,7 @@ public class NavMapView extends MapView {
         }
 
         @Override
-        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale, long queryElapsedTimestamp) {
+        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, String queryAvoid, Locale queryLocale, long queryElapsedTimestamp) {
 
             final NavMapView navMapView = navMapViewWeakReference.get();
             OnStartListener onStartListener = onStartListenerWeakReference.get();
@@ -137,7 +136,8 @@ public class NavMapView extends MapView {
                     queryStartLongitude != navMapView.startLocation.getLongitude() ||
                     queryDestLatitude != navMapView.destLocation.getLatitude() ||
                     queryDestLongitude != navMapView.destLocation.getLongitude() ||
-                    !queryLocale.equals(navMapView.locale)) {
+                    !queryLocale.equals(navMapView.locale) ||
+                    queryElapsedTimestamp != navMapView.latestMockRouteElapsedTimestamp) {
 
                 if (onStartListener != null)
                     onStartListener.onIgnored();
@@ -206,7 +206,7 @@ public class NavMapView extends MapView {
         }
 
         @Override
-        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, Locale queryLocale, long queryElapsedTimestamp) {
+        public void onComplete(Route r, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, String queryAvoid, Locale queryLocale, long queryElapsedTimestamp) {
 
             NavMapView navMapView = navMapViewWeakReference.get();
 
@@ -257,15 +257,18 @@ public class NavMapView extends MapView {
         private int currentRouteStepIndex = -1;
         private int currentRouteLocationIndex = -1;
         private Locale locale;
+        private String avoid = "";
         private boolean prepareToBeReplaced;
 
-        public Route(ArrayList<DirectionsApiManager.Step> steps, double startLatitude, double startLongitude, double endLatitude, double endLongitude, Locale locale, DirectionsApiManager.Polyline polyline) {
+        public Route(ArrayList<DirectionsApiManager.Step> steps, double startLatitude, double startLongitude, double endLatitude, double endLongitude, String avoid, Locale locale, DirectionsApiManager.Polyline polyline) {
 
             this.currentLocation = latLngToLocation(startLatitude, startLongitude);
             this.startLocation = latLngToLocation(startLatitude, startLongitude);
             this.destLocation = latLngToLocation(endLatitude, endLongitude);
 
             this.locale = locale;
+
+            this.avoid = avoid;
 
             if (polyline != null)
                 this.polyline = polyline;
@@ -624,14 +627,11 @@ public class NavMapView extends MapView {
                 }
                 eta += getSteps().get(i).getDurationInMs();
 
-
             }
 
             return eta;
 
-
         }
-
     }
 
     public static final int DEFAULT_ZOOM = 16;
@@ -644,24 +644,29 @@ public class NavMapView extends MapView {
     private Location startLocation;
     private Location rerouteLocation;
     private Locale locale;
+    private String avoid = "";
     private Route route;
     private long latestMockRouteElapsedTimestamp = -1;
 
 
     public NavMapView(Context context) {
         super(context);
+        init();
     }
 
     public NavMapView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public NavMapView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
     }
 
     public NavMapView(Context context, GoogleMapOptions options) {
         super(context, options);
+        init();
     }
 
     // == OnUpdateListener ==
@@ -685,28 +690,26 @@ public class NavMapView extends MapView {
 
     // == Mock route ==
     private long mockRoute(final double startLatitude, final double startLongitude,
-                           final double endLatitude, final double endLongitude, final Locale locale, final OnMockRouteListener listener) {
+                           final double endLatitude, final double endLongitude, final String avoid, final Locale locale, final OnMockRouteListener listener) {
 
         final long elapsedTimestamp = SystemClock.elapsedRealtime();
         DirectionsApiManager.getInstance().route(startLatitude, startLongitude,
-                endLatitude, endLongitude, DirectionsApiManager.AVOID_NONE, locale, new DirectionsApiManager.OnRouteListener() {
+                endLatitude, endLongitude, avoid, locale, new DirectionsApiManager.OnRouteListener() {
                     @Override
                     public void returnSteps(ArrayList<DirectionsApiManager.Step> steps, DirectionsApiManager.Polyline polyline) {
 
                         if (steps.isEmpty() || polyline == null) {
                             if (listener != null)
-                                listener.onComplete(null, startLatitude, startLongitude, endLatitude, endLongitude, locale, elapsedTimestamp);
+                                listener.onComplete(null, startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale, elapsedTimestamp);
                             return;
                         }
 
-                        Route route = new Route(steps, startLatitude, startLongitude, endLatitude, endLongitude, locale, polyline);
+                        Route route = new Route(steps, startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale, polyline);
 
                         if (listener != null)
-                            listener.onComplete(route, startLatitude, startLongitude, endLatitude, endLongitude, locale, elapsedTimestamp);
-
+                            listener.onComplete(route, startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale, elapsedTimestamp);
                     }
                 });
-
 
         return elapsedTimestamp;
     }
@@ -809,7 +812,7 @@ public class NavMapView extends MapView {
                     rerouteLocation = LocationFusedSensor.getInstance().getLastKnownLocation();
 
                     latestMockRouteElapsedTimestamp = mockRoute(rerouteLocation.getLatitude(), rerouteLocation.getLongitude(),
-                            destLocation.getLatitude(), destLocation.getLongitude(), locale, new ResponseToRerouteMockRoute(NavMapView.this));
+                            destLocation.getLatitude(), destLocation.getLongitude(), avoid, locale, new ResponseToRerouteMockRoute(NavMapView.this));
                 }
 
                 DirectionsApiManager.Step currentStep = route.getCurrentRouteStep();
@@ -856,6 +859,16 @@ public class NavMapView extends MapView {
         return route;
     }
 
+    // == Init ==
+    private void init(){
+        DirectionsApiManager.getInstance().init(getContext(), "", "");
+        LocationFusedSensor.getInstance().init(getContext());
+        GSensor.getInstance().init(getContext());
+        MagneticSensor.getInstance().init(getContext());
+        OrientationAnalyzer.getInstance().init(getContext());
+        TextSpeaker.getInstance().init(getContext());
+    }
+
 
     // == Connect ==
 
@@ -883,16 +896,9 @@ public class NavMapView extends MapView {
 
         onConnectListeners.add(onConnectListener);
 
-        DirectionsApiManager.getInstance().init(getContext(), "", "");
-        LocationFusedSensor.getInstance().init(getContext());
-        GSensor.getInstance().init(getContext());
-        MagneticSensor.getInstance().init(getContext());
-        OrientationAnalyzer.getInstance().init(getContext());
-        TextSpeaker.getInstance().init(getContext());
 
         GSensor.getInstance().connect();
         MagneticSensor.getInstance().connect();
-
         final ArrayList<Integer> numOfConnections = new ArrayList<>();
         numOfConnections.add(0);
         numOfConnections.add(1);
@@ -922,6 +928,7 @@ public class NavMapView extends MapView {
         GSensor.getInstance().disconnect();
         MagneticSensor.getInstance().disconnect();
         LocationFusedSensor.getInstance().disconnect();
+        TextSpeaker.getInstance().disconnect();
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -956,7 +963,7 @@ public class NavMapView extends MapView {
      */
     private ArrayList<OnStartListener> onStartListeners = new ArrayList<>();
 
-    public void startNavigation(double latitude, double longitude, Locale locale, final OnStartListener listener) {
+    public void startNavigation(double latitude, double longitude, String avoid, Locale locale, final OnStartListener listener) {
 
         if (!isConnectedNavigation()) {
             if (listener != null) {
@@ -988,12 +995,13 @@ public class NavMapView extends MapView {
         this.destLocation = LocationFusedSensor.getInstance().latLngToLocation(latitude, longitude);
         this.rerouteLocation = null;
         this.locale = locale;
+        this.avoid = avoid;
         this.route = null;
         getMap().clear();
 
         onStartListeners.add(listener);
         latestMockRouteElapsedTimestamp = mockRoute(startLocation.getLatitude(), startLocation.getLongitude(),
-                destLocation.getLatitude(), destLocation.getLongitude(), locale, new ResponseToStartNavigationMockRoute(NavMapView.this, listener));
+                destLocation.getLatitude(), destLocation.getLongitude(), avoid, locale, new ResponseToStartNavigationMockRoute(NavMapView.this, listener));
     }
 
 
