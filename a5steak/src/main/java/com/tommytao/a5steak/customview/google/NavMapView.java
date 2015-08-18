@@ -167,7 +167,11 @@ public class NavMapView extends MapView {
                 navMapView.startLocation = null;
                 navMapView.destLocation = null;
                 navMapView.rerouteLocation = null;
+                navMapView.avoid = "";
                 navMapView.locale = null;
+                navMapView.latestMockRouteElapsedTimestamp = -1;
+                navMapView.route = null;
+
 
                 if (onStartListener != null)
                     onStartListener.onStarted(false);
@@ -273,8 +277,8 @@ public class NavMapView extends MapView {
         private Location destLocation;
         private int currentRouteStepIndex = -1;
         private int currentRouteLocationIndex = -1;
-        private Locale locale;
         private String avoid = "";
+        private Locale locale;
         private boolean prepareToBeReplaced;
 
         public Route(ArrayList<DirectionsApiManager.Step> steps, double startLatitude, double startLongitude, double endLatitude, double endLongitude, String avoid, Locale locale, DirectionsApiManager.Polyline polyline) {
@@ -282,10 +286,8 @@ public class NavMapView extends MapView {
             this.currentLocation = latLngToLocation(startLatitude, startLongitude);
             this.startLocation = latLngToLocation(startLatitude, startLongitude);
             this.destLocation = latLngToLocation(endLatitude, endLongitude);
-
-            this.locale = locale;
-
             this.avoid = avoid;
+            this.locale = locale;
 
             if (polyline != null)
                 this.polyline = polyline;
@@ -673,10 +675,10 @@ public class NavMapView extends MapView {
     private Location destLocation;
     private Location startLocation;
     private Location rerouteLocation;
-    private Locale locale;
     private String avoid = "";
-    private Route route;
+    private Locale locale;
     private long latestMockRouteElapsedTimestamp = -1;
+    private Route route;
 
 
     public NavMapView(Context context) {
@@ -949,7 +951,9 @@ public class NavMapView extends MapView {
             startLocation = null;
             destLocation = null;
             rerouteLocation = null;
+            avoid = "";
             locale = null;
+            latestMockRouteElapsedTimestamp = -1;
             route = null;
             getMap().clear();
         }
@@ -1024,8 +1028,9 @@ public class NavMapView extends MapView {
         this.startLocation = LocationFusedSensor.getInstance().getLastKnownLocation();
         this.destLocation = LocationFusedSensor.getInstance().latLngToLocation(latitude, longitude);
         this.rerouteLocation = null;
-        this.locale = locale;
         this.avoid = avoid;
+        this.locale = locale;
+//        this.latestMockRouteElapsedTimestamp = -1;
         this.route = null;
         getMap().clear();
 
@@ -1054,8 +1059,11 @@ public class NavMapView extends MapView {
         startLocation = null;
         destLocation = null;
         rerouteLocation = null;
+        avoid = "";
         locale = null;
+        latestMockRouteElapsedTimestamp = -1;
         route = null;
+
 
         getMap().clear();
 
@@ -1147,6 +1155,8 @@ public class NavMapView extends MapView {
     }
 
     public void pauseNavigation() {
+
+
         if (isPausedNavigation())
             return;
 
