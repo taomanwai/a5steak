@@ -91,13 +91,30 @@ public class NavMapView extends MapView {
             if (navMapView == null)
                 return;
 
-            if (numOfConnections.size() > 0) {
-                numOfConnections.remove(numOfConnections.size() - 1);
+            if (!succeed){
+
+                GSensor.getInstance().disconnect();
+                MagneticSensor.getInstance().disconnect();
+                LocationFusedSensor.getInstance().disconnect();
+                TextSpeaker.getInstance().disconnect();
+
+                numOfConnections.clear();
+
+                navMapView.connectedNavigation = false;
+                navMapView.triggerAndClearOnConnectListeners(false);
+
+                return;
             }
 
+            if (numOfConnections.size() > 0) {
+               return;
+            }
+
+            numOfConnections.remove(numOfConnections.size() - 1);
+
             if (numOfConnections.isEmpty()) {
-                navMapView.connectedNavigation = succeed;
-                navMapView.triggerAndClearOnConnectListeners(succeed);
+                navMapView.connectedNavigation = true;
+                navMapView.triggerAndClearOnConnectListeners(true);
             }
 
         }

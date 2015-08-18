@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.customview.google.NavMapView;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
+import com.tommytao.a5steak.util.google.TextSpeaker;
 
 import java.util.Locale;
 
@@ -45,24 +46,24 @@ public class MainActivity extends Activity {
         mapAdapter = new GMapAdapter(navMapView);
 
 
-
-
-
-
-
-
-
-
     }
 
 
-
     @OnClick(R.id.btnGo)
-    public void go(){
+    public void go() {
+
+
 
         navMapView.connectNavigation(new NavMapView.OnConnectListener() {
             @Override
             public void onConnected(boolean succeed) {
+
+                if (!succeed) {
+                    Toast.makeText(MainActivity.this, "cannot connect", Toast.LENGTH_LONG).show();
+
+                    return;
+                }
+
                 navMapView.startNavigation(22.339662, 114.154811, DirectionsApiManager.AVOID_HIGHWAYS, new Locale("zh", "HK"), new NavMapView.OnStartListener() {
                     @Override
                     public void onStarted(boolean succeed) {
@@ -77,7 +78,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void onIgnoredByInvalidLatLng() {
 
-                                Toast.makeText(MainActivity.this, "lat lng not found", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "lat lng not found", Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -87,28 +88,27 @@ public class MainActivity extends Activity {
         navMapView.addOnUpdateListener(new NavMapView.OnUpdateListener() {
             @Override
             public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long eta, NavMapView.Route route) {
-                Log.d("", "update_t: " + maneuver + " " + distanceFromEndOfStep +  " " + eta);
+                Log.d("", "update_t: " + maneuver + " " + distanceFromEndOfStep + " " + eta);
             }
         });
-
 
 
     }
 
     @OnClick(R.id.btnStop)
-    public void stop(){
+    public void stop() {
 
         navMapView.disconnectNavigation();
 
     }
 
     @OnClick(R.id.btnResume)
-    public void resume(){
+    public void resume() {
         navMapView.resumeNavigation();
     }
 
     @OnClick(R.id.btnPause)
-    public void pause(){
+    public void pause() {
         navMapView.pauseNavigation();
     }
 
