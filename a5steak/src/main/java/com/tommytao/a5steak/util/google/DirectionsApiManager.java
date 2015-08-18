@@ -408,7 +408,7 @@ public class DirectionsApiManager extends Foundation {
 
         String localeString = locale.getLanguage() + "-" + locale.getCountry();
 
-        String result = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%.6f,%.6f&destination=%.6f,%.6f&avoid=%s&language=%s", startLatitude, startLongitude, endLatitude, endLongitude, avoid,
+        String result = String.format("https://maps.google.com/maps/api/directions/json?origin=%.6f,%.6f&destination=%.6f,%.6f&avoid=%s&language=%s", startLatitude, startLongitude, endLatitude, endLongitude, avoid,
                 localeString);
 
         if (!TextUtils.isEmpty(avoid)) {

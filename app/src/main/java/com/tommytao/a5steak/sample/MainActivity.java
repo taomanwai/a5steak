@@ -2,9 +2,12 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.customview.google.NavMapView;
+import com.tommytao.a5steak.util.google.DirectionsApiManager;
 
 import java.util.Locale;
 
@@ -60,7 +63,31 @@ public class MainActivity extends Activity {
         navMapView.connectNavigation(new NavMapView.OnConnectListener() {
             @Override
             public void onConnected(boolean succeed) {
-                navMapView.startNavigation(22.339662, 114.154811, new Locale("zh", "HK"), null);
+                navMapView.startNavigation(22.339662, 114.154811, DirectionsApiManager.AVOID_HIGHWAYS, new Locale("zh", "HK"), new NavMapView.OnStartListener() {
+                    @Override
+                    public void onStarted(boolean succeed) {
+
+                    }
+
+                    @Override
+                    public void onIgnored() {
+
+                    }
+
+                    @Override
+                    public void onIgnoredByInvalidLatLng() {
+
+                                Toast.makeText(MainActivity.this, "lat lng not found", Toast.LENGTH_LONG).show();
+
+                    }
+                });
+            }
+        });
+
+        navMapView.addOnUpdateListener(new NavMapView.OnUpdateListener() {
+            @Override
+            public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long eta, NavMapView.Route route) {
+                Log.d("", "update_t: " + maneuver + " " + distanceFromEndOfStep +  " " + eta);
             }
         });
 
@@ -91,6 +118,7 @@ public class MainActivity extends Activity {
         super.onResume();
 
         mapAdapter.onResume();
+        navMapView.resumeNavigation();
 
     }
 
@@ -98,6 +126,7 @@ public class MainActivity extends Activity {
     protected void onPause() {
 
         mapAdapter.onPause();
+        navMapView.pauseNavigation();
         super.onPause();
     }
 
