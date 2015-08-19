@@ -105,6 +105,8 @@ public class TextSpeaker extends Foundation {
 
         if (isConnected()) {
 
+
+
             if (onConnectListener != null)
                 handler.post(new Runnable() {
                     @Override
@@ -112,6 +114,8 @@ public class TextSpeaker extends Foundation {
                         onConnectListener.onConnected(true);
                     }
                 });
+
+
 
             return;
         }
