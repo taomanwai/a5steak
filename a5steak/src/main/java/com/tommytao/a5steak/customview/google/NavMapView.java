@@ -75,15 +75,15 @@ public class NavMapView extends MapView {
     public interface OnUpdateListener {
 
         /**
-         * Note: to check if update succeed or not, check if distanceFromEndOfStep being Double.NaN
+         * Note: to check if update succeed or not, check if distanceFromEndOfStepInMeter being Double.NaN
          *
          * @param maneuver
-         * @param distanceFromEndOfStep
+         * @param distanceFromEndOfStepInMeter
          * @param instructionsInHtml
          * @param instructionsInText
          * @param route
          */
-        public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long etaInMs, Route route);
+        public void onUpdate(int maneuver, double distanceFromEndOfStepInMeter, String instructionsInHtml, String instructionsInText, long etaInMs, Route route);
     }
 
     public static class ResponseToConnect implements LocationFusedSensor.OnConnectListener, TextSpeaker.OnConnectListener {
@@ -725,10 +725,10 @@ public class NavMapView extends MapView {
         onUpdateListeners.remove(listener);
     }
 
-    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long etaInMs, Route route) {
+    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStepInMeter, String instructionsInHtml, String instructionsInText, long etaInMs, Route route) {
         for (OnUpdateListener onUpdateListener : onUpdateListeners) {
             if (onUpdateListener != null)
-                onUpdateListener.onUpdate(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, etaInMs, route);
+                onUpdateListener.onUpdate(maneuver, distanceFromEndOfStepInMeter, instructionsInHtml, instructionsInText, etaInMs, route);
         }
     }
 
@@ -869,11 +869,11 @@ public class NavMapView extends MapView {
                 }
 
                 int maneuver = currentStep.getManeuver();
-                double distanceFromEndOfStep = route.getCurrentRouteDistanceFromEndOfStepInMeter();
+                double distanceFromEndOfStepInMeter = route.getCurrentRouteDistanceFromEndOfStepInMeter();
                 String instructionsInHtml = currentStep.getInstructionsInHtml();
                 String instructionsInText = currentStep.getInstructionsInText();
                 long etaInMs = route.getCurrentRouteEtaInMs();
-                triggerOnUpdateListeners(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, etaInMs, route);
+                triggerOnUpdateListeners(maneuver, distanceFromEndOfStepInMeter, instructionsInHtml, instructionsInText, etaInMs, route);
 
 
                 handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
