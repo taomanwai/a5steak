@@ -224,22 +224,43 @@ public class TextSpeaker extends Foundation {
 
             @Override
             public void onStart(String s) {
-                if (listener != null)
-                    listener.onStart();
+                if (listener != null) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onStart();
+                        }
+                    });
+
+                }
             }
 
             @Override
             public void onDone(String s) {
-                if (listener != null)
-                    listener.onComplete(true);
+                if (listener != null) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onComplete(true);
+                        }
+                    });
+
+                }
 
 
             }
 
             @Override
             public void onError(String s) {
-                if (listener != null)
-                    listener.onComplete(false);
+                if (listener != null) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onComplete(false);
+                        }
+                    });
+
+                }
 
             }
         });
