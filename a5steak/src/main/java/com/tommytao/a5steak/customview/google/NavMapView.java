@@ -83,7 +83,7 @@ public class NavMapView extends MapView {
          * @param instructionsInText
          * @param route
          */
-        public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long eta, Route route);
+        public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long etaInMs, Route route);
     }
 
     public static class ResponseToConnect implements LocationFusedSensor.OnConnectListener, TextSpeaker.OnConnectListener {
@@ -659,21 +659,21 @@ public class NavMapView extends MapView {
             if (currentStepIndex < 0 || currentStepIndex >= getSteps().size())
                 return -1;
 
-            long eta = 0;
+            long result = 0;
 
             for (int i = currentStepIndex; i < (getSteps().size() - 1); i++) {
 
                 if (i == currentStepIndex) {
 
-                    eta += getCurrentRouteDurationFromEndOfStepInMs();
+                    result += getCurrentRouteDurationFromEndOfStepInMs();
 
                     continue;
                 }
-                eta += getSteps().get(i).getDurationInMs();
+                result += getSteps().get(i).getDurationInMs();
 
             }
 
-            return eta;
+            return result;
 
         }
     }
@@ -725,10 +725,10 @@ public class NavMapView extends MapView {
         onUpdateListeners.remove(listener);
     }
 
-    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long eta, Route route) {
+    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long etaInMs, Route route) {
         for (OnUpdateListener onUpdateListener : onUpdateListeners) {
             if (onUpdateListener != null)
-                onUpdateListener.onUpdate(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, eta, route);
+                onUpdateListener.onUpdate(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, etaInMs, route);
         }
     }
 
@@ -872,8 +872,8 @@ public class NavMapView extends MapView {
                 double distanceFromEndOfStep = route.getCurrentRouteDistanceFromEndOfStepInMeter();
                 String instructionsInHtml = currentStep.getInstructionsInHtml();
                 String instructionsInText = currentStep.getInstructionsInText();
-                long eta = route.getCurrentRouteEtaInMs();
-                triggerOnUpdateListeners(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, eta, route);
+                long etaInMs = route.getCurrentRouteEtaInMs();
+                triggerOnUpdateListeners(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, etaInMs, route);
 
 
                 handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);

@@ -94,8 +94,8 @@ public class MainActivity extends Activity {
 
         navMapView.addOnUpdateListener(new NavMapView.OnUpdateListener() {
             @Override
-            public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long eta, NavMapView.Route route) {
-                Log.d("", "update_t: " + maneuver + " " + distanceFromEndOfStep + " " + eta);
+            public void onUpdate(int maneuver, double distanceFromEndOfStep, String instructionsInHtml, String instructionsInText, long etaInMs, NavMapView.Route route) {
+                Log.d("", "update_t: " + maneuver + " " + distanceFromEndOfStep + " " + etaInMs);
             }
         });
 
