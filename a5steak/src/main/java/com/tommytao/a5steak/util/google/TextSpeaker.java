@@ -8,6 +8,7 @@ import com.tommytao.a5steak.util.Foundation;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 
@@ -65,7 +66,7 @@ public class TextSpeaker extends Foundation {
 
         if (isConnected()) {
             int setLangResult = tts.setLanguage(this.locale);
-            if (setLangResult == TextToSpeech.LANG_NOT_SUPPORTED){
+            if (setLangResult == TextToSpeech.LANG_NOT_SUPPORTED) {
                 tts.setLanguage(DEFAULT_LOCALE);
             }
         }
@@ -103,7 +104,16 @@ public class TextSpeaker extends Foundation {
         }
 
         if (isConnected()) {
-            disconnect();
+
+            if (onConnectListener != null)
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onConnectListener.onConnected(true);
+                    }
+                });
+
+            return;
         }
 
         onConnectListeners.add(onConnectListener);
@@ -230,7 +240,15 @@ public class TextSpeaker extends Foundation {
             }
         });
 
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "" + genUniqueId());
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, hashMap);
+
+    }
+
+    private int genUniqueId() {
+
+        return (int) (Math.random() * Integer.MAX_VALUE);
 
     }
 

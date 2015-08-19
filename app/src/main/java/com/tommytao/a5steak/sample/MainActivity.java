@@ -9,6 +9,7 @@ import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.customview.google.NavMapView;
 import com.tommytao.a5steak.util.AppManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
+import com.tommytao.a5steak.util.google.TextSpeaker;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -37,6 +38,8 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
+        TextSpeaker.getInstance().init(this);
+
 
         mapAdapter = new GMapAdapter(navMapView);
 
@@ -60,37 +63,62 @@ public class MainActivity extends Activity {
     public void go() {
 
 
-
-        navMapView.connectNavigation(new NavMapView.OnConnectListener() {
+        TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
             @Override
             public void onConnected(boolean succeed) {
 
-                if (!succeed) {
-                    Toast.makeText(MainActivity.this, "cannot connect", Toast.LENGTH_LONG).show();
-
+                if (!succeed)
                     return;
-                }
 
-                navMapView.startNavigation(22.339662, 114.154811, DirectionsApiManager.AVOID_HIGHWAYS, new Locale("zh", "HK"), new NavMapView.OnStartListener() {
+                TextSpeaker.getInstance().speak("Welcome", new TextSpeaker.OnSpeakListener() {
                     @Override
-                    public void onStarted(boolean succeed) {
+                    public void onStart() {
 
                     }
 
                     @Override
-                    public void onIgnored() {
+                    public void onComplete(boolean succeed) {
+                        if (!succeed)
+                            return;
 
-                    }
+                        navMapView.connectNavigation(new NavMapView.OnConnectListener() {
+                            @Override
+                            public void onConnected(boolean succeed) {
 
-                    @Override
-                    public void onIgnoredByInvalidLatLng() {
+                                if (!succeed) {
+                                    Toast.makeText(MainActivity.this, "cannot connect", Toast.LENGTH_LONG).show();
 
-                        Toast.makeText(MainActivity.this, "lat lng not found", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+
+                                navMapView.startNavigation(22.339662, 114.154811, DirectionsApiManager.AVOID_HIGHWAYS, new Locale("zh", "HK"), new NavMapView.OnStartListener() {
+                                    @Override
+                                    public void onStarted(boolean succeed) {
+
+                                    }
+
+                                    @Override
+                                    public void onIgnored() {
+
+                                    }
+
+                                    @Override
+                                    public void onIgnoredByInvalidLatLng() {
+
+                                        Toast.makeText(MainActivity.this, "lat lng not found", Toast.LENGTH_LONG).show();
+
+                                    }
+                                });
+                            }
+                        });
+
 
                     }
                 });
             }
         });
+
+
 
         navMapView.addOnUpdateListener(new NavMapView.OnUpdateListener() {
             @Override
