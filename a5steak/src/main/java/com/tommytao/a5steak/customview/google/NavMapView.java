@@ -15,6 +15,7 @@ import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -197,8 +198,24 @@ public class NavMapView extends MapView {
 
             navMapView.route = r;
 
-            navMapView.getMap().clear();
-            navMapView.route.drawRouteToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
+            try {
+                navMapView.routePolyline.remove();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            navMapView.routePolyline = navMapView.route.drawRouteToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
+
+            double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
+            double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
+            final double rotation = navMapView.getProcessedRotation(false);
+
+            try {
+                navMapView.currentLocationGroundOverlay.remove();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            navMapView.currentLocationGroundOverlay = navMapView.drawGroundOverlayAtLatLngRotation(lat, lng, (float) rotation, R.drawable.ic_marker_current_location);
+
 
             if (onStartListener != null)
                 onStartListener.onStarted(true);
@@ -208,9 +225,6 @@ public class NavMapView extends MapView {
             }
 
             // anim map to current
-            double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
-            double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
-            final double rotation = navMapView.getProcessedRotation(false);
 
             navMapView.getMap().animateCamera(
                     CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(DEFAULT_ZOOM).bearing((float) rotation).tilt(DEFAULT_PITCH).build()), DEFAULT_ANIM_DURATION_IN_MS,
@@ -271,8 +285,12 @@ public class NavMapView extends MapView {
 
             navMapView.route = r;
 
-            navMapView.getMap().clear();
-            navMapView.route.drawRouteToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
+            try {
+                navMapView.routePolyline.remove();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            navMapView.routePolyline = navMapView.route.drawRouteToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
 
 
         }
@@ -378,6 +396,14 @@ public class NavMapView extends MapView {
 
         public Location getCurrentLocation() {
             return currentLocation;
+        }
+
+        public float getCurrentRotation() {
+
+            if (currentLocation == null)
+                return Float.NaN;
+
+            return currentLocation.getBearing();
         }
 
         public Location getCurrentRouteLocation() {
@@ -507,9 +533,16 @@ public class NavMapView extends MapView {
 
         private com.google.android.gms.maps.model.Polyline drawRouteToMap(GoogleMap gmap, float width, int color) {
 
+            if (gmap == null)
+                return null;
+
             PolylineOptions lineOptions = new PolylineOptions();
 
             ArrayList<LatLng> latLngs = new ArrayList<>();
+
+            if (getPolyline().getLocations().isEmpty())
+                return null;
+
 
             for (Location location : getPolyline().getLocations())
                 if (location != null)
@@ -521,17 +554,23 @@ public class NavMapView extends MapView {
 
             return gmap.addPolyline(lineOptions);
 
-
         }
 
-        private void drawCurrentLocationToMap(GoogleMap gmap, int resId){
+        public GroundOverlay drawCurrentLocationToMap(GoogleMap gmap, int resId) {
 
-            final int markerSize = getResources().getInteger(R.integer.indicator_navigation_meter);
+            if (gmap == null)
+                return null;
+
+            if (currentLocation == null)
+                return null;
+
+            final int markerSize = 120;
 
             final GroundOverlayOptions newarkMap = new GroundOverlayOptions()
-                    .image(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_current_location))
-                    .position(currentLocation, markerSize, markerSize).bearing(bearing).zIndex(1.0f);
-            overlayCurrentLocation = map.addGroundOverlay(newarkMap);
+                    .image(BitmapDescriptorFactory.fromResource(resId))
+                    .position(new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude()), markerSize, markerSize)
+                    .bearing(getCurrentRotation()).zIndex(1.0f);
+            return gmap.addGroundOverlay(newarkMap);
 
         }
 
@@ -581,8 +620,9 @@ public class NavMapView extends MapView {
         }
 
 
-        public void update(double latitude, double longitude) {
+        public void update(double latitude, double longitude, double rotation) {
             currentLocation = latLngToLocation(latitude, longitude);
+            currentLocation.setBearing((float) rotation);
 
             if (steps.isEmpty())
                 return;
@@ -709,6 +749,9 @@ public class NavMapView extends MapView {
     private long latestMockRouteElapsedTimestamp = -1;
     private Route route;
 
+    private com.google.android.gms.maps.model.Polyline routePolyline;
+    private GroundOverlay currentLocationGroundOverlay;
+
 
     public NavMapView(Context context) {
         super(context);
@@ -728,6 +771,18 @@ public class NavMapView extends MapView {
     public NavMapView(Context context, GoogleMapOptions options) {
         super(context, options);
         init();
+    }
+
+    private GroundOverlay drawGroundOverlayAtLatLngRotation(double lat, double lng, float rotation, int resId) {
+
+        final int markerSize = 120;
+
+        final GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions()
+                .image(BitmapDescriptorFactory.fromResource(resId))
+                .position(new LatLng(lat, lng), markerSize, markerSize)
+                .bearing(rotation).zIndex(1.0f);
+        return getMap().addGroundOverlay(groundOverlayOptions);
+
     }
 
     // == OnUpdateListener ==
@@ -847,16 +902,25 @@ public class NavMapView extends MapView {
 
                 double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
                 double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
-
+                double rotation = getProcessedRotation(false);
                 try {
-                    route.update(lat, lng);
+                    route.update(lat, lng, rotation);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                double rotation = getProcessedRotation(true); // true
+                double processedRotation = getProcessedRotation(true);
 
                 getMap().moveCamera(CameraUpdateFactory.newCameraPosition(
-                        new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(DEFAULT_ZOOM).bearing((float) rotation).tilt((float) DEFAULT_PITCH).build()));
+                        new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(DEFAULT_ZOOM).bearing((float) processedRotation).tilt((float) DEFAULT_PITCH).build()));
+
+
+                if (currentLocationGroundOverlay == null)
+                    currentLocationGroundOverlay = drawGroundOverlayAtLatLngRotation(lat, lng, (float) processedRotation, R.drawable.ic_marker_current_location);
+                else {
+                    currentLocationGroundOverlay.setPosition(new LatLng(lat, lng));
+                    currentLocationGroundOverlay.setBearing((float) processedRotation);
+                }
+
 
                 if (route == null) {
                     triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", -1, route);
@@ -969,6 +1033,21 @@ public class NavMapView extends MapView {
 
     }
 
+    private void removeRoutePolylineAndCurrentLocationGroundOverlay() {
+        try {
+            routePolyline.remove();
+            routePolyline = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            currentLocationGroundOverlay.remove();
+            currentLocationGroundOverlay = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Disconnect all resources (e.g. Singletons) used by NavMapView
      * <p/>
@@ -985,7 +1064,8 @@ public class NavMapView extends MapView {
             locale = null;
             latestMockRouteElapsedTimestamp = -1;
             route = null;
-            getMap().clear();
+
+            removeRoutePolylineAndCurrentLocationGroundOverlay();
         }
 
         connectedNavigation = false;
@@ -1077,7 +1157,14 @@ public class NavMapView extends MapView {
         this.locale = locale;
 //        this.latestMockRouteElapsedTimestamp = -1;
         this.route = null;
-        getMap().clear();
+
+//        removeRoutePolylineAndCurrentLocationGroundOverlay();
+        try {
+            routePolyline.remove();
+            routePolyline = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         onStartListeners.add(listener);
         latestMockRouteElapsedTimestamp = mockRoute(startLocation.getLatitude(), startLocation.getLongitude(),
@@ -1109,8 +1196,7 @@ public class NavMapView extends MapView {
         latestMockRouteElapsedTimestamp = -1;
         route = null;
 
-
-        getMap().clear();
+        removeRoutePolylineAndCurrentLocationGroundOverlay();
 
         handler.post(new Runnable() {
             @Override
