@@ -872,8 +872,8 @@ public class NavMapView extends MapView {
                 double distanceFromEndOfStep = route.getCurrentRouteDistanceFromEndOfStepInMeter();
                 String instructionsInHtml = currentStep.getInstructionsInHtml();
                 String instructionsInText = currentStep.getInstructionsInText();
-                long etaFromEndOfStep = route.getCurrentRouteDurationFromEndOfStepInMs();
-                triggerOnUpdateListeners(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, etaFromEndOfStep, route);
+                long eta = route.getCurrentRouteEtaInMs();
+                triggerOnUpdateListeners(maneuver, distanceFromEndOfStep, instructionsInHtml, instructionsInText, eta, route);
 
 
                 handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
