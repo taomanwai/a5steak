@@ -113,7 +113,7 @@ public class NavMapView extends MapView {
                 numOfConnections.clear();
 
                 navMapView.connectedNavigation = false;
-                navMapView.triggerAndClearOnConnectListeners(false);
+                navMapView.clearAndTriggerOnConnectListeners(false);
 
                 return;
             }
@@ -126,7 +126,7 @@ public class NavMapView extends MapView {
 
             if (numOfConnections.isEmpty()) {
                 navMapView.connectedNavigation = true;
-                navMapView.triggerAndClearOnConnectListeners(true);
+                navMapView.clearAndTriggerOnConnectListeners(true);
             }
 
         }
@@ -976,12 +976,7 @@ public class NavMapView extends MapView {
         MagneticSensor.getInstance().disconnect();
         LocationFusedSensor.getInstance().disconnect();
         TextSpeaker.getInstance().disconnect();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                triggerAndClearOnConnectListeners(false);
-            }
-        });
+        clearAndOnUiThreadTriggerOnConnectListeners(false);
 
     }
 
@@ -993,13 +988,32 @@ public class NavMapView extends MapView {
         return (!isConnectedNavigation() && !onConnectListeners.isEmpty());
     }
 
-    private void triggerAndClearOnConnectListeners(boolean succeed) {
+    private void clearAndTriggerOnConnectListeners(boolean succeed) {
         ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
         onConnectListeners.clear();
         for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
-            if (pendingOnConnectListener != null)
+            if (pendingOnConnectListener != null) {
                 pendingOnConnectListener.onConnected(succeed);
+            }
         }
+    }
+
+    private void clearAndOnUiThreadTriggerOnConnectListeners(final boolean succeed) {
+        final ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
+        onConnectListeners.clear();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
+                    if (pendingOnConnectListener != null) {
+                        pendingOnConnectListener.onConnected(succeed);
+                    }
+                }
+            }
+        });
+
+
     }
 
 
@@ -1152,22 +1166,35 @@ public class NavMapView extends MapView {
         onSwipeAndPauseListeners.remove(listener);
     }
 
-    private void triggerOnResumeListeners() {
-        for (OnResumeListener onResumeListener : onResumeListeners) {
-            if (onResumeListener != null)
-                onResumeListener.onResumed();
-        }
+    private void keepAndOnUiThreadTriggerOnResumeListeners() {
+
+        final ArrayList<OnResumeListener> pendingOnResumeListeners = new ArrayList<>(onResumeListeners);
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (OnResumeListener onResumeListener : pendingOnResumeListeners) {
+                    if (onResumeListener != null)
+                        onResumeListener.onResumed();
+                }
+            }
+        });
+
     }
 
-    private void triggerOnPauseListeners() {
-        for (OnPauseListener onPauseListener : onPauseListeners) {
+    private void keepAndOnUiThreadTriggerOnPauseListeners() {
+        final ArrayList<OnPauseListener> pendingOnPauseListeners = new ArrayList<>(onPauseListeners);
+
+        for (OnPauseListener onPauseListener : pendingOnPauseListeners) {
             if (onPauseListener != null)
                 onPauseListener.onPaused();
         }
     }
 
-    private void triggerOnSwipeAndPauseListeners() {
-        for (OnSwipeAndPauseListener onSwipeAndPauseListener : onSwipeAndPauseListeners) {
+    private void keepAndOnUiThreadTriggerOnSwipeAndPauseListeners() {
+        final ArrayList<OnSwipeAndPauseListener> pendingOnSwipeAndPauseListeners = new ArrayList<>(onSwipeAndPauseListeners);
+
+        for (OnSwipeAndPauseListener onSwipeAndPauseListener : pendingOnSwipeAndPauseListeners) {
             if (onSwipeAndPauseListener != null)
                 onSwipeAndPauseListener.onSwipeAndPaused();
         }
@@ -1194,13 +1221,7 @@ public class NavMapView extends MapView {
         LocationFusedSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, null);
         TextSpeaker.getInstance().connect(null);
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                triggerOnResumeListeners();
-            }
-        });
-
+        keepAndOnUiThreadTriggerOnResumeListeners();
 
         double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
         double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
@@ -1238,13 +1259,7 @@ public class NavMapView extends MapView {
         LocationFusedSensor.getInstance().disconnect();
         TextSpeaker.getInstance().disconnect();
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                triggerOnPauseListeners();
-            }
-        });
-
+        keepAndOnUiThreadTriggerOnPauseListeners();
 
 
     }
@@ -1257,12 +1272,8 @@ public class NavMapView extends MapView {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             pauseNavigation();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    triggerOnSwipeAndPauseListeners();
-                }
-            });
+            keepAndOnUiThreadTriggerOnSwipeAndPauseListeners();
+
         }
         return super.dispatchTouchEvent(ev);
     }
