@@ -13,9 +13,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.tommytao.a5steak.R;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
@@ -195,7 +198,7 @@ public class NavMapView extends MapView {
             navMapView.route = r;
 
             navMapView.getMap().clear();
-            navMapView.route.drawToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
+            navMapView.route.drawRouteToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
 
             if (onStartListener != null)
                 onStartListener.onStarted(true);
@@ -269,7 +272,7 @@ public class NavMapView extends MapView {
             navMapView.route = r;
 
             navMapView.getMap().clear();
-            navMapView.route.drawToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
+            navMapView.route.drawRouteToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
 
 
         }
@@ -502,7 +505,7 @@ public class NavMapView extends MapView {
 
         }
 
-        private void drawToMap(GoogleMap gmap, float width, int color) {
+        private com.google.android.gms.maps.model.Polyline drawRouteToMap(GoogleMap gmap, float width, int color) {
 
             PolylineOptions lineOptions = new PolylineOptions();
 
@@ -516,8 +519,22 @@ public class NavMapView extends MapView {
             lineOptions.width(width); // 11.0f
             lineOptions.color(color);
 
-            gmap.addPolyline(lineOptions);
+            return gmap.addPolyline(lineOptions);
+
+
         }
+
+        private void drawCurrentLocationToMap(GoogleMap gmap, int resId){
+
+            final int markerSize = getResources().getInteger(R.integer.indicator_navigation_meter);
+
+            final GroundOverlayOptions newarkMap = new GroundOverlayOptions()
+                    .image(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_current_location))
+                    .position(currentLocation, markerSize, markerSize).bearing(bearing).zIndex(1.0f);
+            overlayCurrentLocation = map.addGroundOverlay(newarkMap);
+
+        }
+
 
         public double getCurrentRouteRatioFromEndOfStep() {
 
@@ -836,7 +853,7 @@ public class NavMapView extends MapView {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                double rotation = getProcessedRotation(true);
+                double rotation = getProcessedRotation(true); // true
 
                 getMap().moveCamera(CameraUpdateFactory.newCameraPosition(
                         new CameraPosition.Builder().target(new LatLng(lat, lng)).zoom(DEFAULT_ZOOM).bearing((float) rotation).tilt((float) DEFAULT_PITCH).build()));
