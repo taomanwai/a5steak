@@ -63,6 +63,9 @@ public class NavMapView extends MapView {
         public void onPaused();
     }
 
+    public interface OnSwipeAndPauseListener {
+        public void onSwipeAndPaused();
+    }
 
     private interface OnMockRouteListener {
         public void onComplete(Route route, double queryStartLatitude, double queryStartLongitude, double queryDestLatitude, double queryDestLongitude, String queryAvoid, Locale queryLocale, long queryElapsedTimestamp);
@@ -1121,6 +1124,7 @@ public class NavMapView extends MapView {
 
     private ArrayList<OnResumeListener> onResumeListeners = new ArrayList<>();
     private ArrayList<OnPauseListener> onPauseListeners = new ArrayList<>();
+    private ArrayList<OnSwipeAndPauseListener> onSwipeAndPauseListeners = new ArrayList<>();
 
     private boolean resumeAnimRunning;
 
@@ -1140,6 +1144,14 @@ public class NavMapView extends MapView {
         onPauseListeners.remove(listener);
     }
 
+    public void addOnSwipeAndPauseListener(OnSwipeAndPauseListener listener) {
+        onSwipeAndPauseListeners.add(listener);
+    }
+
+    public void removeOnSwipeAndPauseListener(OnSwipeAndPauseListener listener) {
+        onSwipeAndPauseListeners.remove(listener);
+    }
+
     private void triggerOnResumeListeners() {
         for (OnResumeListener onResumeListener : onResumeListeners) {
             if (onResumeListener != null)
@@ -1151,6 +1163,13 @@ public class NavMapView extends MapView {
         for (OnPauseListener onPauseListener : onPauseListeners) {
             if (onPauseListener != null)
                 onPauseListener.onPaused();
+        }
+    }
+
+    private void triggerOnSwipeAndPauseListeners() {
+        for (OnSwipeAndPauseListener onSwipeAndPauseListener : onSwipeAndPauseListeners) {
+            if (onSwipeAndPauseListener != null)
+                onSwipeAndPauseListener.onSwipeAndPaused();
         }
     }
 
@@ -1236,8 +1255,15 @@ public class NavMapView extends MapView {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN)
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             pauseNavigation();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    triggerOnSwipeAndPauseListeners();
+                }
+            });
+        }
         return super.dispatchTouchEvent(ev);
     }
 
