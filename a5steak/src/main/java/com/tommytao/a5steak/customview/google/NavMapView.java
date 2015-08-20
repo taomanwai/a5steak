@@ -1387,7 +1387,7 @@ public class NavMapView extends MapView {
     }
 
     // == Reroute ==
-    private interface OnRerouteListener {
+    public interface OnRerouteListener {
         public void onReroute();
     }
 
