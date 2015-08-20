@@ -90,6 +90,7 @@ public class NavMapView extends MapView {
         public void onUpdate(int maneuver, double distanceFromEndOfStepInMeter, String instructionsInHtml, String instructionsInText, long etaInMs, Route route);
     }
 
+
     public static class ResponseToConnect implements LocationFusedSensor.OnConnectListener, TextSpeaker.OnConnectListener {
 
         private WeakReference<NavMapView> navMapViewWeakReference;
@@ -743,7 +744,6 @@ public class NavMapView extends MapView {
 
     private Location destLocation;
     private Location startLocation;
-    private Location rerouteLocation;
     private String avoid = "";
     private Locale locale;
     private long latestMockRouteElapsedTimestamp = -1;
@@ -939,6 +939,9 @@ public class NavMapView extends MapView {
 
                     latestMockRouteElapsedTimestamp = mockRoute(rerouteLocation.getLatitude(), rerouteLocation.getLongitude(),
                             destLocation.getLatitude(), destLocation.getLongitude(), avoid, locale, new ResponseToRerouteMockRoute(NavMapView.this));
+
+                    triggerOnRerouteListeners();
+
                 }
 
                 DirectionsApiManager.Step currentStep = route.getCurrentRouteStep();
@@ -954,7 +957,9 @@ public class NavMapView extends MapView {
                 String instructionsInHtml = currentStep.getInstructionsInHtml();
                 String instructionsInText = currentStep.getInstructionsInText();
                 long etaInMs = route.getCurrentRouteEtaInMs();
-                triggerOnUpdateListeners(maneuver, distanceFromEndOfStepInMeter, instructionsInHtml, instructionsInText, etaInMs, route);
+
+                if (!route.isPrepareToBeReplaced())
+                    triggerOnUpdateListeners(maneuver, distanceFromEndOfStepInMeter, instructionsInHtml, instructionsInText, etaInMs, route);
 
 
                 handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
@@ -1379,6 +1384,30 @@ public class NavMapView extends MapView {
 
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    // == Reroute ==
+    private interface OnRerouteListener {
+        public void onReroute();
+    }
+
+    private Location rerouteLocation;
+
+    private ArrayList<OnRerouteListener> onRerouteListeners = new ArrayList<>();
+
+    public void addOnRerouteListener(OnRerouteListener listener) {
+        onRerouteListeners.add(listener);
+    }
+
+    public void removeOnRerouteListener(OnRerouteListener listener) {
+        onRerouteListeners.remove(listener);
+    }
+
+    private void triggerOnRerouteListeners() {
+        for (OnRerouteListener onRerouteListener : onRerouteListeners) {
+            if (onRerouteListener != null)
+                onRerouteListener.onReroute();
+        }
     }
 
 }

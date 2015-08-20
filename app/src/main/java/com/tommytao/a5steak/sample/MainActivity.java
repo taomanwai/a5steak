@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
         ButterKnife.bind(this);
 
         TextSpeaker.getInstance().init(this);
+        TextSpeaker.getInstance().connect(null);
 
 
         mapAdapter = new GMapAdapter(navMapView);
@@ -140,6 +141,11 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnResume)
     public void resume() {
         navMapView.resumeNavigation();
+
+//        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
+//        TextSpeaker.getInstance().speak("go to left", null);
+
+
     }
 
     @OnClick(R.id.btnPause)
