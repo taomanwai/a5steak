@@ -2,14 +2,10 @@ package com.tommytao.a5steak.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
@@ -86,14 +82,7 @@ public class Foundation {
 
     }
 
-    public static interface OnPlayListener {
 
-        public void onStart();
-
-        public void onComplete(boolean succeed);
-
-
-    }
 
     public final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 60000; // 10000
     public final int DEFAULT_READ_TIMEOUT_IN_MS = DEFAULT_CONNECT_TIMEOUT_IN_MS;
@@ -1135,201 +1124,6 @@ public class Foundation {
     }
 
 
-    // ==== Media player  ===
-
-    protected MediaPlayer mediaPlayer = new MediaPlayer();
-
-    protected MediaPlayer getMediaPlayer() {
-
-        return mediaPlayer;
-
-    }
-
-    protected MediaPlayer getMediaPlayerFromRaw(int resId) {
-        return MediaPlayer.create(appContext, resId);
-    }
-
-
-    protected void releaseMediaPlayer() {
-
-        try {
-            mediaPlayer.release();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    protected void playRaw(final int resId, final OnPlayListener listener) {
-
-        releaseMediaPlayer();
-
-        try {
-            mediaPlayer = getMediaPlayerFromRaw(resId);
-
-            getMediaPlayer().start();
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (listener != null)
-                        listener.onStart();
-
-                }
-            });
-
-
-            getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-
-                    try {
-                        mediaPlayer.release();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    if (listener != null)
-                        listener.onComplete(true);
-
-
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (listener != null)
-                        listener.onComplete(false);
-
-                }
-            });
-        }
-
-
-    }
-
-    protected void playAssets(final String fileName, final OnPlayListener listener) {
-
-        releaseMediaPlayer();
-
-        try {
-
-            mediaPlayer = new MediaPlayer();
-            AssetFileDescriptor descriptor = ((ContextWrapper) appContext).getAssets().openFd(fileName);
-            getMediaPlayer().setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
-            descriptor.close();
-            getMediaPlayer().prepare();
-
-
-            getMediaPlayer().start();
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (listener != null)
-                        listener.onStart();
-
-                }
-            });
-
-
-            getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    try {
-                        mediaPlayer.release();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    if (listener != null)
-                        listener.onComplete(true);
-
-
-                }
-            });
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (listener != null)
-                        listener.onComplete(false);
-
-                }
-            });
-        }
-
-    }
-
-
-    protected void playLink(final String link, final OnPlayListener listener) {
-
-        releaseMediaPlayer();
-
-        try {
-
-
-            mediaPlayer = new MediaPlayer();
-            getMediaPlayer().setAudioStreamType(AudioManager.STREAM_MUSIC);
-            getMediaPlayer().setDataSource(link);
-            getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-
-                    boolean succeed = true;
-                    try {
-                        mediaPlayer.start();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        succeed = false;
-                        if (listener != null)
-                            listener.onComplete(false);
-                    }
-
-                    if (succeed && listener != null) {
-                        listener.onStart();
-                    }
-
-                }
-            });
-            getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    try {
-                        mediaPlayer.release();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    if (listener != null)
-                        listener.onComplete(true);
-                }
-            });
-            getMediaPlayer().prepareAsync();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (listener != null)
-                        listener.onComplete(false);
-
-                }
-            });
-        }
-
-    }
 
     // === Google API for Work ===
     protected static class UrlSigner {

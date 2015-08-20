@@ -1,6 +1,10 @@
 package com.tommytao.a5steak.util.google;
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
@@ -15,7 +19,9 @@ import java.util.Locale;
 /**
  * Responsible for speak text
  * <p/>
- * Note: Cantonese speaking may not work coz Google blocks robot access sometimes. Still fixing ...
+ * Note: Cantonese speaking may not work coz Google blocks robot access sometimes. Fixed by &client=t
+ * <p/>
+ * Ref: http://stackoverflow.com/questions/9893175/google-text-to-speech-api
  */
 public class TextSpeaker extends Foundation {
 
@@ -49,7 +55,7 @@ public class TextSpeaker extends Foundation {
 
     }
 
-    public static final String SERVER_CANTONESE_SPEAKER_PREFIX = "http://translate.google.com/translate_tts?&tl=zh-yue&ie=UTF-8&q=";
+    public static final String SERVER_CANTONESE_SPEAKER_PREFIX = "http://translate.google.com/translate_tts?&tl=zh-yue&ie=UTF-8&client=t&q=";
 
     public static final Locale DEFAULT_LOCALE = new Locale("en", "US");
 
@@ -106,7 +112,6 @@ public class TextSpeaker extends Foundation {
         if (isConnected()) {
 
 
-
             if (onConnectListener != null)
                 handler.post(new Runnable() {
                     @Override
@@ -114,7 +119,6 @@ public class TextSpeaker extends Foundation {
                         onConnectListener.onConnected(true);
                     }
                 });
-
 
 
             return;
@@ -199,38 +203,108 @@ public class TextSpeaker extends Foundation {
 
         if (shouldUseCantonese()) {
 
-            String link = SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText + "&client=t";
+            String link = SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText;
 
             log("text_speaker: speak cantonese: link: " + link);
 
-            playLink(link, new OnPlayListener() {
-                @Override
-                public void onStart() {
-                    if (listener != null)
-                        listener.onStart();
-                }
+//            playLink(link, new OnPlayListener() {
+//                @Override
+//                public void onStart() {
+//                    if (listener != null)
+//                        listener.onStart();
+//                }
+//
+//                @Override
+//                public void onComplete(boolean succeed) {
+//
+//                    if (listener != null)
+//                        listener.onComplete(succeed);
+//                }
+//            });
 
-                @Override
-                public void onComplete(boolean succeed) {
+            try {
 
-                    if (listener != null)
-                        listener.onComplete(succeed);
-                }
-            });
+                Uri uri = Uri.parse(link);
+
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("User-Agent", "stagefright/1.2 (Linux;Android 5.0)");
+                headers.put("Referer", "http://translate.google.com/");
+
+                MediaPlayer mediaPlayer = new MediaPlayer();
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//                mediaPlayer.setDataSource(link);
+                mediaPlayer.setDataSource(appContext, uri, headers);
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+
+                        boolean succeed = true;
+                        try {
+                            mediaPlayer.start();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            succeed = false;
+                            if (listener != null)
+                                listener.onComplete(false);
+                        }
+
+                        if (succeed && listener != null) {
+                            listener.onStart();
+                        }
+
+                    }
+                });
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        try {
+                            mediaPlayer.release();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (listener != null)
+                            listener.onComplete(true);
+                    }
+                });
+                mediaPlayer.prepareAsync();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (listener != null)
+                            listener.onComplete(false);
+
+                    }
+                });
+            }
+
+
             return;
         }
 
+        // UtteranceProgressListener may be running in bg thread
+        // Ref: http://developer.android.com/intl/es/reference/android/speech/tts/UtteranceProgressListener.html
         tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
 
             @Override
             public void onStart(String s) {
+
+
                 if (listener != null) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onStart();
-                        }
-                    });
+
+                    if (isRunningOnUiThread())
+                        listener.onStart();
+                    else
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onStart();
+                            }
+                        });
 
                 }
             }
@@ -238,12 +312,15 @@ public class TextSpeaker extends Foundation {
             @Override
             public void onDone(String s) {
                 if (listener != null) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onComplete(true);
-                        }
-                    });
+                    if (isRunningOnUiThread())
+                        listener.onStart();
+                    else
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onComplete(true);
+                            }
+                        });
 
                 }
 
@@ -253,12 +330,15 @@ public class TextSpeaker extends Foundation {
             @Override
             public void onError(String s) {
                 if (listener != null) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onComplete(false);
-                        }
-                    });
+                    if (isRunningOnUiThread())
+                        listener.onStart();
+                    else
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onComplete(false);
+                            }
+                        });
 
                 }
 
@@ -275,6 +355,10 @@ public class TextSpeaker extends Foundation {
 
         return (int) (Math.random() * Integer.MAX_VALUE);
 
+    }
+
+    private boolean isRunningOnUiThread() {
+        return Looper.myLooper() == Looper.getMainLooper();
     }
 
 

@@ -1,6 +1,8 @@
 package com.tommytao.a5steak.util;
 
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -24,6 +26,15 @@ public class MusicManager extends Foundation {
 
     // --
 
+    public static interface OnPlayListener {
+
+        public void onStart();
+
+        public void onComplete(boolean succeed);
+
+
+    }
+
     public static final String BLINK_MP3_LINK = "http://www.xamuel.com/blank-mp3-files/1sec.mp3";
 
     @Override
@@ -32,21 +43,136 @@ public class MusicManager extends Foundation {
     }
 
 
-    @Override
-    public MediaPlayer getMediaPlayer() {
-        return super.getMediaPlayer();
-    }
+    protected MediaPlayer mediaPlayer = new MediaPlayer();
 
-    @Override
-    public void playRaw(final int resId, MusicManager.OnPlayListener listener) {
+    protected MediaPlayer getMediaPlayer() {
 
-        super.playRaw(resId, listener);
+        return mediaPlayer;
 
     }
 
-    public void playAssets(final String fileName, MusicManager.OnPlayListener listener) {
+    protected MediaPlayer getMediaPlayerFromRaw(int resId) {
+        return MediaPlayer.create(appContext, resId);
+    }
 
-        super.playAssets(fileName, listener);
+
+    protected void releaseMediaPlayer() {
+
+        try {
+            mediaPlayer.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    protected void playRaw(final int resId, final OnPlayListener listener) {
+
+        releaseMediaPlayer();
+
+        try {
+            mediaPlayer = getMediaPlayerFromRaw(resId);
+
+            getMediaPlayer().start();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onStart();
+
+                }
+            });
+
+
+            getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+
+                    try {
+                        mediaPlayer.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (listener != null)
+                        listener.onComplete(true);
+
+
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onComplete(false);
+
+                }
+            });
+        }
+
+
+    }
+
+    protected void playAssets(final String fileName, final OnPlayListener listener) {
+
+        releaseMediaPlayer();
+
+        try {
+
+            mediaPlayer = new MediaPlayer();
+            AssetFileDescriptor descriptor = ((ContextWrapper) appContext).getAssets().openFd(fileName);
+            getMediaPlayer().setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+            descriptor.close();
+            getMediaPlayer().prepare();
+
+
+            getMediaPlayer().start();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onStart();
+
+                }
+            });
+
+
+            getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    try {
+                        mediaPlayer.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (listener != null)
+                        listener.onComplete(true);
+
+
+                }
+            });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onComplete(false);
+
+                }
+            });
+        }
 
     }
 
@@ -57,9 +183,63 @@ public class MusicManager extends Foundation {
      *
      * @param link
      */
-    public void playLink(final String link, MusicManager.OnPlayListener listener) {
+    protected void playLink(final String link, final OnPlayListener listener) {
 
-        super.playLink(link, listener);
+        releaseMediaPlayer();
+
+        try {
+
+
+            mediaPlayer = new MediaPlayer();
+            getMediaPlayer().setAudioStreamType(AudioManager.STREAM_MUSIC);
+            getMediaPlayer().setDataSource(link);
+            getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+
+                    boolean succeed = true;
+                    try {
+                        mediaPlayer.start();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        succeed = false;
+                        if (listener != null)
+                            listener.onComplete(false);
+                    }
+
+                    if (succeed && listener != null) {
+                        listener.onStart();
+                    }
+
+                }
+            });
+            getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    try {
+                        mediaPlayer.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (listener != null)
+                        listener.onComplete(true);
+                }
+            });
+            getMediaPlayer().prepareAsync();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onComplete(false);
+
+                }
+            });
+        }
 
     }
 

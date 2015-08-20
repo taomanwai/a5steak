@@ -140,10 +140,10 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnResume)
     public void resume() {
-        navMapView.resumeNavigation();
+//        navMapView.resumeNavigation();
 
-//        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-//        TextSpeaker.getInstance().speak("go to left", null);
+        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
+        TextSpeaker.getInstance().speak("啟動", null);
 
 
     }
