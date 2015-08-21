@@ -631,40 +631,51 @@ public class NavMapView extends MapView {
             if (currentRouteStepIndex < 0 || currentRouteLocationIndex < 0)
                 return;
 
-            // TODO can further optimized (e.g. skip batch 2 when batch 1 is just started
             // Batch 1 scanning
-            int batch1StepIndex = currentRouteStepIndex;
-            int batch1StartIndex = currentRouteLocationIndex;
-            int batch1EndIndex = steps.get(currentRouteStepIndex).getPolyline().getLocations().size() - 1;
-            int batch1ApproxLocationIndex = steps.get(batch1StepIndex).getPolyline().getClosestPointIndexFromLatLng(latitude, longitude, batch1StartIndex, batch1EndIndex);
             double batch1Derivation = Double.NaN;
+            int batch1StepIndex = -1;
+            int batch1StartIndex = -1;
+            int batch1EndIndex = -1;
+            int batch1ApproxLocationIndex = -1;
             Location batch1ApproxLocation = null;
-            if (batch1ApproxLocationIndex >= 0) {
-                batch1ApproxLocation = steps.get(batch1StepIndex).getPolyline().getLocations().get(batch1ApproxLocationIndex);
-                batch1Derivation = calculateDistanceInMeter(
-                        batch1ApproxLocation.getLatitude(), batch1ApproxLocation.getLongitude(),
-                        latitude, longitude
-                );
+            try {
+                batch1StepIndex = 0;
+                batch1StartIndex = currentRouteLocationIndex;
+                batch1EndIndex = steps.get(currentRouteStepIndex).getPolyline().getLocations().size() - 1;
+                batch1ApproxLocationIndex = steps.get(batch1StepIndex).getPolyline().getClosestPointIndexFromLatLng(latitude, longitude, batch1StartIndex, batch1EndIndex);
+                if (batch1ApproxLocationIndex >= 0) {
+                    batch1ApproxLocation = steps.get(batch1StepIndex).getPolyline().getLocations().get(batch1ApproxLocationIndex);
+                    batch1Derivation = calculateDistanceInMeter(
+                            batch1ApproxLocation.getLatitude(), batch1ApproxLocation.getLongitude(),
+                            latitude, longitude
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             // Batch 2 scanning
-            int batch2StepIndex = currentRouteStepIndex + 1;
-            int batch2StartIndex = 0;
-            int batch2EndIndex = steps.get(currentRouteStepIndex).getPolyline().getLocations().size() / 2 - 1;
-            int batch2ApproxLocationIndex = -1;
-            if (batch2StepIndex >= steps.size()) {
-                batch2StepIndex = -1;
-            } else {
-                batch2ApproxLocationIndex = steps.get(batch2StepIndex).getPolyline().getClosestPointIndexFromLatLng(latitude, longitude, batch2StartIndex, batch2EndIndex);
-            }
             double batch2Derivation = Double.NaN;
+            int batch2StepIndex = -1;
+            int batch2StartIndex = -1;
+            int batch2EndIndex = -1;
+            int batch2ApproxLocationIndex = -1;
             Location batch2ApproxLocation = null;
-            if (batch2StepIndex >= 0 && batch2ApproxLocationIndex >= 0) {
-                batch2ApproxLocation = steps.get(batch2StepIndex).getPolyline().getLocations().get(batch2ApproxLocationIndex);
-                batch2Derivation = calculateDistanceInMeter(
-                        batch2ApproxLocation.getLatitude(), batch2ApproxLocation.getLongitude(),
-                        latitude, longitude
-                );
+            try {
+                batch2StepIndex = currentRouteStepIndex + 1;
+                batch2StartIndex = 0;
+                batch2EndIndex = steps.get(batch2StepIndex).getPolyline().getLocations().size() - 1;
+                batch2ApproxLocationIndex = -1;
+                batch2ApproxLocationIndex = steps.get(batch2StepIndex).getPolyline().getClosestPointIndexFromLatLng(latitude, longitude, batch2StartIndex, batch2EndIndex);
+                if (batch2StepIndex >= 0 && batch2ApproxLocationIndex >= 0) {
+                    batch2ApproxLocation = steps.get(batch2StepIndex).getPolyline().getLocations().get(batch2ApproxLocationIndex);
+                    batch2Derivation = calculateDistanceInMeter(
+                            batch2ApproxLocation.getLatitude(), batch2ApproxLocation.getLongitude(),
+                            latitude, longitude
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             // Compare batch 1 & 2, pick the most appropriate one
@@ -701,6 +712,77 @@ public class NavMapView extends MapView {
                     targetApproxLocation = batch2ApproxLocation;
                 }
             }
+
+//            // TODO can further optimized (e.g. skip batch 2 when batch 1 is just started
+//            // Batch 1 scanning
+//            int batch1StepIndex = currentRouteStepIndex;
+//            int batch1StartIndex = currentRouteLocationIndex;
+//            int batch1EndIndex = steps.get(currentRouteStepIndex).getPolyline().getLocations().size() - 1;
+//            int batch1ApproxLocationIndex = steps.get(batch1StepIndex).getPolyline().getClosestPointIndexFromLatLng(latitude, longitude, batch1StartIndex, batch1EndIndex);
+//            double batch1Derivation = Double.NaN;
+//            Location batch1ApproxLocation = null;
+//            if (batch1ApproxLocationIndex >= 0) {
+//                batch1ApproxLocation = steps.get(batch1StepIndex).getPolyline().getLocations().get(batch1ApproxLocationIndex);
+//                batch1Derivation = calculateDistanceInMeter(
+//                        batch1ApproxLocation.getLatitude(), batch1ApproxLocation.getLongitude(),
+//                        latitude, longitude
+//                );
+//            }
+//
+//            // Batch 2 scanning
+//            int batch2StepIndex = currentRouteStepIndex + 1;
+//            int batch2StartIndex = 0;
+//            int batch2EndIndex = steps.get(currentRouteStepIndex).getPolyline().getLocations().size() / 2 - 1;
+//            int batch2ApproxLocationIndex = -1;
+//            if (batch2StepIndex >= steps.size()) {
+//                batch2StepIndex = -1;
+//            } else {
+//                batch2ApproxLocationIndex = steps.get(batch2StepIndex).getPolyline().getClosestPointIndexFromLatLng(latitude, longitude, batch2StartIndex, batch2EndIndex);
+//            }
+//            double batch2Derivation = Double.NaN;
+//            Location batch2ApproxLocation = null;
+//            if (batch2StepIndex >= 0 && batch2ApproxLocationIndex >= 0) {
+//                batch2ApproxLocation = steps.get(batch2StepIndex).getPolyline().getLocations().get(batch2ApproxLocationIndex);
+//                batch2Derivation = calculateDistanceInMeter(
+//                        batch2ApproxLocation.getLatitude(), batch2ApproxLocation.getLongitude(),
+//                        latitude, longitude
+//                );
+//            }
+//
+//            // Compare batch 1 & 2, pick the most appropriate one
+//            int targetStepIndex = -1;
+//            int targetApproxLocationIndex = -1;
+//            double targetDerivation = Double.NaN;
+//            Location targetApproxLocation = null;
+//            if (Double.isNaN(batch1Derivation) && Double.isNaN(batch2Derivation)) {
+//                // do nothing
+//            } else if (Double.isNaN(batch1Derivation) && !Double.isNaN(batch2Derivation)) {
+//                targetStepIndex = batch1StepIndex;
+//                targetApproxLocationIndex = batch1ApproxLocationIndex;
+//                targetDerivation = batch1Derivation;
+//                targetApproxLocation = batch1ApproxLocation;
+//
+//            } else if (!Double.isNaN(batch1Derivation) && Double.isNaN(batch2Derivation)) {
+//                targetStepIndex = batch2StepIndex;
+//                targetApproxLocationIndex = batch2ApproxLocationIndex;
+//                targetDerivation = batch2Derivation;
+//                targetApproxLocation = batch2ApproxLocation;
+//
+//            } else {
+//                // TODO MVP too much copy
+//                // both are valid real num
+//                if (batch1Derivation <= batch2Derivation) {
+//                    targetStepIndex = batch1StepIndex;
+//                    targetApproxLocationIndex = batch1ApproxLocationIndex;
+//                    targetDerivation = batch1Derivation;
+//                    targetApproxLocation = batch1ApproxLocation;
+//                } else {
+//                    targetStepIndex = batch2StepIndex;
+//                    targetApproxLocationIndex = batch2ApproxLocationIndex;
+//                    targetDerivation = batch2Derivation;
+//                    targetApproxLocation = batch2ApproxLocation;
+//                }
+//            }
 
             if (targetDerivation <= MAX_DERIVATION_ALLOWED_IN_METER) {
                 currentRouteStepIndex = targetStepIndex;
