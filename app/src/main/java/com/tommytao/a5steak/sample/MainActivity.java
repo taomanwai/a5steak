@@ -2,6 +2,8 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,6 +32,8 @@ public class MainActivity extends Activity {
     public static final String CRYPTO_FOR_BUSINESS = "RglSWAR2KO9R2OghAMwyj4WqIXg=";
     public static final String PLACES_API_KEY = "AIzaSyDho8iArjPHWI7GiY1xGhefeB6LplFucdI";
 
+    Handler handler = new Handler(Looper.getMainLooper());
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +58,13 @@ public class MainActivity extends Activity {
 
         ArrayList<String> sl = AppManager.getInstance().getInstalledApps();
 
-        Log.d("","");
+
+
+
+
+
+
+
 
 
     }
@@ -140,10 +150,10 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnResume)
     public void resume() {
-//        navMapView.resumeNavigation();
+        navMapView.resumeNavigation();
 
-        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-        TextSpeaker.getInstance().speak("啟動", null);
+//        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
+//        TextSpeaker.getInstance().speak("啟動", null);
 
 
     }
