@@ -1031,15 +1031,15 @@ public class NavMapView extends MapView {
 
                 if (!route.isCurrentlyPassing() && !route.isPrepareToBeReplaced()) {
 
-                    Log.d("rtemp", "nav_t: not_isCurrentlyPassing");
+                    Log.d("rtemp", "nav_t: not_isCurrentlyPassing: derivation:" + route.getCurrentRouteDerivation());
 
-//                    route.setPrepareToBeReplaced(true);
-//                    rerouteLocation = LocationSensor.getInstance().getLastKnownLocation();
-//
-//                    latestMockRouteElapsedTimestamp = mockRoute(rerouteLocation.getLatitude(), rerouteLocation.getLongitude(),
-//                            destLocation.getLatitude(), destLocation.getLongitude(), avoid, locale, new ResponseToRerouteMockRoute(NavMapView.this));
-//
-//                    triggerOnRerouteListeners();
+                    route.setPrepareToBeReplaced(true);
+                    rerouteLocation = LocationSensor.getInstance().getLastKnownLocation();
+
+                    latestMockRouteElapsedTimestamp = mockRoute(rerouteLocation.getLatitude(), rerouteLocation.getLongitude(),
+                            destLocation.getLatitude(), destLocation.getLongitude(), avoid, locale, new ResponseToRerouteMockRoute(NavMapView.this));
+
+                    triggerOnRerouteListeners();
 
                 }
 
