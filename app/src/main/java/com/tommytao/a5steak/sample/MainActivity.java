@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
                                     return;
                                 }
 
-                                navMapView.startNavigation(22.339662, 114.154811, DirectionsApiManager.AVOID_HIGHWAYS, new Locale("zh", "HK"), new NavMapView.OnStartListener() {
+                                navMapView.startNavigation(22.381245,114.189324, DirectionsApiManager.AVOID_FERRIES, new Locale("zh", "HK"), new NavMapView.OnStartListener() {
                                     @Override
                                     public void onStarted(boolean succeed) {
 
