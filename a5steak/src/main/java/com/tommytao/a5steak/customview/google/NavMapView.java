@@ -738,7 +738,7 @@ public class NavMapView extends MapView {
 
     public static final int DEFAULT_ZOOM = 16;
     public static final int DEFAULT_PITCH = 45;
-    public static final int DEFAULT_ANIM_DURATION_IN_MS = 300;
+    public static final int DEFAULT_ANIM_DURATION_IN_MS = 30000;
 
     private Handler handler = new Handler(Looper.getMainLooper());
 
