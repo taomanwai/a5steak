@@ -268,7 +268,7 @@ public class NavMapView extends MapView {
             if (r == null)
                 return;
 
-            if (!r.isPrepareToBeReplaced())
+            if (!navMapView.route.isPrepareToBeReplaced())
                 return;
 
             if (queryStartLatitude != navMapView.rerouteLocation.getLatitude() ||
