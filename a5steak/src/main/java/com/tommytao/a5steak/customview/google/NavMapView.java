@@ -640,8 +640,8 @@ public class NavMapView extends MapView {
             int batch1ApproxLocationIndex = -1;
             Location batch1ApproxLocation = null;
             try {
-                batch1StepIndex = 0;
-                batch1StartIndex = currentRouteLocationIndex;
+                batch1StepIndex = currentRouteStepIndex;
+                batch1StartIndex = 0;
                 batch1EndIndex = steps.get(currentRouteStepIndex).getPolyline().getLocations().size() - 1;
                 batch1ApproxLocationIndex = steps.get(batch1StepIndex).getPolyline().getClosestPointIndexFromLatLng(latitude, longitude, batch1StartIndex, batch1EndIndex);
                 if (batch1ApproxLocationIndex >= 0) {
@@ -724,7 +724,7 @@ public class NavMapView extends MapView {
 
 
             Log.d("rtemp", "nav_t: batch1StepIndex: " + batch1StepIndex + " batch1ApproxLocationIndex: " + batch1ApproxLocationIndex + " batch1Derivation:" + batch1Derivation +
-                    "batch2StepIndex: " + batch2StepIndex + " batch2ApproxLocationIndex: " + batch2ApproxLocationIndex + " batch2Derivation:" + batch2Derivation);
+                    " batch2StepIndex: " + batch2StepIndex + " batch2ApproxLocationIndex: " + batch2ApproxLocationIndex + " batch2Derivation:" + batch2Derivation);
 
 
 
