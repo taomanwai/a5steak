@@ -106,21 +106,6 @@ public class DirectionsApiManager extends Foundation {
             double closestDistance = WHOLE_WORLD_RADIUS_IN_METER + 1; // plus 1 to make it as max impossible to reach value !
             double distanceInTesting = -1;
 
-//            int i = 0;
-//            for (Location location : locations) {
-//
-//                distanceInTesting = calculateDistanceInMeter(location.getLatitude(), location.getLongitude(), latitude, longitude);
-//                if (distanceInTesting < closestDistance) {
-//
-//                    closestPtIndex = i;
-//                    closestDistance = (int) distanceInTesting;
-//
-//                } else {
-//                    // do nothing
-//                }
-//
-//                i++;
-//            }
 
             for (int i = start; i <= end; i++) {
                 distanceInTesting = calculateDistanceInMeter(locations.get(i).getLatitude(), locations.get(i).getLongitude(), latitude, longitude);
