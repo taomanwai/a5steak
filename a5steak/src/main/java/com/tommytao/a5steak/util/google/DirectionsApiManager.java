@@ -246,6 +246,8 @@ public class DirectionsApiManager extends Foundation {
         public static final int MANEUVER_KEEP_LEFT = 18;
         public static final int MANEUVER_KEEP_RIGHT = 19;
 
+        public static final int MANEUVER_DESTINATION_ARRIVED = 99;
+
         private int distanceInMeter;
         private String distanceInText = "";
 

@@ -82,13 +82,13 @@ public class NavMapView extends MapView {
         /**
          * Note: to check if update succeed or not, check if distanceFromEndOfStepInMeter being Double.NaN
          *
-         * @param maneuver
+         * @param nextManeuver
          * @param distanceFromEndOfStepInMeter
-         * @param instructionsInHtml
-         * @param instructionsInText
+         * @param nextInstructionsInHtml
+         * @param nextInstructionsInText
          * @param route
          */
-        public void onUpdate(int maneuver, double distanceFromEndOfStepInMeter, String instructionsInHtml, String instructionsInText, long etaInMs, Route route);
+        public void onUpdate(double distanceFromEndOfStepInMeter, long etaInMs, int nextManeuver, String nextInstructionsInHtml, String nextInstructionsInText, Route route);
     }
 
 
@@ -425,6 +425,17 @@ public class NavMapView extends MapView {
 
             try {
                 result = getSteps().get(getCurrentRouteStepIndex());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        public DirectionsApiManager.Step getNextRouteStep() {
+            DirectionsApiManager.Step result = null;
+
+            try {
+                result = getSteps().get(getCurrentRouteStepIndex() + 1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -894,10 +905,10 @@ public class NavMapView extends MapView {
         onUpdateListeners.remove(listener);
     }
 
-    private void triggerOnUpdateListeners(int maneuver, double distanceFromEndOfStepInMeter, String instructionsInHtml, String instructionsInText, long etaInMs, Route route) {
+    private void triggerOnUpdateListeners(double distanceFromEndOfStepInMeter, long etaInMs, int nextManeuver, String nextInstructionsInHtml, String nextInstructionsInText, Route route) {
         for (OnUpdateListener onUpdateListener : onUpdateListeners) {
             if (onUpdateListener != null)
-                onUpdateListener.onUpdate(maneuver, distanceFromEndOfStepInMeter, instructionsInHtml, instructionsInText, etaInMs, route);
+                onUpdateListener.onUpdate(distanceFromEndOfStepInMeter, etaInMs, nextManeuver, nextInstructionsInHtml, nextInstructionsInText, route);
         }
     }
 
@@ -1020,7 +1031,7 @@ public class NavMapView extends MapView {
 
 
                 if (route == null) {
-                    triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", -1, route);
+                    triggerOnUpdateListeners(Double.NaN, -1, DirectionsApiManager.Step.MANEUVER_NONE, "", "", route);
                     handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
                     return;
                 }
@@ -1046,19 +1057,23 @@ public class NavMapView extends MapView {
                 DirectionsApiManager.Step currentStep = route.getCurrentRouteStep();
 
                 if (currentStep == null) {
-                    triggerOnUpdateListeners(DirectionsApiManager.Step.MANEUVER_NONE, Double.NaN, "", "", -1, route);
+                    triggerOnUpdateListeners(Double.NaN, -1, DirectionsApiManager.Step.MANEUVER_NONE, "", "", route);
                     handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
                     return;
                 }
 
-                int maneuver = currentStep.getManeuver();
                 double distanceFromEndOfStepInMeter = route.getCurrentRouteDistanceFromEndOfStepInMeter();
-                String instructionsInHtml = currentStep.getInstructionsInHtml();
-                String instructionsInText = currentStep.getInstructionsInText();
                 long etaInMs = route.getCurrentRouteEtaInMs();
 
-                if (!route.isPrepareToBeReplaced())
-                    triggerOnUpdateListeners(maneuver, distanceFromEndOfStepInMeter, instructionsInHtml, instructionsInText, etaInMs, route);
+                DirectionsApiManager.Step nextStep = route.getNextRouteStep();
+                int nextManeuver = nextStep==null ? DirectionsApiManager.Step.MANEUVER_DESTINATION_ARRIVED : nextStep.getManeuver();
+                String nextInstructionsInHtml = nextStep==null ? "" : nextStep.getInstructionsInHtml();
+                String nextInstructionsInText = nextStep==null ? "" : nextStep.getInstructionsInText();
+
+
+                if (!route.isPrepareToBeReplaced()) {
+                    triggerOnUpdateListeners(distanceFromEndOfStepInMeter, etaInMs, nextManeuver, nextInstructionsInHtml, nextInstructionsInText, route);
+                }
 
 
                 handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
