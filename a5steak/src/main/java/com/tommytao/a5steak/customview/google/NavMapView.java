@@ -456,15 +456,22 @@ public class NavMapView extends MapView {
             return result;
         }
 
-        public void speakCurrentRouteStep(boolean withoutRepeat) {
+        private void speakRouteStep(int index, boolean withoutRepeat) {
+            DirectionsApiManager.Step step = null;
 
-            final DirectionsApiManager.Step step = getCurrentRouteStep();
+            try {
+                step = getSteps().get(index);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             if (step == null)
                 return;
 
             if (step.isSpoken() && withoutRepeat)
                 return;
+
+            final DirectionsApiManager.Step stepFinal = step;
 
             TextSpeaker.getInstance().setLocale(getLocale());
             TextSpeaker.getInstance().speak(step.getInstructionsInText(), new TextSpeaker.OnSpeakListener() {
@@ -477,11 +484,72 @@ public class NavMapView extends MapView {
                 public void onComplete(boolean succeed) {
 
                     if (!succeed)
-                        step.setSpoken(false);
+                        stepFinal.setSpoken(false);
 
                 }
             });
             step.setSpoken(true);
+        }
+
+        public void speakCurrentRouteStep(boolean withoutRepeat) {
+
+            speakRouteStep(getCurrentRouteStepIndex(), withoutRepeat);
+
+//            final DirectionsApiManager.Step step = getCurrentRouteStep();
+//
+//            if (step == null)
+//                return;
+//
+//            if (step.isSpoken() && withoutRepeat)
+//                return;
+//
+//            TextSpeaker.getInstance().setLocale(getLocale());
+//            TextSpeaker.getInstance().speak(step.getInstructionsInText(), new TextSpeaker.OnSpeakListener() {
+//                @Override
+//                public void onStart() {
+//
+//                }
+//
+//                @Override
+//                public void onComplete(boolean succeed) {
+//
+//                    if (!succeed)
+//                        step.setSpoken(false);
+//
+//                }
+//            });
+//            step.setSpoken(true);
+
+        }
+
+        public void speakNextRouteStep(boolean withoutRepeat) {
+
+            speakRouteStep(getCurrentRouteStepIndex()+1, withoutRepeat);
+
+//            final DirectionsApiManager.Step step = getNextRouteStep();
+//
+//            if (step == null)
+//                return;
+//
+//            if (step.isSpoken() && withoutRepeat)
+//                return;
+//
+//            TextSpeaker.getInstance().setLocale(getLocale());
+//            TextSpeaker.getInstance().speak(step.getInstructionsInText(), new TextSpeaker.OnSpeakListener() {
+//                @Override
+//                public void onStart() {
+//
+//                }
+//
+//                @Override
+//                public void onComplete(boolean succeed) {
+//
+//                    if (!succeed)
+//                        step.setSpoken(false);
+//
+//                }
+//            });
+//            step.setSpoken(true);
 
         }
 
@@ -736,7 +804,6 @@ public class NavMapView extends MapView {
 
             Log.d("rtemp", "nav_t: batch1StepIndex: " + batch1StepIndex + " batch1ApproxLocationIndex: " + batch1ApproxLocationIndex + " batch1Derivation:" + batch1Derivation +
                     " batch2StepIndex: " + batch2StepIndex + " batch2ApproxLocationIndex: " + batch2ApproxLocationIndex + " batch2Derivation:" + batch2Derivation);
-
 
 
 //            // TODO can further optimized (e.g. skip batch 2 when batch 1 is just started
@@ -1037,7 +1104,7 @@ public class NavMapView extends MapView {
                 }
 
                 if (route.getCurrentRouteDistanceFromEndOfStepInMeter() < Route.MAX_DISTANCE_BEFORE_SPEAK_IN_METER) {
-                    route.speakCurrentRouteStep(true);
+                    route.speakNextRouteStep(true);
                 }
 
                 if (!route.isCurrentlyPassing() && !route.isPrepareToBeReplaced()) {
@@ -1066,9 +1133,9 @@ public class NavMapView extends MapView {
                 long etaInMs = route.getCurrentRouteEtaInMs();
 
                 DirectionsApiManager.Step nextStep = route.getNextRouteStep();
-                int nextManeuver = nextStep==null ? DirectionsApiManager.Step.MANEUVER_DESTINATION_ARRIVED : nextStep.getManeuver();
-                String nextInstructionsInHtml = nextStep==null ? "" : nextStep.getInstructionsInHtml();
-                String nextInstructionsInText = nextStep==null ? "" : nextStep.getInstructionsInText();
+                int nextManeuver = nextStep == null ? DirectionsApiManager.Step.MANEUVER_DESTINATION_ARRIVED : nextStep.getManeuver();
+                String nextInstructionsInHtml = nextStep == null ? "" : nextStep.getInstructionsInHtml();
+                String nextInstructionsInText = nextStep == null ? "" : nextStep.getInstructionsInText();
 
 
                 if (!route.isPrepareToBeReplaced()) {
