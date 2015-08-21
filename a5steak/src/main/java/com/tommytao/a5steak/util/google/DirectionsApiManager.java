@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
@@ -657,6 +658,8 @@ public class DirectionsApiManager extends Foundation {
 
 
         String link = genRouteLink(startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale);
+
+        Log.d("rtemp", "nav_t: link: " + link);
 
         httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 

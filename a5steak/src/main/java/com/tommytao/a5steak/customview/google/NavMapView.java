@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -712,6 +713,20 @@ public class NavMapView extends MapView {
                     targetApproxLocation = batch2ApproxLocation;
                 }
             }
+
+//            batch1StepIndex
+//                    batch1ApproxLocationIndex
+//            // batch1Derivation
+//
+//            batch2StepIndex
+//                    batch2ApproxLocationIndex
+//            // batch2Derivation
+
+
+            Log.d("rtemp", "nav_t: batch1StepIndex: " + batch1StepIndex + " batch1ApproxLocationIndex: " + batch1ApproxLocationIndex + " batch1Derivation:" + batch1Derivation +
+                    "batch2StepIndex: " + batch2StepIndex + " batch2ApproxLocationIndex: " + batch2ApproxLocationIndex + " batch2Derivation:" + batch2Derivation);
+
+
 
 //            // TODO can further optimized (e.g. skip batch 2 when batch 1 is just started
 //            // Batch 1 scanning
