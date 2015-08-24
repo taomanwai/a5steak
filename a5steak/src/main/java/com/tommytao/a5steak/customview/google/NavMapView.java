@@ -1395,7 +1395,6 @@ public class NavMapView extends MapView {
 //        this.latestMockRouteElapsedTimestamp = -1;
         this.route = null;
 
-//        removeRoutePolylineAndCurrentLocationGroundOverlay();
         try {
             routePolyline.remove();
             routePolyline = null;

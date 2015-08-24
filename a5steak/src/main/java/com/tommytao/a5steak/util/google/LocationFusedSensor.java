@@ -286,9 +286,10 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         handler.post(new Runnable() {
             @Override
             public void run() {
-                startDetectingLocation(DEFAULT_PRIORITY, intervalInMs, intervalInMs);
 
                 connected = true;
+
+                startDetectingLocation(DEFAULT_PRIORITY, intervalInMs, intervalInMs);
 
                 clearAndTriggerOnConnectListeners(true);
             }
