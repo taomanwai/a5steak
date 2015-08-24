@@ -69,7 +69,11 @@ public class LocationSensor extends Foundation implements LocationListener {
 
     }
 
-    public final static String PROVIDER = LocationManager.GPS_PROVIDER;
+    public final static String GPS_PROVIDER = LocationManager.GPS_PROVIDER;
+    public final static String NETWORK_PROVIDER = LocationManager.NETWORK_PROVIDER;
+    public final static String PASSIVE_PROVIDER = LocationManager.PASSIVE_PROVIDER;
+
+    public final static String PROVIDER = GPS_PROVIDER; // NETWORK_PROVIDER
     public final static int DEFAULT_UPDATE_INTERVAL_IN_MS = 5 * 1000;
 
     public final static String PREFS_LAT_E6 = "LBSManager.PREFS_LAT_E6";

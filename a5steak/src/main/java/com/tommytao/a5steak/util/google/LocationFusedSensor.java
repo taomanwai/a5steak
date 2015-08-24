@@ -53,8 +53,14 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     }
 
+    public final static int PRIORITY_HIGH_ACCURACY = LocationRequest.PRIORITY_HIGH_ACCURACY;
+    public final static int PRIORITY_BALANCED_POWER_ACCURACY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+    public final static int PRIORITY_LOW_POWER = LocationRequest.PRIORITY_LOW_POWER;
+    public final static int PRIORITY_NO_POWER = LocationRequest.PRIORITY_NO_POWER;
 
-    public final static int DEFAULT_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY; // PRIORITY_BALANCED_POWER_ACCURACY
+
+
+    public final static int DEFAULT_PRIORITY = PRIORITY_BALANCED_POWER_ACCURACY;
     public final static int DEFAULT_INTERVAL_IN_MS = 5000; // 5s (5000ms) = Google Maps interval
 
     private int intervalInMs = DEFAULT_INTERVAL_IN_MS;
