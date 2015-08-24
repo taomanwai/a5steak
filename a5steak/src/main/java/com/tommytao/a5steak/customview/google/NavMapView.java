@@ -313,7 +313,7 @@ public class NavMapView extends MapView {
         public static final int MAX_DERIVATION_ALLOWED_IN_METER = 30; // 30
         public static final int MIN_ANGLE_FROM_ROUTE_FOR_FREE_ROTATION_IN_DEGREE = 45;
         public static final int MAX_DISTANCE_BEFORE_SPEAK_IN_METER = 200;
-        public static final int UPDATE_FAST_SCANNING_DISTANCE_IN_METER = 200;
+        public static final int UPDATE_FAST_SCANNING_DISTANCE_IN_METER = 100;
         private DirectionsApiManager.Polyline polyline = new DirectionsApiManager.Polyline("");
         private ArrayList<DirectionsApiManager.Step> steps = new ArrayList<>();
         private Location currentRouteLocation;
