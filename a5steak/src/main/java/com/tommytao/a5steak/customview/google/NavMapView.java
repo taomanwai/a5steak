@@ -677,6 +677,24 @@ public class NavMapView extends MapView {
 
         }
 
+        public double getCurrentRouteLocationIntervalInMeter() {
+
+            DirectionsApiManager.Step step = getCurrentRouteStep();
+
+            if (step == null)
+                return Double.NaN;
+
+            int sizeOfLocations = step.getPolyline().getLocations().size();
+
+            if (sizeOfLocations == 0 || sizeOfLocations == 1)
+                return Double.NaN;
+
+            int sizeOfLocationIntervals = sizeOfLocations - 1;
+
+            return (double) step.getDistanceInMeter() / sizeOfLocationIntervals;
+
+        }
+
         public double getCurrentRouteDistanceFromEndOfStepInMeter() {
 
             DirectionsApiManager.Step step = getCurrentRouteStep();
@@ -723,7 +741,7 @@ public class NavMapView extends MapView {
             Location batch1ApproxLocation = null;
             try {
                 batch1StepIndex = currentRouteStepIndex;
-                batch1StartIndex = 0;
+                batch1StartIndex = currentRouteLocationIndex;
                 batch1EndIndex = steps.get(currentRouteStepIndex).getPolyline().getLocations().size() - 1;
                 batch1ApproxLocationIndex = steps.get(batch1StepIndex).getPolyline().getClosestPointIndexFromLatLng(latitude, longitude, batch1StartIndex, batch1EndIndex);
                 if (batch1ApproxLocationIndex >= 0) {
@@ -826,7 +844,7 @@ public class NavMapView extends MapView {
             Location batch1ApproxLocation = null;
             try {
                 batch1StepIndex = currentRouteStepIndex;
-                batch1StartIndex = 0;
+                batch1StartIndex = currentRouteLocationIndex;
                 batch1EndIndex = steps.get(currentRouteStepIndex).getPolyline().getLocations().size() - 1;
                 batch1ApproxLocationIndex = steps.get(batch1StepIndex).getPolyline().getClosestPointIndexFromLatLng(latitude, longitude, batch1StartIndex, batch1EndIndex);
                 if (batch1ApproxLocationIndex >= 0) {
