@@ -392,7 +392,7 @@ public class DirectionsApiManager extends Foundation {
         this.clientIdForWork = clientIdForWork;
         this.cryptoForWork = cryptoForWork;
 
-        getPrefs().edit().clear().commit();
+        getPrefs().edit().clear().apply();
 
         return true;
     }

@@ -101,7 +101,7 @@ public class AppManager extends Foundation {
         else if (this.getVersionCode() > versionCodeInPref)
             justUpdated = true;
 
-        PreferenceManager.getDefaultSharedPreferences(appContext).edit().putInt(PREFS_LATEST_RECORDED_VERSION_CODE, this.getVersionCode()).commit();
+        PreferenceManager.getDefaultSharedPreferences(appContext).edit().putInt(PREFS_LATEST_RECORDED_VERSION_CODE, this.getVersionCode()).apply();
 
         return true;
 
