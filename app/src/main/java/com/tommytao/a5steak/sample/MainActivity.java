@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
                                     return;
                                 }
 
-                                navMapView.startNavigation(22.381245,114.189324, DirectionsApiManager.AVOID_FERRIES, new Locale("zh", "HK"), new NavMapView.OnStartListener() {
+                                navMapView.startNavigation(22.381245, 114.189324, DirectionsApiManager.AVOID_FERRIES, new Locale("zh", "HK"), new NavMapView.OnStartListener() {
                                     @Override
                                     public void onStarted(boolean succeed) {
 
@@ -149,18 +149,23 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnResume)
     public void resume() {
-        navMapView.resumeNavigation();
+//        navMapView.resumeNavigation();
 
 //        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-//        TextSpeaker.getInstance().speak("啟動", null);
+        TextSpeaker.getInstance().speak("Starting navigation, hope u enjoy", null);
 
 
     }
 
     @OnClick(R.id.btnPause)
     public void pause() {
-        navMapView.pauseNavigation();
+//        navMapView.pauseNavigation();
+//        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
+        TextSpeaker.getInstance().speak("stop", null);
     }
+
+
+
 
 
     @Override

@@ -430,7 +430,7 @@ public class NavMapView extends MapView {
             return currentRouteLocation.getBearing();
         }
 
-        private DirectionsApiManager.Step getRouteStep(int index){
+        private DirectionsApiManager.Step getRouteStep(int index) {
             DirectionsApiManager.Step result = null;
 
             try {
@@ -637,7 +637,7 @@ public class NavMapView extends MapView {
         }
 
 
-        private double getRouteLocationIntervalInMeter(int index){
+        private double getRouteLocationIntervalInMeter(int index) {
             DirectionsApiManager.Step step = getRouteStep(index);
 
             if (step == null)
@@ -652,7 +652,6 @@ public class NavMapView extends MapView {
 
             return (double) step.getDistanceInMeter() / sizeOfLocationIntervals;
         }
-
 
 
         public double getCurrentRouteLocationIntervalInMeter() {
@@ -694,7 +693,6 @@ public class NavMapView extends MapView {
 
         public void updateFast(double latitude, double longitude, double rotation) {
 
-            // TODO
             currentLocation = latLngToLocation(latitude, longitude);
             currentLocation.setBearing((float) rotation);
 
@@ -1095,6 +1093,11 @@ public class NavMapView extends MapView {
 
     }
 
+    private void reportPerformance(long startTime, long endTime, int criteriaInMs) {
+        long interval = endTime - startTime;
+        Log.d("rtemp", "report_performance_t: " +  (interval <= criteriaInMs ? "OK" : "Failed: " + interval + "ms"));
+    }
+
     private void enableFrameUpdate() {
 
         if (isFrameUpdating())
@@ -1103,6 +1106,8 @@ public class NavMapView extends MapView {
         runnableFrameUpdate = new Runnable() {
             @Override
             public void run() {
+
+                long startTime = SystemClock.elapsedRealtime();
 
                 double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
                 double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
@@ -1128,6 +1133,7 @@ public class NavMapView extends MapView {
 
                 if (route == null) {
                     triggerOnUpdateListeners(Double.NaN, -1, DirectionsApiManager.Step.MANEUVER_NONE, "", "", route);
+                    reportPerformance(startTime, SystemClock.elapsedRealtime(), DEFAULT_FRAME_TIME_IN_MS);
                     handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
                     return;
                 }
@@ -1154,6 +1160,7 @@ public class NavMapView extends MapView {
 
                 if (currentStep == null) {
                     triggerOnUpdateListeners(Double.NaN, -1, DirectionsApiManager.Step.MANEUVER_NONE, "", "", route);
+                    reportPerformance(startTime, SystemClock.elapsedRealtime(), DEFAULT_FRAME_TIME_IN_MS);
                     handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
                     return;
                 }
@@ -1172,6 +1179,7 @@ public class NavMapView extends MapView {
                 }
 
 
+                reportPerformance(startTime, SystemClock.elapsedRealtime(), DEFAULT_FRAME_TIME_IN_MS);
                 handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
 
             }
