@@ -58,6 +58,10 @@ public class MainActivity extends Activity {
 
         ArrayList<String> sl = AppManager.getInstance().getInstalledApps();
 
+        double a = (int) Math.ceil(1/ Double.NaN);
+
+        Log.d("", "" + a);
+
 
 
 
@@ -131,12 +135,7 @@ public class MainActivity extends Activity {
 
 
 
-        navMapView.addOnUpdateListener(new NavMapView.OnUpdateListener() {
-            @Override
-            public void onUpdate(int maneuver, double distanceFromEndOfStepInMeter, String instructionsInHtml, String instructionsInText, long etaInMs, NavMapView.Route route) {
-                Log.d("", "update_t: " + maneuver + " " + distanceFromEndOfStepInMeter + " " + etaInMs);
-            }
-        });
+
 
 
     }

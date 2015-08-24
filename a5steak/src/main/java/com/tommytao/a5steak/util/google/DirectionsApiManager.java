@@ -108,19 +108,28 @@ public class DirectionsApiManager extends Foundation {
             double distanceInTesting = -1;
 
 
-            for (int i = start; i <= end; i++) {
-                distanceInTesting = calculateDistanceInMeter(locations.get(i).getLatitude(), locations.get(i).getLongitude(), latitude, longitude);
-                if (distanceInTesting < closestDistance) {
+            boolean hasException = false;
+            try {
+                for (int i = start; i <= end; i++) {
+                    distanceInTesting = calculateDistanceInMeter(locations.get(i).getLatitude(), locations.get(i).getLongitude(), latitude, longitude);
+                    if (distanceInTesting < closestDistance) {
 
-                    closestPtIndex = i;
-                    closestDistance = (int) distanceInTesting;
+                        closestPtIndex = i;
+                        closestDistance = (int) distanceInTesting;
 
-                } else {
-                    // do nothing
+                    } else {
+                        // do nothing
+                    }
+
+
                 }
-
-
+            } catch (Exception e){
+                e.printStackTrace();
+                hasException = true;
             }
+
+            if (hasException)
+                return -1;
 
             return closestPtIndex;
 
