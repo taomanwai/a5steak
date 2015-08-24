@@ -650,7 +650,9 @@ public class NavMapView extends MapView {
 
             int sizeOfLocationIntervals = sizeOfLocations - 1;
 
-            return (double) step.getDistanceInMeter() / sizeOfLocationIntervals;
+            double result = (double) step.getDistanceInMeter() / sizeOfLocationIntervals;
+
+            return result;
         }
 
 
