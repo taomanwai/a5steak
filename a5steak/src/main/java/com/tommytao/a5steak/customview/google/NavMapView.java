@@ -650,9 +650,8 @@ public class NavMapView extends MapView {
 
             int sizeOfLocationIntervals = sizeOfLocations - 1;
 
-            double result = (double) step.getDistanceInMeter() / sizeOfLocationIntervals;
+            return (double) step.getDistanceInMeter() / sizeOfLocationIntervals;
 
-            return result;
         }
 
 
@@ -732,6 +731,8 @@ public class NavMapView extends MapView {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            Log.d("rtemp", "batch_t: batch1StepIndex: " + batch1StepIndex + " batch1StartIndex: " + batch1StartIndex + " batch1EndIndex: " + batch1EndIndex + " batch1ApproxLocationIndex: " + batch1ApproxLocationIndex);
 
             int targetStepIndex = -1;
             int targetApproxLocationIndex = -1;
