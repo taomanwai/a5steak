@@ -152,7 +152,20 @@ public class MainActivity extends Activity {
 //        navMapView.resumeNavigation();
 
         TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-        TextSpeaker.getInstance().speak("啟動", null);
+        TextSpeaker.getInstance().speak("啟動啟動啟動啟動啟動", new TextSpeaker.OnSpeakListener() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onComplete(boolean succeed) {
+
+                Log.d("rtemp", "tts_t: " + "start_end: " + succeed);
+
+
+            }
+        });
 
 
     }
@@ -160,8 +173,21 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnPause)
     public void pause() {
 //        navMapView.pauseNavigation();
+
         TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-        TextSpeaker.getInstance().speak("停止", null);
+        TextSpeaker.getInstance().speak("暫停", new TextSpeaker.OnSpeakListener() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onComplete(boolean succeed) {
+
+                Log.d("rtemp", "tts_t: " + "pause_end: " + succeed);
+
+            }
+        });
     }
 
 

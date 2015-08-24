@@ -63,6 +63,8 @@ public class TextSpeaker extends Foundation {
 
     private MediaPlayer cantoneseMediaPlayer;
 
+    private OnSpeakListener cantoneseMediaPlayerOnSpeakListener;
+
     private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
 
     private boolean connected;
@@ -209,20 +211,6 @@ public class TextSpeaker extends Foundation {
 
             log("text_speaker: speak cantonese: link: " + link);
 
-//            playLink(link, new OnPlayListener() {
-//                @Override
-//                public void onStart() {
-//                    if (listener != null)
-//                        listener.onStart();
-//                }
-//
-//                @Override
-//                public void onComplete(boolean succeed) {
-//
-//                    if (listener != null)
-//                        listener.onComplete(succeed);
-//                }
-//            });
 
             try {
 
@@ -238,9 +226,23 @@ public class TextSpeaker extends Foundation {
                     e.printStackTrace();
                 }
 
+                if (cantoneseMediaPlayerOnSpeakListener != null) {
+                    final OnSpeakListener pendingCantoneseMediaPlayerOnSpeakListener = cantoneseMediaPlayerOnSpeakListener;
+                    cantoneseMediaPlayerOnSpeakListener = null;
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (pendingCantoneseMediaPlayerOnSpeakListener != null)
+                                pendingCantoneseMediaPlayerOnSpeakListener.onComplete(true);
+                        }
+                    });
+
+                }
+
                 cantoneseMediaPlayer = new MediaPlayer();
                 cantoneseMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 cantoneseMediaPlayer.setDataSource(appContext, uri, headers);
+
                 cantoneseMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
@@ -252,8 +254,10 @@ public class TextSpeaker extends Foundation {
                         } catch (Exception e) {
                             e.printStackTrace();
                             succeed = false;
-                            if (listener != null)
+                            cantoneseMediaPlayerOnSpeakListener = null;
+                            if (listener != null) {
                                 listener.onComplete(false);
+                            }
                         }
 
                         if (succeed && listener != null) {
@@ -271,10 +275,14 @@ public class TextSpeaker extends Foundation {
                             e.printStackTrace();
                         }
 
-                        if (listener != null)
+                        cantoneseMediaPlayerOnSpeakListener = null;
+                        if (listener != null) {
                             listener.onComplete(true);
+                        }
                     }
                 });
+
+                cantoneseMediaPlayerOnSpeakListener = listener;
                 cantoneseMediaPlayer.prepareAsync();
 
             } catch (Exception e) {
@@ -282,8 +290,10 @@ public class TextSpeaker extends Foundation {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (listener != null)
+                        cantoneseMediaPlayerOnSpeakListener = null;
+                        if (listener != null) {
                             listener.onComplete(false);
+                        }
 
                     }
                 });
