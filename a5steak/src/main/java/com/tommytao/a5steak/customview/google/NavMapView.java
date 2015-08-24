@@ -1095,8 +1095,19 @@ public class NavMapView extends MapView {
 
     private void reportPerformance(long startTime, long endTime, int criteriaInMs) {
         long interval = endTime - startTime;
-        Log.d("rtemp", "report_performance_t: " +  (interval <= criteriaInMs ? "OK" : "Failed: " + interval + "ms"));
+        Log.d("rtemp", "report_performance_t: " + (interval <= criteriaInMs ? "OK" : "Failed: " + interval + "ms"));
     }
+
+    private int calculateFrameTimeLeftInMs(long frameStartTime, long frameEndTime) {
+
+        int frameInterval = (int) (frameEndTime - frameStartTime);
+
+        int result = DEFAULT_FRAME_TIME_IN_MS - frameInterval;
+
+        return (result < 0) ? 0 : result;
+
+    }
+
 
     private void enableFrameUpdate() {
 
@@ -1107,7 +1118,7 @@ public class NavMapView extends MapView {
             @Override
             public void run() {
 
-                long startTime = SystemClock.elapsedRealtime();
+                long frameStartTime = SystemClock.elapsedRealtime();
 
                 double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
                 double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
@@ -1133,8 +1144,8 @@ public class NavMapView extends MapView {
 
                 if (route == null) {
                     triggerOnUpdateListeners(Double.NaN, -1, DirectionsApiManager.Step.MANEUVER_NONE, "", "", route);
-                    reportPerformance(startTime, SystemClock.elapsedRealtime(), DEFAULT_FRAME_TIME_IN_MS);
-                    handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
+                    reportPerformance(frameStartTime, SystemClock.elapsedRealtime(), DEFAULT_FRAME_TIME_IN_MS);
+                    handler.postDelayed(this, calculateFrameTimeLeftInMs(frameStartTime, SystemClock.elapsedRealtime()));
                     return;
                 }
 
@@ -1160,8 +1171,8 @@ public class NavMapView extends MapView {
 
                 if (currentStep == null) {
                     triggerOnUpdateListeners(Double.NaN, -1, DirectionsApiManager.Step.MANEUVER_NONE, "", "", route);
-                    reportPerformance(startTime, SystemClock.elapsedRealtime(), DEFAULT_FRAME_TIME_IN_MS);
-                    handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
+                    reportPerformance(frameStartTime, SystemClock.elapsedRealtime(), DEFAULT_FRAME_TIME_IN_MS);
+                    handler.postDelayed(this, calculateFrameTimeLeftInMs(frameStartTime, SystemClock.elapsedRealtime()));
                     return;
                 }
 
@@ -1179,8 +1190,8 @@ public class NavMapView extends MapView {
                 }
 
 
-                reportPerformance(startTime, SystemClock.elapsedRealtime(), DEFAULT_FRAME_TIME_IN_MS);
-                handler.postDelayed(this, DEFAULT_FRAME_TIME_IN_MS);
+                reportPerformance(frameStartTime, SystemClock.elapsedRealtime(), DEFAULT_FRAME_TIME_IN_MS);
+                handler.postDelayed(this, calculateFrameTimeLeftInMs(frameStartTime, SystemClock.elapsedRealtime()));
 
             }
         };
