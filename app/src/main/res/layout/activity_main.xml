@@ -43,6 +43,30 @@
         android:layout_alignParentBottom="true" />
 
 
+    <com.appyvet.rangebar.RangeBar
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/rangebar"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        custom:tickStart="1"
+        custom:tickInterval="1"
+        custom:tickEnd="2000"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        custom:pinRadius="0dp"
+        custom:selectorSize="7dp"
+        custom:selectorColor="#AA00FF00"
+        custom:tickColor="#AAAAAA"
+        custom:connectingLineColor="#FF0000"
+        custom:tickHeight="0dp"
+        android:layout_below="@+id/btnGo"
+        />
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rangebar"/>
+
 
 
 

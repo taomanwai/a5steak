@@ -24,9 +24,9 @@ import com.tommytao.a5steak.R;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
+import com.tommytao.a5steak.util.google.LocationFusedSensor;
 import com.tommytao.a5steak.util.google.TextSpeaker;
 import com.tommytao.a5steak.util.sensor.GSensor;
-import com.tommytao.a5steak.util.sensor.LocationSensor;
 import com.tommytao.a5steak.util.sensor.MagneticSensor;
 import com.tommytao.a5steak.util.sensor.analyzer.OrientationAnalyzer;
 import com.tommytao.a5steak.util.sensor.support.DataProcessor;
@@ -92,7 +92,7 @@ public class NavMapView extends MapView {
     }
 
 
-    public static class ResponseToConnect implements LocationSensor.OnConnectListener, TextSpeaker.OnConnectListener {
+    public static class ResponseToConnect implements LocationFusedSensor.OnConnectListener, TextSpeaker.OnConnectListener {
 
         private WeakReference<NavMapView> navMapViewWeakReference;
         private ArrayList<Integer> numOfConnections;
@@ -113,7 +113,7 @@ public class NavMapView extends MapView {
 
                 GSensor.getInstance().disconnect();
                 MagneticSensor.getInstance().disconnect();
-                LocationSensor.getInstance().disconnect();
+                LocationFusedSensor.getInstance().disconnect();
                 TextSpeaker.getInstance().disconnect();
 
                 numOfConnections.clear();
@@ -207,8 +207,8 @@ public class NavMapView extends MapView {
             }
             navMapView.routePolyline = navMapView.route.drawRouteToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
 
-            double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
-            double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
+            double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
+            double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
             final double rotation = navMapView.getProcessedRotation(false);
 
             try {
@@ -294,8 +294,8 @@ public class NavMapView extends MapView {
             }
             navMapView.routePolyline = navMapView.route.drawRouteToMap(navMapView.getMap(), 11.0f, Color.parseColor("#FB4E0A"));
 
-            double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
-            double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
+            double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
+            double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
             double rotation = navMapView.getProcessedRotation(false);
             try {
                 navMapView.route.update(lat, lng, rotation);
@@ -350,7 +350,7 @@ public class NavMapView extends MapView {
             Location approxLocation = this.steps.get(0).getPolyline().getLocations().get(index);
             double approxLat = approxLocation.getLatitude();
             double approxLng = approxLocation.getLongitude();
-            double derivation = LocationSensor.getInstance().calculateDistanceInMeter(
+            double derivation = LocationFusedSensor.getInstance().calculateDistanceInMeter(
                     approxLat, approxLng,
                     startLatitude, startLongitude
             );
@@ -518,7 +518,7 @@ public class NavMapView extends MapView {
             if (currentRouteLocation == null || currentLocation == null)
                 return Float.NaN;
 
-            return LocationSensor.getInstance().calculateDistanceInMeter(currentRouteLocation.getLatitude(), currentRouteLocation.getLongitude(),
+            return LocationFusedSensor.getInstance().calculateDistanceInMeter(currentRouteLocation.getLatitude(), currentRouteLocation.getLongitude(),
                     currentLocation.getLatitude(), currentLocation.getLongitude());
 
         }
@@ -1123,8 +1123,8 @@ public class NavMapView extends MapView {
 
                 long frameStartTime = SystemClock.elapsedRealtime();
 
-                double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
-                double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
+                double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
+                double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
                 double rotation = getProcessedRotation(false);
                 try {
                     route.updateFast(lat, lng, rotation);
@@ -1161,7 +1161,7 @@ public class NavMapView extends MapView {
                     Log.d("rtemp", "nav_t: not_isCurrentlyPassing: derivation:" + route.getCurrentRouteDerivation());
 
                     route.setPrepareToBeReplaced(true);
-                    rerouteLocation = LocationSensor.getInstance().getLastKnownLocation();
+                    rerouteLocation = LocationFusedSensor.getInstance().getLastKnownLocation();
 
                     latestMockRouteElapsedTimestamp = mockRoute(rerouteLocation.getLatitude(), rerouteLocation.getLongitude(),
                             destLocation.getLatitude(), destLocation.getLongitude(), avoid, locale, new ResponseToRerouteMockRoute(NavMapView.this));
@@ -1225,7 +1225,7 @@ public class NavMapView extends MapView {
     // == Init ==
     private void init() {
         DirectionsApiManager.getInstance().init(getContext(), "", "");
-        LocationSensor.getInstance().init(getContext());
+        LocationFusedSensor.getInstance().init(getContext());
         GSensor.getInstance().init(getContext());
         MagneticSensor.getInstance().init(getContext());
         OrientationAnalyzer.getInstance().init(getContext());
@@ -1265,7 +1265,7 @@ public class NavMapView extends MapView {
         final ArrayList<Integer> numOfConnections = new ArrayList<>();
         numOfConnections.add(0);
         numOfConnections.add(1);
-        LocationSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, new ResponseToConnect(this, numOfConnections));
+        LocationFusedSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, new ResponseToConnect(this, numOfConnections));
         TextSpeaker.getInstance().connect(new ResponseToConnect(this, numOfConnections));
 
     }
@@ -1288,7 +1288,7 @@ public class NavMapView extends MapView {
     /**
      * Disconnect all resources (e.g. Singletons) used by NavMapView
      * <p/>
-     * Note: It will close all Singletons (e.g. GSensor, MagneticSensor, LocationSensor, TextSpeaker), use it before ensuring such Singletons are totally not in use
+     * Note: It will close all Singletons (e.g. GSensor, MagneticSensor, LocationFusedSensor, TextSpeaker), use it before ensuring such Singletons are totally not in use
      */
     public void disconnectNavigation() {
 
@@ -1308,7 +1308,7 @@ public class NavMapView extends MapView {
         connectedNavigation = false;
         GSensor.getInstance().disconnect();
         MagneticSensor.getInstance().disconnect();
-        LocationSensor.getInstance().disconnect();
+        LocationFusedSensor.getInstance().disconnect();
         TextSpeaker.getInstance().disconnect();
         clearAndOnUiThreadTriggerOnConnectListeners(false);
 
@@ -1373,7 +1373,7 @@ public class NavMapView extends MapView {
 
         }
 
-        if (LocationSensor.getInstance().getLastKnownLocation() == null) {
+        if (LocationFusedSensor.getInstance().getLastKnownLocation() == null) {
 
             if (listener != null) {
                 handler.post(new Runnable() {
@@ -1387,8 +1387,8 @@ public class NavMapView extends MapView {
             return;
         }
 
-        this.startLocation = LocationSensor.getInstance().getLastKnownLocation();
-        this.destLocation = LocationSensor.getInstance().latLngToLocation(latitude, longitude);
+        this.startLocation = LocationFusedSensor.getInstance().getLastKnownLocation();
+        this.destLocation = LocationFusedSensor.getInstance().latLngToLocation(latitude, longitude);
         this.rerouteLocation = null;
         this.avoid = avoid;
         this.locale = locale;
@@ -1554,17 +1554,17 @@ public class NavMapView extends MapView {
 
         GSensor.getInstance().connect();
         MagneticSensor.getInstance().connect();
-        // LocationSensor and TextSpeaker may not be fully connected,
+        // LocationFusedSensor and TextSpeaker may not be fully connected,
         // but it is Ok!
         // Coz getLastKnownLocation() must not be null (coz checked in startNavigation) and
         // TextSpeaker will skip speaking and speak again in the upcoming frame or when TextSpeaker is fully connected
-        LocationSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, null);
+        LocationFusedSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, null);
         TextSpeaker.getInstance().connect(null);
 
         keepAndOnUiThreadTriggerOnResumeListeners();
 
-        double lat = LocationSensor.getInstance().getLastKnownLocation().getLatitude();
-        double lng = LocationSensor.getInstance().getLastKnownLocation().getLongitude();
+        double lat = LocationFusedSensor.getInstance().getLastKnownLocation().getLatitude();
+        double lng = LocationFusedSensor.getInstance().getLastKnownLocation().getLongitude();
         final double bearing = getProcessedRotation(false);
         resumeAnimRunning = true;
         getMap().animateCamera(
@@ -1596,7 +1596,7 @@ public class NavMapView extends MapView {
 
         GSensor.getInstance().disconnect();
         MagneticSensor.getInstance().disconnect();
-        LocationSensor.getInstance().disconnect();
+        LocationFusedSensor.getInstance().disconnect();
         TextSpeaker.getInstance().disconnect();
 
         keepAndOnUiThreadTriggerOnPauseListeners();

@@ -60,7 +60,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
 
 
-    public final static int DEFAULT_PRIORITY = PRIORITY_BALANCED_POWER_ACCURACY;
+    public final static int DEFAULT_PRIORITY = PRIORITY_HIGH_ACCURACY; // PRIORITY_BALANCED_POWER_ACCURACY
     public final static int DEFAULT_INTERVAL_IN_MS = 5000; // 5s (5000ms) = Google Maps interval
 
     private int intervalInMs = DEFAULT_INTERVAL_IN_MS;
