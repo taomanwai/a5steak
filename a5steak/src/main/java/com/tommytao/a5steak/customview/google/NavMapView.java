@@ -732,7 +732,7 @@ public class NavMapView extends MapView {
                 e.printStackTrace();
             }
 
-            Log.d("rtemp", "batch_t: batch1StepIndex: " + batch1StepIndex + " batch1StartIndex: " + batch1StartIndex + " batch1EndIndex: " + batch1EndIndex + " batch1ApproxLocationIndex: " + batch1ApproxLocationIndex);
+//            Log.d("rtemp", "batch_t: batch1StepIndex: " + batch1StepIndex + " batch1StartIndex: " + batch1StartIndex + " batch1EndIndex: " + batch1EndIndex + " batch1ApproxLocationIndex: " + batch1ApproxLocationIndex);
 
             int targetStepIndex = -1;
             int targetApproxLocationIndex = -1;

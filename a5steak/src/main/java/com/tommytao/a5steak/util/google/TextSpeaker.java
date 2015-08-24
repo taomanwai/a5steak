@@ -61,6 +61,8 @@ public class TextSpeaker extends Foundation {
 
     private TextToSpeech tts;
 
+    private MediaPlayer cantoneseMediaPlayer;
+
     private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
 
     private boolean connected;
@@ -230,11 +232,16 @@ public class TextSpeaker extends Foundation {
                 headers.put("User-Agent", "stagefright/1.2 (Linux;Android 5.0)");
                 headers.put("Referer", "http://translate.google.com/");
 
-                MediaPlayer mediaPlayer = new MediaPlayer();
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//                mediaPlayer.setDataSource(link);
-                mediaPlayer.setDataSource(appContext, uri, headers);
-                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                try {
+                    cantoneseMediaPlayer.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                cantoneseMediaPlayer = new MediaPlayer();
+                cantoneseMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                cantoneseMediaPlayer.setDataSource(appContext, uri, headers);
+                cantoneseMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
 
@@ -255,7 +262,7 @@ public class TextSpeaker extends Foundation {
 
                     }
                 });
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                cantoneseMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
                         try {
@@ -268,7 +275,7 @@ public class TextSpeaker extends Foundation {
                             listener.onComplete(true);
                     }
                 });
-                mediaPlayer.prepareAsync();
+                cantoneseMediaPlayer.prepareAsync();
 
             } catch (Exception e) {
                 e.printStackTrace();

@@ -151,8 +151,8 @@ public class MainActivity extends Activity {
     public void resume() {
 //        navMapView.resumeNavigation();
 
-//        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-        TextSpeaker.getInstance().speak("Starting navigation, hope u enjoy", null);
+        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
+        TextSpeaker.getInstance().speak("啟動", null);
 
 
     }
@@ -160,8 +160,8 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnPause)
     public void pause() {
 //        navMapView.pauseNavigation();
-//        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-        TextSpeaker.getInstance().speak("stop", null);
+        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
+        TextSpeaker.getInstance().speak("停止", null);
     }
 
 
