@@ -1265,7 +1265,7 @@ public class NavMapView extends MapView {
         final ArrayList<Integer> numOfConnections = new ArrayList<>();
         numOfConnections.add(0);
         numOfConnections.add(1);
-        LocationFusedSensor.getInstance().connect(LocationFusedSensor.DEFAULT_PRIORITY, DEFAULT_FRAME_TIME_IN_MS, new ResponseToConnect(this, numOfConnections));
+        LocationFusedSensor.getInstance().connect(LocationFusedSensor.PRIORITY_HIGH_ACCURACY, DEFAULT_FRAME_TIME_IN_MS, new ResponseToConnect(this, numOfConnections));
         TextSpeaker.getInstance().connect(new ResponseToConnect(this, numOfConnections));
 
     }

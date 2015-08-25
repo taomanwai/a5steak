@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -311,8 +312,11 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     @Override
     public void onLocationChanged(Location location) {
 
+        Log.d("rtemp", "location_ch");
+
         if (location == null)
             return;
+
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
         editor.putLong(PREFS_LAT_E6, lat2LatE6(location.getLatitude()));

@@ -143,7 +143,7 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnStop)
     public void stop() {
 
-        navMapView.disconnectNavigation();
+        navMapView.disconnectNavigation(true);
 
     }
 
