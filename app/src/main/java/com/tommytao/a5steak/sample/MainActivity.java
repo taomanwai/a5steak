@@ -11,6 +11,7 @@ import com.tommytao.a5steak.customview.google.GMapAdapter;
 import com.tommytao.a5steak.customview.google.NavMapView;
 import com.tommytao.a5steak.util.AppManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
+import com.tommytao.a5steak.util.google.LocationFusedSensor;
 import com.tommytao.a5steak.util.google.TextSpeaker;
 
 import java.util.ArrayList;
@@ -61,6 +62,38 @@ public class MainActivity extends Activity {
         double a = (int) Math.ceil(1/ Double.NaN);
 
         Log.d("", "" + a);
+
+        String s = "" + Float.NaN;
+
+        float f = Float.valueOf(s);
+
+        Log.d("", "" + a);
+
+        LocationFusedSensor.getInstance().init(this);
+        LocationFusedSensor.getInstance().connect(LocationFusedSensor.PRIORITY_HIGH_ACCURACY, 16, new LocationFusedSensor.OnConnectListener() {
+            @Override
+            public void onConnected(boolean succeed) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        float speed = LocationFusedSensor.getInstance().getLastKnownSpeed();
+
+                        Log.d("", "speed_t: " + speed);
+
+                        handler.postDelayed(this, 16);
+
+                    }
+                }, 16);
+            }
+
+            @Override
+            public void onIgnored() {
+
+            }
+        });
+
+
 
 
 

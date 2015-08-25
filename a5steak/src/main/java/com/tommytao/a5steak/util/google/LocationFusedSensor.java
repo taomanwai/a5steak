@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -60,7 +59,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     public final static int PRIORITY_NO_POWER = LocationRequest.PRIORITY_NO_POWER;
 
 
-
     public final static int DEFAULT_PRIORITY = PRIORITY_BALANCED_POWER_ACCURACY; // PRIORITY_BALANCED_POWER_ACCURACY
     public final static int DEFAULT_INTERVAL_IN_MS = 5000; // 5s (5000ms) = Google Maps interval
 
@@ -72,6 +70,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     public final static String PREFS_LAT_E6 = "LocationFusedSensor.PREFS_LAT_E6";
     public final static String PREFS_LNG_E6 = "LocationFusedSensor.PREFS_LNG_E6";
+    public final static String PREFS_SPEED = "LocationFusedSensor.PREFS_SPEED";
 
     private final long INVALID_LAT_E6_EXAMPLE = 999999999;
     private final long INVALID_LNG_E6_EXAMPLE = 999999999;
@@ -205,12 +204,21 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
             long latE6 = PreferenceManager.getDefaultSharedPreferences(appContext).getLong(PREFS_LAT_E6, INVALID_LAT_E6_EXAMPLE);
             long lngE6 = PreferenceManager.getDefaultSharedPreferences(appContext).getLong(PREFS_LNG_E6, INVALID_LNG_E6_EXAMPLE);
+            String speedStr = PreferenceManager.getDefaultSharedPreferences(appContext).getString(PREFS_SPEED, "");
 
             if (latE6 != INVALID_LAT_E6_EXAMPLE && lngE6 != INVALID_LNG_E6_EXAMPLE) {
 
                 result = new Location("");
                 result.setLatitude(latE62Lat(latE6));
                 result.setLongitude(lngE62Lng(lngE6));
+
+                try {
+                    float speed = Float.valueOf(speedStr);
+                    if (!Float.isNaN(speed))
+                        result.setSpeed(speed);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -219,6 +227,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
                     .edit()
                     .putLong(PREFS_LAT_E6, lat2LatE6(result.getLatitude()))
                     .putLong(PREFS_LNG_E6, lng2LngE6(result.getLongitude()))
+                    .putString(PREFS_SPEED, "" + (result.hasSpeed() ? result.getSpeed() : Float.NaN))
                     .commit();
         }
 
@@ -229,6 +238,15 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         return result;
 
     }
+
+    public float getLastKnownSpeed() {
+
+        Location location = getLastKnownLocation();
+        float result = location.getSpeed();
+        return location.hasSpeed() ? result : Float.NaN;
+
+    }
+
 
     private GoogleApiClient getClient() {
 
@@ -312,16 +330,15 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     @Override
     public void onLocationChanged(Location location) {
 
-        Log.d("rtemp", "location_ch");
 
         if (location == null)
             return;
 
-
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
-        editor.putLong(PREFS_LAT_E6, lat2LatE6(location.getLatitude()));
-        editor.putLong(PREFS_LNG_E6, lng2LngE6(location.getLongitude()));
-        editor.commit();
+        editor.putLong(PREFS_LAT_E6, lat2LatE6(location.getLatitude()))
+                .putLong(PREFS_LNG_E6, lng2LngE6(location.getLongitude()))
+                .putString(PREFS_SPEED, "" + (location.hasSpeed() ? location.getSpeed() : Float.NaN))
+                .commit();
 
 
     }
