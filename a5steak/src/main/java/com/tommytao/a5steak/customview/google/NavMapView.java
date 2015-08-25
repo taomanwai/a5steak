@@ -1265,7 +1265,7 @@ public class NavMapView extends MapView {
         final ArrayList<Integer> numOfConnections = new ArrayList<>();
         numOfConnections.add(0);
         numOfConnections.add(1);
-        LocationFusedSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, new ResponseToConnect(this, numOfConnections));
+        LocationFusedSensor.getInstance().connect(LocationFusedSensor.DEFAULT_PRIORITY, DEFAULT_FRAME_TIME_IN_MS, new ResponseToConnect(this, numOfConnections));
         TextSpeaker.getInstance().connect(new ResponseToConnect(this, numOfConnections));
 
     }
@@ -1286,11 +1286,14 @@ public class NavMapView extends MapView {
     }
 
     /**
-     * Disconnect all resources (e.g. Singletons) used by NavMapView
-     * <p/>
-     * Note: It will close all Singletons (e.g. GSensor, MagneticSensor, LocationFusedSensor, TextSpeaker), use it before ensuring such Singletons are totally not in use
+     * Stop NavMapView, then disconnect IO resources (i.e. GSensor, MagneticSensor, LocationFusedSensor, TextSpeaker) used by NavMapView (if disconnectIo is true)
+     *
+     * Note: If disconnectIo is false, it is programmers responsibility to disconnect related IO resources at appropriate time.
+     *
+     * @param disconnectIo True: disconnect IO resources after stopping NavMapView; False: Not disconnect IO resources after stopping NavMapView
+     *
      */
-    public void disconnectNavigation() {
+    public void disconnectNavigation(boolean disconnectIo) {
 
         if (isStartingNavigation() || isStartedNavigation()) {
             disableFrameUpdate();
@@ -1306,10 +1309,12 @@ public class NavMapView extends MapView {
         }
 
         connectedNavigation = false;
-        GSensor.getInstance().disconnect();
-        MagneticSensor.getInstance().disconnect();
-        LocationFusedSensor.getInstance().disconnect();
-        TextSpeaker.getInstance().disconnect();
+        if (disconnectIo) {
+            GSensor.getInstance().disconnect();
+            MagneticSensor.getInstance().disconnect();
+            LocationFusedSensor.getInstance().disconnect();
+            TextSpeaker.getInstance().disconnect();
+        }
         clearAndOnUiThreadTriggerOnConnectListeners(false);
 
     }
@@ -1557,7 +1562,7 @@ public class NavMapView extends MapView {
         // but it is Ok!
         // Coz getLastKnownLocation() must not be null (coz checked in startNavigation) and
         // TextSpeaker will skip speaking and speak again in the upcoming frame or when TextSpeaker is fully connected
-        LocationFusedSensor.getInstance().connect(DEFAULT_FRAME_TIME_IN_MS, null);
+        LocationFusedSensor.getInstance().connect(LocationFusedSensor.DEFAULT_PRIORITY, DEFAULT_FRAME_TIME_IN_MS, null);
         TextSpeaker.getInstance().connect(null);
 
         keepAndOnUiThreadTriggerOnResumeListeners();

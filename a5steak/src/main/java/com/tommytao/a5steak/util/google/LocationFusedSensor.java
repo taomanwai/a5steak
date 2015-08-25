@@ -64,6 +64,8 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     public final static int DEFAULT_INTERVAL_IN_MS = 5000; // 5s (5000ms) = Google Maps interval
 
     private int intervalInMs = DEFAULT_INTERVAL_IN_MS;
+    private int priority = DEFAULT_PRIORITY;
+
 
     private boolean connected;
 
@@ -149,11 +151,12 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     // == END of onConnectListener ==
 
-    public void connect(int intervalInMs, final OnConnectListener onConnectListener) {
+    public void connect(int priority, int intervalInMs, final OnConnectListener onConnectListener) {
 
         if (isConnected()) {
+            this.priority = priority;
             this.intervalInMs = intervalInMs;
-            startDetectingLocation(DEFAULT_PRIORITY, intervalInMs, intervalInMs);
+            startDetectingLocation(priority, intervalInMs, intervalInMs);
 
             if (onConnectListener != null)
                 handler.post(new Runnable() {
@@ -166,6 +169,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
             return;
         }
 
+        this.priority = priority;
         this.intervalInMs = intervalInMs;
 
         if (!isConnecting())
@@ -260,6 +264,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     public void showResolveLocationSourceDialog() {
         // TODO under construction
+
     }
 
 
@@ -289,7 +294,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
                 connected = true;
 
-                startDetectingLocation(DEFAULT_PRIORITY, intervalInMs, intervalInMs);
+                startDetectingLocation(priority, intervalInMs, intervalInMs);
 
                 clearAndTriggerOnConnectListeners(true);
             }
