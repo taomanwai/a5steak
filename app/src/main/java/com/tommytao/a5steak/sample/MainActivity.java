@@ -1,12 +1,12 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.tommytao.a5steak.util.BitmapManager;
 import com.tommytao.a5steak.util.FbManager;
 
 import java.util.ArrayList;
@@ -73,19 +73,37 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnShare)
     public void share() {
-        BitmapManager.getInstance().init(this);
 
-        Bitmap bm = BitmapManager.getInstance().loadResId(R.drawable.ic_launcher, -1, -1, false);
 
-        FbManager.getInstance().sharePhoto(this, bm, new FbManager.OnShareListener() {
-            @Override
-            public void onComplete(String postId) {
 
-                Toast.makeText(MainActivity.this, "postId: " + postId, Toast.LENGTH_SHORT).show();
+        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, 1234);
 
-            }
-        });
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode==RESULT_OK){
+
+            if (requestCode== 1234){
+
+                Uri uri = data.getData();
+
+                FbManager.getInstance().shareVideo(MainActivity.this, uri, new FbManager.OnShareListener() {
+                    @Override
+                    public void onComplete(String postId) {
+
+                        Toast.makeText(MainActivity.this, "postId: " + postId, Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+
+
+            }
+
+        }
+    }
 }

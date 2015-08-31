@@ -414,7 +414,7 @@ public class FbManager extends Foundation {
                     break;
 
                 case "video":
-                    Uri localUrl = (Uri) intent.getSerializableExtra("localUrl");
+                    Uri localUrl = (Uri) intent.getParcelableExtra("localUrl");
 
                     ShareVideo shareVideo = new ShareVideo.Builder()
                             .setLocalUrl(localUrl)
