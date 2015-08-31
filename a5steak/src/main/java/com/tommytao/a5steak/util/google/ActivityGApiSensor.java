@@ -72,16 +72,15 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
 
         public void onConnected(boolean succeed);
 
-
     }
 
-    private GoogleApiClient apiClient;
+    private GoogleApiClient client;
 
-    public GoogleApiClient getApiClient() {
+    public GoogleApiClient getClient() {
 
-        if (apiClient == null) {
+        if (client == null) {
 
-            apiClient = new GoogleApiClient.Builder(appContext)
+            client = new GoogleApiClient.Builder(appContext)
                     .addApi(ActivityRecognition.API)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
@@ -89,7 +88,7 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
 
         }
 
-        return apiClient;
+        return client;
     }
 
     private boolean connected;
@@ -98,7 +97,7 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
 
     private DetectedActivity lastKnownDetectedActivity;
 
-    private ArrayList<OnConnectListener> onConnectListenerList = new ArrayList<>();
+    private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
 
     @Override
     public boolean init(Context context) {
@@ -110,37 +109,53 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
         if (isConnected())
             return false;
 
-        return !onConnectListenerList.isEmpty();
+        return !onConnectListeners.isEmpty();
     }
 
     public boolean isConnected() {
         return connected;
     }
 
-    public void connect(OnConnectListener onConnectListener) {
+    public void connect(final OnConnectListener onConnectListener) {
+
+        if (isConnected()){
+
+            if (onConnectListener!=null){
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onConnectListener.onConnected(true);
+                    }
+                });
+            }
+
+            return;
+        }
 
         if (isConnecting()) {
 
-            onConnectListenerList.add(onConnectListener);
+            onConnectListeners.add(onConnectListener);
 
             return;
         }
 
 
-        onConnectListenerList.add(onConnectListener);
+        onConnectListeners.add(onConnectListener);
 
         lastKnownDetectedActivity = null;
-        getApiClient().connect();
+        getClient().connect();
 
     }
 
     public void disconnect() {
 
-        ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(getApiClient(), pendingIntent);
-
+        ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(getClient(), pendingIntent);
+        getClient().disconnect();
         connected = false;
+        clearAndTriggerOnConnectListeners(false);
 
-    }
+
+}
 
     private void setLastKnownDetectedActivity(DetectedActivity lastKnownDetectedActivity) {
         this.lastKnownDetectedActivity = lastKnownDetectedActivity;
@@ -150,13 +165,13 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
         return lastKnownDetectedActivity;
     }
 
-    private void clearAndTriggerOnConnectListenerList(boolean succeed) {
+    private void clearAndTriggerOnConnectListeners(boolean succeed) {
 
-        ArrayList<OnConnectListener> pendingOnConnectListenerList = new ArrayList<>(onConnectListenerList);
+        ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
 
-        onConnectListenerList.clear();
+        onConnectListeners.clear();
 
-        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListenerList) {
+        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
             if (pendingOnConnectListener != null)
                 pendingOnConnectListener.onConnected(succeed);
         }
@@ -177,11 +192,11 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
                         .getService(appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 ActivityRecognition.
-                        ActivityRecognitionApi.requestActivityUpdates(getApiClient(), 0, pendingIntent);
+                        ActivityRecognitionApi.requestActivityUpdates(getClient(), 0, pendingIntent);
 
                 connected = true;
 
-                clearAndTriggerOnConnectListenerList(true);
+                clearAndTriggerOnConnectListeners(true);
             }
         });
 
@@ -198,8 +213,7 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
-
-        clearAndTriggerOnConnectListenerList(false);
+        clearAndTriggerOnConnectListeners(false);
 
     }
 

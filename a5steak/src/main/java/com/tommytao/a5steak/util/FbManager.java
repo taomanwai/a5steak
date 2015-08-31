@@ -91,9 +91,7 @@ public class FbManager extends Foundation {
     }
 
 
-    public static final int GENDER_UNCLASSIFIED = 0;
-    public static final int GENDER_MALE = 1;
-    public static final int GENDER_FEMALE = 2;
+
 
 
     public static class Device {
@@ -116,6 +114,10 @@ public class FbManager extends Foundation {
 
 
     public static class User {
+
+        public static final int GENDER_UNCLASSIFIED = 0;
+        public static final int GENDER_MALE = 1;
+        public static final int GENDER_FEMALE = 2;
 
         private String id = "";
         private String firstName = "";
