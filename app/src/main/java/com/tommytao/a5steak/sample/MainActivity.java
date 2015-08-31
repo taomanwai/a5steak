@@ -96,7 +96,14 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             @Override
             public void onConnected() {
 
-                Toast.makeText(MainActivity.this, "onConnected: " + GPlusManager.getInstance().getCurrentPerson(), Toast.LENGTH_LONG).show();
+                GPlusManager.getInstance().getLastKnownToken(new GPlusManager.OnGetLastKnownTokenListener() {
+                    @Override
+                    public void onCompleted(String token) {
+                        Toast.makeText(MainActivity.this, "onConnected: token: " + token, Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
 
             }
 
