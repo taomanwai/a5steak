@@ -33,6 +33,8 @@ dependencies {
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     compile 'com.nineoldandroids:library:2.4.0'
 
+    compile 'com.facebook.android:facebook-android-sdk:4.5.0'
+
     // compile 'com.github.ozodrukh:CircularReveal:1.0.4@aar'
 
 

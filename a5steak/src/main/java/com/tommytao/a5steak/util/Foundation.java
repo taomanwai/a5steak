@@ -129,7 +129,7 @@ public class Foundation {
 
     }
 
-    // === tag ===
+    // == tag ==
     private Object tag;
 
     public Object getTag() {
@@ -140,7 +140,7 @@ public class Foundation {
         this.tag = tag;
     }
 
-    // === log ===
+    // == log ==
 
 
     protected void log(String msg) {
@@ -149,7 +149,7 @@ public class Foundation {
 
     }
 
-    // === http ===
+    // == http ==
 
     protected int calculateDownloadPercentage(int finished, int totalSize) {
 
@@ -857,7 +857,7 @@ public class Foundation {
 
     }
 
-    // === MD5 ===
+    // == MD5 ==
     protected byte[] hexStrToByteArray(String input) {
 
         int inputLength = input.length();
@@ -904,7 +904,7 @@ public class Foundation {
     }
 
 
-    // === file utils ===
+    // == file utils ==
 
     protected boolean deleteFolder(File folder) {
 
@@ -936,7 +936,7 @@ public class Foundation {
     }
 
 
-    // === Check inside China or not ===
+    // == Check inside China or not ==
 
     protected boolean isInChinaWgs84(double lat, double lng) {
 
@@ -966,7 +966,7 @@ public class Foundation {
 
     }
 
-    // === Location sensor ===
+    // == Location sensor ==
 
     protected void goToLocationSourceSettings(Activity activity) {
         activity.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
@@ -1011,7 +1011,7 @@ public class Foundation {
 
     }
 
-    // === Baidu coordination conversion ===
+    // == Baidu coordination conversion ==
 
 
     protected Location bd09ToGcj02(double bdLat, double bdLng) {
@@ -1078,7 +1078,7 @@ public class Foundation {
     }
 
 
-    // === GCJ02 conversion (using simplified algorithm) ===
+    // == GCJ02 conversion (using simplified algorithm) ==
 
     protected double latitudeOffsetForWgs84ToGcj02(double d, double d1) {
         return -100D + 2D * d + 3D * d1 + d1 * (0.20000000000000001D * d1) + d1 * (0.10000000000000001D * d) + 0.20000000000000001D * Math.sqrt(Math.abs(d)) + (2D * (20D * Math.sin(3.1415926535897931D * (6D * d)) + 20D * Math.sin(3.1415926535897931D * (2D * d)))) / 3D + (2D * (20D * Math.sin(3.1415926535897931D * d1) + 40D * Math.sin(3.1415926535897931D * (d1 / 3D)))) / 3D + (2D * (160D * Math.sin(3.1415926535897931D * (d1 / 12D)) + 320D * Math.sin((3.1415926535897931D * d1) / 30D))) / 3D;
@@ -1125,7 +1125,7 @@ public class Foundation {
 
 
 
-    // === Google API for Work ===
+    // == Google API for Work ==
     protected static class UrlSigner {
 
         // Note: Generally, you should store your private key someplace safe
@@ -1221,7 +1221,7 @@ public class Foundation {
         return cryptoForWork;
     }
 
-    // === Directions API ===
+    // == Directions API ==
     protected ArrayList<Location> encodedPolylineToLocations(String encodedPolyline) {
         ArrayList<Location> poly = new ArrayList<>();
         int index = 0, len = encodedPolyline.length();
@@ -1258,7 +1258,7 @@ public class Foundation {
         return poly;
     }
 
-    // === Sensor ===
+    // == Sensor ==
     public static interface OnReadingChangeListener {
 
         public void onReadingChanged(float x, float y, float z);
@@ -1321,7 +1321,7 @@ public class Foundation {
 
     }
 
-    // === Converter ===
+    // == Converter ==
     protected String resIdToName(int resId, boolean fullName) {
 
         String idName = appContext.getResources().getResourceName(resId);
@@ -1356,7 +1356,7 @@ public class Foundation {
     }
 
 
-    // === Location ===
+    // == Location ==
     protected long lat2LatE6(double latitude) {
         return (long) (latitude * 1000000);
     }
@@ -1374,7 +1374,7 @@ public class Foundation {
     }
 
 
-    // === MathManager ===
+    // == MathManager ==
 
     protected double normalizeToOneLoopBearing(double value) {
 
@@ -1435,7 +1435,7 @@ public class Foundation {
     }
 
 
-    // === Data processor ===
+    // == Data processor ==
 
 
     protected void lowPassFilter(ArrayList<Double> lowPassHistoryList, int maxHistorySize, double latestValue, double strength) {
@@ -1486,6 +1486,14 @@ public class Foundation {
 
         while (lowPassHistoryList.size() > maxHistorySize)
             lowPassHistoryList.remove(lowPassHistoryList.size() - 1);
+
+
+    }
+    
+    // == Generate unique ID ==
+    protected int genUniqueId() {
+
+        return (int) (Math.random() * Integer.MAX_VALUE);
 
 
     }

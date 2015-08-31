@@ -1,9 +1,30 @@
- <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.tommytao.a5steak">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tommytao.a5steak" >
 
-     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-     <application android:allowBackup="true" android:label="@string/app_name">
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name" >
 
         <service android:name=".util.google.ActivityGApiSensor$SenseService" />
+
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges=
+                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:label="@string/app_name" />
+
+
+        <activity
+            android:name=".util.FbManager$FbLoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            />
+
+        <activity
+            android:name=".util.FbManager$FbShareActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            />
+
 
     </application>
 

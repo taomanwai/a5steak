@@ -59,7 +59,7 @@ public class AlarmSetter extends Foundation {
      */
     private int genUniqueRequestCode() {
 
-        return (int) (Math.random() * Integer.MAX_VALUE);
+        return genUniqueId();
 
     }
 

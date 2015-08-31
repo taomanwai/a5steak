@@ -1,39 +1,22 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
+import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.tommytao.a5steak.customview.google.GMapAdapter;
-import com.tommytao.a5steak.customview.google.NavMapView;
-import com.tommytao.a5steak.util.AppManager;
-import com.tommytao.a5steak.util.google.DirectionsApiManager;
-import com.tommytao.a5steak.util.google.LocationFusedSensor;
-import com.tommytao.a5steak.util.google.TextSpeaker;
+import com.tommytao.a5steak.util.BitmapManager;
+import com.tommytao.a5steak.util.FbManager;
 
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Arrays;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
 public class MainActivity extends Activity {
-
-    @Bind(R.id.navMapView)
-    NavMapView navMapView;
-
-    private GMapAdapter mapAdapter;
-
-    public static final String CLIENT_ID_FOR_BUSINESS = "gme-easyvanhongkonglimited";
-    public static final String CRYPTO_FOR_BUSINESS = "RglSWAR2KO9R2OghAMwyj4WqIXg=";
-    public static final String PLACES_API_KEY = "AIzaSyDho8iArjPHWI7GiY1xGhefeB6LplFucdI";
-
-    Handler handler = new Handler(Looper.getMainLooper());
 
 
     @Override
@@ -43,65 +26,7 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
-        TextSpeaker.getInstance().init(this);
-        TextSpeaker.getInstance().connect(null);
-
-
-        mapAdapter = new GMapAdapter(navMapView);
-
-
-        mapAdapter.onCreate(savedInstanceState);
-        mapAdapter.init(this, null);
-
-        mapAdapter = new GMapAdapter(navMapView);
-
-        AppManager.getInstance().init(this);
-
-        ArrayList<String> sl = AppManager.getInstance().getInstalledApps();
-
-        double a = (int) Math.ceil(1/ Double.NaN);
-
-        Log.d("", "" + a);
-
-        String s = "" + Float.NaN;
-
-        float f = Float.valueOf(s);
-
-        Log.d("", "" + a);
-
-        LocationFusedSensor.getInstance().init(this);
-        LocationFusedSensor.getInstance().connect(LocationFusedSensor.PRIORITY_HIGH_ACCURACY, 16, new LocationFusedSensor.OnConnectListener() {
-            @Override
-            public void onConnected(boolean succeed) {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        float speed = LocationFusedSensor.getInstance().getLastKnownSpeed();
-
-                        Log.d("", "speed_t: " + speed);
-
-                        handler.postDelayed(this, 16);
-
-                    }
-                }, 16);
-            }
-
-            @Override
-            public void onIgnored() {
-
-            }
-        });
-
-
-
-
-
-
-
-
-
-
+        FbManager.getInstance().init(this);
 
 
     }
@@ -111,155 +36,56 @@ public class MainActivity extends Activity {
     public void go() {
 
 
-        TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
+        FbManager.getInstance().login(this, false, new ArrayList<String>(Arrays.asList("publish_actions")), new FbManager.OnLoginListener() {
             @Override
-            public void onConnected(boolean succeed) {
+            public void onComplete(String token) {
+                if (TextUtils.isEmpty(token)) {
+                    Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_LONG).show();
 
-                if (!succeed)
+                } else {
+                    Toast.makeText(MainActivity.this, "succeed " + token, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
+    }
+
+    @OnClick(R.id.btnGet)
+    public void get() {
+
+        FbManager.getInstance().getFriends(0, 10, new FbManager.OnGetFriendsListener() {
+            @Override
+            public void onComplete(ArrayList<FbManager.User> users, int totalCount) {
+
+
+                if (totalCount == -1) {
+                    Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_LONG).show();
                     return;
+                }
 
-                TextSpeaker.getInstance().speak("Welcome", new TextSpeaker.OnSpeakListener() {
-                    @Override
-                    public void onStart() {
-
-                    }
-
-                    @Override
-                    public void onComplete(boolean succeed) {
-                        if (!succeed)
-                            return;
-
-                        navMapView.connectNavigation(new NavMapView.OnConnectListener() {
-                            @Override
-                            public void onConnected(boolean succeed) {
-
-                                if (!succeed) {
-                                    Toast.makeText(MainActivity.this, "cannot connect", Toast.LENGTH_LONG).show();
-
-                                    return;
-                                }
-
-                                navMapView.startNavigation(22.381245, 114.189324, DirectionsApiManager.AVOID_FERRIES, new Locale("zh", "HK"), new NavMapView.OnStartListener() {
-                                    @Override
-                                    public void onStarted(boolean succeed) {
-
-                                    }
-
-                                    @Override
-                                    public void onIgnored() {
-
-                                    }
-
-                                    @Override
-                                    public void onIgnoredByInvalidLatLng() {
-
-                                        Toast.makeText(MainActivity.this, "lat lng not found", Toast.LENGTH_LONG).show();
-
-                                    }
-                                });
-                            }
-                        });
-
-
-                    }
-                });
-            }
-        });
-
-
-
-
-
-
-    }
-
-    @OnClick(R.id.btnStop)
-    public void stop() {
-
-        navMapView.disconnectNavigation(true);
-
-    }
-
-    @OnClick(R.id.btnResume)
-    public void resume() {
-//        navMapView.resumeNavigation();
-
-        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-        TextSpeaker.getInstance().speak("啟動啟動啟動啟動啟動", new TextSpeaker.OnSpeakListener() {
-            @Override
-            public void onStart() {
-
-            }
-
-            @Override
-            public void onComplete(boolean succeed) {
-
-                Log.d("rtemp", "tts_t: " + "start_end: " + succeed);
+                Toast.makeText(MainActivity.this, "totalCount " + totalCount, Toast.LENGTH_LONG).show();
 
 
             }
         });
-
-
     }
 
-    @OnClick(R.id.btnPause)
-    public void pause() {
-//        navMapView.pauseNavigation();
+    @OnClick(R.id.btnShare)
+    public void share() {
+        BitmapManager.getInstance().init(this);
 
-        TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
-        TextSpeaker.getInstance().speak("暫停", new TextSpeaker.OnSpeakListener() {
+        Bitmap bm = BitmapManager.getInstance().loadResId(R.drawable.ic_launcher, -1, -1, false);
+
+        FbManager.getInstance().sharePhoto(this, bm, new FbManager.OnShareListener() {
             @Override
-            public void onStart() {
+            public void onComplete(String postId) {
 
-            }
-
-            @Override
-            public void onComplete(boolean succeed) {
-
-                Log.d("rtemp", "tts_t: " + "pause_end: " + succeed);
+                Toast.makeText(MainActivity.this, "postId: " + postId, Toast.LENGTH_SHORT).show();
 
             }
         });
-    }
-
-
-
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        mapAdapter.onResume();
-        navMapView.resumeNavigation();
 
     }
 
-    @Override
-    protected void onPause() {
-
-        mapAdapter.onPause();
-        navMapView.pauseNavigation();
-        super.onPause();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        mapAdapter.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapAdapter.onLowMemory();
-    }
-
-    @Override
-    protected void onDestroy() {
-        mapAdapter.onDestroy();
-        super.onDestroy();
-    }
 }

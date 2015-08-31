@@ -368,11 +368,6 @@ public class TextSpeaker extends Foundation {
 
     }
 
-    private int genUniqueId() {
-
-        return (int) (Math.random() * Integer.MAX_VALUE);
-
-    }
 
     private boolean isRunningOnUiThread() {
         return Looper.myLooper() == Looper.getMainLooper();

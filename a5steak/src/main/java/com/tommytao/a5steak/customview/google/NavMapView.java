@@ -665,7 +665,6 @@ public class NavMapView extends MapView {
 
             return getRouteLocationIntervalInMeter(getCurrentRouteStepIndex() + 1);
 
-
         }
 
         public double getCurrentRouteDistanceFromEndOfStepInMeter() {

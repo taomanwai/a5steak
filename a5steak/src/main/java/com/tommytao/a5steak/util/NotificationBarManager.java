@@ -87,7 +87,7 @@ public class NotificationBarManager extends Foundation {
     }
 
     private int genUniqueID(int lowestValueExclusive) {
-
+        // TODO may cause err, coz long -> int
         return (int) SystemClock.elapsedRealtime() + lowestValueExclusive + 1;
 
     }
