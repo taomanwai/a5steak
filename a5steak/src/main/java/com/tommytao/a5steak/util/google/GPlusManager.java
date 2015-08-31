@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.util;
+package com.tommytao.a5steak.util.google;
 
 
 import android.app.Activity;
@@ -18,6 +18,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
+import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,7 +144,6 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
         @Override
         protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-
 
             if (requestCode != REQ_USER_RECOVERABLE_AUTH)
                 return;

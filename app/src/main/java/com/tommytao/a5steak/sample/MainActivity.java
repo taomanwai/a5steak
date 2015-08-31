@@ -12,7 +12,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.tommytao.a5steak.util.FbManager;
-import com.tommytao.a5steak.util.GPlusManager;
+import com.tommytao.a5steak.util.google.GPlusManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;

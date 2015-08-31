@@ -323,8 +323,8 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-
+    public void onConnectionSuspended(int cause) {
+        getClient().connect();
     }
 
     @Override

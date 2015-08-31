@@ -26,12 +26,12 @@
             />
 
         <activity
-            android:name=".util.GPlusManager$GPlusStartResolutionActivity"
+            android:name=".util.google.GPlusManager$GPlusStartResolutionActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             />
 
         <activity
-            android:name=".util.GPlusManager$GPlusUserRecoverableAuthActivity"
+            android:name=".util.google.GPlusManager$GPlusUserRecoverableAuthActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             />
 

@@ -206,8 +206,8 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-        // do nothing
+    public void onConnectionSuspended(int cause) {
+        getClient().connect();
     }
 
     @Override
