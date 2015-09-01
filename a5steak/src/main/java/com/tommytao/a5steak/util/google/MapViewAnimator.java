@@ -12,7 +12,7 @@ import com.tommytao.a5steak.util.Foundation;
 /**
  * Created by tommytao on 29/7/15.
  */
-public class MapViewAnimator extends Foundation {
+public class MapViewAnimator extends GFoundation {
 
     private static MapViewAnimator instance;
 

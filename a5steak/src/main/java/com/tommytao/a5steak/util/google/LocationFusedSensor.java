@@ -261,15 +261,15 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     }
 
     public boolean isConnected() {
-
-//        return (this.getClient() != null && this.getClient().isConnected());
-
         return connected;
     }
 
     public boolean isConnecting() {
 
-        return !isConnected() && !onConnectListeners.isEmpty();
+        if (isConnected())
+            return false;
+
+        return !onConnectListeners.isEmpty();
 
     }
 
@@ -321,7 +321,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
             }
         });
 
-
     }
 
     @Override
@@ -331,7 +330,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     @Override
     public void onLocationChanged(Location location) {
-
 
         if (location == null)
             return;

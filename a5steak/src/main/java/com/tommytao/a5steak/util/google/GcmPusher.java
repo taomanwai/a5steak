@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
 
@@ -28,7 +27,7 @@ import java.util.ArrayList;
  *
  * @author tommytao
  */
-public class GcmPusher extends Foundation {
+public class GcmPusher extends GFoundation {
 
     private static GcmPusher instance;
 

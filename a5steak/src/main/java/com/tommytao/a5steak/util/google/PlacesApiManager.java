@@ -19,7 +19,7 @@ import java.util.Locale;
  * Ref: <a href="https://developers.google.com/places/webservice/autocomplete#location_biasing">here</a>
  *
  */
-public class PlacesApiManager extends Foundation {
+public class PlacesApiManager extends GFoundation {
 
     private static PlacesApiManager instance;
 

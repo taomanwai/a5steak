@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -13,11 +11,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.tommytao.a5steak.util.FbManager;
-import com.tommytao.a5steak.util.ZipUtils;
 import com.tommytao.a5steak.util.google.GPlusManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -48,39 +42,18 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public void go() {
 
 
-        FbManager.getInstance().login(this, false, new ArrayList<String>(Arrays.asList("publish_actions")), new FbManager.OnLoginListener() {
-            @Override
-            public void onComplete(String token) {
-                if (TextUtils.isEmpty(token)) {
-                    Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_LONG).show();
-
-                } else {
-                    Toast.makeText(MainActivity.this, "succeed " + token, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
 
     }
 
     @OnClick(R.id.btnGet)
     public void get() {
 
-//        GPlusManager.getInstance().getLastKnownToken(new GPlusManager.OnGetLastKnownTokenListener() {
-//            @Override
-//            public void onCompleted(String token) {
-//                Toast.makeText(MainActivity.this, "token: " + token, Toast.LENGTH_LONG).show();
-//            }
-//        });
-
-        String s = "aaaaaa";
-        byte[] ba = ZipUtils.zipString(s);
-        byte[] unzip = ZipUtils.unzipByteArray(ba);
-
-
-        String s2 = new String(unzip);
-
-        Log.d("","");
+        GPlusManager.getInstance().getLastKnownToken(new GPlusManager.OnGetLastKnownTokenListener() {
+            @Override
+            public void onCompleted(String token) {
+                Toast.makeText(MainActivity.this, "token: " + token, Toast.LENGTH_LONG).show();
+            }
+        });
 
 
 
@@ -90,13 +63,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @OnClick(R.id.btnShare)
     public void share() {
-
-
-
-//        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-//        startActivityForResult(i, 1234);
-
-//        mGoogleApiClient.connect();
 
         GPlusManager.getInstance().init(this);
         GPlusManager.getInstance().connect(new GPlusManager.OnConnectListener() {

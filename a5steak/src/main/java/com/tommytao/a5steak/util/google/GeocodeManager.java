@@ -4,8 +4,6 @@ import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
 
-import com.tommytao.a5steak.util.Foundation;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,7 +12,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class GeocodeManager extends Foundation {
+public class GeocodeManager extends GFoundation {
 
 	private static GeocodeManager instance;
 

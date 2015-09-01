@@ -18,7 +18,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
-import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ import java.util.HashMap;
  * Ref:
  * https://developers.facebook.com/docs/sharing/android
  */
-public class GPlusManager extends Foundation implements GoogleApiClient.ConnectionCallbacks,
+public class GPlusManager extends GFoundation implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static GPlusManager instance;

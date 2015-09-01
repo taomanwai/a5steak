@@ -36,7 +36,7 @@ import java.util.Locale;
  * 23 waypoints allowed in each request. Waypoints are not available for transit directions.
  * 10 requests per second.
  */
-public class DirectionsApiManager extends Foundation {
+public class DirectionsApiManager extends GFoundation {
 
     private static DirectionsApiManager instance;
 

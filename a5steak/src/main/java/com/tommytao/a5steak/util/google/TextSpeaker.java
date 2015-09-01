@@ -8,8 +8,6 @@ import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
-import com.tommytao.a5steak.util.Foundation;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +21,7 @@ import java.util.Locale;
  * <p/>
  * Ref: http://stackoverflow.com/questions/9893175/google-text-to-speech-api
  */
-public class TextSpeaker extends Foundation {
+public class TextSpeaker extends GFoundation {
 
     private static TextSpeaker instance;
 

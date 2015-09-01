@@ -182,13 +182,13 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
             public void run() {
                 Intent intent = new Intent(appContext, SenseService.class);
 
+                connected = true;
+
                 pendingIntent = PendingIntent
                         .getService(appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 ActivityRecognition.
                         ActivityRecognitionApi.requestActivityUpdates(getClient(), 0, pendingIntent);
-
-                connected = true;
 
                 clearAndTriggerOnConnectListeners(true);
             }
