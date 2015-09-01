@@ -49,15 +49,11 @@ public class GPlayManager extends Foundation {
 	}
 
 	public boolean isGPlayExistAndUpToDate() {
-
-//		return (GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SUCCESS);
-
-		return super.isGPlayExistAndUpToDate();
+		return (GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SUCCESS);
 	}
 
 	public boolean isGPlayExist() {
-//		return (isGPlayExistAndUpToDate() || GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED);
-		return super.isGPlayExist();
+		return (isGPlayExistAndUpToDate() || GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED);
 	}
 
 	public boolean isGPlayUpdateRequired(){

@@ -13,9 +13,6 @@ import android.text.Html;
 import android.util.Base64;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -1498,17 +1495,6 @@ public class Foundation {
 
         return (int) (Math.random() * Integer.MAX_VALUE);
 
-
     }
-
-    // == GPlayManager ==
-    protected boolean isGPlayExistAndUpToDate() {
-        return (GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SUCCESS);
-    }
-
-    protected boolean isGPlayExist() {
-        return (isGPlayExistAndUpToDate() || GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED);
-    }
-
 
 }
