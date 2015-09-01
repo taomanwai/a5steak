@@ -59,13 +59,13 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
 
     private static interface OnStartResolutionListener {
 
-        public void onCompleted(Intent data);
+        public void onCompleted(boolean succeed);
 
     }
 
     private static interface OnUserRecoverableAuthListener {
 
-        public void onCompleted(Intent data);
+        public void onCompleted(String token);
 
     }
 
@@ -100,7 +100,7 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
         }
 
         @Override
-        protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
             finish();
@@ -109,7 +109,7 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
                 @Override
                 public void run() {
                     if (listener != null)
-                        listener.onCompleted(data);
+                        listener.onCompleted(resultCode == RESULT_OK);
                 }
             });
 
@@ -142,25 +142,43 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
         }
 
         @Override
-        protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
             if (requestCode != REQ_USER_RECOVERABLE_AUTH)
                 return;
 
-            if (resultCode != RESULT_OK)
+            if (resultCode != RESULT_OK) {
+                finish();
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (listener != null) {
+                            listener.onCompleted("");
+                        }
+                    }
+                });
                 return;
+            }
 
             finish();
-
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    if (listener != null)
-                        listener.onCompleted(data);
+                    if (listener != null) {
+
+                        String token = "";
+
+                        try {
+                            token = data.getExtras().getString("authtoken");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        listener.onCompleted(token);
+                    }
                 }
             });
-
 
         }
 
@@ -361,13 +379,13 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
-        int errorCode = connectionResult.getErrorCode();
+        final int errorCode = connectionResult.getErrorCode();
 
 
         if (errorCode == 4) { // 4 = SIGN_IN_REQUIRED
             startResolution(connectionResult, new OnStartResolutionListener() {
                 @Override
-                public void onCompleted(Intent data) {
+                public void onCompleted(boolean succeed) {
 
                     if (getClient().isConnected()) {
                         clearAndTriggerOnConnectListeners(true, -1);
@@ -381,7 +399,12 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
                     }
 
                     if (!getClient().isConnected()) {
-                        client.connect();
+                        if (succeed)
+                            client.connect();
+                        else {
+                            clearAndTriggerOnConnectListeners(false, errorCode);
+                        }
+
                         return;
                     }
 
@@ -507,8 +530,10 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
 
                     userRecoverAuth(intent, new OnUserRecoverableAuthListener() {
                         @Override
-                        public void onCompleted(Intent data) {
-                            getLastKnownToken(listener);
+                        public void onCompleted(String token) {
+
+                            listener.onCompleted(token);
+
                         }
                     });
 

@@ -103,6 +103,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     }
                 });
 
+//                Toast.makeText(MainActivity.this, "onConnected:  ", Toast.LENGTH_LONG).show();
+
 
 
             }
