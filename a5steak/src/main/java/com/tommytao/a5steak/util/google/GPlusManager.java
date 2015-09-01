@@ -123,7 +123,6 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
         public static int REQ_USER_RECOVERABLE_AUTH = 9383;
 
         private OnUserRecoverableAuthListener listener;
-        private Intent userRecoverableAuthIntent;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -131,11 +130,10 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
 
             Intent intent = getIntent();
 
+            Intent userRecoverableAuthIntent= intent.getParcelableExtra("userRecoverableAuthIntent");
+
             int idOfUserRecoverableAuthListener = intent.getIntExtra("idOfUserRecoverableAuthListener", -1);
             listener = GPlusManager.getInstance().onUserRecoverableAuthListeners.remove(idOfUserRecoverableAuthListener);
-
-            int idOfUserRecoverableAuthIntent = intent.getIntExtra("idOfUserRecoverableAuthIntent", -1);
-            userRecoverableAuthIntent = GPlusManager.getInstance().userRecoverableAuthIntents.remove(idOfUserRecoverableAuthIntent);
 
             startActivityForResult(userRecoverableAuthIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK), REQ_USER_RECOVERABLE_AUTH);
 
@@ -145,8 +143,9 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
         protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode != REQ_USER_RECOVERABLE_AUTH)
+            if (requestCode != REQ_USER_RECOVERABLE_AUTH) {
                 return;
+            }
 
             if (resultCode != RESULT_OK) {
                 finish();
@@ -254,7 +253,6 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
 
     private HashMap<Integer, OnStartResolutionListener> onStartResolutionListeners = new HashMap<>();
     private HashMap<Integer, OnUserRecoverableAuthListener> onUserRecoverableAuthListeners = new HashMap<>();
-    private HashMap<Integer, Intent> userRecoverableAuthIntents = new HashMap<>();
 
     private boolean connected;
 
@@ -462,12 +460,11 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
 
     }
 
-    private void userRecoverAuth(Intent userRecoverableAuthInent, OnUserRecoverableAuthListener listener) {
+    private void userRecoverAuth(Intent userRecoverableAuthIntent, OnUserRecoverableAuthListener listener) {
         int id = genUniqueId();
-        userRecoverableAuthIntents.put(id, userRecoverableAuthInent);
         onUserRecoverableAuthListeners.put(id, listener);
 
-        appContext.startActivity(new Intent(appContext, GPlusUserRecoverableAuthActivity.class).putExtra("idOfUserRecoverableAuthListener", id).putExtra("idOfUserRecoverableAuthIntent", id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        appContext.startActivity(new Intent(appContext, GPlusUserRecoverableAuthActivity.class).putExtra("userRecoverableAuthIntent", userRecoverableAuthIntent).putExtra("idOfUserRecoverableAuthIntent", id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
     }
 
@@ -507,7 +504,7 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
                             appContext,
                             Plus.AccountApi.getAccountName(clients[0]), "oauth2:"
                                     + Scopes.PLUS_LOGIN + " "
-                                    + Scopes.PLUS_ME + " https://www.googleapis.com/auth/plus.profile.emails.read");
+                                    + Scopes.PLUS_ME); // + " https://www.googleapis.com/auth/plus.profile.emails.read"
                     if (token == null)
                         token = "";
                 } catch (UserRecoverableAuthException e) {
