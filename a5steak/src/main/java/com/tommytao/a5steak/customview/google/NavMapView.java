@@ -24,7 +24,7 @@ import com.tommytao.a5steak.R;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
-import com.tommytao.a5steak.util.google.LocationFusedSensor;
+import com.tommytao.a5steak.util.google.gapiclient.LocationFusedSensor;
 import com.tommytao.a5steak.util.google.TextSpeaker;
 import com.tommytao.a5steak.util.sensor.GSensor;
 import com.tommytao.a5steak.util.sensor.MagneticSensor;

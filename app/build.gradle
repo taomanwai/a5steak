@@ -29,5 +29,8 @@ dependencies {
 
     compile 'com.appyvet:materialrangebar:1.0'
 
+    compile 'org.osmdroid:osmdroid-android:4.2'
+    compile 'org.slf4j:slf4j-simple:1.6.1'
+
 
 }

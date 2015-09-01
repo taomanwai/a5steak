@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.util.google;
+package com.tommytao.a5steak.util.google.gapiclient;
 
 
 import android.app.Activity;
@@ -18,7 +18,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
+import com.tommytao.a5steak.util.google.GFoundation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -47,6 +49,13 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
 
     // --
 
+    public static interface OnConnectListener {
+
+        public void onConnected();
+
+        public void onFailed(int errorCode);
+
+    }
 
     private static interface OnStartResolutionListener {
 
@@ -245,44 +254,89 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
     private HashMap<Integer, OnStartResolutionListener> onStartResolutionListeners = new HashMap<>();
     private HashMap<Integer, OnUserRecoverableAuthListener> onUserRecoverableAuthListeners = new HashMap<>();
 
+    private boolean connected;
+
+    private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
+
+    private GoogleApiClient client;
+
+    public GoogleApiClient getClient() {
+
+        if (client == null) {
+            client = new GoogleApiClient.Builder(appContext).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(Plus.API, Plus.PlusOptions.builder().build()).addScope(Plus.SCOPE_PLUS_LOGIN).build();
+        }
+
+        return client;
+    }
+
+    private void clearAndTriggerOnConnectListeners(boolean succeed, int errorCode) {
+
+        ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
+
+        onConnectListeners.clear();
+
+        for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
+            if (pendingOnConnectListener != null) {
+                if (succeed) {
+                    pendingOnConnectListener.onConnected();
+                } else {
+                    pendingOnConnectListener.onFailed(errorCode);
+                }
+            }
+        }
+    }
+
+    private void clearAndOnUiThreadTriggerOnConnectListeners(final boolean succeed, final int errorCode) {
+
+        final ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
+        onConnectListeners.clear();
+        if (pendingOnConnectListeners.isEmpty())
+            return;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
+                    if (pendingOnConnectListener != null) {
+                        if (succeed)
+                            pendingOnConnectListener.onConnected();
+                        else
+                            pendingOnConnectListener.onFailed(errorCode);
+                    }
+                }
+            }
+        });
+
+    }
+
     @Override
     public boolean init(Context context) {
         if (!super.init(context))
             return false;
 
         return true;
+
     }
 
-    @Override
-    protected GoogleApiClient getClient() {
-        if (client == null) {
-            client = new GoogleApiClient.Builder(appContext)
-                    .addApi(Plus.API, Plus.PlusOptions.builder().build())
-                    .addScope(Plus.SCOPE_PLUS_LOGIN)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this).build();
-        }
-        return client;
+    public boolean isConnecting() {
+
+        if (isConnected())
+            return false;
+
+        return !onConnectListeners.isEmpty();
     }
 
-    @Override
-    public void connect(final OnConnectListener onConnectListener) {
-        super.connect(onConnectListener);
+    public boolean isConnected() {
+        return connected;
     }
-    @Override
+
+
     public void disconnect() {
 
         Plus.AccountApi.clearDefaultAccount(getClient());
-        super.disconnect();
+        getClient().disconnect();
+        connected = false;
+        clearAndOnUiThreadTriggerOnConnectListeners(false, -1);
 
-    }
-    @Override
-    public boolean isConnecting() {
-        return super.isConnecting();
-    }
-    @Override
-    public boolean isConnected() {
-        return super.isConnected();
     }
 
     private void startResolution(ConnectionResult connectionResult, OnStartResolutionListener listener) {
@@ -291,6 +345,93 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
         onStartResolutionListeners.put(id, listener);
 
         appContext.startActivity(new Intent(appContext, GPlusStartResolutionActivity.class).putExtra("connectionResult", connectionResult).putExtra("idOfStartResolutionListener", id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+    }
+
+    public void connect(final OnConnectListener onConnectListener) {
+
+        if (isConnected()) {
+
+            if (onConnectListener != null) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onConnectListener.onConnected();
+                    }
+                });
+            }
+
+            return;
+        }
+
+        onConnectListeners.add(onConnectListener);
+
+        if (!isConnecting())
+            getClient().connect();
+
+
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+        // coz onConnected will be run in async style. Ref: https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient.ConnectionCallbacks
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                connected = true;
+                clearAndTriggerOnConnectListeners(true, -1);
+            }
+        });
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+
+        getClient().connect();
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+        final int errorCode = connectionResult.getErrorCode();
+
+
+        if (errorCode == 4) { // 4 = SIGN_IN_REQUIRED
+            startResolution(connectionResult, new OnStartResolutionListener() {
+                @Override
+                public void onCompleted(boolean succeed) {
+
+                    if (getClient().isConnected()) {
+                        clearAndTriggerOnConnectListeners(true, -1);
+                        return;
+                    }
+
+
+                    if (getClient().isConnecting()) {
+                        // do nothing, waiting connection done
+                        return;
+                    }
+
+                    if (!getClient().isConnected()) {
+                        if (succeed)
+                            client.connect();
+                        else {
+                            clearAndTriggerOnConnectListeners(false, errorCode);
+                        }
+
+                        return;
+                    }
+
+
+                }
+            });
+            return;
+        }
+
+        clearAndTriggerOnConnectListeners(false, connectionResult.getErrorCode());
 
     }
 
@@ -427,48 +568,6 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
 
         }.execute(getClient());
 
-
-    }
-
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-        final int errorCode = connectionResult.getErrorCode();
-
-        if (errorCode == 4) { // 4 = SIGN_IN_REQUIRED
-            startResolution(connectionResult, new OnStartResolutionListener() {
-                @Override
-                public void onCompleted(boolean succeed) {
-
-                    if (getClient().isConnected()) {
-                        clearAndTriggerOnConnectListeners(true);
-                        return;
-                    }
-
-
-                    if (getClient().isConnecting()) {
-                        // do nothing, waiting connection done
-                        return;
-                    }
-
-                    if (!getClient().isConnected()) {
-                        if (succeed)
-                            client.connect();
-                        else {
-                            clearAndTriggerOnConnectListeners(false);
-                        }
-
-                        return;
-                    }
-
-
-                }
-            });
-            return;
-        }
-
-        super.onConnectionFailed(connectionResult);
 
     }
 

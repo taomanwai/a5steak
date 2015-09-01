@@ -6,7 +6,7 @@
         android:allowBackup="true"
         android:label="@string/app_name" >
 
-        <service android:name=".util.google.ActivityGApiSensor$SenseService" />
+        <service android:name=".util.google.gapiclient.ActivityGApiSensor$SenseService" />
 
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
@@ -26,12 +26,12 @@
             />
 
         <activity
-            android:name=".util.google.GPlusManager$GPlusStartResolutionActivity"
+            android:name=".util.google.gapiclient.GPlusManager$GPlusStartResolutionActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             />
 
         <activity
-            android:name=".util.google.GPlusManager$GPlusUserRecoverableAuthActivity"
+            android:name=".util.google.gapiclient.GPlusManager$GPlusUserRecoverableAuthActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             />
 

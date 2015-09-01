@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.util.google;
+package com.tommytao.a5steak.util.google.gapiclient;
 
 import android.app.IntentService;
 import android.app.PendingIntent;
@@ -148,7 +148,7 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
         ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(getClient(), pendingIntent);
         getClient().disconnect();
         connected = false;
-        clearAndTriggerOnConnectListeners(false);
+        clearAndOnUiThreadTriggerOnConnectListeners(false);
 
 
 }
@@ -173,6 +173,30 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
         }
     }
 
+    private void clearAndOnUiThreadTriggerOnConnectListeners(final boolean succeed) {
+
+        final ArrayList<OnConnectListener> pendingOnConnectListeners = new ArrayList<>(onConnectListeners);
+
+        onConnectListeners.clear();
+
+        if (pendingOnConnectListeners.isEmpty())
+            return;
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (OnConnectListener pendingOnConnectListener : pendingOnConnectListeners) {
+                    if (pendingOnConnectListener != null) {
+                        pendingOnConnectListener.onConnected(succeed);
+                    }
+                }
+            }
+        });
+
+    }
+
+
+
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -195,9 +219,6 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
                 clearAndTriggerOnConnectListeners(true);
             }
         });
-
-
-
 
     }
 

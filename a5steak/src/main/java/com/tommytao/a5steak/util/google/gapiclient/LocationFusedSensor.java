@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.util.google;
+package com.tommytao.a5steak.util.google.gapiclient;
 
 import android.app.Activity;
 import android.content.Context;
@@ -246,6 +246,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         return location.hasSpeed() ? result : Float.NaN;
 
     }
+
 
     protected GoogleApiClient getClient() {
 
