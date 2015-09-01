@@ -65,14 +65,17 @@ public class ZipUtils {
 
         // Decompress the data
         byte[] buf = new byte[1024];
+        boolean hasException = false;
         while (!decompressor.finished()) {
             try {
                 int count = decompressor.inflate(buf);
                 bos.write(buf, 0, count);
             } catch (DataFormatException e) {
                 e.printStackTrace();
-                break;
+                hasException = true;
             }
+            if(hasException)
+                break;
         }
         try {
             bos.close();
@@ -81,7 +84,7 @@ public class ZipUtils {
         }
 
         // Get the decompressed data
-        return bos.toByteArray();
+        return hasException ? new byte[0] : bos.toByteArray();
 
     }
 
