@@ -64,21 +64,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @OnClick(R.id.btnGet)
     public void get() {
 
-        FbManager.getInstance().getFriends(0, 10, new FbManager.OnGetFriendsListener() {
+        GPlusManager.getInstance().getLastKnownToken(new GPlusManager.OnGetLastKnownTokenListener() {
             @Override
-            public void onComplete(ArrayList<FbManager.User> users, int totalCount) {
-
-
-                if (totalCount == -1) {
-                    Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                Toast.makeText(MainActivity.this, "totalCount " + totalCount, Toast.LENGTH_LONG).show();
-
-
+            public void onCompleted(String token) {
+                Toast.makeText(MainActivity.this, "token: " + token, Toast.LENGTH_LONG).show();
             }
         });
+
     }
 
     @OnClick(R.id.btnShare)
@@ -96,14 +88,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             @Override
             public void onConnected() {
 
-                GPlusManager.getInstance().getLastKnownToken(new GPlusManager.OnGetLastKnownTokenListener() {
-                    @Override
-                    public void onCompleted(String token) {
-                        Toast.makeText(MainActivity.this, "onConnected: token: " + token, Toast.LENGTH_LONG).show();
-                    }
-                });
 
-//                Toast.makeText(MainActivity.this, "onConnected:  ", Toast.LENGTH_LONG).show();
+
+                Toast.makeText(MainActivity.this, "onConnected:  ", Toast.LENGTH_LONG).show();
 
 
 

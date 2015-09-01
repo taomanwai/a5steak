@@ -12,29 +12,7 @@ import android.telephony.TelephonyManager;
  * <p/>
  * Warning: Need <uses-permission android:name="android.permission.CALL_PHONE" />
  */
-public class PhoneManager extends Foundation {
-
-    private static PhoneManager instance;
-
-    public static PhoneManager getInstance() {
-
-        if (instance == null)
-            instance = new PhoneManager();
-
-        return instance;
-    }
-
-    private PhoneManager() {
-
-    }
-
-
-    // --
-
-    @Override
-    public boolean init(Context context) {
-        return super.init(context);
-    }
+public class PhoneUtils {
 
     /**
      * Get SIM card phone number (may not work)
@@ -45,11 +23,11 @@ public class PhoneManager extends Foundation {
      *
      * @return Phone number recorded in SIM card
      */
-    public String getSimPhoneNo() {
+    public static String getSimPhoneNo(Context ctx) {
         String result = "";
 
         try {
-            TelephonyManager tm = (TelephonyManager) appContext.getSystemService(Context.TELEPHONY_SERVICE);
+            TelephonyManager tm = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);
             result = tm.getLine1Number();
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,12 +46,12 @@ public class PhoneManager extends Foundation {
      *
      * @return Phone number recorded in Whatsapp
      */
-    public String getWhatsappPhoneNo() {
+    public static String getWhatsappPhoneNo(Context ctx) {
 
         String result = "";
 
         try {
-            AccountManager am = AccountManager.get(appContext);
+            AccountManager am = AccountManager.get(ctx);
             Account[] accounts = am.getAccounts();
 
             for (Account ac : accounts) {
@@ -93,19 +71,19 @@ public class PhoneManager extends Foundation {
 
     }
 
-    public boolean isSimAvailable() {
-        TelephonyManager tm = (TelephonyManager) appContext.getSystemService(Context.TELEPHONY_SERVICE);  //gets the current TelephonyManager
+    public static boolean isSimAvailable(Context ctx) {
+        TelephonyManager tm = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);  //gets the current TelephonyManager
         return (tm.getSimState() != TelephonyManager.SIM_STATE_ABSENT);
 
     }
 
-    private boolean dialOrCall(String phoneNo, boolean dial) {
+    private static boolean dialOrCall(Context ctx, String phoneNo, boolean dial) {
 
 
         // TODO MVP try catch
         boolean succeed = true;
         try {
-            if (!isSimAvailable())
+            if (!isSimAvailable(ctx))
                 return false;
 
             if (phoneNo == null)
@@ -121,7 +99,7 @@ public class PhoneManager extends Foundation {
             Intent intent = new Intent(action, Uri.parse("tel:" + phoneNo));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            appContext.startActivity(intent);
+            ctx.startActivity(intent);
         } catch (Exception e){
             e.printStackTrace();
             succeed = false;
@@ -141,8 +119,8 @@ public class PhoneManager extends Foundation {
      * @param phoneNo
      * @return
      */
-    public boolean dial(String phoneNo) {
-        return dialOrCall(phoneNo, true);
+    public static boolean dial(Context ctx, String phoneNo) {
+        return dialOrCall(ctx, phoneNo, true);
     }
 
 
@@ -152,8 +130,8 @@ public class PhoneManager extends Foundation {
      * @param phoneNo
      * @return
      */
-    public boolean call(String phoneNo) {
-        return dialOrCall(phoneNo, false);
+    public static boolean call(Context ctx, String phoneNo) {
+        return dialOrCall(ctx, phoneNo, false);
     }
 
 

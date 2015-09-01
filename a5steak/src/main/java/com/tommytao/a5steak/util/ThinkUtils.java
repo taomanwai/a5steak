@@ -6,23 +6,7 @@ import android.location.Location;
 import android.text.TextUtils;
 import android.util.Patterns;
 
-public class Thinker {
-
-	private static Thinker instance;
-
-	public static Thinker getInstance() {
-
-		if (instance == null)
-			instance = new Thinker();
-
-		return instance;
-	}
-
-	private Thinker() { 
-
-	}
-
-	// --
+public class ThinkUtils {
 
 
 	/**
@@ -34,7 +18,7 @@ public class Thinker {
 	 * @return TRUE = valid, FALSE = invalid
 	 * 
 	 */
-	public boolean isEmailValid(String email) {
+	public static boolean isEmailValid(String email) {
 
 		String trimmedEmail = email.trim();
 
@@ -44,7 +28,7 @@ public class Thinker {
 		return Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches();
 	}
 	
-	public boolean isQQValid(String qq) {
+	public static boolean isQQValid(String qq) {
 
 		String trimmedQQ = qq.trim();
 
@@ -54,7 +38,7 @@ public class Thinker {
 		return TextUtils.isDigitsOnly(trimmedQQ);
 	}
 	
-	public boolean isPhoneNoFormatValidForChina(String phoneNo) {
+	public static boolean isPhoneNoFormatValidForChina(String phoneNo) {
 
 		if (phoneNo == null)
 			return false;
@@ -64,7 +48,7 @@ public class Thinker {
 
 	}
 
-    public boolean isAppInstalled(Context ctx, String pkgName) {
+    public static boolean isAppInstalled(Context ctx, String pkgName) {
 
         boolean appFound = false;
         try {
@@ -79,17 +63,14 @@ public class Thinker {
 
     }
 
-    public boolean isInteger(double value ) {
+    public static boolean isInteger(double value ) {
 
         return value== Math.round(value);
 
     }
-	
-//	public static boolean isNumeric(String str) {
-//	  return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
-//	}
 
-	public boolean isInCity(double lat, double lng, double cityLat,
+
+	public static boolean isInCity(double lat, double lng, double cityLat,
 			double cityLng, int cityRadiusInMeter) {
 
 		if (Double.isNaN(lat) || Double.isNaN(lng)){

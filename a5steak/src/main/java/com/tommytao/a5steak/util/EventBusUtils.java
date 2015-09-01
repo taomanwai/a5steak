@@ -9,29 +9,10 @@ import de.greenrobot.event.EventBus;
 
 /**
  * Response for EventBus stuff (e.g. enforce EventBus onEvent() following main thread handler handling sequence)
- *
+ * <p/>
  * Warning: EventBus lib must be installed
- *
  */
-public class EventBusManager {
-
-
-    private static EventBusManager instance;
-
-    public static EventBusManager getInstance() {
-
-        if (instance == null)
-            instance = new EventBusManager();
-
-        return instance;
-    }
-
-    private EventBusManager() {
-
-    }
-
-
-    // --
+public class EventBusUtils {
 
     public static class BundledEvent {
 
@@ -67,89 +48,62 @@ public class EventBusManager {
 
         }
 
-
     }
 
-    private Handler handler = new Handler(Looper.getMainLooper());
+    public static void post(final java.lang.Object event) {
 
-    public void post(final java.lang.Object event) {
-
-        handler.post(new Runnable() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-
                 EventBus.getDefault().post(event);
-
             }
         });
 
     }
 
-    public void postSticky(final java.lang.Object event) {
-
-        handler.post(new Runnable() {
+    public static void postSticky(final java.lang.Object event) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-
                 EventBus.getDefault().postSticky(event);
-
             }
         });
-
     }
 
-    public void removeSticky(final java.lang.Object event) {
-
-        handler.post(new Runnable() {
+    public static void removeSticky(final java.lang.Object event) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-
                 EventBus.getDefault().removeStickyEvent(event);
-
             }
         });
-
     }
 
-    public void register(final java.lang.Object subscriber) {
-
-        handler.post(new Runnable() {
+    public static void register(final java.lang.Object subscriber) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-
                 EventBus.getDefault().register(subscriber);
-
             }
         });
-
     }
 
-    public void registerSticky(final java.lang.Object subscriber) {
-
-        handler.post(new Runnable() {
+    public static void registerSticky(final java.lang.Object subscriber) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-
                 EventBus.getDefault().registerSticky(subscriber);
-
             }
         });
-
-
     }
 
-    public void unregister(final java.lang.Object subscriber) {
-
-        handler.post(new Runnable() {
+    public static void unregister(final java.lang.Object subscriber) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-
                 EventBus.getDefault().unregister(subscriber);
-
             }
         });
-
     }
-
 
 }

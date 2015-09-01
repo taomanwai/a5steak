@@ -342,14 +342,12 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
             return;
         }
 
-        if (isConnecting()) {
-            onConnectListeners.add(onConnectListener);
-            return;
-        }
-
         onConnectListeners.add(onConnectListener);
 
-        getClient().connect();
+        if (!isConnecting())
+            getClient().connect();
+
+
 
     }
 
@@ -460,6 +458,13 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
 
     }
 
+    /**
+     *
+     * Note: This function has BUG, but will not be run (coz + "https://www.googleapis.com/auth/plus.profile.emails.read" is removed from getLastKnownToken())
+     *
+     * @param userRecoverableAuthIntent
+     * @param listener
+     */
     private void userRecoverAuth(Intent userRecoverableAuthIntent, OnUserRecoverableAuthListener listener) {
         int id = genUniqueId();
         onUserRecoverableAuthListeners.put(id, listener);
@@ -504,7 +509,7 @@ public class GPlusManager extends Foundation implements GoogleApiClient.Connecti
                             appContext,
                             Plus.AccountApi.getAccountName(clients[0]), "oauth2:"
                                     + Scopes.PLUS_LOGIN + " "
-                                    + Scopes.PLUS_ME); // + " https://www.googleapis.com/auth/plus.profile.emails.read"
+                                    + Scopes.PLUS_ME ); // + " https://www.googleapis.com/auth/plus.profile.emails.read"
                     if (token == null)
                         token = "";
                 } catch (UserRecoverableAuthException e) {

@@ -34,23 +34,7 @@ import java.lang.reflect.Field;
  *
  * @author tommytao
  */
-public class UxManager extends Foundation {
-
-    private static UxManager instance;
-
-    public static UxManager getInstance() {
-
-        if (instance == null)
-            instance = new UxManager();
-
-        return instance;
-    }
-
-    private UxManager() {
-
-    }
-
-    // --
+public class UxUtils {
 
     public static interface Listener {
 
@@ -60,11 +44,6 @@ public class UxManager extends Foundation {
 
     public static int DEFAULT_ANIM_DURATION_IN_MS = 300;
     public static float DEFAULT_ALPHA_SEMI_TRANSPARENT = 0.7f;
-
-    @Override
-    public boolean init(Context context) {
-        return super.init(context);
-    }
 
     public static boolean setNumberPickerTextColor(NumberPicker numberPicker, int color) {
         final int count = numberPicker.getChildCount();
@@ -92,7 +71,7 @@ public class UxManager extends Foundation {
     }
 
 
-    public void setNumberPickerDividerColor(NumberPicker picker, int color) {
+    public static void setNumberPickerDividerColor(NumberPicker picker, int color) {
 
         java.lang.reflect.Field[] pickerFields = NumberPicker.class.getDeclaredFields();
         for (java.lang.reflect.Field pf : pickerFields) {
@@ -114,14 +93,14 @@ public class UxManager extends Foundation {
     }
 
 
-    public void showKeyboard(Context context, View view) {
+    public static void showKeyboard(Context context, View view) {
         ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(2, 0);
         if (view != null)
             view.requestFocus();
 
     }
 
-    public void hideKeyboard(Context context, View view) {
+    public static void hideKeyboard(Context context, View view) {
 
         if (view == null && context instanceof Activity)
             view = ((Activity) context).getWindow().getDecorView();
@@ -136,7 +115,7 @@ public class UxManager extends Foundation {
 
     }
 
-    public void outOfFocusOnEditText(EditText editText) {
+    public static void outOfFocusOnEditText(EditText editText) {
 
         if (null == editText)
             return;
@@ -145,7 +124,7 @@ public class UxManager extends Foundation {
 
     }
 
-    public void focusOnEditText(Activity activity, EditText editText, boolean isShowKeyboard) {
+    public static void focusOnEditText(Activity activity, EditText editText, boolean isShowKeyboard) {
 
         if (null == editText)
             return;
@@ -159,20 +138,20 @@ public class UxManager extends Foundation {
 
     }
 
-    public void fadeChangeTextViewText(final TextView textView, final String text, final int durationInMs, final Listener listener) {
+    public static void fadeChangeTextViewText(final TextView textView, final String text, final int durationInMs, final Listener listener) {
 
         if (null == textView)
             return;
 
         final int halfDurationInMs = durationInMs / 2;
 
-        UxManager.getInstance().fadeOutView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
+        UxUtils.fadeOutView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
             @Override
             public void onComplete() {
 
                 textView.setText(text);
 
-                UxManager.getInstance().fadeInView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
+                UxUtils.fadeInView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
                     @Override
                     public void onComplete() {
 
@@ -188,7 +167,7 @@ public class UxManager extends Foundation {
 
     }
 
-    public TextView getToolBarTextView(Toolbar mToolBar) {
+    public static TextView getToolBarTextView(Toolbar mToolBar) {
 
         TextView titleTextView = null;
 
@@ -206,7 +185,7 @@ public class UxManager extends Foundation {
 
     }
 
-    public void slideDownHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void slideDownHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
 
 
@@ -215,7 +194,7 @@ public class UxManager extends Foundation {
 
     }
 
-    public void slideUpShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void slideUpShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
 
         slideView(view, 0, 0, view.getHeight(), 0, 1.0f, 1.0f, durationInMs, interpolator,  listener);
@@ -226,7 +205,7 @@ public class UxManager extends Foundation {
 
     // ===
 
-    public void slideDownShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void slideDownShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
 
         slideView(view, 0, 0, -view.getHeight(), 0, 1.0f, 1.0f, durationInMs, interpolator, listener);
@@ -234,7 +213,7 @@ public class UxManager extends Foundation {
 
     }
 
-    public void slideUpHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void slideUpHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
 
         slideView(view, 0, 0, 0, -view.getHeight(), 1.0f, 0.0f, durationInMs, interpolator, listener);
@@ -246,7 +225,7 @@ public class UxManager extends Foundation {
     // ===
 
 
-    public void slideLeftShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void slideLeftShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
 
         slideView(view, view.getWidth(), 0, 0, 0, 1.0f, 1.0f, durationInMs, interpolator, listener);
@@ -254,7 +233,7 @@ public class UxManager extends Foundation {
 
     }
 
-    public void slideRightHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void slideRightHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
 
 
         slideView(view, 0, view.getWidth(), 0, 0, 1.0f, 0.0f, durationInMs, interpolator, listener);
@@ -306,7 +285,7 @@ public class UxManager extends Foundation {
 //
 //    }
 
-    public void slideView(final View view, int fromXDelta, int toXDelta, int fromYDelta, int toYDelta, float fromAlpha, final float toAlpha,  final long durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void slideView(final View view, int fromXDelta, int toXDelta, int fromYDelta, int toYDelta, float fromAlpha, final float toAlpha,  final long durationInMs, Interpolator interpolator, final Listener listener) {
 
         if (view == null)
             return;
@@ -351,7 +330,7 @@ public class UxManager extends Foundation {
     }
 
 
-    public void fadeInView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void fadeInView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
         if (null == view)
             return;
@@ -384,12 +363,12 @@ public class UxManager extends Foundation {
         view.startAnimation(anim);
     }
 
-    private void playXmlAnim(final View view, final int resId, final Listener listener) {
+    private static void playXmlAnim(Context ctx, final View view, final int resId, final Listener listener) {
 
         if (null == view)
             return;
 
-        Animation anim = AnimationUtils.loadAnimation(appContext, resId);
+        Animation anim = AnimationUtils.loadAnimation(ctx, resId);
 
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -417,34 +396,34 @@ public class UxManager extends Foundation {
     }
 
 
-    public void blastViewForTwoAndHalfSecond(final View view, final Listener listener) {
+    public static void blastViewForTwoAndHalfSecond(Context ctx, final View view, final Listener listener) {
 
-        playXmlAnim(view, R.anim.blast, listener);
-
-    }
-
-
-    public void doubleBlinkViewForHalfSecond(final View view, final Listener listener) {
-
-        playXmlAnim(view, R.anim.double_blink, listener);
+        playXmlAnim(ctx, view, R.anim.blast, listener);
 
     }
 
-    public void shakeViewForOneSecond(final View view, final Listener listener) {
 
-        playXmlAnim(view, R.anim.shake, listener);
+    public static void doubleBlinkViewForHalfSecond(Context ctx, final View view, final Listener listener) {
+
+        playXmlAnim(ctx, view, R.anim.double_blink, listener);
 
     }
 
-    public void spinViewInfinitely(final View view, final Listener listener) {
+    public static void shakeViewForOneSecond(Context ctx, final View view, final Listener listener) {
 
-        playXmlAnim(view, R.anim.spin, listener);
+        playXmlAnim(ctx, view, R.anim.shake, listener);
+
+    }
+
+    public static void spinViewInfinitely(Context ctx, final View view, final Listener listener) {
+
+        playXmlAnim(ctx, view, R.anim.spin, listener);
 
     }
 
 
     // TODO MVP seems having performance issue
-    public void fadeOutView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void fadeOutView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
         if (null == view)
             return;
@@ -477,7 +456,7 @@ public class UxManager extends Foundation {
         view.startAnimation(anim);
     }
 
-    public void clearAnimationTo(final View view, boolean visible) {
+    public static void clearAnimationTo(final View view, boolean visible) {
 
 
         if (null == view)
@@ -493,7 +472,7 @@ public class UxManager extends Foundation {
 
     }
 
-    public void assignLayoutWidth(ViewGroup layout, int width) {
+    public static void assignLayoutWidth(ViewGroup layout, int width) {
 
         LayoutParams p = layout.getLayoutParams();
         p.width = width;
@@ -502,7 +481,7 @@ public class UxManager extends Foundation {
 
     }
 
-    public void assignLayoutHeight(ViewGroup layout, int height) {
+    public static void assignLayoutHeight(ViewGroup layout, int height) {
 
         LayoutParams p = layout.getLayoutParams();
         p.height = height;
@@ -518,7 +497,7 @@ public class UxManager extends Foundation {
      *
      * @param listView Listview which will be set
      */
-    public void setListViewHeightBasedOnChildren(ListView listView) {
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
         if (listView == null)
             return;
 
@@ -550,18 +529,18 @@ public class UxManager extends Foundation {
     }
 
 
-    private ViewGroup getParent(View view) {
+    private static ViewGroup getParent(View view) {
         return (ViewGroup) view.getParent();
     }
 
-    public void removeView(View view) {
+    public static void removeView(View view) {
         ViewGroup parent = getParent(view);
         if (parent != null) {
             parent.removeView(view);
         }
     }
 
-    public void replaceView(View currentView, View newView) {
+    public static void replaceView(View currentView, View newView) {
         ViewGroup parent = getParent(currentView);
         if (parent == null) {
             return;

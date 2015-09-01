@@ -1,77 +1,38 @@
 package com.tommytao.a5steak.util.google;
 
-import android.app.IntentService;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognition;
-import com.google.android.gms.location.ActivityRecognitionResult;
-import com.google.android.gms.location.DetectedActivity;
 import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
 
 /**
- * Responsible to recognize activity of users
- * <p/>
- * Note:
- * 1. Permission com.google.android.gms.permission.ACTIVITY_RECOGNITION is needed
- * 2. In manifest, must declare <service android:name="com.tommytao.a5steak.util.google.ActivitySensor$SenseService" />, A5Steak has already done so
- * 3. Reading may have few seconds delay
- * 4. Reading may stick to old values for long time
- * 5. Network is required, it may consume significant amount of battery
+ * Responsible to vision operations, e.g. recognize face, smile, barcode, etc.
  */
-public class ActivityGApiSensor extends Foundation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class VisionGApiAnalyzer extends Foundation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static ActivityGApiSensor instance;
+    private static VisionGApiAnalyzer instance;
 
-    public static ActivityGApiSensor getInstance() {
+    public static VisionGApiAnalyzer getInstance() {
 
         if (instance == null)
-            instance = new ActivityGApiSensor();
+            instance = new VisionGApiAnalyzer();
 
         return instance;
     }
 
-    private ActivityGApiSensor() {
+    private VisionGApiAnalyzer() {
         // do nothing
     }
 
-
     // --
 
-    public static class SenseService extends IntentService {
-
-        public SenseService() {
-            super(SenseService.class.getName());
-        }
-
-        public SenseService(String name) {
-            super(name);
-        }
-
-        @Override
-        protected void onHandleIntent(Intent intent) {
-
-            if (!ActivityRecognitionResult.hasResult(intent)) {
-                return;
-            }
-
-            ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-            ActivityGApiSensor.getInstance().setLastKnownDetectedActivity(result.getMostProbableActivity());
-
-        }
-
-    }
-
     public static interface OnConnectListener {
-
         public void onConnected(boolean succeed);
-
     }
 
     private GoogleApiClient client;
@@ -79,23 +40,17 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
     public GoogleApiClient getClient() {
 
         if (client == null) {
-
             client = new GoogleApiClient.Builder(appContext)
                     .addApi(ActivityRecognition.API)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .build();
-
         }
 
         return client;
     }
 
     private boolean connected;
-
-    private PendingIntent pendingIntent;
-
-    private DetectedActivity lastKnownDetectedActivity;
 
     private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
 
@@ -118,9 +73,9 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
 
     public void connect(final OnConnectListener onConnectListener) {
 
-        if (isConnected()){
+        if (isConnected()) {
 
-            if (onConnectListener!=null){
+            if (onConnectListener != null) {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -134,29 +89,17 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
 
         onConnectListeners.add(onConnectListener);
 
-        if (!isConnecting()) {
-            lastKnownDetectedActivity = null;
+        if (!isConnecting())
             getClient().connect();
-        }
 
     }
 
     public void disconnect() {
 
-        ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(getClient(), pendingIntent);
         getClient().disconnect();
         connected = false;
         clearAndTriggerOnConnectListeners(false);
 
-
-}
-
-    private void setLastKnownDetectedActivity(DetectedActivity lastKnownDetectedActivity) {
-        this.lastKnownDetectedActivity = lastKnownDetectedActivity;
-    }
-
-    public DetectedActivity getLastKnownDetectedActivity() {
-        return lastKnownDetectedActivity;
     }
 
     private void clearAndTriggerOnConnectListeners(boolean succeed) {
@@ -171,7 +114,6 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
         }
     }
 
-
     @Override
     public void onConnected(Bundle bundle) {
 
@@ -180,22 +122,10 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(appContext, SenseService.class);
-
-                pendingIntent = PendingIntent
-                        .getService(appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                ActivityRecognition.
-                        ActivityRecognitionApi.requestActivityUpdates(getClient(), 0, pendingIntent);
-
                 connected = true;
-
                 clearAndTriggerOnConnectListeners(true);
             }
         });
-
-
-
 
     }
 
@@ -206,10 +136,7 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
         clearAndTriggerOnConnectListeners(false);
-
     }
-
 
 }
