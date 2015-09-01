@@ -11,6 +11,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.tommytao.a5steak.util.FbManager;
+import com.tommytao.a5steak.util.google.GFoundation;
 import com.tommytao.a5steak.util.google.GPlusManager;
 
 import butterknife.ButterKnife;
@@ -41,8 +42,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @OnClick(R.id.btnGo)
     public void go() {
 
-
-
     }
 
     @OnClick(R.id.btnGet)
@@ -55,34 +54,26 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             }
         });
 
-
-
-
-
     }
 
     @OnClick(R.id.btnShare)
     public void share() {
 
         GPlusManager.getInstance().init(this);
-        GPlusManager.getInstance().connect(new GPlusManager.OnConnectListener() {
+        GPlusManager.getInstance().connect(new GFoundation.OnConnectListener() {
             @Override
-            public void onConnected() {
+            public void onConnected(boolean succeed) {
 
+                if (succeed){
+                    Toast.makeText(MainActivity.this, "onConnected:  ", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "onFailed: " , Toast.LENGTH_LONG).show();
 
-
-                Toast.makeText(MainActivity.this, "onConnected:  ", Toast.LENGTH_LONG).show();
-
+                }
 
 
             }
 
-            @Override
-            public void onFailed(int errorCode) {
-
-                Toast.makeText(MainActivity.this, "onFailed: " + errorCode , Toast.LENGTH_LONG).show();
-
-            }
         });
 
 

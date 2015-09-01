@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.LocationServices;
 import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
@@ -28,18 +28,14 @@ public class GFoundation extends Foundation implements GoogleApiClient.Connectio
     // == G Api Client ==
     public static interface OnConnectListener {
         public void onConnected(boolean succeed);
+        public void onIgnored();
     }
 
     protected GoogleApiClient client;
 
     protected GoogleApiClient getClient() {
-
         if (client == null) {
-            client = new GoogleApiClient.Builder(appContext)
-                    .addApi(ActivityRecognition.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
+            this.client = new GoogleApiClient.Builder(appContext).addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
         }
 
         return client;
@@ -48,6 +44,38 @@ public class GFoundation extends Foundation implements GoogleApiClient.Connectio
     protected boolean connected;
 
     protected ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
+
+    protected void connect(final OnConnectListener onConnectListener) {
+
+        if (isConnected()) {
+
+            if (onConnectListener != null) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onConnectListener.onConnected(true);
+                    }
+                });
+            }
+
+            return;
+        }
+
+        if (!isConnecting())
+            getClient().connect();
+
+        onConnectListeners.add(onConnectListener);
+
+
+    }
+
+    protected void disconnect() {
+
+        getClient().disconnect();
+        connected = false;
+        clearAndTriggerOnConnectListeners(false);
+
+    }
 
     protected boolean isConnecting() {
 
@@ -59,14 +87,6 @@ public class GFoundation extends Foundation implements GoogleApiClient.Connectio
 
     protected boolean isConnected() {
         return connected;
-    }
-
-    protected void disconnect() {
-
-        getClient().disconnect();
-        connected = false;
-        clearAndTriggerOnConnectListeners(false);
-
     }
 
     protected void clearAndTriggerOnConnectListeners(boolean succeed) {
@@ -81,9 +101,6 @@ public class GFoundation extends Foundation implements GoogleApiClient.Connectio
         }
     }
 
-    protected void customOnConnected(Bundle bundle){
-    }
-
     @Override
     public void onConnected(final Bundle bundle) {
         // coz onConnected will be run in async style. Ref: https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient.ConnectionCallbacks
@@ -93,9 +110,6 @@ public class GFoundation extends Foundation implements GoogleApiClient.Connectio
             public void run() {
 
                 connected = true;
-
-                customOnConnected(bundle);
-
                 clearAndTriggerOnConnectListeners(true);
 
             }

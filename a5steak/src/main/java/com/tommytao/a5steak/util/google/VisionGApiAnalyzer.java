@@ -1,7 +1,8 @@
 package com.tommytao.a5steak.util.google;
 
 import android.content.Context;
-import android.os.Bundle;
+
+import com.google.android.gms.common.api.GoogleApiClient;
 
 /**
  * Responsible to vision operations, e.g. recognize face, smile, barcode, etc.
@@ -29,43 +30,30 @@ public class VisionGApiAnalyzer extends GFoundation {
         return super.init(appContext);
     }
 
+    @Override
+    protected GoogleApiClient getClient() {
+        // TODO under construction
+        return super.getClient();
+    }
+
+    @Override
+    public void connect(final OnConnectListener onConnectListener) {
+        super.connect(onConnectListener);
+    }
+    @Override
+    public void disconnect() {
+        super.disconnect();
+    }
+    @Override
     public boolean isConnecting() {
        return super.isConnecting();
     }
-
+    @Override
     public boolean isConnected() {
         return super.isConnected();
     }
 
-    public void connect(final OnConnectListener onConnectListener) {
 
-        if (isConnected()) {
 
-            if (onConnectListener != null) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onConnectListener.onConnected(true);
-                    }
-                });
-            }
 
-            return;
-        }
-
-        onConnectListeners.add(onConnectListener);
-
-        if (!isConnecting())
-            getClient().connect();
-
-    }
-
-    public void disconnect() {
-        super.disconnect();
-    }
-
-    @Override
-    protected void customOnConnected(Bundle bundle) {
-        // do nothing
-    }
 }

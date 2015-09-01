@@ -132,12 +132,14 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
             return;
         }
 
-        onConnectListeners.add(onConnectListener);
-
         if (!isConnecting()) {
             lastKnownDetectedActivity = null;
             getClient().connect();
         }
+
+        onConnectListeners.add(onConnectListener);
+
+
 
     }
 

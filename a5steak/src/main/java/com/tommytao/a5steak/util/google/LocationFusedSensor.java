@@ -172,12 +172,10 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         this.priority = priority;
         this.intervalInMs = intervalInMs;
 
-        onConnectListeners.add(onConnectListener);
-
         if (!isConnecting())
             this.getClient().connect();
 
-
+        onConnectListeners.add(onConnectListener);
 
 
     }
@@ -249,12 +247,10 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     }
 
-
-    private GoogleApiClient getClient() {
+    protected GoogleApiClient getClient() {
 
         if (client == null) {
             this.client = new GoogleApiClient.Builder(appContext).addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
-
         }
 
         return client;
