@@ -50,12 +50,14 @@ public class GPlayManager extends Foundation {
 
 	public boolean isGPlayExistAndUpToDate() {
 
-		return (GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SUCCESS);
+//		return (GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SUCCESS);
 
+		return super.isGPlayExistAndUpToDate();
 	}
 
 	public boolean isGPlayExist() {
-		return (isGPlayExistAndUpToDate() || GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED);
+//		return (isGPlayExistAndUpToDate() || GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext) == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED);
+		return super.isGPlayExist();
 	}
 
 	public boolean isGPlayUpdateRequired(){

@@ -11,8 +11,6 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
@@ -69,9 +67,9 @@ public class SpeechRecognitionManager extends Foundation {
 
     public void installGoogleVoiceSearch(Activity activity) {
 
-        int connectionResult = GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext);
-        boolean gPlayExist = (connectionResult == ConnectionResult.SUCCESS || connectionResult == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED);
-        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse((gPlayExist ? MARKET_PREFIX : HTTP_PREFIX) + VOICE_SEARCH_PACKAGE_NAME)));
+//        int connectionResult = GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext);
+//        boolean gPlayExist = (connectionResult == ConnectionResult.SUCCESS || connectionResult == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED);
+        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse((isGPlayExist() ? MARKET_PREFIX : HTTP_PREFIX) + VOICE_SEARCH_PACKAGE_NAME)));
 
     }
 
