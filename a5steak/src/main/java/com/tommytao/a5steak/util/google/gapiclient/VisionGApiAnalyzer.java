@@ -43,7 +43,7 @@ public class VisionGApiAnalyzer extends Foundation implements GoogleApiClient.Co
 
         if (client == null) {
             client = new GoogleApiClient.Builder(appContext)
-                    .addApi(ActivityRecognition.API)
+                    .addApi()
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .build();
