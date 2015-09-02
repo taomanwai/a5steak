@@ -505,6 +505,7 @@ public class FbManager extends Foundation {
     }
 
 
+
     private HashMap<Integer, OnLoginListener> loginListeners = new HashMap<>();
     private HashMap<Integer, OnShareListener> shareListeners = new HashMap<>();
     private HashMap<Integer, Bitmap> shareBitmaps = new HashMap<>();
