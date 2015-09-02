@@ -3,6 +3,7 @@ package com.tommytao.a5steak.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -1494,6 +1495,19 @@ public class Foundation {
     protected int genUniqueId() {
 
         return (int) (Math.random() * Integer.MAX_VALUE);
+
+    }
+
+    // == BitmapManager ==
+    protected Bitmap convertBitmapConfig(Bitmap bitmap, Bitmap.Config config) {
+//        Bitmap convertedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), config);
+//        Canvas canvas = new Canvas(convertedBitmap);
+//        Paint paint = new Paint();
+//        paint.setColor(Color.BLACK);
+//        canvas.drawBitmap(bitmap, 0, 0, paint);
+//        return convertedBitmap;
+
+        return bitmap.copy(config, false);
 
     }
 

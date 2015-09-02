@@ -194,21 +194,6 @@ public class BitmapManager extends Foundation {
         return getBitmapCacheParent() + VERSION_NO + File.separator;
     }
 
-//    public final Bitmap decodeBitmap(Uri uri, int reqWidth, int reqHeight) {
-//        BitmapFactory.Options op = new BitmapFactory.Options();
-//        op.inJustDecodeBounds = true;
-//        try {
-//            BitmapFactory.decodeStream(appContext.getContentResolver().openInputStream(uri), null, op);
-//            op.inSampleSize = calculateInSampleSize(op, reqWidth, reqHeight);
-//            op.inJustDecodeBounds = false;
-//            return rotate(BitmapFactory.decodeStream(appContext.getContentResolver().openInputStream(uri), null, op), checkRotationForImage(appContext, uri));
-//
-//        } catch (FileNotFoundException e) {
-//            Toast.makeText(appContext, "The file" + " does not exist on phone.", Toast.LENGTH_SHORT).show();
-//        } catch (Exception e) {
-//        }
-//        return null;
-//    }
 
     private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
@@ -389,6 +374,13 @@ public class BitmapManager extends Foundation {
 
     }
 
+    public boolean loadFileLinkToBitmap(String fileLink, Bitmap bitmap){
+
+        return loadByteArrayToBitmap(fileLink2ByteArray(fileLink), bitmap);
+
+
+    }
+
     public Bitmap loadFileLink(String fileLink, int targetWidth, int targetHeight) {
 
         return loadByteArray(fileLink2ByteArray(fileLink), targetWidth, targetHeight);
@@ -423,6 +415,26 @@ public class BitmapManager extends Foundation {
 
     }
 
+    public boolean loadByteArrayToBitmap(byte[] data, Bitmap bitmap){
+        if (data == null || data.length == 0)
+            return false;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inBitmap = bitmap;
+
+        boolean hasException = false;
+        try {
+            BitmapFactory.decodeByteArray(data, 0, data.length);
+        } catch (Exception e){
+            e.printStackTrace();
+            hasException = true;
+        }
+
+        return !hasException;
+
+
+    }
+
 
     public Bitmap loadByteArray(byte[] data, int targetWidth, int targetHeight) {
 
@@ -431,6 +443,7 @@ public class BitmapManager extends Foundation {
 
 
         Bitmap bitmap = null;
+
 
         int dataLength = data.length;
         byte[] newData = new byte[dataLength];
@@ -490,7 +503,7 @@ public class BitmapManager extends Foundation {
         try {
             bitmapDrawable = (BitmapDrawable) imgView.getDrawable();
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         if (bitmapDrawable == null)
@@ -665,6 +678,34 @@ public class BitmapManager extends Foundation {
         return bitmap;
 
     }
+
+    public boolean loadResIdToBitmap(int resId, Bitmap bitmap) {
+
+        if (resId == 0) {
+            return false;
+        }
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inBitmap = bitmap;
+
+        boolean hasException = false;
+        try {
+            BitmapFactory.decodeResource(
+                    appContext.getResources(), resId, options);
+        } catch (Exception e){
+            e.printStackTrace();
+            hasException = true;
+        }
+
+        return !hasException;
+
+    }
+
+    public Bitmap convertBitmapConfig(Bitmap bitmap, Bitmap.Config config) {
+        return convertBitmapConfig(bitmap, config);
+    }
+
+
 
 
 }
