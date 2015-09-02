@@ -1,6 +1,8 @@
 package com.tommytao.a5steak.util.google.gapiclient;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.FaceDetector;
 import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -56,7 +58,7 @@ public class VisionGApiAnalyzer extends Foundation implements GoogleApiClient.Co
 
     @Override
     public boolean init(Context context) {
-        return super.init(appContext);
+        return super.init(context);
     }
 
     public boolean isConnecting() {
@@ -159,6 +161,40 @@ public class VisionGApiAnalyzer extends Foundation implements GoogleApiClient.Co
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         clearAndTriggerOnConnectListeners(false);
+    }
+
+    public ArrayList<FaceDetector.Face> findFacesFromBitmap(Bitmap bitmap, int maxNumOfFaces){
+
+        ArrayList<FaceDetector.Face> result = new ArrayList<>();
+
+        if (!isConnected())
+            return result;
+
+        if (bitmap==null || bitmap.isRecycled() || maxNumOfFaces<=0)
+            return result;
+
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        FaceDetector detector = new FaceDetector(width,height, maxNumOfFaces);
+        FaceDetector.Face[] faces = new FaceDetector.Face[maxNumOfFaces];
+
+
+        int numOfFacesFound = detector.findFaces(bitmap, faces);
+
+
+        for (int i=0; i<numOfFacesFound; i++){
+            result.add(faces[i]);
+        }
+
+        return result;
+
+
+
+
+
+
     }
 
 }

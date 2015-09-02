@@ -1,13 +1,20 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.location.Location;
+import android.media.FaceDetector;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.tommytao.a5steak.util.BitmapManager;
 import com.tommytao.a5steak.util.Encyclopedia;
+import com.tommytao.a5steak.util.google.gapiclient.VisionGApiAnalyzer;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,6 +34,11 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
+        VisionGApiAnalyzer.getInstance().init(this);
+
+        VisionGApiAnalyzer.getInstance().connect(null);
+
+        BitmapManager.getInstance().init(this);
 
 
     }
@@ -46,6 +58,10 @@ public class MainActivity extends Activity {
         osmMapView.getController().setZoom(15);
         osmMapView.getController().setCenter(new GeoPoint(location));
 
+        osmMapView.setBuiltInZoomControls(true);
+
+
+
 
 
 
@@ -55,6 +71,12 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnGet)
     public void get() {
+
+        Bitmap bm = BitmapManager.getInstance().loadResId(R.drawable.face3, -1, -1, false);
+
+        ArrayList<FaceDetector.Face> faces = VisionGApiAnalyzer.getInstance().findFacesFromBitmap(bm, 3);
+
+        Log.d("", "");
 
 
     }
