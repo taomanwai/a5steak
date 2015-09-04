@@ -3,15 +3,14 @@ package com.tommytao.a5steak.sample;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.face.Face;
+import com.tommytao.a5steak.customview.FaceView;
 import com.tommytao.a5steak.util.BitmapManager;
 import com.tommytao.a5steak.util.FbManager;
-import com.tommytao.a5steak.util.google.BarcodeManager;
-import com.tommytao.a5steak.util.google.FaceManager;
+import com.tommytao.a5steak.util.google.BarcodeSensor;
+import com.tommytao.a5steak.util.google.FaceSensor;
 
 import java.util.ArrayList;
 
@@ -24,8 +23,8 @@ public class MainActivity extends Activity {
 
 
 
-    @Bind(R.id.ivMain)
-    ImageView ivMain;
+    @Bind(R.id.fvMain)
+    FaceView fvMain;
 
 
     @Override
@@ -39,9 +38,13 @@ public class MainActivity extends Activity {
 
         FbManager.getInstance().init(this);
 
-        FaceManager.getInstance().init(this);
+        FaceSensor.getInstance().init(this);
 
-        BarcodeManager.getInstance().init(this);
+        BarcodeSensor.getInstance().init(this);
+
+        fvMain.setDrawBoundary(false);
+        fvMain.setDrawLandmark(true);
+
 
 
     }
@@ -50,17 +53,18 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go() {
 
-        if (!FaceManager.getInstance().isOperational()){
+        if (!FaceSensor.getInstance().isOperational()){
             Toast.makeText(this, "face detection not ready", Toast.LENGTH_LONG).show();
             return;
         }
 
         Bitmap bm = BitmapManager.getInstance().loadResId(R.drawable.face3, -1, -1, false);
-//        bm = BitmapManager.getInstance().convertBitmapConfig(bm, Bitmap.Config.RGB_565);
 
-        ArrayList<Face> faces = FaceManager.getInstance().findFacesFromBitmap(bm, true, true);
+        ArrayList<Face> faces = FaceSensor.getInstance().findFacesFromBitmap(bm, true, true);
 
         Toast.makeText(this, "face num: " + faces.size(), Toast.LENGTH_LONG).show();
+
+        fvMain.setImageBitmap(bm, faces);
 
 
 
@@ -69,18 +73,6 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnGet)
     public void get() {
-
-        if (!BarcodeManager.getInstance().isOperational()){
-            Toast.makeText(this, "barcode detection not ready", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        Bitmap bm = BitmapManager.getInstance().loadResId(R.drawable.barcode2, -1, -1, false);
-//        bm = BitmapManager.getInstance().convertBitmapConfig(bm, Bitmap.Config.RGB_565);
-
-        ArrayList<Barcode> barcodes = BarcodeManager.getInstance().findBarcodesFromBitmap(bm);
-
-        Toast.makeText(this, "barcodes num: " + barcodes.size(), Toast.LENGTH_LONG).show();
 
 
 

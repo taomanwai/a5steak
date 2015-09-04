@@ -18,19 +18,19 @@ import java.util.ArrayList;
  * http://arjunu.com/2015/08/face-detection-with-android-vision-api/
  *
  */
-public class FaceManager extends Foundation {
+public class FaceSensor extends Foundation {
 
-    private static FaceManager instance;
+    private static FaceSensor instance;
 
-    public static FaceManager getInstance() {
+    public static FaceSensor getInstance() {
 
         if (instance == null)
-            instance = new FaceManager();
+            instance = new FaceSensor();
 
         return instance;
     }
 
-    private FaceManager() {
+    private FaceSensor() {
         // do nothing
     }
 

@@ -3,10 +3,12 @@
     android:layout_height="match_parent" tools:context=".MainActivity">
 
 
-    <ImageView
-        android:id="@+id/ivMain"
+    <com.tommytao.a5steak.customview.FaceView
+        android:id="@+id/fvMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:paddingLeft="150dp"
+        />
 
 
 

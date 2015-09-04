@@ -17,19 +17,19 @@ import java.util.ArrayList;
  * Ref:
  * http://arjunu.com/2015/08/face-detection-with-android-vision-api/
  */
-public class BarcodeManager extends Foundation {
+public class BarcodeSensor extends Foundation {
 
-    private static BarcodeManager instance;
+    private static BarcodeSensor instance;
 
-    public static BarcodeManager getInstance() {
+    public static BarcodeSensor getInstance() {
 
         if (instance == null)
-            instance = new BarcodeManager();
+            instance = new BarcodeSensor();
 
         return instance;
     }
 
-    private BarcodeManager() {
+    private BarcodeSensor() {
         // do nothing
     }
 
