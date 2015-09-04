@@ -702,7 +702,7 @@ public class BitmapManager extends Foundation {
     }
 
     public Bitmap convertBitmapConfig(Bitmap bitmap, Bitmap.Config config) {
-        return convertBitmapConfig(bitmap, config);
+        return super.convertBitmapConfig(bitmap, config);
     }
 
 

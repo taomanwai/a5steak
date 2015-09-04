@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.SparseArray;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -36,7 +37,6 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 
 /**
@@ -65,6 +65,12 @@ public class FbManager extends Foundation {
 
 
     // --
+
+    public static final String PERMISSION_READ_PUBLIC_PROFILE = "public_profile";
+    public static final String PERMISSION_READ_USER_FRIENDS = "user_friends";
+
+    public static final String PERMISSION_PUBLISH_PUBLISH_ACTIONS = "publish_actions";
+
 
 
     public static interface OnLoginListener {
@@ -506,9 +512,9 @@ public class FbManager extends Foundation {
 
 
 
-    private HashMap<Integer, OnLoginListener> loginListeners = new HashMap<>();
-    private HashMap<Integer, OnShareListener> shareListeners = new HashMap<>();
-    private HashMap<Integer, Bitmap> shareBitmaps = new HashMap<>();
+    private SparseArray<OnLoginListener> loginListeners = new SparseArray<>();
+    private SparseArray<OnShareListener> shareListeners = new SparseArray<>();
+    private SparseArray<Bitmap> shareBitmaps = new SparseArray<>();
 
     @Override
     public boolean init(Context context) {
@@ -525,16 +531,16 @@ public class FbManager extends Foundation {
      * Login to Facebook
      *
      * @param activity    Activity of page calling this function
-     * @param read        TRUE=login with read granting, FALSE=login with publish granting
+     * @param readMode    TRUE=login with read granting, FALSE=login with publish granting
      * @param permissions Exact permissions of what can be read, what can be publish.
      * @param listener    Listener to receive result (i.e. token)
      */
-    public void login(Activity activity, boolean read, ArrayList<String> permissions, OnLoginListener listener) {
+    public void login(Activity activity, boolean readMode, ArrayList<String> permissions, OnLoginListener listener) {
 
         int id = genUniqueId();
         loginListeners.put(id, listener);
 
-        activity.startActivity(new Intent(activity, FbLoginActivity.class).putExtra("read", read).putExtra("permissions", permissions).putExtra("idOfLoginListener", id));
+        activity.startActivity(new Intent(activity, FbLoginActivity.class).putExtra("read", readMode).putExtra("permissions", permissions).putExtra("idOfLoginListener", id));
 
     }
 

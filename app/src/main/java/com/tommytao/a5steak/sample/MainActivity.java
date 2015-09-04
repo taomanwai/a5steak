@@ -2,13 +2,16 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.media.FaceDetector;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.face.Face;
 import com.tommytao.a5steak.util.BitmapManager;
-import com.tommytao.a5steak.util.google.VisionManager;
+import com.tommytao.a5steak.util.FbManager;
+import com.tommytao.a5steak.util.google.BarcodeManager;
+import com.tommytao.a5steak.util.google.FaceManager;
 
 import java.util.ArrayList;
 
@@ -34,6 +37,12 @@ public class MainActivity extends Activity {
 
         BitmapManager.getInstance().init(this);
 
+        FbManager.getInstance().init(this);
+
+        FaceManager.getInstance().init(this);
+
+        BarcodeManager.getInstance().init(this);
+
 
     }
 
@@ -41,12 +50,18 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go() {
 
+        if (!FaceManager.getInstance().isOperational()){
+            Toast.makeText(this, "face detection not ready", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Bitmap bm = BitmapManager.getInstance().loadResId(R.drawable.face3, -1, -1, false);
+//        bm = BitmapManager.getInstance().convertBitmapConfig(bm, Bitmap.Config.RGB_565);
 
+        ArrayList<Face> faces = FaceManager.getInstance().findFacesFromBitmap(bm, true, true);
 
-        ArrayList<FaceDetector.Face> faces = VisionManager.getInstance().findFacesFromBitmap(bm, 10);
+        Toast.makeText(this, "face num: " + faces.size(), Toast.LENGTH_LONG).show();
 
-        Log.d("","");
 
 
 
@@ -55,7 +70,17 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGet)
     public void get() {
 
+        if (!BarcodeManager.getInstance().isOperational()){
+            Toast.makeText(this, "barcode detection not ready", Toast.LENGTH_LONG).show();
+            return;
+        }
 
+        Bitmap bm = BitmapManager.getInstance().loadResId(R.drawable.barcode2, -1, -1, false);
+//        bm = BitmapManager.getInstance().convertBitmapConfig(bm, Bitmap.Config.RGB_565);
+
+        ArrayList<Barcode> barcodes = BarcodeManager.getInstance().findBarcodesFromBitmap(bm);
+
+        Toast.makeText(this, "barcodes num: " + barcodes.size(), Toast.LENGTH_LONG).show();
 
 
 

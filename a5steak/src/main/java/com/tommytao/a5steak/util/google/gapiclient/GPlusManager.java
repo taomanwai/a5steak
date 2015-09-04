@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Pair;
+import android.util.SparseArray;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -21,7 +22,6 @@ import com.google.android.gms.plus.Plus;
 import com.tommytao.a5steak.util.google.GFoundation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Responsible for Facebook operations
@@ -87,7 +87,8 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
 
             ConnectionResult connectionResult = intent.getParcelableExtra("connectionResult");
             int id = intent.getIntExtra("idOfStartResolutionListener", -1);
-            listener = GPlusManager.getInstance().onStartResolutionListeners.remove(id);
+            listener = GPlusManager.getInstance().onStartResolutionListeners.get(id);
+            GPlusManager.getInstance().onStartResolutionListeners.remove(id);
 
 
             try {
@@ -133,7 +134,8 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
             Intent userRecoverableAuthIntent = intent.getParcelableExtra("userRecoverableAuthIntent");
 
             int idOfUserRecoverableAuthListener = intent.getIntExtra("idOfUserRecoverableAuthListener", -1);
-            listener = GPlusManager.getInstance().onUserRecoverableAuthListeners.remove(idOfUserRecoverableAuthListener);
+            listener = GPlusManager.getInstance().onUserRecoverableAuthListeners.get(idOfUserRecoverableAuthListener);
+            GPlusManager.getInstance().onUserRecoverableAuthListeners.remove(idOfUserRecoverableAuthListener);
 
             startActivityForResult(userRecoverableAuthIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK), REQ_USER_RECOVERABLE_AUTH);
 
@@ -251,8 +253,8 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
         }
     }
 
-    private HashMap<Integer, OnStartResolutionListener> onStartResolutionListeners = new HashMap<>();
-    private HashMap<Integer, OnUserRecoverableAuthListener> onUserRecoverableAuthListeners = new HashMap<>();
+    private SparseArray<OnStartResolutionListener> onStartResolutionListeners = new SparseArray<>();
+    private SparseArray<OnUserRecoverableAuthListener> onUserRecoverableAuthListeners = new SparseArray<>();
 
     private boolean connected;
 
