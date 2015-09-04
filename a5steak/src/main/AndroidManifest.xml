@@ -35,6 +35,15 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             />
 
+        <!-- Activities responsible for gathering payment info -->
+        <activity android:name="io.card.payment.CardIOActivity" android:configChanges="keyboardHidden|orientation" />
+        <activity android:name="io.card.payment.DataEntryActivity" />
+
+        <activity
+            android:name=".util.sensor.CardIoSensor$CardIoActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            />
+
     </application>
 
 </manifest>

@@ -39,6 +39,8 @@ dependencies {
 
     compile 'com.squareup.picasso:picasso:2.5.0'
 
+    compile 'io.card:android-sdk:5.0.1'
+
     // compile 'com.nineoldandroids:library:2.4.0'
 
     // compile 'com.github.ozodrukh:CircularReveal:1.0.4@aar'

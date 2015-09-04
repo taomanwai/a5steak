@@ -1,22 +1,20 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.google.android.gms.vision.face.Face;
 import com.tommytao.a5steak.customview.FaceView;
 import com.tommytao.a5steak.util.BitmapManager;
 import com.tommytao.a5steak.util.FbManager;
 import com.tommytao.a5steak.util.google.BarcodeSensor;
 import com.tommytao.a5steak.util.google.FaceSensor;
-
-import java.util.ArrayList;
+import com.tommytao.a5steak.util.sensor.CardIoSensor;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.card.payment.CreditCard;
 
 
 public class MainActivity extends Activity {
@@ -53,18 +51,17 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go() {
 
-        if (!FaceSensor.getInstance().isOperational()){
-            Toast.makeText(this, "face detection not ready", Toast.LENGTH_LONG).show();
-            return;
-        }
+        CardIoSensor.getInstance().scan(this, true, false, false, new CardIoSensor.OnScanListener() {
+            @Override
+            public void onComplete(CreditCard creditCard) {
 
-        Bitmap bm = BitmapManager.getInstance().loadResId(R.drawable.face3, -1, -1, false);
+                Toast.makeText(MainActivity.this, "" + creditCard, Toast.LENGTH_LONG).show();
 
-        ArrayList<Face> faces = FaceSensor.getInstance().findFacesFromBitmap(bm, true, true);
+            }
+        });
 
-        Toast.makeText(this, "face num: " + faces.size(), Toast.LENGTH_LONG).show();
 
-        fvMain.setImageBitmap(bm, faces);
+
 
 
 
