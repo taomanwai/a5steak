@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,6 +21,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.device.yearclass.YearClass;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.share.Sharer;
@@ -72,6 +74,9 @@ public class FbManager extends Foundation {
     public static final String PERMISSION_PUBLISH_PUBLISH_ACTIONS = "publish_actions";
 
 
+    public static interface OnGetYearClassListener {
+        public void onComplete(int yearClass);
+    }
 
     public static interface OnLoginListener {
         public void onComplete(String token);
@@ -751,6 +756,31 @@ public class FbManager extends Foundation {
                 .putExtra("shareContentType", "video")
                 .putExtra("localUrl", localUrl)
                 .putExtra("idOfShareListener", id));
+
+    }
+
+    public void getYearClass(final OnGetYearClassListener listener){
+
+        if (listener==null)
+            return;
+
+        new AsyncTask<Void, Void, Integer>() {
+
+            @Override
+            protected Integer doInBackground(Void... params) {
+
+                return YearClass.get(appContext);
+
+            }
+
+            @Override
+            protected void onPostExecute(Integer result) {
+
+                listener.onComplete(result);
+
+            }
+
+        }.execute();
 
     }
 

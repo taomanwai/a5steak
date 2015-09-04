@@ -41,6 +41,8 @@ dependencies {
 
     compile 'io.card:android-sdk:5.0.1'
 
+    compile 'com.facebook.device.yearclass:yearclass:1.0.0'
+
     // compile 'com.nineoldandroids:library:2.4.0'
 
     // compile 'com.github.ozodrukh:CircularReveal:1.0.4@aar'

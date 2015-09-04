@@ -9,12 +9,10 @@ import com.tommytao.a5steak.util.BitmapManager;
 import com.tommytao.a5steak.util.FbManager;
 import com.tommytao.a5steak.util.google.BarcodeSensor;
 import com.tommytao.a5steak.util.google.FaceSensor;
-import com.tommytao.a5steak.util.sensor.CardIoSensor;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.card.payment.CreditCard;
 
 
 public class MainActivity extends Activity {
@@ -51,12 +49,10 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go() {
 
-        CardIoSensor.getInstance().scan(this, true, false, false, new CardIoSensor.OnScanListener() {
+        FbManager.getInstance().getYearClass(new FbManager.OnGetYearClassListener() {
             @Override
-            public void onComplete(CreditCard creditCard) {
-
-                Toast.makeText(MainActivity.this, "" + creditCard, Toast.LENGTH_LONG).show();
-
+            public void onComplete(int yearClass) {
+                Toast.makeText(MainActivity.this, "year class: " + yearClass, Toast.LENGTH_LONG).show();
             }
         });
 
