@@ -24,6 +24,9 @@ import com.facebook.HttpMethod;
 import com.facebook.device.yearclass.YearClass;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.facebook.network.connectionclass.ConnectionClassManager;
+import com.facebook.network.connectionclass.ConnectionQuality;
+import com.facebook.network.connectionclass.DeviceBandwidthSampler;
 import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareContent;
 import com.facebook.share.model.ShareLinkContent;
@@ -36,20 +39,21 @@ import com.facebook.share.widget.ShareDialog;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 
 /**
- *
  * Responsible for Facebook operations
- *
+ * <p/>
  * Ref:
  * https://developers.facebook.com/docs/sharing/android
- *
  */
-public class FbManager extends Foundation {
+public class FbManager extends Foundation implements ConnectionClassManager.ConnectionClassStateChangeListener {
 
     private static FbManager instance;
 
@@ -78,6 +82,10 @@ public class FbManager extends Foundation {
         public void onComplete(int yearClass);
     }
 
+    public static interface OnGetConnectionClassListener {
+        public void onComplete(ConnectionQuality quality);
+    }
+
     public static interface OnLoginListener {
         public void onComplete(String token);
     }
@@ -100,9 +108,6 @@ public class FbManager extends Foundation {
     public static interface OnShareListener {
         public void onComplete(String postId);
     }
-
-
-
 
 
     public static class Device {
@@ -414,7 +419,7 @@ public class FbManager extends Foundation {
 
                 case "photo":
 
-                    final Bitmap bitmap = (idOfShareBitmap==-1) ? null : FbManager.getInstance().shareBitmaps.get(idOfShareBitmap);
+                    final Bitmap bitmap = (idOfShareBitmap == -1) ? null : FbManager.getInstance().shareBitmaps.get(idOfShareBitmap);
                     FbManager.getInstance().shareBitmaps.remove(idOfShareBitmap);
 
                     SharePhoto sharePhoto = new SharePhoto.Builder()
@@ -502,7 +507,6 @@ public class FbManager extends Foundation {
                 shareDialog.show(content);
 
 
-
         }
 
         @Override
@@ -516,7 +520,6 @@ public class FbManager extends Foundation {
     }
 
 
-
     private SparseArray<OnLoginListener> loginListeners = new SparseArray<>();
     private SparseArray<OnShareListener> shareListeners = new SparseArray<>();
     private SparseArray<Bitmap> shareBitmaps = new SparseArray<>();
@@ -528,6 +531,8 @@ public class FbManager extends Foundation {
         }
 
         FacebookSdk.sdkInitialize(appContext);
+
+        ConnectionClassManager.getInstance().register(this);
 
         return true;
     }
@@ -678,7 +683,6 @@ public class FbManager extends Foundation {
     }
 
 
-
     public void shareLink(Activity activity, String link, String imageLink, String title, String description, final OnShareListener listener) {
 
         if (!isLoggedIn()) {
@@ -704,7 +708,7 @@ public class FbManager extends Foundation {
 
     }
 
-    public void sharePhoto(Activity activity, Bitmap bitmap, final OnShareListener listener){
+    public void sharePhoto(Activity activity, Bitmap bitmap, final OnShareListener listener) {
 
         if (!isLoggedIn()) {
             handler.post(new Runnable() {
@@ -728,16 +732,14 @@ public class FbManager extends Foundation {
     }
 
 
-
     /**
-     *
      * Note: Max. size of local video url should be 12MB size in max.
      *
      * @param activity
      * @param localUrl
      * @param listener
      */
-    public void shareVideo(Activity activity, Uri localUrl, final OnShareListener listener){
+    public void shareVideo(Activity activity, Uri localUrl, final OnShareListener listener) {
 
         if (!isLoggedIn()) {
             handler.post(new Runnable() {
@@ -759,9 +761,9 @@ public class FbManager extends Foundation {
 
     }
 
-    public void getYearClass(final OnGetYearClassListener listener){
+    public void getYearClass(final OnGetYearClassListener listener) {
 
-        if (listener==null)
+        if (listener == null)
             return;
 
         new AsyncTask<Void, Void, Integer>() {
@@ -784,6 +786,75 @@ public class FbManager extends Foundation {
 
     }
 
+    // == Network Connection Class ==
+
+    public static String GET_CONNECTION_CLASS_SAMPLE_LINK = "http://connectionclass.parseapp.com/m100_hubble_4060.jpg";
+
+    private ArrayList<OnGetConnectionClassListener> onGetConnectionClassListeners = new ArrayList<>();
+
+    private void clearAndTriggerOnGetConnectionClassListeners(ConnectionQuality quality) {
+
+        ArrayList<OnGetConnectionClassListener> pendingOnGetConnectionClassListeners = new ArrayList<>(onGetConnectionClassListeners);
+
+        onGetConnectionClassListeners.clear();
+
+        for (OnGetConnectionClassListener pendingOnConnectListener : pendingOnGetConnectionClassListeners) {
+            if (pendingOnConnectListener != null)
+                pendingOnConnectListener.onComplete(quality);
+        }
+    }
+
+    @Override
+    public void onBandwidthStateChange(ConnectionQuality bandwidthState) {
+        // do nothing
+    }
+
+    public void getConnectionClass(final OnGetConnectionClassListener listener) {
+
+        onGetConnectionClassListeners.add(listener);
+
+        if (DeviceBandwidthSampler.getInstance().isSampling()){
+            return;
+        }
+
+        new AsyncTask<String, Void, Void>() {
+
+            @Override
+            protected void onPreExecute() {
+                DeviceBandwidthSampler.getInstance().startSampling();
+            }
+
+            @Override
+            protected Void doInBackground(String... url) {
+                String imageURL = url[0];
+                try {
+                    // Open a stream to download the image from our URL.
+                    InputStream input = new URL(imageURL).openStream();
+                    try {
+                        byte[] buffer = new byte[1024];
+
+                        // Do some busy waiting while the stream is open.
+                        while (input.read(buffer) != -1) {
+                        }
+                    } finally {
+                        input.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                DeviceBandwidthSampler.getInstance().stopSampling();
+                clearAndTriggerOnGetConnectionClassListeners(ConnectionClassManager.getInstance().getCurrentBandwidthQuality());
+
+            }
+        }.execute(GET_CONNECTION_CLASS_SAMPLE_LINK);
+
+
+    }
 
 
 }

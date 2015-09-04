@@ -2,8 +2,10 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.widget.Toast;
 
+import com.facebook.network.connectionclass.ConnectionQuality;
 import com.tommytao.a5steak.customview.FaceView;
 import com.tommytao.a5steak.util.BitmapManager;
 import com.tommytao.a5steak.util.FbManager;
@@ -49,10 +51,36 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go() {
 
-        FbManager.getInstance().getYearClass(new FbManager.OnGetYearClassListener() {
+        final long time = SystemClock.elapsedRealtime();
+        FbManager.getInstance().getConnectionClass(new FbManager.OnGetConnectionClassListener() {
             @Override
-            public void onComplete(int yearClass) {
-                Toast.makeText(MainActivity.this, "year class: " + yearClass, Toast.LENGTH_LONG).show();
+            public void onComplete(ConnectionQuality quality) {
+
+                switch (quality){
+
+                    case UNKNOWN:
+                        Toast.makeText(MainActivity.this, "" + time + " unknown", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case POOR:
+                        Toast.makeText(MainActivity.this, "" + time + " POOR", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case MODERATE:
+                        Toast.makeText(MainActivity.this, "" + time + " MODERATE", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case GOOD:
+                        Toast.makeText(MainActivity.this, "" + time + " GOOD", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case EXCELLENT:
+                        Toast.makeText(MainActivity.this, "" + time + " EXCELLENT", Toast.LENGTH_LONG).show();
+                        break;
+
+                }
+
+
             }
         });
 
