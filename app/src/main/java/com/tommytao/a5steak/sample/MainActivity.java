@@ -2,15 +2,14 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.widget.Toast;
 
-import com.facebook.network.connectionclass.ConnectionQuality;
-import com.tommytao.a5steak.customview.FaceView;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.tommytao.a5steak.util.BitmapManager;
 import com.tommytao.a5steak.util.FbManager;
 import com.tommytao.a5steak.util.google.BarcodeSensor;
 import com.tommytao.a5steak.util.google.FaceSensor;
+import com.tommytao.a5steak.util.sensor.ProximitySensor;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,9 +19,9 @@ import butterknife.OnClick;
 public class MainActivity extends Activity {
 
 
+    @Bind(R.id.shimmer)
+    ShimmerFrameLayout shimmer;
 
-    @Bind(R.id.fvMain)
-    FaceView fvMain;
 
 
     @Override
@@ -40,8 +39,12 @@ public class MainActivity extends Activity {
 
         BarcodeSensor.getInstance().init(this);
 
-        fvMain.setDrawBoundary(false);
-        fvMain.setDrawLandmark(true);
+        ProximitySensor.getInstance().init(this);
+
+        ProximitySensor.getInstance().connect();
+
+        shimmer.startShimmerAnimation();
+
 
 
 
@@ -51,44 +54,12 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go() {
 
-        final long time = SystemClock.elapsedRealtime();
-        FbManager.getInstance().getConnectionClass(new FbManager.OnGetConnectionClassListener() {
-            @Override
-            public void onComplete(ConnectionQuality quality) {
-
-                switch (quality){
-
-                    case UNKNOWN:
-                        Toast.makeText(MainActivity.this, "" + time + " unknown", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case POOR:
-                        Toast.makeText(MainActivity.this, "" + time + " POOR", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case MODERATE:
-                        Toast.makeText(MainActivity.this, "" + time + " MODERATE", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case GOOD:
-                        Toast.makeText(MainActivity.this, "" + time + " GOOD", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case EXCELLENT:
-                        Toast.makeText(MainActivity.this, "" + time + " EXCELLENT", Toast.LENGTH_LONG).show();
-                        break;
-
-                }
+        boolean b = ProximitySensor.getInstance().getLastKnownProximity();
 
 
-            }
-        });
+        String s = "proximity_t: " + b;
 
-
-
-
-
-
+        Toast.makeText(this, s , Toast.LENGTH_LONG).show();
 
     }
 

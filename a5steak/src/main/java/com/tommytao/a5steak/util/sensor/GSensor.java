@@ -45,50 +45,43 @@ public class GSensor extends Foundation implements SensorEventListener {
         return super.removeOnReadingChangeListener(onReadingChangeListener);
     }
 
-    private Sensor getSensor() {
+    @Override
+    public double getLastKnownMagnitude() {
+        return super.getLastKnownMagnitude();
+    }
+
+    public void connect() {
+        super.connect();
+    }
+
+    public void disconnect() {
+        super.disconnect();
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        super.onSensorChanged(event);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        super.onAccuracyChanged(sensor, accuracy);
+    }
+
+
+    // --
+
+    @Override
+    protected Sensor getSensor() {
 
         if (sensor == null)
             sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-
-
         return sensor;
     }
 
-    public void connect() {
+    // --
 
-        getSensorManager().registerListener(this, getSensor(), DEFAULT_SENSOR_DELAY_LEVEL);
-
-    }
-
-    public void disconnect() {
-        getSensorManager().unregisterListener(this);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-
-        if (sensorEvent.sensor != getSensor())
-            return;
-
-        lastKnownX = sensorEvent.values[0];
-        lastKnownY = sensorEvent.values[1];
-        lastKnownZ = sensorEvent.values[2];
-
-        for (OnReadingChangeListener onReadingChangeListener : onReadingChangeListenerList){
-            onReadingChangeListener.onReadingChanged(lastKnownX, lastKnownY, lastKnownZ);
-        }
-
-    }
-
-
-
-
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-        // do nothing
-    }
 
     @Override
     public float getLastKnownX() {
@@ -105,9 +98,6 @@ public class GSensor extends Foundation implements SensorEventListener {
         return super.getLastKnownZ();
     }
 
-    @Override
-    public double getLastKnownMagnitude() {
-        return super.getLastKnownMagnitude();
-    }
+
 
 }

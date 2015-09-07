@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -45,7 +47,7 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author tommytao
  */
-public class Foundation {
+public class Foundation implements SensorEventListener {
 
     public static interface OnHttpGetJSONListener {
 
@@ -1259,7 +1261,7 @@ public class Foundation {
         return poly;
     }
 
-    // == Sensor ==
+    // == OnReadingChangeListener ==
     public static interface OnReadingChangeListener {
 
         public void onReadingChanged(float x, float y, float z);
@@ -1319,7 +1321,37 @@ public class Foundation {
 
         return Math.sqrt(lastKnownX * lastKnownX + lastKnownY * lastKnownY + lastKnownZ * lastKnownZ);
 
+    }
 
+    protected void connect() {
+        getSensorManager().registerListener(this, getSensor(), DEFAULT_SENSOR_DELAY_LEVEL);
+    }
+
+    protected void disconnect() {
+        getSensorManager().unregisterListener(this);
+    }
+
+    protected Sensor getSensor() {
+        return sensor;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (sensorEvent.sensor != getSensor())
+            return;
+
+        lastKnownX = sensorEvent.values[0];
+        lastKnownY = sensorEvent.values[1];
+        lastKnownZ = sensorEvent.values[2];
+
+        for (OnReadingChangeListener onReadingChangeListener : onReadingChangeListenerList){
+            onReadingChangeListener.onReadingChanged(lastKnownX, lastKnownY, lastKnownZ);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // do nothing
     }
 
     // == Converter ==

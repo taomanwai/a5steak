@@ -1,7 +1,6 @@
 package com.tommytao.a5steak.util.sensor;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,22 +9,23 @@ import com.tommytao.a5steak.util.Foundation;
 
 
 /**
- * Responsible for reading pressure in mBar unit
+ * Responsible for getting gravity field reading
  *
  */
-public class PressureSensor extends Foundation implements SensorEventListener {
+public class LightSensor extends Foundation implements SensorEventListener {
 
-    private static PressureSensor instance;
+    private static LightSensor instance;
 
-    public static PressureSensor getInstance() {
+    public static LightSensor getInstance() {
 
         if (instance == null)
-            instance = new PressureSensor();
+            instance = new LightSensor();
 
         return instance;
     }
 
-    private PressureSensor() {
+    private LightSensor() {
+
     }
 
     // --
@@ -70,21 +70,19 @@ public class PressureSensor extends Foundation implements SensorEventListener {
 
     // --
 
+
+
     protected Sensor getSensor() {
         if (sensor == null)
-            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_PRESSURE);
+            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_LIGHT);
 
         return sensor;
     }
 
-    public boolean exists(){
-        PackageManager packageManager = appContext.getPackageManager();
-        return packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_BAROMETER);
-    }
-
     // --
 
-    public float getPressureInMBar(){
+
+    public float getLastKnownLux() {
         return super.getLastKnownX();
     }
 

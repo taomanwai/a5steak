@@ -1,7 +1,6 @@
 package com.tommytao.a5steak.util.sensor;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,22 +9,22 @@ import com.tommytao.a5steak.util.Foundation;
 
 
 /**
- * Responsible for reading pressure in mBar unit
- *
+ * Responsible for getting gravity field reading
  */
-public class PressureSensor extends Foundation implements SensorEventListener {
+public class ProximitySensor extends Foundation implements SensorEventListener {
 
-    private static PressureSensor instance;
+    private static ProximitySensor instance;
 
-    public static PressureSensor getInstance() {
+    public static ProximitySensor getInstance() {
 
         if (instance == null)
-            instance = new PressureSensor();
+            instance = new ProximitySensor();
 
         return instance;
     }
 
-    private PressureSensor() {
+    private ProximitySensor() {
+
     }
 
     // --
@@ -70,22 +69,23 @@ public class PressureSensor extends Foundation implements SensorEventListener {
 
     // --
 
+    public final float NEAR_PROXIMITY_BOUNDARY_IN_CM = 5;
+
+
     protected Sensor getSensor() {
         if (sensor == null)
-            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_PRESSURE);
+            sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
         return sensor;
     }
 
-    public boolean exists(){
-        PackageManager packageManager = appContext.getPackageManager();
-        return packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_BAROMETER);
-    }
-
     // --
 
-    public float getPressureInMBar(){
-        return super.getLastKnownX();
+
+    public boolean getLastKnownProximity() {
+        float proximity = super.getLastKnownX();
+
+        return proximity < NEAR_PROXIMITY_BOUNDARY_IN_CM;
     }
 
 
