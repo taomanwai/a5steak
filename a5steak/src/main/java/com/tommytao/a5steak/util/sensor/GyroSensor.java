@@ -79,16 +79,16 @@ public class GyroSensor extends Foundation implements SensorEventListener {
     }
 
     // --
+
+    public boolean exists(){
+        return appContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
+    }
+
     protected Sensor getSensor() {
         if (sensor == null)
             sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
         return sensor;
-    }
-
-    public boolean exists(){
-        PackageManager packageManager = appContext.getPackageManager();
-        return packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
     }
 
     // --

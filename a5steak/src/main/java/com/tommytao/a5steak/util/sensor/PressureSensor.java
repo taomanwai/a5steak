@@ -70,16 +70,15 @@ public class PressureSensor extends Foundation implements SensorEventListener {
 
     // --
 
+    public boolean exists(){
+        return appContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_BAROMETER);
+    }
+
     protected Sensor getSensor() {
         if (sensor == null)
             sensor = getSensorManager().getDefaultSensor(Sensor.TYPE_PRESSURE);
 
         return sensor;
-    }
-
-    public boolean exists(){
-        PackageManager packageManager = appContext.getPackageManager();
-        return packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_BAROMETER);
     }
 
     // --

@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.util.sensor;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -70,7 +71,9 @@ public class LightSensor extends Foundation implements SensorEventListener {
 
     // --
 
-
+    public boolean exists(){
+        return appContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_LIGHT);
+    }
 
     protected Sensor getSensor() {
         if (sensor == null)

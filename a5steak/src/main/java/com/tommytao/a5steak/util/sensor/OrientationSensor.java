@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.util.sensor;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,7 +11,6 @@ import com.tommytao.a5steak.util.Foundation;
 
 /**
  * Responsible for getting gravity field reading
- *
  */
 public class OrientationSensor extends Foundation implements SensorEventListener {
 
@@ -70,7 +70,12 @@ public class OrientationSensor extends Foundation implements SensorEventListener
 
     // --
 
+    public boolean exists() {
 
+        PackageManager pkgManager = appContext.getPackageManager();
+        return pkgManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER) &&
+                pkgManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
+    }
 
     protected Sensor getSensor() {
         if (sensor == null)

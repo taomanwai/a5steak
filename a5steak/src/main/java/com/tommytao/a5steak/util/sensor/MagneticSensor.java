@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.util.sensor;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -76,6 +77,10 @@ public class MagneticSensor extends Foundation implements SensorEventListener {
     }
 
     // --
+
+    public boolean exists(){
+        return appContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
+    }
 
     protected Sensor getSensor() {
 
