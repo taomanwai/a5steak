@@ -2,32 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
 
-    <ImageView
+
+    <com.tommytao.a5steak.customview.CameraView
+        android:id="@+id/cameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background"
         />
-
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        shimmer:duration="1000">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="abcfdsafjsdafjsd"
-            android:textColor="@android:color/white"
-            android:textSize="40sp" />
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
 
 
     <Button

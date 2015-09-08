@@ -57,9 +57,7 @@ public class GyroSensor extends Foundation implements SensorEventListener {
     }
 
     public void connect() {
-
         super.connect();
-
     }
 
     public void disconnect() {
@@ -68,9 +66,7 @@ public class GyroSensor extends Foundation implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
         super.onSensorChanged(event);
-
     }
 
     @Override
