@@ -109,17 +109,11 @@ public class DeviceInfoManager extends Foundation {
 
 
         if (screenSize == null) {
-//			Display display = ctx.getWindowManager().getDefaultDisplay();
             Display display = ((WindowManager) (appContext
                     .getSystemService(Context.WINDOW_SERVICE))).getDefaultDisplay();
             screenSize = new Point();
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
-                display.getSize(screenSize);
-            else {
-                screenSize.x = display.getWidth();
-                screenSize.y = display.getHeight();
-            }
+            display.getSize(screenSize);
 
         }
 
@@ -129,7 +123,6 @@ public class DeviceInfoManager extends Foundation {
     }
 
     public Point getScreenSizeInDp() {
-
 
         Point result = getScreenSize();
 

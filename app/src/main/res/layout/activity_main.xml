@@ -8,9 +8,18 @@
 
     <com.tommytao.a5steak.customview.CameraView
         android:id="@+id/cameraView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="480px"
+        android:layout_height="640px"
+        android:layout_above="@+id/tvMsg"
         />
+
+    <TextView
+        android:id="@+id/tvMsg"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="abc"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"/>
 
 
     <Button

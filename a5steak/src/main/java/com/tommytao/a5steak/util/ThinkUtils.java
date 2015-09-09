@@ -97,6 +97,12 @@ public class ThinkUtils {
 		return (distance[0] <= cityRadiusInMeter);
 
 	}
+
+	public static boolean hasCamera(Context ctx){
+		return  ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+	}
+
+
 	
 	
 
