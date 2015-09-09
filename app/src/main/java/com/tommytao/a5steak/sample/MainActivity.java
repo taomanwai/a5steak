@@ -37,6 +37,9 @@ public class MainActivity extends Activity {
     public void go() {
 
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) cameraView.getLayoutParams();
+//        lp.width = 480;
+//        lp.height = 640;
+
         lp.width = 480;
         lp.height = 640;
         cameraView.setLayoutParams(lp);
@@ -46,13 +49,17 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGet)
     public void get() {
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) cameraView.getLayoutParams();
-        lp.width = 144;
-        lp.height = 176;
+//        lp.width = 144;
+//        lp.height = 176;
+
+        lp.width = 200;
+        lp.height = 200;
         cameraView.setLayoutParams(lp);
     }
 
     @OnClick(R.id.btnShare)
     public void share() {
+
 
 
     }
