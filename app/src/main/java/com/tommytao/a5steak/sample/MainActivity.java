@@ -15,6 +15,7 @@ import butterknife.OnClick;
 public class MainActivity extends Activity {
 
 
+
     @Bind(R.id.cameraView)
     CameraView cameraView;
 
