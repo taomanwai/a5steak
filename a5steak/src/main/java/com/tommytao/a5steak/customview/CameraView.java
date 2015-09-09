@@ -152,7 +152,7 @@ public class CameraView extends RelativeLayout {
 
     private void init(Context context) {
         this.context = context;
-        this.setBackgroundColor(Color.RED);
+        this.setBackgroundColor(Color.BLACK);
         surfaceView = new SurfaceView(context);
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -290,40 +290,19 @@ public class CameraView extends RelativeLayout {
 
     private void fitSurfaceViewToCameraView(int viewWidth, int viewHeight){
 
-        FittedSurfaceViewInfo fittedSurfaceViewInfo = getFittedSurfaceViewInfo(viewWidth, viewHeight);
+        final FittedSurfaceViewInfo fittedSurfaceViewInfo = getFittedSurfaceViewInfo(viewWidth, viewHeight);
 
         if (fittedSurfaceViewInfo==null)
             return;
 
-//        int leftMargin = -1;
-//        int topMargin = -1;
-//        int rightMargin = -1;
-//        int bottomMargin = -1;
-//
-//        double widthScale = (double) viewWidth / fittedSurfaceViewInfo.resolutionWidth;
-//        double heightScale = (double) viewHeight / fittedSurfaceViewInfo.resolutionHeight;
-//
-//        if (widthScale > heightScale){
-//            // set horizontal margin
-//            topMargin = 0;
-//            bottomMargin = 0;
-//            leftMargin = (viewWidth - (int) (fittedSurfaceViewInfo.resolutionWidth * heightScale)) / 2;
-//            rightMargin = leftMargin;
-//        } else {
-//            // set vertical margin
-//            leftMargin = 0;
-//            rightMargin = 0;
-//            topMargin = (viewHeight - (int) (fittedSurfaceViewInfo.resolutionHeight * widthScale)) / 2;
-//            bottomMargin = topMargin;
-//        }
 
         assignCameraResolution(fittedSurfaceViewInfo.getResolutionWidth(), fittedSurfaceViewInfo.getResolutionHeight());
         assignSurfaceViewMargin(fittedSurfaceViewInfo.getLeftMargin(), fittedSurfaceViewInfo.getTopMargin(), fittedSurfaceViewInfo.getRightMargin(), fittedSurfaceViewInfo.getBottomMargin());
-
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 requestLayout();
+
             }
         });
 
