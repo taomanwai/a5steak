@@ -28,16 +28,14 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
-        cameraView.start();
+        cameraView.start(CameraView.getBackCameraId());
     }
 
 
     @OnClick(R.id.btnGo)
     public void go() {
 
-
-        cameraView.start();
-
+        cameraView.start(CameraView.getBackCameraId());
 
     }
 
@@ -50,6 +48,8 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnShare)
     public void share() {
+
+        cameraView.start(CameraView.getFrontCameraId());
 
 
     }

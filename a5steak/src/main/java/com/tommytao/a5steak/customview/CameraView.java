@@ -14,6 +14,8 @@ import java.util.List;
 
 public class CameraView extends RelativeLayout {
 
+    public static int CAMERA_NONE = -1;
+
     private class FittedSurfaceViewInfo {
 
         private int viewWidth = -1;
@@ -153,12 +155,12 @@ public class CameraView extends RelativeLayout {
         this.context = context;
         this.setBackgroundColor(Color.BLACK);
         surfaceView = new SurfaceView(context);
+        surfaceView.setBackgroundColor(Color.BLACK);
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
                 surfaceHolderCreated = true;
-                if (startIntention)
-                    startWithoutIntentionRecorded();
+                startCore(targetCamera);
             }
 
             @Override
@@ -168,7 +170,7 @@ public class CameraView extends RelativeLayout {
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
                 surfaceHolderCreated = false;
-                stopWithoutIntentionRecorded();
+                stopCore();
             }
         });
         addView(surfaceView);
@@ -180,7 +182,7 @@ public class CameraView extends RelativeLayout {
         if (listener == null)
             return;
 
-        if (!isStarted()) {
+        if (camera == null) {
 
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -197,7 +199,12 @@ public class CameraView extends RelativeLayout {
 
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
-                camera.startPreview();
+                // try catch for safety
+                try {
+                    camera.startPreview();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 listener.onCompleted(data);
             }
         });
@@ -211,7 +218,7 @@ public class CameraView extends RelativeLayout {
 
     private boolean isCameraResolutionSupported(int resolutionWidth, int resolutionHeight) {
 
-        if (!isStarted())
+        if (camera == null)
             return false;
 
         List<Camera.Size> sizes = camera.getParameters().getSupportedPreviewSizes();
@@ -230,7 +237,7 @@ public class CameraView extends RelativeLayout {
 
         FittedSurfaceViewInfo result = null;
 
-        if (!isStarted()) {
+        if (camera == null) {
             return result;
         }
 
@@ -348,17 +355,27 @@ public class CameraView extends RelativeLayout {
 
     private boolean surfaceHolderCreated;
 
-    private boolean startIntention;
+    private int targetCamera = CAMERA_NONE;
+    private int coreCamera = CAMERA_NONE;
 
 
     // Start
-    private void startWithoutIntentionRecorded() {
+    private void startCore(int targetCamera) {
 
-        if (isStarted())
+        if (targetCamera == CAMERA_NONE) {
+            stopCore();
             return;
+        }
+
+        if (targetCamera == coreCamera) {
+            return;
+        }
+
+        stopCore();
 
         try {
-            camera = Camera.open();
+            coreCamera = targetCamera;
+            camera = Camera.open(targetCamera);
             camera.setDisplayOrientation(90);
             FittedSurfaceViewInfo fittedSurfaceViewInfo = getFittedSurfaceViewInfo(getWidth(), getHeight());
             Camera.Parameters params = camera.getParameters();
@@ -371,44 +388,88 @@ public class CameraView extends RelativeLayout {
 
         } catch (Exception e) {
             e.printStackTrace();
-
+            coreCamera = CAMERA_NONE;
             surfaceView.setBackgroundColor(Color.BLACK);
             try {
                 camera.release();
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
+
             camera = null;
         }
 
     }
 
-    private void stopWithoutIntentionRecorded() {
+    private void stopCore() {
 
-        if (!isStarted())
+        if (coreCamera == CAMERA_NONE)
             return;
 
+        coreCamera = CAMERA_NONE;
         surfaceView.setBackgroundColor(Color.BLACK);
         camera.release();
         camera = null;
 
     }
 
-    public void start() {
-        startIntention = true;
+    public void start(int targetCamera) {
 
+        if (targetCamera == CAMERA_NONE) {
+            stop();
+            return;
+        }
+
+        if (targetCamera == this.targetCamera) {
+            return;
+        }
+
+        stop();
+
+        this.targetCamera = targetCamera;
         if (surfaceHolderCreated)
-            startWithoutIntentionRecorded();
+            startCore(targetCamera);
 
 
     }
 
     public void stop() {
-        startIntention = false;
-        stopWithoutIntentionRecorded();
+
+        if (targetCamera == CAMERA_NONE)
+            return;
+
+        this.targetCamera = CAMERA_NONE;
+        stopCore();
     }
 
     public boolean isStarted() {
-        return camera != null;
+        return coreCamera != CAMERA_NONE;
     }
+
+    public static int getNumOfCameras() {
+        return Camera.getNumberOfCameras();
+    }
+
+    private static int getCameraIdBasedOnType(int type){
+        int cameraId = -1;
+        int numberOfCameras = getNumOfCameras();
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == type) {
+                cameraId = i;
+                break;
+            }
+        }
+        return cameraId;
+    }
+
+    public static int getFrontCameraId() {
+        return getCameraIdBasedOnType(Camera.CameraInfo.CAMERA_FACING_FRONT);
+    }
+
+    public static int getBackCameraId() {
+        return getCameraIdBasedOnType(Camera.CameraInfo.CAMERA_FACING_BACK);
+    }
+
 }
