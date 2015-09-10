@@ -84,11 +84,11 @@ public class CameraView extends RelativeLayout {
             return bottomMargin;
         }
 
-        public int getBlankAreaInPxSquare(){
+        public int getBlankAreaInPxSquare() {
             return viewWidth * (topMargin + bottomMargin) + viewHeight * (leftMargin + rightMargin);
         }
 
-        public int getValidVisibleAreaInPxSquare(){
+        public int getValidVisibleAreaInPxSquare() {
             int surfaceArea = surfaceWidth * surfaceHeight;
             int resolutionArea = resolutionWidth * resolutionHeight;
 
@@ -96,7 +96,7 @@ public class CameraView extends RelativeLayout {
 
         }
 
-        public int getInvalidVisibleAreaInPxSquare(){
+        public int getInvalidVisibleAreaInPxSquare() {
 
             int surfaceArea = surfaceWidth * surfaceHeight;
             int resolutionArea = resolutionWidth * resolutionHeight;
@@ -105,7 +105,7 @@ public class CameraView extends RelativeLayout {
 
         }
 
-        public int getUselessAreaInPxSquare(){
+        public int getUselessAreaInPxSquare() {
             return getBlankAreaInPxSquare() + getInvalidVisibleAreaInPxSquare();
         }
 
@@ -157,7 +157,7 @@ public class CameraView extends RelativeLayout {
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                connect();
+                attach();
             }
 
             @Override
@@ -166,7 +166,7 @@ public class CameraView extends RelativeLayout {
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
-                disconnect();
+                distach();
             }
         });
         addView(surfaceView);
@@ -178,7 +178,7 @@ public class CameraView extends RelativeLayout {
         if (listener == null)
             return;
 
-        if (!isConnected()) {
+        if (!isAttached()) {
 
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -189,6 +189,7 @@ public class CameraView extends RelativeLayout {
 
             return;
         }
+
 
         camera.takePicture(null, null, new Camera.PictureCallback() {
 
@@ -211,7 +212,7 @@ public class CameraView extends RelativeLayout {
 
         boolean result = false;
         for (Camera.Size size : sizes) {
-            if (size.width== resolutionHeight && size.height == resolutionWidth) {
+            if (size.width == resolutionHeight && size.height == resolutionWidth) {
                 result = true;
                 break;
             }
@@ -219,11 +220,11 @@ public class CameraView extends RelativeLayout {
         return result;
     }
 
-    private FittedSurfaceViewInfo getFittedSurfaceViewInfo(int viewWidth, int viewHeight){
+    private FittedSurfaceViewInfo getFittedSurfaceViewInfo(int viewWidth, int viewHeight) {
 
         FittedSurfaceViewInfo result = null;
 
-        if (!isConnected()){
+        if (!isAttached()) {
             return result;
         }
 
@@ -242,7 +243,7 @@ public class CameraView extends RelativeLayout {
 
         double widthScale = Double.NaN;
         double heightScale = Double.NaN;
-        for (Camera.Size size : camera.getParameters().getSupportedPreviewSizes()){
+        for (Camera.Size size : camera.getParameters().getSupportedPreviewSizes()) {
 
             resolutionWidth = size.height;
             resolutionHeight = size.width;
@@ -250,7 +251,7 @@ public class CameraView extends RelativeLayout {
             widthScale = (double) viewWidth / resolutionWidth;
             heightScale = (double) viewHeight / resolutionHeight;
 
-            if (widthScale > heightScale){
+            if (widthScale > heightScale) {
                 // set horizontal margin
                 surfaceWidth = (int) (resolutionWidth * heightScale);
                 surfaceHeight = (int) (resolutionHeight * heightScale);
@@ -270,11 +271,11 @@ public class CameraView extends RelativeLayout {
 
             fittedSurfaceViewInfo = new FittedSurfaceViewInfo(viewWidth, viewHeight, resolutionWidth, resolutionHeight, surfaceWidth, surfaceHeight, leftMargin, topMargin, rightMargin, bottomMargin);
 
-            if (result==null){
+            if (result == null) {
                 result = fittedSurfaceViewInfo;
             } else {
 
-                if (fittedSurfaceViewInfo.getUselessAreaInPxSquare() < result.getUselessAreaInPxSquare()){
+                if (fittedSurfaceViewInfo.getUselessAreaInPxSquare() < result.getUselessAreaInPxSquare()) {
                     result = fittedSurfaceViewInfo;
                 }
 
@@ -288,11 +289,11 @@ public class CameraView extends RelativeLayout {
         return result; // 144, 176 or 480, 640
     }
 
-    private void fitSurfaceViewToCameraView(int viewWidth, int viewHeight){
+    private void fitSurfaceViewToCameraView(int viewWidth, int viewHeight) {
 
         final FittedSurfaceViewInfo fittedSurfaceViewInfo = getFittedSurfaceViewInfo(viewWidth, viewHeight);
 
-        if (fittedSurfaceViewInfo==null)
+        if (fittedSurfaceViewInfo == null)
             return;
 
 
@@ -316,10 +317,10 @@ public class CameraView extends RelativeLayout {
 
     private void assignCameraResolution(int resolutionWidth, int resolutionHeight) {
 
-        if (!isConnected())
+        if (!isAttached())
             return;
 
-        if (!isCameraResolutionSupported(resolutionWidth, resolutionHeight)){
+        if (!isCameraResolutionSupported(resolutionWidth, resolutionHeight)) {
             return;
         }
 
@@ -346,14 +347,44 @@ public class CameraView extends RelativeLayout {
     }
 
 
-    // Connect
-    private boolean isConnected() {
+    // Start
+    private boolean started;
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void start() {
+
+        if (isAttached())
+            camera.startPreview();
+
+        surfaceView.setBackgroundColor(Color.TRANSPARENT);
+
+        started = true;
+
+    }
+
+    public void stop() {
+
+        if (isAttached())
+            camera.stopPreview();
+
+        surfaceView.setBackgroundColor(Color.BLACK);
+
+        started = false;
+
+    }
+
+
+    // Attach
+    private boolean isAttached() {
         return camera != null;
     }
 
-    private void connect() {
+    private void attach() {
 
-        if (isConnected())
+        if (isAttached())
             return;
 
         try {
@@ -364,7 +395,9 @@ public class CameraView extends RelativeLayout {
             params.setPreviewSize(fittedSurfaceViewInfo.getResolutionHeight(), fittedSurfaceViewInfo.getResolutionWidth());
             camera.setParameters(params);
             camera.setPreviewDisplay(surfaceView.getHolder());
-            camera.startPreview();
+
+            if (isStarted())
+                camera.startPreview();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -378,9 +411,9 @@ public class CameraView extends RelativeLayout {
 
     }
 
-    private void disconnect() {
+    private void distach() {
 
-        if (!isConnected())
+        if (!isAttached())
             return;
 
         camera.release();

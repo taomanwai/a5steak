@@ -2,7 +2,6 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tommytao.a5steak.customview.CameraView;
@@ -30,31 +29,25 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
+        cameraView.start();
+
     }
 
 
     @OnClick(R.id.btnGo)
     public void go() {
 
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) cameraView.getLayoutParams();
-//        lp.width = 480;
-//        lp.height = 640;
+        cameraView.start();
 
-        lp.width = 480;
-        lp.height = 640;
-        cameraView.setLayoutParams(lp);
+
 
     }
 
     @OnClick(R.id.btnGet)
     public void get() {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) cameraView.getLayoutParams();
-//        lp.width = 144;
-//        lp.height = 176;
 
-        lp.width = 200;
-        lp.height = 200;
-        cameraView.setLayoutParams(lp);
+        cameraView.stop();
+
     }
 
     @OnClick(R.id.btnShare)
