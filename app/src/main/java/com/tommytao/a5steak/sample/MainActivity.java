@@ -14,7 +14,6 @@ import butterknife.OnClick;
 public class MainActivity extends Activity {
 
 
-
     @Bind(R.id.cameraView)
     CameraView cameraView;
 
@@ -30,15 +29,14 @@ public class MainActivity extends Activity {
         ButterKnife.bind(this);
 
         cameraView.start();
-
     }
 
 
     @OnClick(R.id.btnGo)
     public void go() {
 
-        cameraView.start();
 
+        cameraView.start();
 
 
     }
@@ -52,7 +50,6 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnShare)
     public void share() {
-
 
 
     }

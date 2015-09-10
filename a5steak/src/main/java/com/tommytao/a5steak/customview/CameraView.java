@@ -6,7 +6,6 @@ import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.RelativeLayout;
@@ -157,7 +156,9 @@ public class CameraView extends RelativeLayout {
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                attach();
+                surfaceHolderCreated = true;
+                if (startIntention)
+                    startWithoutIntentionRecorded();
             }
 
             @Override
@@ -166,7 +167,8 @@ public class CameraView extends RelativeLayout {
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
-                distach();
+                surfaceHolderCreated = false;
+                stopWithoutIntentionRecorded();
             }
         });
         addView(surfaceView);
@@ -178,7 +180,7 @@ public class CameraView extends RelativeLayout {
         if (listener == null)
             return;
 
-        if (!isAttached()) {
+        if (!isStarted()) {
 
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -208,6 +210,10 @@ public class CameraView extends RelativeLayout {
     }
 
     private boolean isCameraResolutionSupported(int resolutionWidth, int resolutionHeight) {
+
+        if (!isStarted())
+            return false;
+
         List<Camera.Size> sizes = camera.getParameters().getSupportedPreviewSizes();
 
         boolean result = false;
@@ -224,7 +230,7 @@ public class CameraView extends RelativeLayout {
 
         FittedSurfaceViewInfo result = null;
 
-        if (!isAttached()) {
+        if (!isStarted()) {
             return result;
         }
 
@@ -284,9 +290,8 @@ public class CameraView extends RelativeLayout {
 
         }
 
-        Log.d("rtemp", "info_t: " + result);
-
         return result; // 144, 176 or 480, 640
+
     }
 
     private void fitSurfaceViewToCameraView(int viewWidth, int viewHeight) {
@@ -296,14 +301,12 @@ public class CameraView extends RelativeLayout {
         if (fittedSurfaceViewInfo == null)
             return;
 
-
         assignCameraResolution(fittedSurfaceViewInfo.getResolutionWidth(), fittedSurfaceViewInfo.getResolutionHeight());
         assignSurfaceViewMargin(fittedSurfaceViewInfo.getLeftMargin(), fittedSurfaceViewInfo.getTopMargin(), fittedSurfaceViewInfo.getRightMargin(), fittedSurfaceViewInfo.getBottomMargin());
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 requestLayout();
-
             }
         });
 
@@ -316,9 +319,6 @@ public class CameraView extends RelativeLayout {
     }
 
     private void assignCameraResolution(int resolutionWidth, int resolutionHeight) {
-
-        if (!isAttached())
-            return;
 
         if (!isCameraResolutionSupported(resolutionWidth, resolutionHeight)) {
             return;
@@ -346,45 +346,15 @@ public class CameraView extends RelativeLayout {
 
     }
 
+    private boolean surfaceHolderCreated;
+
+    private boolean startIntention;
+
 
     // Start
-    private boolean started;
+    private void startWithoutIntentionRecorded() {
 
-    public boolean isStarted() {
-        return started;
-    }
-
-    public void start() {
-
-        if (isAttached())
-            camera.startPreview();
-
-        surfaceView.setBackgroundColor(Color.TRANSPARENT);
-
-        started = true;
-
-    }
-
-    public void stop() {
-
-        if (isAttached())
-            camera.stopPreview();
-
-        surfaceView.setBackgroundColor(Color.BLACK);
-
-        started = false;
-
-    }
-
-
-    // Attach
-    private boolean isAttached() {
-        return camera != null;
-    }
-
-    private void attach() {
-
-        if (isAttached())
+        if (isStarted())
             return;
 
         try {
@@ -395,12 +365,14 @@ public class CameraView extends RelativeLayout {
             params.setPreviewSize(fittedSurfaceViewInfo.getResolutionHeight(), fittedSurfaceViewInfo.getResolutionWidth());
             camera.setParameters(params);
             camera.setPreviewDisplay(surfaceView.getHolder());
+            camera.startPreview();
+            surfaceView.setBackgroundColor(Color.TRANSPARENT);
 
-            if (isStarted())
-                camera.startPreview();
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            surfaceView.setBackgroundColor(Color.BLACK);
             try {
                 camera.release();
             } catch (Exception e1) {
@@ -411,15 +383,32 @@ public class CameraView extends RelativeLayout {
 
     }
 
-    private void distach() {
+    private void stopWithoutIntentionRecorded() {
 
-        if (!isAttached())
+        if (!isStarted())
             return;
 
+        surfaceView.setBackgroundColor(Color.BLACK);
         camera.release();
         camera = null;
 
     }
 
+    public void start() {
+        startIntention = true;
 
+        if (surfaceHolderCreated)
+            startWithoutIntentionRecorded();
+
+
+    }
+
+    public void stop() {
+        startIntention = false;
+        stopWithoutIntentionRecorded();
+    }
+
+    public boolean isStarted() {
+        return camera != null;
+    }
 }
