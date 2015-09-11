@@ -334,6 +334,9 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
 
     public void disconnect() {
 
+        if (!isConnected() && !isConnecting())
+            return;
+
         Plus.AccountApi.clearDefaultAccount(getClient());
         getClient().disconnect();
         connected = false;

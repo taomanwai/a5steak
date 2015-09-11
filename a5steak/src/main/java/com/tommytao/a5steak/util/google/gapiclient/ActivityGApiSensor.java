@@ -101,7 +101,7 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
 
     @Override
     public boolean init(Context context) {
-        return super.init(appContext);
+        return super.init(context);
     }
 
     public boolean isConnecting() {
@@ -144,6 +144,9 @@ public class ActivityGApiSensor extends Foundation implements GoogleApiClient.Co
     }
 
     public void disconnect() {
+
+        if (!isConnected() && !isConnecting())
+            return;
 
         ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(getClient(), pendingIntent);
         getClient().disconnect();

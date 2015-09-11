@@ -66,8 +66,8 @@ public class DirectionsApiManager extends GFoundation {
         ArrayList<Location> locations = new ArrayList<>();
 
         @Deprecated
-        public boolean init(Context appContext) {
-            return super.init(appContext);
+        public boolean init(Context context) {
+            return super.init(context);
         }
 
         public Polyline(String encodedPolyline) {
@@ -293,8 +293,8 @@ public class DirectionsApiManager extends GFoundation {
         }
 
         @Deprecated
-        public boolean init(Context appContext) {
-            return super.init(appContext);
+        public boolean init(Context context) {
+            return super.init(context);
         }
 
         public int getDistanceInMeter() {
@@ -379,8 +379,8 @@ public class DirectionsApiManager extends GFoundation {
     }
 
     @Deprecated
-    public boolean init(Context appContext) {
-        return super.init(appContext);
+    public boolean init(Context context) {
+        return super.init(context);
     }
 
     public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {

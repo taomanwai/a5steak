@@ -7,9 +7,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,80 @@ public class SpeechRecognitionManager extends GFoundation {
 
     // --
 
+    public static class SpeechRecognitionActivity extends Activity {
+
+        public static int REQ_SPEECH_RECOGNITION = 6473;
+
+        private Listener listener;
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            Intent intent = getIntent();
+            boolean isWebSearchOnly = intent.getBooleanExtra("isWebSearchOnly", false);
+            Locale locale = (Locale) intent.getSerializableExtra("locale");
+            if (locale == null)
+                locale = Locale.US;
+            int id = intent.getIntExtra("idOfListener", -1);
+            listener = (id == -1) ? null : SpeechRecognitionManager.getInstance().listeners.get(id);
+            SpeechRecognitionManager.getInstance().listeners.remove(id);
+
+            final Intent speechRecognitionIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            speechRecognitionIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, isWebSearchOnly ? RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH : RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            speechRecognitionIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+            String localeStr = locale.getLanguage() + "-" + locale.getCountry();
+            speechRecognitionIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, localeStr);
+
+            startActivityForResult(speechRecognitionIntent, REQ_SPEECH_RECOGNITION);
+
+        }
+
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode != REQ_SPEECH_RECOGNITION)
+                return;
+
+            finish();
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            if (resultCode != Activity.RESULT_OK) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onComplete("");
+                    }
+                });
+
+                return;
+            }
+
+            final ArrayList<String> recognizedResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (recognizedResult==null || recognizedResult.isEmpty()){
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onComplete("");
+                    }
+                });
+
+                return;
+            }
+
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onComplete(recognizedResult.get(0));
+                }
+            });
+
+
+        }
+    }
+
     public static final String MARKET_PREFIX = "market://details?id=";
     public static final String HTTP_PREFIX = "http://play.google.com/store/apps/details?id=";
 
@@ -43,6 +120,9 @@ public class SpeechRecognitionManager extends GFoundation {
         public void onComplete(String result);
 
     }
+
+
+    private SparseArray<Listener> listeners = new SparseArray<>();
 
     private SpeechRecognizer speechRecognizer; // static
 
@@ -72,8 +152,8 @@ public class SpeechRecognitionManager extends GFoundation {
     }
 
     @Override
-    public boolean init(Context appContext) {
-        return super.init(appContext);
+    public boolean init(Context context) {
+        return super.init(context);
     }
 
     private Intent genIntent(boolean isWebSearchOnly, Locale locale) {
@@ -96,17 +176,15 @@ public class SpeechRecognitionManager extends GFoundation {
     }
 
 
-    public void stopAndAnalysisListening(){
+    public void stopAndAnalysisListening() {
         getSpeechRecognizer().stopListening();
     }
 
-    public void cancelListening(){
+    public void cancelListening() {
         getSpeechRecognizer().cancel();
     }
 
     /**
-     *
-     *
      * Note:
      * <a href="http://stackoverflow.com/questions/18476088/how-do-i-create-the-semi-transparent-grey-tutorial-overlay-in-android">Note1</a>
      * <a href="http://stackoverflow.com/questions/5849063/does-recognitionlistener-onerror-automatically-speechrecognizer-cancel">Note2</a>
@@ -120,6 +198,10 @@ public class SpeechRecognitionManager extends GFoundation {
 
         if (listener == null)
             return;
+
+        if (locale == null) {
+            locale = Locale.US;
+        }
 
         getSpeechRecognizer().setRecognitionListener(new RecognitionListener() {
 
@@ -187,10 +269,24 @@ public class SpeechRecognitionManager extends GFoundation {
             }
 
         });
+
         getSpeechRecognizer().startListening(genIntent(isWebSearchOnly, locale));
 
     }
 
+
+    public void listenUsingGoogleUI(Activity activity, boolean isWebSearchOnly, Locale locale, final Listener listener) {
+
+        int id = genUniqueId();
+        listeners.put(id, listener);
+
+        activity.startActivity(new Intent(activity, SpeechRecognitionActivity.class)
+                .putExtra("isWebSearchOnly", isWebSearchOnly)
+                .putExtra("locale", locale)
+                .putExtra("idOfListener", id));
+
+
+    }
 
 
 }

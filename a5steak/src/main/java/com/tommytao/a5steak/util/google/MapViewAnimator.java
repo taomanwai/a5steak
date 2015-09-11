@@ -123,8 +123,8 @@ public class MapViewAnimator extends GFoundation {
     }
 
     @Deprecated
-    public boolean init(Context appContext) {
-        return super.init(appContext);
+    public boolean init(Context context) {
+        return super.init(context);
     }
 
 

@@ -45,7 +45,6 @@ public class GcmPusher extends GFoundation {
 
     // --
 
-
     private GcmBroadcastReceiver receiver;
 
     private IntentFilter intentFilter;
@@ -65,8 +64,8 @@ public class GcmPusher extends GFoundation {
     private GoogleCloudMessaging gcm;
 
     @Override
-    public boolean init(Context appContext) {
-        return super.init(appContext);
+    public boolean init(Context context) {
+        return super.init(context);
     }
 
     public boolean isOnReceiveIntentListenerAssigned() {
@@ -89,8 +88,8 @@ public class GcmPusher extends GFoundation {
 
     }
 
-    public void init(Context appContext, String senderId) {
-        super.init(appContext);
+    public void init(Context context, String senderId) {
+        super.init(context);
 
         setSenderId(senderId);
 
@@ -210,7 +209,7 @@ public class GcmPusher extends GFoundation {
 
     public void addOnReceiveIntentListener(OnReceiveIntentListener onReceiveIntentListener) {
 
-        this.onReceiveIntentListeners.add(onReceiveIntentListener);
+        onReceiveIntentListeners.add(onReceiveIntentListener);
 
     }
 

@@ -199,8 +199,8 @@ public class GeocodeManager extends GFoundation {
 	public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
 
 	@Deprecated
-	public boolean init(Context appContext) {
-		return super.init(appContext);
+	public boolean init(Context context) {
+		return super.init(context);
 	}
 
 	public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {

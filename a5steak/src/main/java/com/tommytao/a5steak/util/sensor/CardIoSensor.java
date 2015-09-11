@@ -54,6 +54,8 @@ public class CardIoSensor extends Foundation {
 
     public static class CardIoActivity extends Activity {
 
+        public static int REQ_CARD_IO = 0;
+
         private OnScanListener listener;
 
         @Override
@@ -78,7 +80,7 @@ public class CardIoSensor extends Foundation {
             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, requirePostalCode);
 
             // MY_SCAN_REQUEST_CODE is arbitrary and is only used within this activity.
-            startActivityForResult(scanIntent, 0);
+            startActivityForResult(scanIntent, REQ_CARD_IO);
 
 
         }
@@ -86,6 +88,9 @@ public class CardIoSensor extends Foundation {
         @Override
         protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode != REQ_CARD_IO)
+                return;
 
             finish();
 
@@ -109,12 +114,8 @@ public class CardIoSensor extends Foundation {
                     listener.onComplete(creditCard);
 
 
-
                 }
             });
-
-
-
 
 
         }

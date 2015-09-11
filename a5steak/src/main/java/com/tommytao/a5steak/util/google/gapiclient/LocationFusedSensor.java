@@ -1,14 +1,24 @@
 package com.tommytao.a5steak.util.google.gapiclient;
 
 import android.app.Activity;
+import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofenceStatusCodes;
+import com.google.android.gms.location.GeofencingEvent;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -45,11 +55,73 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     // --
 
+    public static class GeofenceService extends IntentService {
+
+        public GeofenceService() {
+            super(GeofenceService.class.getName());
+        }
+
+        public GeofenceService(String name) {
+            super(name);
+        }
+
+        @Override
+        protected void onHandleIntent(Intent intent) {
+
+            GeofencingEvent event = GeofencingEvent.fromIntent(intent);
+
+            if (event.hasError()) {
+
+                int errCode = event.getErrorCode();
+                String errStr = GeofenceStatusCodes.getStatusCodeString(errCode);
+
+                Log.d("rtemp", "test_t: err " + "in sensor class");
+                LocationFusedSensor.getInstance().triggerListenerOnError(errCode, errStr);
+
+                return;
+            }
+
+            int transitionMode = event.getGeofenceTransition();
+            ArrayList<Geofence> geofences = new ArrayList<>(event.getTriggeringGeofences().isEmpty() ? new ArrayList<Geofence>() : event.getTriggeringGeofences());
+
+            switch (transitionMode) {
+
+                case Geofence.GEOFENCE_TRANSITION_ENTER:
+                    Log.d("rtemp", "test_t: enter " + "in sensor class");
+                    LocationFusedSensor.getInstance().triggerListenerOnEnter(geofences);
+                    break;
+
+                case Geofence.GEOFENCE_TRANSITION_EXIT:
+                    Log.d("rtemp", "test_t: exit " + "in sensor class");
+                    LocationFusedSensor.getInstance().triggerListenerOnExit(geofences);
+                    break;
+
+                default:
+                    Log.d("rtemp", "test_t: err " + "in sensor class");
+                    LocationFusedSensor.getInstance().triggerListenerOnError(-1, "");
+                    break;
+
+            }
+
+        }
+
+    }
+
     public static interface OnConnectListener {
 
         public void onConnected(boolean succeed);
 
         public void onIgnored();
+
+    }
+
+    public static interface OnGeofenceListener {
+
+        public void onEnter(ArrayList<Geofence> geofences);
+
+        public void onExit(ArrayList<Geofence> geofences);
+
+        public void onError(int errorCode, String errorString);
 
     }
 
@@ -65,6 +137,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     private int intervalInMs = DEFAULT_INTERVAL_IN_MS;
     private int priority = DEFAULT_PRIORITY;
 
+    private ArrayList<OnGeofenceListener> onGeofenceListeners = new ArrayList<>();
 
     private boolean connected;
 
@@ -82,10 +155,42 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         return super.init(context);
     }
 
+    public void addGeofenceListener(OnGeofenceListener onGeofenceListener) {
+        onGeofenceListeners.add(onGeofenceListener);
+    }
+
+    public void removeGeofenceListener(OnGeofenceListener onGeofenceListener) {
+        onGeofenceListeners.remove(onGeofenceListener);
+    }
+
+    private void triggerListenerOnError(int errorCode, String errorString) {
+        for (OnGeofenceListener onGeofenceListener : onGeofenceListeners)
+            if (onGeofenceListener != null)
+                onGeofenceListener.onError(errorCode, errorString);
+    }
+
+    private void triggerListenerOnEnter(ArrayList<Geofence> geofences) {
+        for (OnGeofenceListener onGeofenceListener : onGeofenceListeners)
+            if (onGeofenceListener != null)
+                onGeofenceListener.onEnter(geofences);
+    }
+
+    private void triggerListenerOnExit(ArrayList<Geofence> geofences) {
+        for (OnGeofenceListener onGeofenceListener : onGeofenceListeners)
+            if (onGeofenceListener != null)
+                onGeofenceListener.onExit(geofences);
+    }
+
     public void disconnect() {
+
+        if (!isConnected() && !isConnecting())
+            return;
+
+        LocationServices.GeofencingApi.removeGeofences(getClient(), getGeofencePendingIntent());
         getClient().disconnect();
         connected = false;
         clearAndOnUiThreadTriggerOnConnectListeners(false);
+
     }
 
     @Override
@@ -339,6 +444,57 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
 
     }
+
+    // Geofence
+
+    private PendingIntent geofencePendingIntent;
+
+    private PendingIntent getGeofencePendingIntent() {
+        if (geofencePendingIntent == null) {
+            Intent intent = new Intent(appContext, GeofenceService.class);
+            geofencePendingIntent = PendingIntent.getService(appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
+        return geofencePendingIntent;
+    }
+
+    public PendingResult<Status> addGeofence(String id, double latitude, double longitude, float radiusInMeter, long expiryDurationInMs) {
+
+        if (!isConnected())
+            return null;
+
+        // build geofence
+        Geofence.Builder builder = new Geofence.Builder()
+                .setRequestId(id)
+                .setCircularRegion(latitude, longitude, radiusInMeter)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT);
+        builder = expiryDurationInMs < 0 ? builder : builder.setExpirationDuration(expiryDurationInMs);
+        Geofence geofence = builder.build();
+
+        // build geofencingrequest
+        GeofencingRequest request = new GeofencingRequest.Builder().setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER).addGeofence(geofence).build();
+
+        PendingResult<Status> result = LocationServices.
+                GeofencingApi.addGeofences(getClient(), request, getGeofencePendingIntent());
+
+        return result;
+
+    }
+
+    public void removeGeofence(String id) {
+
+        if (!isConnected())
+            return;
+
+        ArrayList<String> geofenceIds = new ArrayList<>();
+
+        geofenceIds.add(id);
+
+        LocationServices.GeofencingApi.removeGeofences(getClient(), geofenceIds);
+
+    }
+
+
 
 
 }

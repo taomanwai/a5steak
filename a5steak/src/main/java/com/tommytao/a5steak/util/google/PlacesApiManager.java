@@ -3,8 +3,6 @@ package com.tommytao.a5steak.util.google;
 import android.content.Context;
 import android.location.Location;
 
-import com.tommytao.a5steak.util.Foundation;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -157,8 +155,8 @@ public class PlacesApiManager extends GFoundation {
     }
 
     @Deprecated
-    public boolean init(Context appContext) {
-        return super.init(appContext);
+    public boolean init(Context context) {
+        return super.init(context);
     }
 
 	/**
