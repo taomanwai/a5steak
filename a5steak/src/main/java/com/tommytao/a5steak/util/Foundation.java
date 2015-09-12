@@ -36,7 +36,9 @@ import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -615,7 +617,7 @@ public class Foundation implements SensorEventListener {
     }
 
 
-    protected void httpPostJSONRecvJSON(final String link, final JSONObject jObj, final OnHttpPostJSONRecvJSONListener listener) {
+    protected void httpPostJSONRecvJSON(final String link, final JSONObject jObj, final HashMap<String, String> headers, final OnHttpPostJSONRecvJSONListener listener) {
 
         final String BOUNDARY = BOUNDARY_OF_HTTP_POST_BYTE_ARRAY;
         final String TWO_HYPHENS = "--";
@@ -651,6 +653,16 @@ public class Foundation implements SensorEventListener {
                 JSONObject response = null;
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setRequestProperty("Content-Type", "application/json");
+
+                if (headers!=null && !headers.isEmpty()){
+
+                    Set<String> keys = headers.keySet();
+                    for (String key : keys){
+                        connection.setRequestProperty(key, headers.get(key));
+                    }
+
+                }
+
                 connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
                 connection.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
                 boolean succeedOfSettingPost = false;

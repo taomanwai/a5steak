@@ -145,8 +145,6 @@ public class SpeechRecognitionManager extends GFoundation {
 
     public void installGoogleVoiceSearch(Activity activity) {
 
-//        int connectionResult = GooglePlayServicesUtil.isGooglePlayServicesAvailable(appContext);
-//        boolean gPlayExist = (connectionResult == ConnectionResult.SUCCESS || connectionResult == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED);
         activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse((isGPlayExist() ? MARKET_PREFIX : HTTP_PREFIX) + VOICE_SEARCH_PACKAGE_NAME)));
 
     }

@@ -13,8 +13,6 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
@@ -25,12 +23,17 @@ import com.google.android.gms.location.LocationServices;
 import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
- * Responsible for getting latitude & longitude
+ * Responsible for getting latitude & longitude and setting geofence
  * <p/>
- * Note: Google Play services are required. If it is not available, use
+ * Note:
+ * Google Play services are required. If it is not available, use
  * LocationSensor instead
+ * <p/>
+ * <p/>
+ * Ref: http://stackoverflow.com/questions/29671039/geofences-not-working-when-app-is-killed (Fix geofence disappeared when location service mode/provider are changed)
  *
  * @author tommytao
  */
@@ -125,6 +128,32 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     }
 
+    private class CircularRegion {
+
+        private double latitude = Double.NaN;
+        private double longitude = Double.NaN;
+        private float radius = Float.NaN;
+
+
+        public CircularRegion(double latitude, double longitude, float radius) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.radius = radius;
+        }
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public double getLongitude() {
+            return longitude;
+        }
+
+        public float getRadius() {
+            return radius;
+        }
+    }
+
     public final static int PRIORITY_HIGH_ACCURACY = LocationRequest.PRIORITY_HIGH_ACCURACY;
     public final static int PRIORITY_BALANCED_POWER_ACCURACY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
     public final static int PRIORITY_LOW_POWER = LocationRequest.PRIORITY_LOW_POWER;
@@ -136,6 +165,8 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     private int intervalInMs = DEFAULT_INTERVAL_IN_MS;
     private int priority = DEFAULT_PRIORITY;
+
+    private HashMap<String, CircularRegion> circularRegions = new HashMap<>();
 
     private ArrayList<OnGeofenceListener> onGeofenceListeners = new ArrayList<>();
 
@@ -187,6 +218,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
             return;
 
         LocationServices.GeofencingApi.removeGeofences(getClient(), getGeofencePendingIntent());
+        circularRegions.clear();
         getClient().disconnect();
         connected = false;
         clearAndOnUiThreadTriggerOnConnectListeners(false);
@@ -337,9 +369,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         }
 
 
-        // ==
-
-
         return result;
 
     }
@@ -389,7 +418,6 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         // TODO under construction
 
     }
-
 
     private void startDetectingLocation(int priority, int intervalInMs, int fastestIntervalInMs) {
 
@@ -458,26 +486,30 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         return geofencePendingIntent;
     }
 
-    public PendingResult<Status> addGeofence(String id, double latitude, double longitude, float radiusInMeter, long expiryDurationInMs) {
+    public void addGeofence(String id, double latitude, double longitude, float radiusInMeter) {
 
         if (!isConnected())
-            return null;
+            return;
 
         // build geofence
-        Geofence.Builder builder = new Geofence.Builder()
+        Geofence geofence = new Geofence.Builder()
                 .setRequestId(id)
                 .setCircularRegion(latitude, longitude, radiusInMeter)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT);
-        builder = expiryDurationInMs < 0 ? builder : builder.setExpirationDuration(expiryDurationInMs);
-        Geofence geofence = builder.build();
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build();
 
         // build geofencingrequest
-        GeofencingRequest request = new GeofencingRequest.Builder().setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER).addGeofence(geofence).build();
+        GeofencingRequest request = new GeofencingRequest.Builder()
+                .addGeofence(geofence)
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .build();
 
-        PendingResult<Status> result = LocationServices.
+        LocationServices.
                 GeofencingApi.addGeofences(getClient(), request, getGeofencePendingIntent());
 
-        return result;
+        // TODO should check err
+        circularRegions.put(id, new CircularRegion(latitude, longitude, radiusInMeter));
+
 
     }
 
@@ -492,9 +524,11 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
         LocationServices.GeofencingApi.removeGeofences(getClient(), geofenceIds);
 
+        // TODO should check err
+        circularRegions.remove(id);
+
+
     }
-
-
 
 
 }
