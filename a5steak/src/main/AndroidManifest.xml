@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tommytao.a5steak" >
+    package="com.tommytao.a5steak">
 
     <application
         android:allowBackup="true"
-        android:label="@string/app_name" >
+        android:label="@string/app_name">
 
         <!-- Service responsible for LocationFusedSensor Geofence -->
         <service android:name=".util.google.gapiclient.LocationFusedSensor$GeofenceService" />
@@ -12,49 +12,49 @@
         <!-- Service responsible for Activity G Api sensor -->
         <service android:name=".util.google.gapiclient.ActivityGApiSensor$SenseService" />
 
-
         <!-- Activities responsible for Facebook -->
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
             android:name=".util.FbManager$FbLoginActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
             android:name=".util.FbManager$FbShareActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <!-- Activities responsible for G+ -->
         <activity
             android:name=".util.google.gapiclient.GPlusManager$GPlusStartResolutionActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
             android:name=".util.google.gapiclient.GPlusManager$GPlusUserRecoverableAuthActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <!-- Activities responsible for Card IO -->
-        <activity android:name="io.card.payment.CardIOActivity" android:configChanges="keyboardHidden|orientation" />
+        <activity
+            android:name="io.card.payment.CardIOActivity"
+            android:configChanges="keyboardHidden|orientation" />
         <activity android:name="io.card.payment.DataEntryActivity" />
 
         <activity
             android:name=".util.sensor.CardIoSensor$CardIoActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <!-- Activities responsible for speech recognition -->
         <activity
             android:name=".util.google.SpeechRecognitionManager$SpeechRecognitionActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- Auto download face & barcode detection library -->
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode,face" />
 
 
     </application>

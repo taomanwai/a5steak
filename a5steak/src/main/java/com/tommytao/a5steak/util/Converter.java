@@ -205,7 +205,8 @@ public class Converter extends Foundation {
 
     }
 
-
-
-
+    @Override
+    protected String textToUtfRepresentation(String text) {
+        return super.textToUtfRepresentation(text);
+    }
 }

@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 
 import java.util.List;
 
-public class CameraView extends RelativeLayout {
+public class CamView extends RelativeLayout {
 
     public static int CAMERA_NONE = -1;
 
@@ -136,17 +136,17 @@ public class CameraView extends RelativeLayout {
     private SurfaceView surfaceView;
 
 
-    public CameraView(Context context) {
+    public CamView(Context context) {
         super(context);
         init(context);
     }
 
-    public CameraView(Context context, AttributeSet attrs) {
+    public CamView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public CameraView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CamView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
@@ -159,7 +159,7 @@ public class CameraView extends RelativeLayout {
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                surfaceHolderCreated = true;
+                surfaceCreated = true;
                 startCore(targetCamera);
             }
 
@@ -169,7 +169,7 @@ public class CameraView extends RelativeLayout {
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
-                surfaceHolderCreated = false;
+                surfaceCreated = false;
                 stopCore();
             }
         });
@@ -213,7 +213,7 @@ public class CameraView extends RelativeLayout {
 
     @Override
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
-        fitSurfaceViewToCameraView(width, height);
+        fitSurfaceViewToCamView(width, height);
     }
 
     private boolean isCameraResolutionSupported(int resolutionWidth, int resolutionHeight) {
@@ -301,7 +301,7 @@ public class CameraView extends RelativeLayout {
 
     }
 
-    private void fitSurfaceViewToCameraView(int viewWidth, int viewHeight) {
+    private void fitSurfaceViewToCamView(int viewWidth, int viewHeight) {
 
         final FittedSurfaceViewInfo fittedSurfaceViewInfo = getFittedSurfaceViewInfo(viewWidth, viewHeight);
 
@@ -353,7 +353,7 @@ public class CameraView extends RelativeLayout {
 
     }
 
-    private boolean surfaceHolderCreated;
+    private boolean surfaceCreated;
 
     private int targetCamera = CAMERA_NONE;
     private int coreCamera = CAMERA_NONE;
@@ -395,7 +395,6 @@ public class CameraView extends RelativeLayout {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-
             camera = null;
         }
 
@@ -427,7 +426,7 @@ public class CameraView extends RelativeLayout {
         stop();
 
         this.targetCamera = targetCamera;
-        if (surfaceHolderCreated)
+        if (surfaceCreated)
             startCore(targetCamera);
 
 

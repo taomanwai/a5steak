@@ -41,37 +41,44 @@ public class BarcodeSensor extends Foundation {
         return super.init(context);
     }
 
-    private BarcodeDetector barcodeDetector;
+    private BarcodeDetector detector;
 
-    private BarcodeDetector getBarcodeDetector() {
+    private BarcodeDetector getDetector() {
 
-        if (barcodeDetector == null) {
-            barcodeDetector = new BarcodeDetector.Builder(appContext)
+        if (detector == null) {
+            detector = new BarcodeDetector.Builder(appContext)
                     .setBarcodeFormats(Barcode.UPC_A | Barcode.UPC_E | Barcode.EAN_8 | Barcode.EAN_13 | Barcode.QR_CODE)
                     .build();
         }
 
-        return barcodeDetector;
+        return detector;
 
     }
 
 
     public boolean isOperational() {
-        return getBarcodeDetector().isOperational();
+        boolean result = getDetector().isOperational();
+
+        getDetector().release();
+        detector = null;
+
+        return result;
     }
 
-    public ArrayList<Barcode> findBarcodesFromBitmap(Bitmap bitmap){
+    public ArrayList<Barcode> findBarcodesFromBitmap(Bitmap bitmap) {
 
         ArrayList<Barcode> result = new ArrayList<>();
 
-
-        if (!getBarcodeDetector().isOperational())
+        if (!isOperational())
             return result;
 
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-        SparseArray<Barcode> barcodes = getBarcodeDetector().detect(frame);
+        SparseArray<Barcode> barcodes = getDetector().detect(frame);
 
-        for (int i=0; i<barcodes.size();i++){
+        getDetector().release();
+        detector = null;
+
+        for (int i = 0; i < barcodes.size(); i++) {
             result.add(barcodes.valueAt(i));
         }
 

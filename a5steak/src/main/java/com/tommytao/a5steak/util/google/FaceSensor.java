@@ -76,10 +76,13 @@ public class FaceSensor extends Foundation {
     public boolean isOperational(){
         FaceDetector detector = new FaceDetector.Builder(appContext)
                 .setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .build();
 
-        return detector.isOperational();
+        boolean result = detector.isOperational();
+
+        detector.release();
+
+        return result;
 
     }
 
@@ -98,7 +101,6 @@ public class FaceSensor extends Foundation {
 
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
         SparseArray<Face> faces = detector.detect(frame);
-
 
         detector.release();
 

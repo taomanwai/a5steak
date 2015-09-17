@@ -6,20 +6,12 @@
 
 
 
-    <com.tommytao.a5steak.customview.CameraView
-        android:id="@+id/cameraView"
-        android:layout_width="480px"
-        android:layout_height="640px"
-        android:layout_above="@+id/tvMsg"
+    <com.tommytao.a5steak.customview.google.FaceCamView
+        android:id="@+id/cam"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         />
 
-    <TextView
-        android:id="@+id/tvMsg"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="abc"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone"/>
 
 
     <Button
@@ -48,4 +40,13 @@
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/btnGo"
         android:text="Share" />
+
+    <Button
+        android:id="@+id/btnChoose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="Share" />
+
 </RelativeLayout>

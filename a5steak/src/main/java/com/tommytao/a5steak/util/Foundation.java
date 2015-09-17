@@ -77,22 +77,19 @@ public class Foundation implements SensorEventListener {
 
         public void onComplete(boolean succeed);
 
-
     }
 
-    public static interface OnHttpPostJSONRecvJSONListener {
+    public static interface OnHttpPostStringListener {
 
-        public void onComplete(JSONObject response);
-
+        public void onComplete(String responseStr);
 
     }
-
 
 
     public final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 60000; // 10000
     public final int DEFAULT_READ_TIMEOUT_IN_MS = DEFAULT_CONNECT_TIMEOUT_IN_MS;
     public final int BUFFER_SIZE_IN_BYTE = 1024;
-    public final String BOUNDARY_OF_HTTP_POST_BYTE_ARRAY = "&&3rewfwefwfewfhufrbewfuweriwefr"; // Not 0xKhTmLbOuNdArY
+    public final String BOUNDARY_OF_HTTP_POST_BYTE_ARRAY = "&&3rewfwefwfewfhyrjfhdncyuriwefr"; // Not &&3rewfwefwfewfhufrbewfuweriwefr NOT 0xKhTmLbOuNdArY
 
     protected boolean debugMode = true;
 
@@ -600,7 +597,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected void triggerHttpPostJSONListener(final OnHttpPostJSONRecvJSONListener listener, final JSONObject response) {
+    protected void triggerHttpPostStringListener(final OnHttpPostStringListener listener, final String responseStr) {
 
         if (listener == null)
             return;
@@ -609,7 +606,7 @@ public class Foundation implements SensorEventListener {
             @Override
             public void run() {
 
-                listener.onComplete(response);
+                listener.onComplete(responseStr);
 
             }
         });
@@ -617,11 +614,8 @@ public class Foundation implements SensorEventListener {
     }
 
 
-    protected void httpPostJSONRecvJSON(final String link, final JSONObject jObj, final HashMap<String, String> headers, final OnHttpPostJSONRecvJSONListener listener) {
+    protected void httpPostString(final String link, final String dataStr, final HashMap<String, String> headers, final OnHttpPostStringListener listener) {
 
-        final String BOUNDARY = BOUNDARY_OF_HTTP_POST_BYTE_ARRAY;
-        final String TWO_HYPHENS = "--";
-        final String NEW_LINE = "\r\n";
 
         new Thread() {
             @Override
@@ -635,7 +629,7 @@ public class Foundation implements SensorEventListener {
                     e.printStackTrace();
                 }
                 if (url == null) {
-                    triggerHttpPostJSONListener(listener, null);
+                    triggerHttpPostStringListener(listener, "");
                     return;
                 }
 
@@ -646,25 +640,14 @@ public class Foundation implements SensorEventListener {
                     e.printStackTrace();
                 }
                 if (connection == null) {
-                    triggerHttpPostJSONListener(listener, null);
+                    triggerHttpPostStringListener(listener, "");
                     return;
                 }
 
-                JSONObject response = null;
-                connection.setRequestProperty("Accept", "application/json");
-                connection.setRequestProperty("Content-Type", "application/json");
+                String responseStr = "";
+                // orig
 
-                if (headers!=null && !headers.isEmpty()){
 
-                    Set<String> keys = headers.keySet();
-                    for (String key : keys){
-                        connection.setRequestProperty(key, headers.get(key));
-                    }
-
-                }
-
-                connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
-                connection.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
                 boolean succeedOfSettingPost = false;
                 try {
                     connection.setRequestMethod("POST");
@@ -673,9 +656,25 @@ public class Foundation implements SensorEventListener {
                     e.printStackTrace();
                 }
                 if (!succeedOfSettingPost) {
-                    triggerHttpPostJSONListener(listener, null);
+                    triggerHttpPostStringListener(listener, "");
                     return;
                 }
+
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setRequestProperty("Content-Type", "application/json");
+
+                if (headers != null && !headers.isEmpty()) {
+
+                    Set<String> keys = headers.keySet();
+                    for (String key : keys) {
+                        connection.setRequestProperty(key, headers.get(key));
+                    }
+
+                }
+
+                connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
+                connection.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
+
                 connection.setDoOutput(true);
                 connection.setDoInput(true);
 
@@ -687,7 +686,7 @@ public class Foundation implements SensorEventListener {
                     e.printStackTrace();
                 }
                 if (!succeedOfConnection) {
-                    triggerHttpPostJSONListener(listener, null);
+                    triggerHttpPostStringListener(listener, "");
                     return;
                 }
 
@@ -695,11 +694,25 @@ public class Foundation implements SensorEventListener {
                 try {
 
                     os = new DataOutputStream(connection.getOutputStream());
-                    os.writeBytes(jObj.toString());
+                    os.writeBytes(dataStr);
                     os.flush();
 
                     // Ensure we got the HTTP 200 response code
-                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    int responseCode = -1;
+                    try{
+                        responseCode = connection.getResponseCode();
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    if (responseCode==-1)
+                        Log.d("rtemp", "failed");
+                    else {
+                        String msg = connection.getResponseMessage();
+                        Log.d("rtemp", "succeed" + " " + connection.getResponseMessage());
+                    }
+
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
                         InputStream in = null;
                         try {
                             in = new BufferedInputStream(connection.getInputStream());
@@ -712,12 +725,7 @@ public class Foundation implements SensorEventListener {
                             String line = "";
                             while ((line = reader.readLine()) != null)
                                 sb.append(line);
-                            try {
-                                response = new JSONObject(sb.toString());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-
-                            }
+                            responseStr = "" + sb;
                         }
                     }
 
@@ -731,7 +739,7 @@ public class Foundation implements SensorEventListener {
                     }
                 }
 
-                triggerHttpPostJSONListener(listener, response);
+                triggerHttpPostStringListener(listener, responseStr);
 
 
             }
@@ -773,10 +781,6 @@ public class Foundation implements SensorEventListener {
                     return;
                 }
 
-
-                connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
-                connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
-                connection.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
                 boolean succeedOfSettingPost = false;
                 try {
                     connection.setRequestMethod("POST");
@@ -788,9 +792,13 @@ public class Foundation implements SensorEventListener {
                     triggerHttpPostByteArrayListener(listener, false);
                     return;
                 }
+                connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+
+                connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
+                connection.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
+
                 connection.setDoOutput(true);
                 connection.setDoInput(true);
-
 
                 StringBuffer sbRequestBody = new StringBuffer();
 
@@ -1139,7 +1147,6 @@ public class Foundation implements SensorEventListener {
     }
 
 
-
     // == Google API for Work ==
     protected static class UrlSigner {
 
@@ -1356,7 +1363,7 @@ public class Foundation implements SensorEventListener {
         lastKnownY = sensorEvent.values[1];
         lastKnownZ = sensorEvent.values[2];
 
-        for (OnReadingChangeListener onReadingChangeListener : onReadingChangeListenerList){
+        for (OnReadingChangeListener onReadingChangeListener : onReadingChangeListenerList) {
             onReadingChangeListener.onReadingChanged(lastKnownX, lastKnownY, lastKnownZ);
         }
     }
@@ -1399,6 +1406,27 @@ public class Foundation implements SensorEventListener {
         return "" + Html.fromHtml(html);
 
     }
+
+    /**
+     *
+     *
+     * Ref: http://stackoverflow.com/questions/2220366/get-unicode-value-of-a-character
+     *
+     * @param text
+     * @return
+     */
+    protected String textToUtfRepresentation(String text) {
+
+        // TODO slow, should enhance
+        StringBuffer sbResult = new StringBuffer();
+        for (int i=0;i<text.length(); i++){
+            sbResult.append("\\u" + Integer.toHexString(text.codePointAt(i) | 0x10000).substring(1));
+        }
+
+        return "" + sbResult;
+
+    }
+
 
 
     // == Location ==
@@ -1534,7 +1562,7 @@ public class Foundation implements SensorEventListener {
 
 
     }
-    
+
     // == Generate unique ID ==
     protected int genUniqueId() {
 

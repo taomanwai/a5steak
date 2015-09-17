@@ -2,13 +2,12 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.util.Log;
 
-import com.tommytao.a5steak.customview.CameraView;
-import com.tommytao.a5steak.util.google.SpeechRecognitionManager;
+import com.tommytao.a5steak.customview.google.FaceCamView;
+import com.tommytao.a5steak.util.SemanticsManager;
 
-import java.util.Locale;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -17,11 +16,9 @@ import butterknife.OnClick;
 
 public class MainActivity extends Activity {
 
-    @Bind(R.id.cameraView)
-    CameraView cameraView;
+    @Bind(R.id.cam)
+    FaceCamView cam;
 
-    @Bind(R.id.tvMsg)
-    TextView tvMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,26 +27,24 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
-        SpeechRecognitionManager.getInstance().init(this);
+        SemanticsManager.getInstance().init(this, "Se9DNydp.3665.8FudbgZo3UGG");
 
 
-
+        SemanticsManager.getInstance().getKeyword("他是个傻逼", new SemanticsManager.OnGetKeywordListener() {
+            @Override
+            public void onComplete(ArrayList<SemanticsManager.Keyword> keywords) {
+                Log.d("", "");
+            }
+        });
 
     }
-
 
 
     @OnClick(R.id.btnGo)
     public void go() {
 
-        SpeechRecognitionManager.getInstance().listenUsingGoogleUI(this, false, new Locale("zh", "HK"), new SpeechRecognitionManager.Listener() {
-            @Override
-            public void onComplete(String result) {
 
-                Toast.makeText(MainActivity.this, result, Toast.LENGTH_LONG).show();
 
-            }
-        });
 
 
     }
@@ -58,12 +53,17 @@ public class MainActivity extends Activity {
     public void get() {
 
 
+
+
     }
 
     @OnClick(R.id.btnShare)
     public void share() {
 
+    }
 
+    @OnClick(R.id.btnChoose)
+    public void choose() {
 
 
     }
