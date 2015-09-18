@@ -186,27 +186,27 @@ public class Converter extends Foundation {
 
 
 
-    public byte[] hexStrToByteArray(String input) {
+    public byte[] hexRepresentationToByteArray(String input) {
 
-        return super.hexStrToByteArray(input);
+        return super.hexRepresentationToByteArray(input);
 
-
-    }
-
-    public String byteArrayToHexStr(byte[] bytes) {
-
-        return super.byteArrayToHexStr(bytes);
 
     }
 
-    public String colorToHexStr(int color) {
+    public String byteArrayToHexRepresentation(byte[] bytes) {
+
+        return super.byteArrayToHexRepresentation(bytes);
+
+    }
+
+    public String colorToHexRepresentation(int color) {
 
         return Integer.toHexString(color).toUpperCase().substring(2);
 
     }
 
     @Override
-    protected String textToUtfRepresentation(String text) {
-        return super.textToUtfRepresentation(text);
+    protected String strToUtfRepresentation(String text) {
+        return super.strToUtfRepresentation(text);
     }
 }

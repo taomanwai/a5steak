@@ -103,7 +103,7 @@ public class AntiHackManager extends Foundation {
 		SecretKeySpec spec = new SecretKeySpec(secretKey.getBytes(), ENCRYPTION_DECRYPTION_PROTOCOL);
 		try {
 			getCipher().init(Cipher.ENCRYPT_MODE, spec);
-			result = byteArrayToHexStr(getCipher().doFinal(input.getBytes()));
+			result = byteArrayToHexRepresentation(getCipher().doFinal(input.getBytes()));
 		} catch (Exception e) {
 
 		}
@@ -122,7 +122,7 @@ public class AntiHackManager extends Foundation {
 		String result = "";
 
 		byte[] inputNonHexBytes;
-		inputNonHexBytes = hexStrToByteArray(input);
+		inputNonHexBytes = hexRepresentationToByteArray(input);
 
 		SecretKeySpec spec = new SecretKeySpec(secretKey.getBytes(), ENCRYPTION_DECRYPTION_PROTOCOL);
 

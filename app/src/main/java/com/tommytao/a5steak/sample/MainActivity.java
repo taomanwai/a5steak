@@ -2,7 +2,6 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.tommytao.a5steak.customview.google.FaceCamView;
 import com.tommytao.a5steak.util.SemanticsManager;
@@ -33,7 +32,7 @@ public class MainActivity extends Activity {
         SemanticsManager.getInstance().getKeyword("他是个傻逼", new SemanticsManager.OnGetKeywordListener() {
             @Override
             public void onComplete(ArrayList<SemanticsManager.Keyword> keywords) {
-                Log.d("", "");
+
             }
         });
 

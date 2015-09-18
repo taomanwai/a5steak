@@ -46,19 +46,35 @@ public class FileManager extends Foundation {
     // TODO MVP should not use in_s.available()
     public String openRawText(int resId){
 
-        String result = "";
+//        String result = "";
+//        try {
+//            InputStream in_s = appContext.getResources().openRawResource(resId);
+//            byte[] b = new byte[in_s.available()];
+//            in_s.read(b);
+//            result = new String(b);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return result;
+
+        return new String(openRawByteArray(resId));
+
+    }
+
+    public byte[] openRawByteArray(int resId){
+        byte[] result = new byte[0];
         try {
             InputStream in_s = appContext.getResources().openRawResource(resId);
-            byte[] b = new byte[in_s.available()];
-            in_s.read(b);
-            result = new String(b);
+            result = new byte[in_s.available()];
+            in_s.read(result);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return result;
 
-
-
     }
+
+
 }

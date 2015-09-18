@@ -881,7 +881,7 @@ public class Foundation implements SensorEventListener {
     }
 
     // == MD5 ==
-    protected byte[] hexStrToByteArray(String input) {
+    protected byte[] hexRepresentationToByteArray(String input) {
 
         int inputLength = input.length();
         byte[] result = new byte[inputLength / 2];
@@ -892,7 +892,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected String byteArrayToHexStr(byte[] bytes) {
+    protected String byteArrayToHexRepresentation(byte[] bytes) {
 
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < bytes.length; ++i)
@@ -908,7 +908,7 @@ public class Foundation implements SensorEventListener {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance(algorithm);
             byte[] array = md.digest(input.getBytes());
 
-            return byteArrayToHexStr(array);
+            return byteArrayToHexRepresentation(array);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1415,7 +1415,7 @@ public class Foundation implements SensorEventListener {
      * @param text
      * @return
      */
-    protected String textToUtfRepresentation(String text) {
+    protected String strToUtfRepresentation(String text) {
 
         // TODO slow, should enhance
         StringBuffer sbResult = new StringBuffer();
