@@ -50,12 +50,22 @@ public class SemanticsManager extends Foundation {
 
     }
 
+    public static interface OnGetAssociationListener {
+
+        public void onComplete(ArrayList<Association> associations);
+
+    }
+
     public static String GET_KEYWORD_LINK = "http://api.bosonnlp.com/keywords/analysis";
     public static String ANALYZE_GRAMMAR_LINK = "http://api.bosonnlp.com/depparser/analysis";
+    public static String GET_ASSOCIATION_LINK = "http://api.bosonnlp.com/suggest/analysis";
     public static String GET_TIME_IN_MILLIS_LINK_PREFIX = "http://api.bosonnlp.com/time/analysis";
 
-    public static String INPUT_PREFIX = "[\"";
-    public static String INPUT_SUFFIX = "\"]";
+    public static String INPUT_BRANKET_PREFIX = "[\"";
+    public static String INPUT_BRANKET_SUFFIX = "\"]";
+
+    public static String INPUT_QUOTATION_PREFIX = "\"";
+    public static String INPUT_QUOTATION_SUFFIX = "\"";
 
     public class Keyword {
 
@@ -63,6 +73,25 @@ public class SemanticsManager extends Foundation {
         private double weight = -1;
 
         public Keyword(String text, double weight) {
+            this.text = text;
+            this.weight = weight;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public double getWeight() {
+            return weight;
+        }
+    }
+
+    public class Association {
+
+        private String text = "";
+        private double weight = -1;
+
+        public Association(String text, double weight) {
             this.text = text;
             this.weight = weight;
         }
@@ -137,9 +166,9 @@ public class SemanticsManager extends Foundation {
 
     public boolean init(Context context, String token) {
 
-        if (!super.init(context)) {
+        if (!super.init(context))
             return false;
-        }
+
 
         this.token = token;
 
@@ -147,13 +176,23 @@ public class SemanticsManager extends Foundation {
 
     }
 
+    private String getQuotatedSentenceInUtfRepresentation(String sentence) {
+
+        if (TextUtils.isEmpty(sentence)) {
+            return INPUT_QUOTATION_PREFIX + INPUT_QUOTATION_SUFFIX;
+        }
+
+        return INPUT_QUOTATION_PREFIX + strToUtfRepresentation(sentence) + INPUT_QUOTATION_SUFFIX;
+
+    }
+
     private String getBranketSentenceInUtfRepresentation(String sentence) {
 
         if (TextUtils.isEmpty(sentence)) {
-            return INPUT_PREFIX + INPUT_SUFFIX;
+            return INPUT_BRANKET_PREFIX + INPUT_BRANKET_SUFFIX;
         }
 
-        return INPUT_PREFIX + strToUtfRepresentation(sentence) + INPUT_SUFFIX;
+        return INPUT_BRANKET_PREFIX + strToUtfRepresentation(sentence) + INPUT_BRANKET_SUFFIX;
 
     }
 
@@ -317,9 +356,8 @@ public class SemanticsManager extends Foundation {
 
     public void getTimeInMillis(String sentence, final OnGetTimeInMillisListener listener) {
 
-        if (listener == null) {
+        if (listener == null)
             return;
-        }
 
         httpPostString(GET_TIME_IN_MILLIS_LINK_PREFIX + "?pattern=" +
                 sentence
@@ -360,6 +398,42 @@ public class SemanticsManager extends Foundation {
             }
         });
 
+
+    }
+
+    public void getAssociation(String sentence, final OnGetAssociationListener listener){
+
+        if (listener==null)
+            return;
+
+        httpPostString(GET_ASSOCIATION_LINK, getQuotatedSentenceInUtfRepresentation(sentence), getTokenedHeaders(), new OnHttpPostStringListener() {
+            @Override
+            public void onComplete(String responseStr) {
+                ArrayList<Association> result = new ArrayList<>();
+                boolean hasException = false;
+                try {
+                    JSONArray jArray = new JSONArray(responseStr);
+
+                    String text = "";
+                    double weight = -1;
+                    Association association = new Association(text, weight);
+                    for (int i = 0; i < jArray.length(); i++) {
+                        weight = jArray.getJSONArray(i).getDouble(0);
+                        text = jArray.getJSONArray(i).getString(1);
+                        text = text.replace("/n", "");
+                        association = new Association(text, weight);
+                        result.add(association);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    hasException = true;
+                }
+
+                listener.onComplete(hasException ? new ArrayList<Association>() : result);
+
+            }
+        });
 
     }
 

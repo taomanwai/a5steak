@@ -7,6 +7,8 @@ import android.util.Log;
 import com.tommytao.a5steak.customview.google.FaceCamView;
 import com.tommytao.a5steak.util.SemanticsManager;
 
+import java.util.ArrayList;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -41,14 +43,21 @@ public class MainActivity extends Activity {
 //            }
 //        });
 
-        SemanticsManager.getInstance().getTimeInMillis("2013年二月二十八日下午二点三十分二十9秒", new SemanticsManager.OnGetTimeInMillisListener() {
-            @Override
-            public void onComplete(long timeInMillis) {
-                Log.d("", "");
-            }
+//        SemanticsManager.getInstance().getTimeInMillis("2013年二月二十八日下午二点三十分二十9秒", new SemanticsManager.OnGetTimeInMillisListener() {
+//            @Override
+//            public void onComplete(long timeInMillis) {
+//                Log.d("", "");
+//            }
+//
+//            @Override
+//            public void onError() {
+//                Log.d("", "");
+//            }
+//        });
 
+        SemanticsManager.getInstance().getAssociation("粉丝", new SemanticsManager.OnGetAssociationListener() {
             @Override
-            public void onError() {
+            public void onComplete(ArrayList<SemanticsManager.Association> associations) {
                 Log.d("", "");
             }
         });
