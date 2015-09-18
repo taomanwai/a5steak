@@ -2,11 +2,10 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.tommytao.a5steak.customview.google.FaceCamView;
 import com.tommytao.a5steak.util.SemanticsManager;
-
-import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,11 +27,29 @@ public class MainActivity extends Activity {
 
         SemanticsManager.getInstance().init(this, "Se9DNydp.3665.8FudbgZo3UGG");
 
+//        SemanticsManager.getInstance().getKeyword("他是个傻逼", new SemanticsManager.OnGetKeywordListener() {
+//            @Override
+//            public void onComplete(ArrayList<SemanticsManager.Keyword> keywords) {
+//
+//            }
+//        });
 
-        SemanticsManager.getInstance().getKeyword("他是个傻逼", new SemanticsManager.OnGetKeywordListener() {
+//        SemanticsManager.getInstance().analyzeGrammar("警察打击犯罪", new SemanticsManager.OnAnalyzeGrammarListener() {
+//            @Override
+//            public void onComplete(ArrayList<SemanticsManager.GrammarWord> words) {
+//                Log.d("", "");
+//            }
+//        });
+
+        SemanticsManager.getInstance().getTimeInMillis("2013年二月二十八日下午二点三十分二十9秒", new SemanticsManager.OnGetTimeInMillisListener() {
             @Override
-            public void onComplete(ArrayList<SemanticsManager.Keyword> keywords) {
+            public void onComplete(long timeInMillis) {
+                Log.d("", "");
+            }
 
+            @Override
+            public void onError() {
+                Log.d("", "");
             }
         });
 
@@ -41,11 +58,6 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnGo)
     public void go() {
-
-
-
-
-
     }
 
     @OnClick(R.id.btnGet)

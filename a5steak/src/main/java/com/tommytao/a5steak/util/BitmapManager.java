@@ -290,6 +290,7 @@ public class BitmapManager extends Foundation {
     }
 
 
+
     /**
      * Convert to mutable bitmap (if clear old bitmap function is enabled,
      * the old bitmap should not be referenced by variable outside this function,
@@ -298,10 +299,10 @@ public class BitmapManager extends Foundation {
      * @param bitmap       Bitmap being chopped
      * @param targetWidth  Target width of bitmap
      * @param targetHeight Target height of bitmap
+     * @param topHorizontalCenterMode True: chop and remain top and horizontal center; False: chop out non-center region
      * @return Chopped bitmap
      */
-    private Bitmap chop(Bitmap bitmap, int targetWidth, int targetHeight) {
-
+    private Bitmap chop(Bitmap bitmap, int targetWidth, int targetHeight, boolean topHorizontalCenterMode) {
 
         if (bitmap == null || bitmap.isRecycled() || targetWidth <= 0 || targetHeight <= 0)
             return null;
@@ -333,8 +334,8 @@ public class BitmapManager extends Foundation {
         if (widthScale > heightScale) {
             // chop vertical
             b4choppedBMPLeft = 0;
-            b4choppedBMPTop = (int) (((scaledBMPHeight - (float) targetHeight
-                    / targetWidth * scaledBMPWidth)) / 2 / realScale);
+            b4choppedBMPTop = topHorizontalCenterMode ? 0 : ((int) (((scaledBMPHeight - (float) targetHeight
+                    / targetWidth * scaledBMPWidth)) / 2 / realScale));
         } else {
             // chop horizontal
             b4choppedBMPLeft = (int) (((scaledBMPWidth - (float) targetWidth
@@ -374,16 +375,16 @@ public class BitmapManager extends Foundation {
 
     }
 
-    public boolean loadFileLinkToBitmap(String fileLink, Bitmap bitmap){
+    public boolean loadFileLinkToExistingBitmap(String fileLink, Bitmap bitmap){
 
-        return loadByteArrayToBitmap(fileLink2ByteArray(fileLink), bitmap);
+        return loadByteArrayToExistingBitmap(fileLink2ByteArray(fileLink), bitmap);
 
 
     }
 
-    public Bitmap loadFileLink(String fileLink, int targetWidth, int targetHeight) {
+    public Bitmap loadFileLink(String fileLink, int targetWidth, int targetHeight, boolean topAndHorizontalCenterMode) {
 
-        return loadByteArray(fileLink2ByteArray(fileLink), targetWidth, targetHeight);
+        return loadByteArray(fileLink2ByteArray(fileLink), targetWidth, targetHeight, topAndHorizontalCenterMode);
 
     }
 
@@ -415,7 +416,7 @@ public class BitmapManager extends Foundation {
 
     }
 
-    public boolean loadByteArrayToBitmap(byte[] data, Bitmap bitmap){
+    public boolean loadByteArrayToExistingBitmap(byte[] data, Bitmap bitmap){
         if (data == null || data.length == 0)
             return false;
 
@@ -435,15 +436,12 @@ public class BitmapManager extends Foundation {
 
     }
 
-
-    public Bitmap loadByteArray(byte[] data, int targetWidth, int targetHeight) {
+    public Bitmap loadByteArray(byte[] data, int targetWidth, int targetHeight, boolean topAndHorizontalCenterMode) {
 
         if (data == null || data.length == 0)
             return null;
 
-
         Bitmap bitmap = null;
-
 
         int dataLength = data.length;
         byte[] newData = new byte[dataLength];
@@ -485,7 +483,7 @@ public class BitmapManager extends Foundation {
 
         bitmap = chop(
                 BitmapFactory.decodeByteArray(data, 0, data.length, options),
-                targetWidth, targetHeight);
+                targetWidth, targetHeight, topAndHorizontalCenterMode);
 
         bitmap.setHasAlpha(true);
 
@@ -537,7 +535,7 @@ public class BitmapManager extends Foundation {
     }
 
 
-    public Bitmap loadResId(int resId, int specificWidth, int specificHeight,
+    public Bitmap loadResId(int resId, int specificWidth, int specificHeight, boolean topHorizontalCenterMode,
                             boolean cacheEnabled) {
 
         Bitmap bitmap = null;
@@ -627,7 +625,7 @@ public class BitmapManager extends Foundation {
                                 .openRawResource(resId);
                         bitmap = chop(
                                 BitmapFactory.decodeStream(is, null, options),
-                                specificWidth, specificHeight);
+                                specificWidth, specificHeight, topHorizontalCenterMode);
                     } catch (Resources.NotFoundException e) {
 
                     } catch (OutOfMemoryError oomE) {
@@ -679,7 +677,7 @@ public class BitmapManager extends Foundation {
 
     }
 
-    public boolean loadResIdToBitmap(int resId, Bitmap bitmap) {
+    public boolean loadResIdToExistingBitmap(int resId, Bitmap bitmap) {
 
         if (resId == 0) {
             return false;
@@ -704,6 +702,8 @@ public class BitmapManager extends Foundation {
     public Bitmap convertBitmapConfig(Bitmap bitmap, Bitmap.Config config) {
         return super.convertBitmapConfig(bitmap, config);
     }
+
+
 
 
 

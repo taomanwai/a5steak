@@ -458,7 +458,6 @@ public class UxUtils {
 
     public static void clearAnimationTo(final View view, boolean visible) {
 
-
         if (null == view)
             return;
 
