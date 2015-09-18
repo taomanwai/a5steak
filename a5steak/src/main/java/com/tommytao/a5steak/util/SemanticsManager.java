@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.util;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -394,7 +395,6 @@ public class SemanticsManager extends Foundation {
                 else
                     listener.onError();
 
-
             }
         });
 
@@ -406,34 +406,77 @@ public class SemanticsManager extends Foundation {
         if (listener==null)
             return;
 
-        httpPostString(GET_ASSOCIATION_LINK, getQuotatedSentenceInUtfRepresentation(sentence), getTokenedHeaders(), new OnHttpPostStringListener() {
+
+        new AsyncTask<String, Void, String>() {
+
             @Override
-            public void onComplete(String responseStr) {
-                ArrayList<Association> result = new ArrayList<>();
-                boolean hasException = false;
-                try {
-                    JSONArray jArray = new JSONArray(responseStr);
+            protected String doInBackground(String... params) {
 
-                    String text = "";
-                    double weight = -1;
-                    Association association = new Association(text, weight);
-                    for (int i = 0; i < jArray.length(); i++) {
-                        weight = jArray.getJSONArray(i).getDouble(0);
-                        text = jArray.getJSONArray(i).getString(1);
-                        text = text.replace("/n", "");
-                        association = new Association(text, weight);
-                        result.add(association);
-                    }
+                if (params.length != 1)
+                    return "";
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    hasException = true;
-                }
-
-                listener.onComplete(hasException ? new ArrayList<Association>() : result);
+                return tcToSc(params[0]);
 
             }
-        });
+
+            @Override
+            protected void onPostExecute(String result) {
+
+                httpPostString(GET_ASSOCIATION_LINK, getQuotatedSentenceInUtfRepresentation(result), getTokenedHeaders(), new OnHttpPostStringListener() {
+                    @Override
+                    public void onComplete(String responseStr) {
+
+                        new AsyncTask<String, Void, ArrayList<Association>>() {
+
+                            @Override
+                            protected ArrayList<Association> doInBackground(String... params) {
+
+                                ArrayList<Association> result = new ArrayList<>();
+
+                                if (params.length!=1)
+                                    return result;
+
+                                boolean hasException = false;
+                                try {
+                                    JSONArray jArray = new JSONArray(params[0]);
+
+                                    String text = "";
+                                    double weight = -1;
+                                    Association association = new Association(text, weight);
+                                    for (int i = 0; i < jArray.length(); i++) {
+                                        weight = jArray.getJSONArray(i).getDouble(0);
+                                        text = jArray.getJSONArray(i).getString(1);
+                                        text = text.replace("/n", "");
+                                        text = scToTc(text);
+                                        association = new Association(text, weight);
+                                        result.add(association);
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    hasException = true;
+                                }
+
+                                return (hasException ? new ArrayList<Association>() : result);
+
+                            }
+
+                            @Override
+                            protected void onPostExecute(ArrayList<Association> result) {
+
+                                listener.onComplete(result);
+
+                            }
+
+                        }.execute(responseStr);
+
+                    }
+                });
+
+            }
+
+        }.execute(sentence);
+
 
     }
 

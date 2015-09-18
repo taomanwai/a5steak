@@ -206,7 +206,17 @@ public class Converter extends Foundation {
     }
 
     @Override
-    protected String strToUtfRepresentation(String text) {
+    public String strToUtfRepresentation(String text) {
         return super.strToUtfRepresentation(text);
+    }
+
+    @Override
+    public String tcToSc(String text) {
+        return super.tcToSc(text);
+    }
+
+    @Override
+    public String scToTc(String text) {
+        return super.scToTc(text);
     }
 }
