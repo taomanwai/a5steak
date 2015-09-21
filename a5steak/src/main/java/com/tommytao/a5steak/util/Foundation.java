@@ -1410,6 +1410,12 @@ public class Foundation implements SensorEventListener {
     protected HashMap<Character, Character> tcToScHashMap = new HashMap<>();
     protected HashMap<Character, Character> scToTcHashMap = new HashMap<>();
 
+    /**
+     *
+     *
+     * Ref: http://www.pupuliao.info/2012/09/java的utf-8-繁簡互轉的方法/
+     *
+     */
     protected void buildChineseConversionHashMap(){
 
         tcToScHashMap.clear();
