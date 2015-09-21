@@ -12,19 +12,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimeZone;
 
-public class SemanticsManager extends Foundation {
 
-    private static SemanticsManager instance;
+/**
+ * Responsible for CUI (Conversation User Interface)
+ */
+public class CuiManager extends Foundation {
 
-    public static SemanticsManager getInstance() {
+    private static CuiManager instance;
+
+    public static CuiManager getInstance() {
 
         if (instance == null)
-            instance = new SemanticsManager();
+            instance = new CuiManager();
 
         return instance;
     }
 
-    private SemanticsManager() {
+    private CuiManager() {
 
     }
 
@@ -166,10 +170,7 @@ public class SemanticsManager extends Foundation {
     }
 
     /**
-     *
-     *
      * Ref: http://docs.bosonnlp.com/tag_rule.html
-     *
      */
     public class PartOfSpeechWord {
 
@@ -332,7 +333,7 @@ public class SemanticsManager extends Foundation {
 
     public void getKeyword(String sentence, final OnGetKeywordListener listener) {
 
-        if (listener==null)
+        if (listener == null)
             return;
 
         httpPostString(GET_KEYWORD_LINK, getBranketSentenceInUtfRepresentation(sentence), getTokenedHeaders(), new OnHttpPostStringListener() {
@@ -369,7 +370,7 @@ public class SemanticsManager extends Foundation {
 
     public void analyzePartOfSpeech(String sentence, int oovLevel, final OnPartOfSpeechListener listener) {
 
-        if (listener==null)
+        if (listener == null)
             return;
 
         String link = ANALYZE_PART_OF_SPEECH_LINK_PREFIX + "?oov_level=" + oovLevel;
@@ -624,7 +625,7 @@ public class SemanticsManager extends Foundation {
 
     public void analyzeGrammar(String sentence, final OnAnalyzeGrammarListener listener) {
 
-        if (listener==null)
+        if (listener == null)
             return;
 
         httpPostString(ANALYZE_GRAMMAR_LINK, getBranketSentenceInUtfRepresentation(sentence), getTokenedHeaders(), new OnHttpPostStringListener() {
@@ -781,9 +782,9 @@ public class SemanticsManager extends Foundation {
 
     }
 
-    public void getAssociation(String sentence, final OnGetAssociationListener listener){
+    public void getAssociation(String sentence, final OnGetAssociationListener listener) {
 
-        if (listener==null)
+        if (listener == null)
             return;
 
 
@@ -813,7 +814,7 @@ public class SemanticsManager extends Foundation {
 
                                 ArrayList<Association> result = new ArrayList<>();
 
-                                if (params.length!=1)
+                                if (params.length != 1)
                                     return result;
 
                                 boolean hasException = false;
@@ -856,6 +857,28 @@ public class SemanticsManager extends Foundation {
             }
 
         }.execute(sentence);
+
+
+    }
+
+    public ArrayList<String> getHkStopsInDistrict(String text) {
+
+        text = text.replace("湧", "涌").replace("砲", "炮").replace("舂磡角", "舂坎角").replace("洛馬洲", "落馬洲")
+                .replace("樂馬洲", "落馬洲").replace("大塘", "大棠").replace("蠍涌", "蛹涌").replace("濠", "蠔")
+                .replace("杏花村", "杏花邨").replace("馬遊塘", "馬游塘").replace("馬油塘", "馬游塘");
+
+        String[] resultInStrArray = text.split("去");
+
+        if (resultInStrArray == null) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<String> result = new ArrayList<>();
+        for (String resultInStr : resultInStrArray){
+            result.add(resultInStr);
+        }
+
+        return result;
 
 
     }

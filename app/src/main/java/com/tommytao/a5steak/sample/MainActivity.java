@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.tommytao.a5steak.util.SemanticsManager;
+import com.tommytao.a5steak.util.CuiManager;
 
 import java.util.ArrayList;
 
@@ -23,16 +23,12 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
-        SemanticsManager.getInstance().init(this, "Se9DNydp.3665.8FudbgZo3UGG");
+        CuiManager.getInstance().init(this, "Se9DNydp.3665.8FudbgZo3UGG");
 
 
-        SemanticsManager.getInstance().analyzePartOfSpeech("我是粉絲", 3, new SemanticsManager.OnPartOfSpeechListener() {
-            @Override
-            public void onComplete(ArrayList<SemanticsManager.PartOfSpeechWord> partOfSpeechWords) {
-                Log.d("","");
-            }
-        });
+        ArrayList<String> results =  CuiManager.getInstance().getHkStopsInDistrict("大圍去上水");
 
+        Log.d("","");
 
 
     }
