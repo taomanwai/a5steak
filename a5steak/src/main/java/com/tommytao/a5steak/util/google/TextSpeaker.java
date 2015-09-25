@@ -181,6 +181,18 @@ public class TextSpeaker extends Foundation {
 
     }
 
+    public void stop(){
+
+        tts.stop();
+
+        try {
+            cantoneseMediaPlayer.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public void speak(String text, final OnSpeakListener listener) {
 

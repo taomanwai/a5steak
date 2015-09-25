@@ -1,8 +1,10 @@
-package com.tommytao.a5steak.util;
+package com.tommytao.a5steak.util.ai;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+
+import com.tommytao.a5steak.util.Foundation;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,21 +16,21 @@ import java.util.TimeZone;
 
 
 /**
- * Responsible for CUI (Conversation User Interface)
+ * Responsible for BosonNLP
  */
-public class CuiManager extends Foundation {
+public class BosonNlpManager extends Foundation {
 
-    private static CuiManager instance;
+    private static BosonNlpManager instance;
 
-    public static CuiManager getInstance() {
+    public static BosonNlpManager getInstance() {
 
         if (instance == null)
-            instance = new CuiManager();
+            instance = new BosonNlpManager();
 
         return instance;
     }
 
-    private CuiManager() {
+    private BosonNlpManager() {
 
     }
 
@@ -741,18 +743,30 @@ public class CuiManager extends Foundation {
         if (listener == null)
             return;
 
-        httpPostString(GET_TIME_IN_MILLIS_LINK_PREFIX + "?pattern=" +
-                sentence
-                        .replace("晏晝", "下午")
-                        .replace("廿", "二十")
-                        .replace("兩", "二"), "", getTokenedHeaders(), new OnHttpPostStringListener() {
+        // TODO can optimize replace algorithm
+        sentence = sentence
+                .replace("晏晝", "下午")
+                .replace("廿", "二十")
+                .replace("兩", "二")
+                .replace("點搭一", "點05分")
+                .replace("點搭二", "點10分")
+                .replace("點搭三", "點15分")
+                .replace("點搭四", "點20分")
+                .replace("點搭五", "點25分")
+                .replace("點搭六", "點30分")
+                .replace("點搭七", "點35分")
+                .replace("點搭八", "點40分")
+                .replace("點搭九", "點45分")
+                .replace("點搭十", "點50分")
+                .replace("點搭十一", "點55分");
+
+        sentence = tcToSc(sentence);
+
+        httpPostString(GET_TIME_IN_MILLIS_LINK_PREFIX + "?pattern=" + sentence
+                , "", getTokenedHeaders(), new OnHttpPostStringListener() {
             @Override
             public void onComplete(String responseStr) {
 
-//                {
-//                    "timestamp": "2013-02-28 00:00:00",
-//                        "type": "timestamp"
-//                }
 
                 long timeInMillis = -1;
                 boolean hasException = false;

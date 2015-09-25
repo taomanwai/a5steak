@@ -2,11 +2,10 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.tommytao.a5steak.util.CuiManager;
+import com.tommytao.a5steak.util.google.TextSpeaker;
 
-import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -23,23 +22,34 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
-        CuiManager.getInstance().init(this, "Se9DNydp.3665.8FudbgZo3UGG");
+//        BosonNlpManager.getInstance().init(this, "Se9DNydp.3665.8FudbgZo3UGG");
+        TextSpeaker.getInstance().init(this);
+        TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
+            @Override
+            public void onConnected(boolean succeed) {
+                TextSpeaker.getInstance().setLocale(new Locale("zh", "HK"));
+            }
+        });
+
+    }
 
 
-        ArrayList<String> results =  CuiManager.getInstance().getHkStopsInDistrict("大圍去上水");
-
-        Log.d("","");
-
-
+    public int add(int a, int b){
+        return a + b;
     }
 
 
     @OnClick(R.id.btnGo)
     public void go() {
+
+        TextSpeaker.getInstance().speak("歡迎使用導航", null);
+
     }
 
     @OnClick(R.id.btnGet)
     public void get() {
+
+        TextSpeaker.getInstance().stop();
 
 
 
