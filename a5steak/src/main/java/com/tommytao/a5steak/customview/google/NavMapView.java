@@ -480,8 +480,7 @@ public class NavMapView extends MapView {
 
             final DirectionsApiManager.Step stepFinal = step;
 
-            TextSpeaker.getInstance().setLocale(getLocale());
-            TextSpeaker.getInstance().speak(step.getInstructionsInText(), new TextSpeaker.OnSpeakListener() {
+            TextSpeaker.getInstance().speak(step.getInstructionsInText(), getLocale(), new TextSpeaker.OnSpeakListener() {
                 @Override
                 public void onStart() {
 

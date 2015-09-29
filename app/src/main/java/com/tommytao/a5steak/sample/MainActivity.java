@@ -28,7 +28,6 @@ public class MainActivity extends Activity {
         TextSpeaker.getInstance().connect(new TextSpeaker.OnConnectListener() {
             @Override
             public void onConnected(boolean succeed) {
-                TextSpeaker.getInstance().setLocale(new Locale("en", "US"));
             }
         });
 
@@ -43,8 +42,7 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go() {
 
-        TextSpeaker.getInstance().setLocale(new Locale("zh", "TW"));
-        TextSpeaker.getInstance().speak("一號歡迎使用導航", new TextSpeaker.OnSpeakListener() {
+        TextSpeaker.getInstance().speak("一號歡迎使用導航", new Locale("zh", "HK"), new TextSpeaker.OnSpeakListener() {
             @Override
             public void onStart() {
 
@@ -61,8 +59,7 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGet)
     public void get() {
 
-        TextSpeaker.getInstance().setLocale(new Locale("zh", "TW"));
-        TextSpeaker.getInstance().speak("二號歡迎使用導航", new TextSpeaker.OnSpeakListener() {
+        TextSpeaker.getInstance().speak("二號歡迎使用導航", new Locale("zh", "HK"), new TextSpeaker.OnSpeakListener() {
             @Override
             public void onStart() {
 

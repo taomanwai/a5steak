@@ -71,29 +71,23 @@ public class TextSpeaker extends Foundation {
 
     private boolean connected;
 
-    private Locale locale = DEFAULT_LOCALE;
+//    private Locale locale = DEFAULT_LOCALE;
 
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-
-        if (isConnected()) {
-            int setLangResult = tts.setLanguage(this.locale);
-            if (setLangResult == TextToSpeech.LANG_NOT_SUPPORTED) {
-                tts.setLanguage(DEFAULT_LOCALE);
-            }
-        }
-    }
-
-    public Locale getLocale() {
-        return locale;
-    }
+//    public void setLocale(Locale locale) {
+//        if (isConnected()) {
+//            int setLangResult = tts.setLanguage(this.locale);
+//            if (setLangResult == TextToSpeech.LANG_NOT_SUPPORTED) {
+//                tts.setLanguage(DEFAULT_LOCALE);
+//            }
+//        }
+//    }
 
     @Override
     public boolean init(Context context) {
         return super.init(context);
     }
 
-    private boolean shouldUseCantonese() {
+    private boolean isCantonese(Locale locale) {
 
         if (!"zh".equals(locale.getLanguage()))
             return false;
@@ -135,7 +129,6 @@ public class TextSpeaker extends Foundation {
                 if (status != TextToSpeech.ERROR) {
 
                     connected = true;
-                    setLocale(locale);
 
                     clearAndTriggerOnConnectListeners(true);
                 } else {
@@ -458,7 +451,7 @@ public class TextSpeaker extends Foundation {
 
     }
 
-    private void speakInTts(String text, final OnSpeakListener listener) {
+    private void speakInTts(String text, Locale locale, final OnSpeakListener listener) {
 
         if (!isConnected()) {
             handler.post(new Runnable() {
@@ -473,6 +466,13 @@ public class TextSpeaker extends Foundation {
             return;
         }
 
+        if (locale == null)
+            locale = DEFAULT_LOCALE;
+        int setLangResult = tts.setLanguage(locale);
+        if (setLangResult == TextToSpeech.LANG_NOT_SUPPORTED)
+            tts.setLanguage(DEFAULT_LOCALE);
+
+
         HashMap<String, String> hashMap = new HashMap<>();
         String utteranceId = "" + genUniqueId();
         hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utteranceId);
@@ -483,12 +483,12 @@ public class TextSpeaker extends Foundation {
     }
 
 
-    public void speak(String text, final OnSpeakListener listener) {
+    public void speak(String text, Locale locale, final OnSpeakListener listener) {
 
-        if (shouldUseCantonese())
+        if (isCantonese(locale))
             speakInCantonese(text, listener);
         else
-            speakInTts(text, listener);
+            speakInTts(text, locale, listener);
 
     }
 
