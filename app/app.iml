@@ -105,8 +105,8 @@
     <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="library" exported="" name="shimmer-0.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.0.0" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="mockable-android-23" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="mockable-android-23" level="project" />
     <orderEntry type="library" exported="" name="sqliteassethelper-2.0.1" level="project" />
     <orderEntry type="library" exported="" name="materialrangebar-1.0" level="project" />
     <orderEntry type="library" exported="" name="connectionclass-1.0.0" level="project" />
