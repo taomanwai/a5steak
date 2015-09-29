@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Set;
 
 
 /**
@@ -63,9 +64,10 @@ public class TextSpeaker extends Foundation {
 
     private MediaPlayer cantoneseMediaPlayer;
 
-    private OnSpeakListener cantoneseMediaPlayerOnSpeakListener;
-
     private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
+
+    private HashMap<String, OnSpeakListener> ttsOnSpeakListeners = new HashMap<>();
+    private OnSpeakListener cantoneseOnSpeakListener;
 
     private boolean connected;
 
@@ -96,7 +98,6 @@ public class TextSpeaker extends Foundation {
         if (!"zh".equals(locale.getLanguage()))
             return false;
 
-
         if (!"HK".equals(locale.getCountry()) && !"MO".equals(locale.getCountry()))
             return false;
 
@@ -109,12 +110,11 @@ public class TextSpeaker extends Foundation {
         if (isConnecting()) {
 
             onConnectListeners.add(onConnectListener);
-
             return;
+
         }
 
         if (isConnected()) {
-
 
             if (onConnectListener != null)
                 handler.post(new Runnable() {
@@ -123,7 +123,6 @@ public class TextSpeaker extends Foundation {
                         onConnectListener.onConnected(true);
                     }
                 });
-
 
             return;
         }
@@ -147,6 +146,76 @@ public class TextSpeaker extends Foundation {
             }
         });
 
+        // UtteranceProgressListener may be running in bg thread
+        // Ref: http://developer.android.com/intl/es/reference/android/speech/tts/UtteranceProgressListener.html
+        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+
+            @Override
+            public void onStart(String utteranceId) {
+
+                final OnSpeakListener listener = ttsOnSpeakListeners.get(utteranceId);
+//                onSpeakListenersOfTts.remove(utteranceId);
+
+                if (listener != null) {
+
+                    if (isRunningOnUiThread()) {
+                        listener.onStart();
+                    } else
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onStart();
+                            }
+                        });
+
+                }
+            }
+
+            @Override
+            public void onDone(String utteranceId) {
+
+                final OnSpeakListener listener = ttsOnSpeakListeners.get(utteranceId);
+                ttsOnSpeakListeners.remove(utteranceId);
+
+                if (listener != null) {
+                    if (isRunningOnUiThread())
+                        listener.onComplete(true);
+                    else
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onComplete(true);
+                            }
+                        });
+
+                }
+
+
+            }
+
+            @Override
+            public void onError(String utteranceId) {
+
+                final OnSpeakListener listener = ttsOnSpeakListeners.get(utteranceId);
+                ttsOnSpeakListeners.remove(utteranceId);
+
+                if (listener != null) {
+                    if (isRunningOnUiThread())
+                        listener.onStart();
+                    else
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onComplete(false);
+                            }
+                        });
+
+                }
+
+            }
+        });
+
+
     }
 
     public void disconnect() {
@@ -156,12 +225,14 @@ public class TextSpeaker extends Foundation {
 
         tts.shutdown();
         tts = null;
+        clearAndOnUiThreadTriggerTtsOnSpeakCompleteListeners(true);
 
         try {
             cantoneseMediaPlayer.release();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        clearAndOnUiThreadTriggerCantoneseOnSpeakCompleteListener(true);
 
         connected = false;
     }
@@ -187,7 +258,65 @@ public class TextSpeaker extends Foundation {
 
     }
 
-    public void stop(){
+    private void clearAndOnUiThreadTriggerTtsOnSpeakCompleteListeners(final boolean succeed) {
+
+        final HashMap<String, OnSpeakListener> pendingTtsOnSpeakListeners = new HashMap<>(ttsOnSpeakListeners);
+
+        ttsOnSpeakListeners.clear();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                Set<String> keys = pendingTtsOnSpeakListeners.keySet();
+
+                for (String key : keys) {
+                    if (pendingTtsOnSpeakListeners.get(key) != null)
+                        pendingTtsOnSpeakListeners.get(key).onComplete(succeed);
+                }
+
+            }
+        });
+
+    }
+
+    private void clearAndOnUiThreadTriggerCantoneseOnSpeakCompleteListener(final boolean succeed) {
+
+        final OnSpeakListener pendingCantoneseOnSpeakListener = cantoneseOnSpeakListener;
+
+        cantoneseOnSpeakListener = null;
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                if (pendingCantoneseOnSpeakListener != null)
+                    pendingCantoneseOnSpeakListener.onComplete(succeed);
+
+            }
+        });
+
+    }
+
+    private void clearAndTriggerCantoneseOnSpeakCompleteListener(boolean succeed) {
+
+        final OnSpeakListener pendingCantoneseOnSpeakListener = cantoneseOnSpeakListener;
+
+        cantoneseOnSpeakListener = null;
+
+        if (pendingCantoneseOnSpeakListener != null)
+            pendingCantoneseOnSpeakListener.onComplete(succeed);
+
+    }
+
+    private void triggerCantoneseOnSpeakStartListener() {
+
+        if (cantoneseOnSpeakListener != null)
+            cantoneseOnSpeakListener.onStart();
+
+    }
+
+    public void stop() {
 
         tts.stop();
 
@@ -197,10 +326,139 @@ public class TextSpeaker extends Foundation {
             e.printStackTrace();
         }
 
+        clearAndOnUiThreadTriggerCantoneseOnSpeakCompleteListener(true);
+
     }
 
+    private void speakInCantonese(String text, final OnSpeakListener listener) {
 
-    public void speak(String text, final OnSpeakListener listener) {
+        if (!isConnected()) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onComplete(false);
+                }
+            });
+            return;
+        }
+
+        try {
+            cantoneseMediaPlayer.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        clearAndOnUiThreadTriggerCantoneseOnSpeakCompleteListener(true);
+
+//            if (onSpeakListenerOfCantonese != null) {
+//                final OnSpeakListener pendingOnSpeakListenerOfCantonese = onSpeakListenerOfCantonese;
+//                onSpeakListenerOfCantonese = null;
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (pendingOnSpeakListenerOfCantonese != null)
+//                            pendingOnSpeakListenerOfCantonese.onComplete(true);
+//                    }
+//                });
+//            }
+
+        try {
+
+            cantoneseOnSpeakListener = listener;
+
+            String urlEncodedText = text;
+            try {
+                urlEncodedText = URLEncoder.encode(text, "UTF-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            String link = SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText;
+
+            log("text_speaker: speak cantonese: link: " + link);
+
+            Uri uri = Uri.parse(link);
+
+            HashMap<String, String> headers = new HashMap<>();
+            headers.put("User-Agent", "stagefright/1.2 (Linux;Android 5.0)");
+            headers.put("Referer", "http://translate.google.com/");
+
+            cantoneseMediaPlayer = new MediaPlayer();
+            cantoneseMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            cantoneseMediaPlayer.setDataSource(appContext, uri, headers);
+
+            cantoneseMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+
+                    boolean succeed = true;
+                    try {
+                        mediaPlayer.start();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        succeed = false;
+
+//                        cantoneseOnSpeakListener = null;
+//                        if (listener != null) {
+//                            listener.onComplete(false);
+//                        }
+
+                        clearAndTriggerCantoneseOnSpeakCompleteListener(false);
+
+                    }
+
+                    if (succeed) {
+//                        listener.onStart();
+                        triggerCantoneseOnSpeakStartListener();
+
+                    }
+
+                }
+            });
+
+            cantoneseMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    try {
+                        mediaPlayer.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+//                    onSpeakListenerOfCantonese = null;
+//                    if (listener != null) {
+//                        listener.onComplete(true);
+//                    }
+
+                    clearAndTriggerCantoneseOnSpeakCompleteListener(true);
+                }
+            });
+
+
+            cantoneseMediaPlayer.prepareAsync();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+//                    onSpeakListenerOfCantonese = null;
+//                    if (listener != null) {
+//                        listener.onComplete(false);
+//                    }
+
+                    clearAndTriggerCantoneseOnSpeakCompleteListener(false);
+
+                }
+            });
+        }
+
+
+    }
+
+    private void speakInTts(String text, final OnSpeakListener listener) {
 
         if (!isConnected()) {
             handler.post(new Runnable() {
@@ -215,174 +473,22 @@ public class TextSpeaker extends Foundation {
             return;
         }
 
-        String urlEncodedText = text;
-
-        try {
-            urlEncodedText = URLEncoder.encode(text, "UTF-8");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (shouldUseCantonese()) {
-
-            String link = SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText;
-
-            log("text_speaker: speak cantonese: link: " + link);
-
-
-            try {
-
-                Uri uri = Uri.parse(link);
-
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("User-Agent", "stagefright/1.2 (Linux;Android 5.0)");
-                headers.put("Referer", "http://translate.google.com/");
-
-                try {
-                    cantoneseMediaPlayer.release();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if (cantoneseMediaPlayerOnSpeakListener != null) {
-                    final OnSpeakListener pendingCantoneseMediaPlayerOnSpeakListener = cantoneseMediaPlayerOnSpeakListener;
-                    cantoneseMediaPlayerOnSpeakListener = null;
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (pendingCantoneseMediaPlayerOnSpeakListener != null)
-                                pendingCantoneseMediaPlayerOnSpeakListener.onComplete(true);
-                        }
-                    });
-
-                }
-
-                cantoneseMediaPlayer = new MediaPlayer();
-                cantoneseMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                cantoneseMediaPlayer.setDataSource(appContext, uri, headers);
-
-                cantoneseMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mediaPlayer) {
-
-                        boolean succeed = true;
-                        try {
-                            mediaPlayer.start();
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            succeed = false;
-                            cantoneseMediaPlayerOnSpeakListener = null;
-                            if (listener != null) {
-                                listener.onComplete(false);
-                            }
-                        }
-
-                        if (succeed && listener != null) {
-                            listener.onStart();
-                        }
-
-                    }
-                });
-                cantoneseMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        try {
-                            mediaPlayer.release();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        cantoneseMediaPlayerOnSpeakListener = null;
-                        if (listener != null) {
-                            listener.onComplete(true);
-                        }
-                    }
-                });
-
-                cantoneseMediaPlayerOnSpeakListener = listener;
-                cantoneseMediaPlayer.prepareAsync();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        cantoneseMediaPlayerOnSpeakListener = null;
-                        if (listener != null) {
-                            listener.onComplete(false);
-                        }
-
-                    }
-                });
-            }
-
-
-            return;
-        }
-
-        // UtteranceProgressListener may be running in bg thread
-        // Ref: http://developer.android.com/intl/es/reference/android/speech/tts/UtteranceProgressListener.html
-        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-
-            @Override
-            public void onStart(String s) {
-
-
-                if (listener != null) {
-
-                    if (isRunningOnUiThread())
-                        listener.onStart();
-                    else
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                listener.onStart();
-                            }
-                        });
-
-                }
-            }
-
-            @Override
-            public void onDone(String s) {
-                if (listener != null) {
-                    if (isRunningOnUiThread())
-                        listener.onStart();
-                    else
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                listener.onComplete(true);
-                            }
-                        });
-
-                }
-
-
-            }
-
-            @Override
-            public void onError(String s) {
-                if (listener != null) {
-                    if (isRunningOnUiThread())
-                        listener.onStart();
-                    else
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                listener.onComplete(false);
-                            }
-                        });
-
-                }
-
-            }
-        });
-
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "" + genUniqueId());
+        String utteranceId = "" + genUniqueId();
+        hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utteranceId);
+        ttsOnSpeakListeners.put(utteranceId, listener);
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, hashMap);
+
+
+    }
+
+
+    public void speak(String text, final OnSpeakListener listener) {
+
+        if (shouldUseCantonese())
+            speakInCantonese(text, listener);
+        else
+            speakInTts(text, listener);
 
     }
 

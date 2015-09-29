@@ -1594,7 +1594,6 @@ public class NavMapView extends MapView {
 
     public void pauseNavigation() {
 
-
         if (!isResumedNavigation())
             return;
 
