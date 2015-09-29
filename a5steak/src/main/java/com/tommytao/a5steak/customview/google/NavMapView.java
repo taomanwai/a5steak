@@ -1439,6 +1439,8 @@ public class NavMapView extends MapView {
 
         removeRoutePolylineAndCurrentLocationGroundOverlay();
 
+        TextSpeaker.getInstance().stop();
+
         handler.post(new Runnable() {
             @Override
             public void run() {

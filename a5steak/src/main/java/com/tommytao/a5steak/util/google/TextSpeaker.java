@@ -157,6 +157,12 @@ public class TextSpeaker extends Foundation {
         tts.shutdown();
         tts = null;
 
+        try {
+            cantoneseMediaPlayer.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         connected = false;
     }
 
