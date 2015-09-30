@@ -4,6 +4,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <com.tommytao.a5steak.customview.google.BarcodeCamView
+        android:id="@+id/barcodeCamView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        />
 
 
 

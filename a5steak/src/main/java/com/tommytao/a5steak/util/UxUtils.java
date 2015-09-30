@@ -185,113 +185,52 @@ public class UxUtils {
 
     }
 
-    public static void slideDownHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
-
-
-
-        slideView(view, 0, 0, 0, view.getHeight(), 1.0f, 0.0f, durationInMs, interpolator, listener);
-
-
+    public static void slideDownHideView(final View view, int delayInMs, int durationInMs, Interpolator interpolator, final Listener listener) {
+        slideView(view, 0, 0, 0, view.getHeight(), 1.0f, 0.0f, delayInMs, durationInMs, interpolator, listener);
     }
 
-    public static void slideUpShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
-
-
-        slideView(view, 0, 0, view.getHeight(), 0, 1.0f, 1.0f, durationInMs, interpolator,  listener);
-
-
+    public static void slideUpShowView(final View view, int delayInMs, int durationInMs, Interpolator interpolator, final Listener listener) {
+        slideView(view, 0, 0, view.getHeight(), 0, 1.0f, 1.0f, delayInMs, durationInMs, interpolator,  listener);
     }
 
 
     // ===
 
-    public static void slideDownShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
-
-
-        slideView(view, 0, 0, -view.getHeight(), 0, 1.0f, 1.0f, durationInMs, interpolator, listener);
+    public static void slideDownShowView(final View view, int delayInMs, int durationInMs, Interpolator interpolator, final Listener listener) {
+        slideView(view, 0, 0, -view.getHeight(), 0, 1.0f, 1.0f, delayInMs, durationInMs, interpolator, listener);
 
 
     }
 
-    public static void slideUpHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
-
-
-        slideView(view, 0, 0, 0, -view.getHeight(), 1.0f, 0.0f, durationInMs, interpolator, listener);
-
-
+    public static void slideUpHideView(final View view, int delayInMs, int durationInMs, Interpolator interpolator, final Listener listener) {
+        slideView(view, 0, 0, 0, -view.getHeight(), 1.0f, 0.0f, delayInMs, durationInMs, interpolator, listener);
     }
 
 
     // ===
 
 
-    public static void slideLeftShowView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
-
-
-        slideView(view, view.getWidth(), 0, 0, 0, 1.0f, 1.0f, durationInMs, interpolator, listener);
-
-
+    public static void slideLeftShowView(final View view, int delayInMs, int durationInMs, Interpolator interpolator, final Listener listener) {
+        slideView(view, view.getWidth(), 0, 0, 0, 1.0f, 1.0f, delayInMs, durationInMs, interpolator, listener);
     }
 
-    public static void slideRightHideView(final View view, int durationInMs, Interpolator interpolator, final Listener listener) {
-
-
-        slideView(view, 0, view.getWidth(), 0, 0, 1.0f, 0.0f, durationInMs, interpolator, listener);
-
+    public static void slideRightHideView(final View view, int delayInMs, int durationInMs, Interpolator interpolator, final Listener listener) {
+        slideView(view, 0, view.getWidth(), 0, 0, 1.0f, 0.0f, delayInMs, durationInMs, interpolator, listener);
     }
 
 
     // ===
 
 
-//    public void circularReveal(View view, int centerX, int centerY, int fromRadius, int toRadius, int durationInMs, final Listener listener) {
-//
-//        if (null == view)
-//            return;
-//
-//        view.setVisibility(View.VISIBLE);
-//
-//        SupportAnimator animator = io.codetail.animation.ViewAnimationUtils.createCircularReveal(
-//                view, centerX, centerY, fromRadius, toRadius);
-//        animator.setInterpolator(new AccelerateDecelerateInterpolator());
-//        animator.setDuration(durationInMs);
-//        animator.start();
-//
-//        animator.addListener(new SupportAnimator.AnimatorListener() {
-//            @Override
-//            public void onAnimationStart() {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationEnd() {
-//
-//
-//                if (listener != null)
-//                    listener.onComplete();
-//
-//            }
-//
-//            @Override
-//            public void onAnimationCancel() {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat() {
-//
-//            }
-//        });
-//
-//    }
-
-    public static void slideView(final View view, int fromXDelta, int toXDelta, int fromYDelta, int toYDelta, float fromAlpha, final float toAlpha,  final long durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void slideView(final View view, int fromXDelta, int toXDelta, int fromYDelta, int toYDelta, float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
         if (view == null)
             return;
 
         AnimationSet animSet = new AnimationSet(true);
         Animation slideAnim = new TranslateAnimation(fromXDelta, toXDelta, fromYDelta, toYDelta);
+
+        slideAnim.setStartOffset(delayInMs);
         slideAnim.setDuration(durationInMs);
 
         animSet.addAnimation(slideAnim);
@@ -326,6 +265,31 @@ public class UxUtils {
         });
 
         view.startAnimation(animSet);
+
+    }
+
+    public static void slideViewAbsolutely(final View view, int fromX, int fromY, int toX, int toY, float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, Interpolator interpolator, final Listener listener){
+
+        int viewCenterX = view.getLeft() + view.getMeasuredWidth() / 2;
+        int viewCenterY = view.getTop() + view.getMeasuredHeight() / 2;
+
+        int fromXDelta = fromX - viewCenterX;
+        int fromYDelta = fromY - viewCenterY;
+
+        int toXDelta = toX - viewCenterX;
+        int toYDelta = toY - viewCenterY;
+
+
+        slideView(view, fromXDelta, toXDelta, fromYDelta, toYDelta, fromAlpha, toAlpha, delayInMs, durationInMs, interpolator, listener);
+
+    }
+
+    public static void slideViewTo(final View view, int toX, int toY, float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, Interpolator interpolator, final Listener listener){
+
+        int viewCenterX = view.getLeft() + view.getMeasuredWidth() / 2;
+        int viewCenterY = view.getTop() + view.getMeasuredHeight() / 2;
+
+        slideViewAbsolutely(view, viewCenterX, viewCenterY, toX, toY, fromAlpha, toAlpha, delayInMs, durationInMs, interpolator, listener);
 
     }
 
@@ -391,7 +355,6 @@ public class UxUtils {
         });
 
         view.startAnimation(anim);
-
 
     }
 

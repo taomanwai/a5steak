@@ -14,6 +14,10 @@ import java.util.List;
 
 public class CamView extends RelativeLayout {
 
+    public interface OnSnapshotListener {
+        public void onCompleted(byte[] data);
+    }
+
     public static int CAMERA_NONE = -1;
 
     private class FittedSurfaceViewInfo {
@@ -127,13 +131,14 @@ public class CamView extends RelativeLayout {
         }
     }
 
-    public interface OnSnapshotListener {
-        public void onCompleted(byte[] data);
-    }
-
     private Context context;
     private Camera camera;
     private SurfaceView surfaceView;
+
+    private boolean surfaceCreated;
+
+    private int targetCamera = CAMERA_NONE;
+    private int coreCamera = CAMERA_NONE;
 
 
     public CamView(Context context) {
@@ -177,40 +182,7 @@ public class CamView extends RelativeLayout {
 
     }
 
-    public void snapshot(final OnSnapshotListener listener) {
-
-        if (listener == null)
-            return;
-
-        if (camera == null) {
-
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    listener.onCompleted(new byte[0]);
-                }
-            });
-
-            return;
-        }
-
-
-        camera.takePicture(null, null, new Camera.PictureCallback() {
-
-            @Override
-            public void onPictureTaken(byte[] data, Camera camera) {
-                // try catch for safety
-                try {
-                    camera.startPreview();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                listener.onCompleted(data);
-            }
-        });
-
-    }
-
+    // size assign
     @Override
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         fitSurfaceViewToCamView(width, height);
@@ -294,7 +266,6 @@ public class CamView extends RelativeLayout {
 
             }
 
-
         }
 
         return result; // 144, 176 or 480, 640
@@ -353,13 +324,8 @@ public class CamView extends RelativeLayout {
 
     }
 
-    private boolean surfaceCreated;
 
-    private int targetCamera = CAMERA_NONE;
-    private int coreCamera = CAMERA_NONE;
-
-
-    // Start
+    // Start or stop
     private void startCore(int targetCamera) {
 
         if (targetCamera == CAMERA_NONE) {
@@ -445,6 +411,8 @@ public class CamView extends RelativeLayout {
         return coreCamera != CAMERA_NONE;
     }
 
+    // Misc
+
     public static int getNumOfCameras() {
         return Camera.getNumberOfCameras();
     }
@@ -469,6 +437,40 @@ public class CamView extends RelativeLayout {
 
     public static int getBackCameraId() {
         return getCameraIdBasedOnType(Camera.CameraInfo.CAMERA_FACING_BACK);
+    }
+
+    public void snapshot(final OnSnapshotListener listener) {
+
+        if (listener == null)
+            return;
+
+        if (camera == null) {
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onCompleted(new byte[0]);
+                }
+            });
+
+            return;
+        }
+
+
+        camera.takePicture(null, null, new Camera.PictureCallback() {
+
+            @Override
+            public void onPictureTaken(byte[] data, Camera camera) {
+                // try catch for safety
+                try {
+                    camera.startPreview();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                listener.onCompleted(data);
+            }
+        });
+
     }
 
 }
