@@ -57,6 +57,15 @@ public class BarcodeCamView extends RelativeLayout {
     private boolean started;
 
     private int DEFAULT_FACING = CameraSource.CAMERA_FACING_BACK;
+//    .setRequestedPreviewSize(640, 480)
+//    .setFacing(DEFAULT_FACING)
+//    .setRequestedFps(30.0f)
+
+    private int SUGGESTED_PREVIEW_WIDTH = 480;
+    private int SUGGESTED_PREVIEW_HEIGHT = 640;
+
+    private float DEFAULT_PREVIEW_FPS = 30.0f;
+
 
     private ArrayList<Pair<Integer, Barcode>> idBarcodesOnScreen = new ArrayList<>();
 
@@ -208,7 +217,7 @@ public class BarcodeCamView extends RelativeLayout {
                                         private void removeIdBarcodeOnScreen(int id) {
 
                                             for (int i = 0; i < idBarcodesOnScreen.size(); i++) {
-                                                if (id == idBarcodesOnScreen.get(i).first){
+                                                if (id == idBarcodesOnScreen.get(i).first) {
 
                                                     idBarcodesOnScreen.remove(i);
 
@@ -260,7 +269,6 @@ public class BarcodeCamView extends RelativeLayout {
                                             }
 
 
-
                                         }
 
                                         @Override
@@ -290,10 +298,26 @@ public class BarcodeCamView extends RelativeLayout {
                             }
                     ).build());
 
+            int proposedWidth = getMeasuredWidth();
+            int proposedHeight = getMeasuredHeight();
+
+            if (proposedWidth <= 0 || proposedHeight <= 0){
+                proposedWidth = SUGGESTED_PREVIEW_WIDTH;
+                proposedHeight = SUGGESTED_PREVIEW_HEIGHT;
+            }
+
+            if (proposedWidth < proposedHeight){
+                proposedHeight = SUGGESTED_PREVIEW_WIDTH * proposedHeight / proposedWidth;
+                proposedWidth = SUGGESTED_PREVIEW_WIDTH;
+            } else {
+                proposedHeight = SUGGESTED_PREVIEW_HEIGHT * proposedHeight / proposedWidth;
+                proposedWidth = SUGGESTED_PREVIEW_HEIGHT;
+            }
+
             cameraSource = new CameraSource.Builder(context, detector)
-                    .setRequestedPreviewSize(640, 480)
+                    .setRequestedPreviewSize(proposedHeight, proposedWidth)
                     .setFacing(DEFAULT_FACING)
-                    .setRequestedFps(30.0f)
+                    .setRequestedFps(DEFAULT_PREVIEW_FPS)
                     .build();
             cameraSource.start(surfaceView.getHolder());
             surfaceView.setBackgroundColor(Color.TRANSPARENT);
