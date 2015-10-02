@@ -20,7 +20,6 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -57,9 +56,6 @@ public class BarcodeCamView extends RelativeLayout {
     private boolean started;
 
     private int DEFAULT_FACING = CameraSource.CAMERA_FACING_BACK;
-//    .setRequestedPreviewSize(640, 480)
-//    .setFacing(DEFAULT_FACING)
-//    .setRequestedFps(30.0f)
 
     private int SUGGESTED_PREVIEW_WIDTH = 480;
     private int SUGGESTED_PREVIEW_HEIGHT = 640;
@@ -229,7 +225,6 @@ public class BarcodeCamView extends RelativeLayout {
 
                                         @Override
                                         public void onNewItem(int id, Barcode barcode) {
-                                            Log.d("rtemp", "barcode_cam_view: onNewItem id: " + id + " " + barcode.rawValue);
 
                                             this.id = id;
                                             this.barcode = barcode;
@@ -243,7 +238,6 @@ public class BarcodeCamView extends RelativeLayout {
 
                                         @Override
                                         public void onUpdate(Detector.Detections<Barcode> detections, Barcode barcode) {
-                                            Log.d("rtemp", "barcode_cam_view: onUpdate " + barcode.rawValue);
 
                                             this.barcode = barcode;
 
@@ -273,7 +267,6 @@ public class BarcodeCamView extends RelativeLayout {
 
                                         @Override
                                         public void onMissing(Detector.Detections<Barcode> detections) {
-                                            Log.d("rtemp", "barcode_cam_view: onMissing");
 
                                             removeIdBarcodeOnScreen(this.id);
 
@@ -283,7 +276,6 @@ public class BarcodeCamView extends RelativeLayout {
 
                                         @Override
                                         public void onDone() {
-                                            Log.d("rtemp", "barcode_cam_view: onDone");
 
                                             removeIdBarcodeOnScreen(this.id);
 
@@ -355,7 +347,6 @@ public class BarcodeCamView extends RelativeLayout {
         startCore();
 
     }
-
 
     public void stop() {
 
