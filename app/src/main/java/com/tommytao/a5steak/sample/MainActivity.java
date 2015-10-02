@@ -1,84 +1,37 @@
 package com.tommytao.a5steak.sample;
 
-import android.app.Activity;
-import android.graphics.Point;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import com.tommytao.a5steak.util.DeviceInfoManager;
-
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-
-public class MainActivity extends Activity {
-
-
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ButterKnife.bind(this);
-
-//        BosonNlpManager.getInstance().init(this, "Se9DNydp.3665.8FudbgZo3UGG");
-
-
-        
-
     }
 
-
-
-    @OnClick(R.id.btnGo)
-    public void go() {
-
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
-    @OnClick(R.id.btnGet)
-    public void get() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
 
-
-
+        return super.onOptionsItemSelected(item);
     }
-
-    @OnClick(R.id.btnShare)
-    public void share() {
-
-
-    }
-
-    @OnClick(R.id.btnChoose)
-    public void choose() {
-
-
-    }
-
-
-    public Point calculateHidingPlace(View view){
-
-        Point result = new Point();
-        int resultX = -1;
-        int resultY = -1;
-
-        int viewHeight = view.getMeasuredHeight();
-
-        Point screenSize = DeviceInfoManager.getInstance().getScreenSize();
-        int screenWidth = screenSize.x;
-        int screenHeight = screenSize.y;
-
-        resultX = screenWidth / 2 ;
-        resultY = screenHeight + viewHeight;
-
-        result.set(resultX, resultY);
-
-        return result;
-
-    }
-
-
-
 }
