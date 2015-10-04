@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Application;
+import android.content.Context;
 import android.test.ApplicationTestCase;
 
 /**
@@ -9,6 +10,15 @@ import android.test.ApplicationTestCase;
 public class ApplicationTest extends ApplicationTestCase<Application> {
     public ApplicationTest() {
         super(Application.class);
+    }
+
+    public void testIt(){
+
+        Context context = getContext();
+//        String s = context.getString(R.string.app_name);
+
+        assertEquals("test_it", "fdasdfd", getSystemContext().getString(R.string.app_name));
+
     }
 
 }
