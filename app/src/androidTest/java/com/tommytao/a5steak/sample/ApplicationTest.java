@@ -8,14 +8,21 @@ import android.test.ApplicationTestCase;
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
 public class ApplicationTest extends ApplicationTestCase<Application> {
+
     public ApplicationTest() {
         super(Application.class);
+
+
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        createApplication();
     }
 
     public void testIt(){
-
-        Context context = getContext();
-//        String s = context.getString(R.string.app_name);
 
         assertEquals("test_it", "A5Steak", getSystemContext().getString(R.string.app_name));
 
