@@ -35,7 +35,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
         final CountDownLatch signal = new CountDownLatch(1);
 
-        GeocodeManager.getInstance().get(Encyclopedia.HKSIL_LAT, Encyclopedia.HK_SPACE_MUSEUM_LNG, null, new GeocodeManager.OnGetListener() {
+        GeocodeManager.getInstance().get(Encyclopedia.HKSIL_LAT, Encyclopedia.HKSIL_LNG, null, new GeocodeManager.OnGetListener() {
             @Override
             public void returnGeocode(GeocodeManager.Geocode geocode) {
 
@@ -118,9 +118,13 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
     }
 
-//    public void testGeocodeManager_Get_shouldReturnNullWhenOneOfLatIsOutOfEarth() {
-//
-//    }
+    public void testGeocodeManager_Get_shouldReturnNullWhenLatIsOutOfEarth() {
+
+    }
+
+    public void testGeocodeManager_Get_shouldReturnNullWhenLngIsOutOfEarth() {
+
+    }
 
     // == PlacesApiManager ==
 

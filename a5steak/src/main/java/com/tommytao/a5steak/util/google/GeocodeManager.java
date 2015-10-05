@@ -384,7 +384,7 @@ public class GeocodeManager extends GFoundation {
         // Can use handler post runnable coz GeocodeGMapManager is Singleton
         // while
         // listener should have weak ref to its parent (e.g. activity)
-        if (link.isEmpty()) {
+        if (Double.isNaN(latitude) || Double.isNaN(longitude) || link.isEmpty()) {
 
             handler.post(new Runnable() {
 
