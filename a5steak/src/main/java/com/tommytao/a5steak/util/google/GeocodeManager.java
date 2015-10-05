@@ -125,7 +125,7 @@ public class GeocodeManager extends GFoundation {
             this.country = country;
             this.postalCode = postalCode;
             this.formattedAddress = formattedAddress;
-            this.locale = new Locale(locale.getLanguage(), locale.getCountry(), locale.getVariant());
+            this.locale = locale == null ? null : new Locale(locale.getLanguage(), locale.getCountry(), locale.getVariant());
 
         }
 
@@ -236,7 +236,7 @@ public class GeocodeManager extends GFoundation {
         return !TextUtils.isEmpty(clientIdForWork) && !TextUtils.isEmpty(cryptoForWork);
     }
 
-    private String localeToLocaleStr(Locale locale){
+    private String localeToLocaleStr(Locale locale) {
         if (locale == null)
             locale = Locale.US;
 
