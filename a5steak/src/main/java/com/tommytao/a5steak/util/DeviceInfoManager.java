@@ -2,6 +2,7 @@ package com.tommytao.a5steak.util;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Build;
@@ -10,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -137,6 +139,33 @@ public class DeviceInfoManager extends Foundation {
 
     public int getAndroidApiLevel() {
         return Build.VERSION.SDK_INT;
+    }
+
+    public int getStatusBarHeight(Activity activity) {
+        int statusBarHeight = 0;
+
+        if (!isSystemBarVisible(activity)) {
+            int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                statusBarHeight = activity.getResources().getDimensionPixelSize(resourceId);
+            }
+        }
+
+        return statusBarHeight;
+    }
+
+    public boolean isSystemBarVisible(Activity activity) {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        int rawDisplayHeight = 0;
+        try {
+            Method getRawHeight = Display.class.getMethod("getRawHeight");
+            rawDisplayHeight = (Integer) getRawHeight.invoke(display);
+        } catch (Exception ex) {
+        }
+
+        int UIRequestedHeight = display.getHeight();
+
+        return rawDisplayHeight - UIRequestedHeight > 0;
     }
 
 
