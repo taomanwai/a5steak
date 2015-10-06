@@ -227,6 +227,21 @@ public class AppManager extends Foundation {
 
     }
 
+    public boolean isAppInstalled(String pkgName) {
+
+        boolean appFound = false;
+        try {
+            appContext.getPackageManager().getApplicationInfo(pkgName, 0);
+            appFound = true;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return appFound;
+
+    }
+
 
     public int pkgName2Pid(String pkgName) {
         int result = -1;

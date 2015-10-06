@@ -3,6 +3,7 @@ package com.tommytao.a5steak.util.google;
 import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -196,6 +197,9 @@ public class GeocodeManager extends GFoundation {
         }
     }
 
+    public static final String WORLD_BOUNDS = "-90,-180|90,180";
+    public static final String HK_BOUNDS = "22.1533884,113.835078|22.561968,114.4069561";
+
     public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
 
     @Deprecated
@@ -384,7 +388,7 @@ public class GeocodeManager extends GFoundation {
         // Can use handler post runnable coz GeocodeGMapManager is Singleton
         // while
         // listener should have weak ref to its parent (e.g. activity)
-        if (Double.isNaN(latitude) || Double.isNaN(longitude) || link.isEmpty()) {
+        if (!isLatLngValid(latitude, longitude) || link.isEmpty()) {
 
             handler.post(new Runnable() {
 
@@ -416,16 +420,38 @@ public class GeocodeManager extends GFoundation {
      * Search nearby location based on Google Geocode protocol
      *
      * @param keyword  Search query
-     * @param bounds   Boundary of search region (format: e.g.:
-     *                 22.1533884,113.835078|22.561968,114.4069561)
+     * @param leftTopLat Latitude of left top of bounds
+     * @param leftTopLng Longitude of left top of bounds
+     * @param rightBottomLat Latitude of right bottom of bounds
+     * @param rightBottomLng Longitude of right bottom of bounds
      * @param locale   Locale of search query
      * @param listener Listener which will be triggered when search completed,
      *                 listener will also return search result
      */
-    public void searchByBounds(final String keyword, final String bounds, final Locale locale, final OnSearchListener listener) {
+    public void searchByBounds(final String keyword,
+                               final double leftTopLat, final double leftTopLng,
+                               final double rightBottomLat, final double rightBottomLng,
+                               final Locale locale, final OnSearchListener listener) {
 
         if (listener == null)
             return;
+
+        if (!isLatLngValid(leftTopLat, leftTopLng) || !isLatLngValid(rightBottomLat, rightBottomLng)){
+
+            handler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    listener.returnPOIPoints(new ArrayList<POIPoint>(), keyword);
+                }
+
+            });
+
+            return;
+        }
+
+
+        final String bounds = leftTopLat + "," + leftTopLng + "|" + rightBottomLat + "," + rightBottomLng; // 22.1533884,113.835078|22.561968,114.4069561
 
         String link = genSearchByBoundsLink(keyword, bounds, locale);
 
@@ -441,6 +467,16 @@ public class GeocodeManager extends GFoundation {
 
     }
 
+    /**
+     *
+     * Search nearby location based on Google Geocode protocol
+     *
+     * @param keyword Search query
+     * @param country Country code (2 letters) follows ISO 3166-1 standard Ref: https://en.wikipedia.org/wiki/ISO_3166-1
+     * @param locale Locale of search query
+     * @param listener Listener which will be triggered when search completed,
+     *                 listener will also return search result
+     */
     public void searchByCountry(final String keyword, final String country, final Locale locale, final OnSearchListener listener) {
 
         if (listener == null)
@@ -449,11 +485,12 @@ public class GeocodeManager extends GFoundation {
         String link = genSearchByCountryLink(keyword, country, locale);
 
 
+
         httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
             @Override
             public void onComplete(JSONObject response) {
-                response2Search(null, keyword, WORLD_BOUNDS, locale, listener);
+                response2Search(response, keyword, WORLD_BOUNDS, locale, listener);
 
             }
 

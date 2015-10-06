@@ -699,13 +699,13 @@ public class Foundation implements SensorEventListener {
 
                     // Ensure we got the HTTP 200 response code
                     int responseCode = -1;
-                    try{
+                    try {
                         responseCode = connection.getResponseCode();
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    if (responseCode==-1)
+                    if (responseCode == -1)
                         Log.d("rtemp", "failed");
                     else {
                         String msg = connection.getResponseMessage();
@@ -991,6 +991,20 @@ public class Foundation implements SensorEventListener {
 
     // == Location sensor ==
 
+    protected boolean isLatLngValid(double lat, double lng) {
+
+        if (Double.isNaN(lat) || Double.isNaN(lng))
+            return false;
+
+        if (lat < -90 || lat > 90)
+            return false;
+
+        if (lng < -180 || lng > 180)
+            return false;
+
+        return true;
+    }
+
     protected void goToLocationSourceSettings(Activity activity) {
         activity.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
     }
@@ -1230,7 +1244,6 @@ public class Foundation implements SensorEventListener {
 
     public static final String API_DOMAIN_FOR_WORK = "https://maps.google.com";
 
-    public static final String WORLD_BOUNDS = "-90,-180|90,180";
 
     protected String clientIdForWork = "";
     protected String cryptoForWork = "";
@@ -1411,12 +1424,9 @@ public class Foundation implements SensorEventListener {
     protected HashMap<Character, Character> scToTcHashMap = new HashMap<>();
 
     /**
-     *
-     *
      * Ref: http://www.pupuliao.info/2012/09/java的utf-8-繁簡互轉的方法/
-     *
      */
-    protected void buildChineseConversionHashMap(){
+    protected void buildChineseConversionHashMap() {
 
         tcToScHashMap.clear();
         scToTcHashMap.clear();
@@ -1432,9 +1442,9 @@ public class Foundation implements SensorEventListener {
         }
     }
 
-    protected HashMap<Character, Character> getTcToScHashMap(){
+    protected HashMap<Character, Character> getTcToScHashMap() {
 
-        if (tcToScHashMap.isEmpty()){
+        if (tcToScHashMap.isEmpty()) {
 
             buildChineseConversionHashMap();
 
@@ -1443,9 +1453,9 @@ public class Foundation implements SensorEventListener {
         return tcToScHashMap;
     }
 
-    protected HashMap<Character, Character> getScToTcHashMap(){
+    protected HashMap<Character, Character> getScToTcHashMap() {
 
-        if (scToTcHashMap.isEmpty()){
+        if (scToTcHashMap.isEmpty()) {
 
             buildChineseConversionHashMap();
 
@@ -1455,7 +1465,7 @@ public class Foundation implements SensorEventListener {
     }
 
 
-    protected String chineseConversion(String text, HashMap<Character, Character> chineseConversionHashMap){
+    protected String chineseConversion(String text, HashMap<Character, Character> chineseConversionHashMap) {
         final char[] chars = text.toCharArray();
         for (int i = 0, n = chars.length; i < n; i++) {
             final Character found = chineseConversionHashMap.get(chars[i]);
@@ -1466,19 +1476,16 @@ public class Foundation implements SensorEventListener {
     }
 
 
-
-    protected String tcToSc(String text){
+    protected String tcToSc(String text) {
         return chineseConversion(text, getTcToScHashMap());
     }
 
-    protected String scToTc(String text){
+    protected String scToTc(String text) {
         return chineseConversion(text, getScToTcHashMap());
     }
 
 
     /**
-     *
-     *
      * Ref: http://stackoverflow.com/questions/2220366/get-unicode-value-of-a-character
      *
      * @param text
@@ -1488,14 +1495,13 @@ public class Foundation implements SensorEventListener {
 
         // TODO slow, should enhance
         StringBuffer sbResult = new StringBuffer();
-        for (int i=0;i<text.length(); i++){
+        for (int i = 0; i < text.length(); i++) {
             sbResult.append("\\u" + Integer.toHexString(text.codePointAt(i) | 0x10000).substring(1));
         }
 
         return "" + sbResult;
 
     }
-
 
 
     // == Location ==

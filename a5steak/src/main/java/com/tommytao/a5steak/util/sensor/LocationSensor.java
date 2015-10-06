@@ -136,6 +136,11 @@ public class LocationSensor extends Foundation implements LocationListener {
 
     }
 
+    @Override
+    protected boolean isLatLngValid(double lat, double lng) {
+        return super.isLatLngValid(lat, lng);
+    }
+
     public int getUpdateIntervalInMs() {
         return updateIntervalInMs;
     }

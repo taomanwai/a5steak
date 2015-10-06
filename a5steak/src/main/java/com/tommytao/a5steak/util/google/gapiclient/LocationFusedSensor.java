@@ -317,6 +317,11 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
 
     }
 
+    @Override
+    protected boolean isLatLngValid(double lat, double lng) {
+        return super.isLatLngValid(lat, lng);
+    }
+
     public long lat2LatE6(double latitude) {
         return super.lat2LatE6(latitude);
     }

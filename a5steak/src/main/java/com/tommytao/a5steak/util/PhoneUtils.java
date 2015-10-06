@@ -134,5 +134,14 @@ public class PhoneUtils {
         return dialOrCall(ctx, phoneNo, false);
     }
 
+    public static boolean isPhoneNumFormatValidForChina(String phoneNum) {
+
+        if (phoneNum == null)
+            return false;
+
+        return phoneNum.length() == 7 || phoneNum.length() == 8 || phoneNum.length() == 11 ;
+
+
+    }
 
 }

@@ -38,30 +38,9 @@ public class ThinkUtils {
 		return TextUtils.isDigitsOnly(trimmedQQ);
 	}
 	
-	public static boolean isPhoneNoFormatValidForChina(String phoneNo) {
-
-		if (phoneNo == null)
-			return false;
-
-		return phoneNo.length() == 7 || phoneNo.length() == 8 || phoneNo.length() == 11 ;
 
 
-	}
 
-    public static boolean isAppInstalled(Context ctx, String pkgName) {
-
-        boolean appFound = false;
-        try {
-            ctx.getPackageManager().getApplicationInfo(pkgName, 0);
-            appFound = true;
-        }
-        catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return appFound;
-
-    }
 
     public static boolean isInteger(double value ) {
 

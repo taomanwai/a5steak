@@ -5,23 +5,40 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.tommytao.a5steak.util.Encyclopedia;
 import com.tommytao.a5steak.util.google.GeocodeManager;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
+
+    @Bind(R.id.tvMsg)
+    TextView tvMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GeocodeManager.getInstance().get(Encyclopedia.HKSIL_LAT, Encyclopedia.HKSIL_LNG, null, new GeocodeManager.OnGetListener() {
-            @Override
-            public void returnGeocode(GeocodeManager.Geocode geocode) {
-                Log.d("","");
-            }
-        });
+        ButterKnife.bind(this);
+
+
+
+        GeocodeManager.getInstance().searchByBounds("長沙灣政府合署",
+                22.1533884, 113.835078, 22.561968, 114.4069561, new Locale("en", "US"), new GeocodeManager.OnSearchListener() {
+                    @Override
+                    public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
+                        Log.d("","");
+                    }
+                }
+        );
+
 
     }
 
