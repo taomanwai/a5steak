@@ -1,5 +1,6 @@
 package com.tommytao.a5steak.sample;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,8 +8,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalPayment;
 import com.tommytao.a5steak.util.Encyclopedia;
 import com.tommytao.a5steak.util.google.GeocodeManager;
+import com.tommytao.a5steak.util.google.PlacesApiManager;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -21,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.tvMsg)
     TextView tvMsg;
 
+    private PayPalConfiguration config;
+    private PayPalPayment item;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,16 +35,15 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        // setup config
+        config = new PayPalConfiguration()
+                .environment(PayPalConfiguration.ENVIRONMENT_NO_NETWORK)
+                .clientId("")
+                .merchantName("merchant name")
+                .merchantPrivacyPolicyUri(Uri.parse("http://google.com"))
+                .merchantUserAgreementUri(Uri.parse("http://yahoo.com"));
 
 
-        GeocodeManager.getInstance().searchByBounds("長沙灣政府合署",
-                22.1533884, 113.835078, 22.561968, 114.4069561, new Locale("en", "US"), new GeocodeManager.OnSearchListener() {
-                    @Override
-                    public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
-                        Log.d("","");
-                    }
-                }
-        );
 
 
     }

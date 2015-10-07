@@ -2,6 +2,7 @@ package com.tommytao.a5steak.util.google;
 
 import android.content.Context;
 import android.location.Location;
+import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -235,7 +236,9 @@ public class PlacesApiManager extends GFoundation {
 
 	}
 
-	private String genLocaleStr(Locale locale) {
+	private String localeToLocaleStr(Locale locale) {
+		if (locale == null)
+			locale = Locale.US;
 
 		return locale.getLanguage() + "-" + locale.getCountry();
 	}
@@ -246,7 +249,7 @@ public class PlacesApiManager extends GFoundation {
 		// Ref:
 		// https://developers.google.com/places/documentation/details#PlaceDetailsRequests
 
-		String localeStr = genLocaleStr(locale);
+		String localeStr = localeToLocaleStr(locale);
 
 		String result = String.format("https://maps.googleapis.com/maps/api/place/details/json?placeid=%s&language=%s&key=%s", placeId, localeStr, getKey());
 
@@ -256,7 +259,7 @@ public class PlacesApiManager extends GFoundation {
 
 	private String genQueryLink(double latitude, double longitude, int radiusInMeter, String keyword, Locale locale, boolean isRankByDistance) {
 
-		String localeStr = genLocaleStr(locale);
+		String localeStr = localeToLocaleStr(locale);
 
 		String keywordURLEncoded = "";
 		try {
@@ -281,7 +284,7 @@ public class PlacesApiManager extends GFoundation {
 
     private String genAutoCompleteLink(String input, Locale locale ) {
 
-        String localeStr = genLocaleStr(locale);
+        String localeStr = localeToLocaleStr(locale);
 
         String inputURLEncoded = "";
         try {
@@ -308,7 +311,7 @@ public class PlacesApiManager extends GFoundation {
 
 		String link = genQueryLink(latitude, longitude, GET_PLACE_FROM_LAT_LNG_IN_METER, "", locale, false);
 
-		if (link.isEmpty()) {
+		if (!isLatLngValid(latitude, longitude) || link.isEmpty()) {
 			handler.post(new Runnable() {
 
 				@Override
@@ -403,23 +406,9 @@ public class PlacesApiManager extends GFoundation {
 		if (listener == null)
 			return;
 
-		if (keyword.isEmpty()) {
-			handler.post(new Runnable() {
-
-				@Override
-				public void run() {
-					listener.returnPlaces(new ArrayList<Place>(), keyword, "");
-
-				}
-
-			});
-
-			return;
-		}
-
 		String link = genQueryLink(latitude, longitude, radiusInMeter, keyword, locale, rankByDistance);
 
-		if (link.isEmpty()) {
+		if (!isLatLngValid(latitude, longitude) || TextUtils.isEmpty(keyword) || link.isEmpty()) {
 			handler.post(new Runnable() {
 
 				@Override
@@ -428,7 +417,6 @@ public class PlacesApiManager extends GFoundation {
 				}
 
 			});
-
 			return;
 		}
 
@@ -733,9 +721,6 @@ public class PlacesApiManager extends GFoundation {
             e.printStackTrace();
             hasException = true;
         }
-
-//        boolean isResultValid = !placeId.isEmpty() && !description.isEmpty() && location!=null;
-//        listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, description, location.getLatitude(), location.getLongitude()));
 
 		listener.returnAutoCompletes(hasException ? new ArrayList<AutoComplete>() : results, input, response);
 

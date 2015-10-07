@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.tommytao.a5steak.util.google.GeocodeManager;
+import com.tommytao.a5steak.util.google.PlacesApiManager;
 
 /**
  * Created by taomanwai on 5/10/2015.
@@ -29,6 +30,8 @@ public class MainApp extends Application{
         context = this;
 
         GeocodeManager.getInstance().init(this, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
+
+        PlacesApiManager.getInstance().init(this, GOOGLE_PLACES_API_KEY);
 
 
 
