@@ -79,7 +79,6 @@ public class CardIoSensor extends Foundation {
             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, requireCvv);
             scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, requirePostalCode);
 
-            // MY_SCAN_REQUEST_CODE is arbitrary and is only used within this activity.
             startActivityForResult(scanIntent, REQ_CARD_IO);
 
 

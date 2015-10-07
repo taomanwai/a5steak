@@ -2,32 +2,21 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
-import com.paypal.android.sdk.payments.PaymentActivity;
-import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.tommytao.a5steak.util.sensor.CardIoSensor;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Locale;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.card.payment.CreditCard;
 
 public class MainActivity extends Activity {
-
 
     private PayPalConfiguration config;
     private PayPalPayment item;
@@ -35,21 +24,21 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        switch (requestCode){
-
-            case 1234:
-                if (resultCode== Activity.RESULT_OK){
-
-                    PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
-
-                    if (confirm!=null)
-                        Toast.makeText(MainActivity.this, "paid", Toast.LENGTH_LONG).show();
-
-                }
-
-            default:
-                // do nothing
-        }
+//        switch (requestCode){
+//
+//            case 1234:
+//                if (resultCode== Activity.RESULT_OK){
+//
+//                    PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+//
+//                    if (confirm!=null)
+//                        Toast.makeText(MainActivity.this, "paid", Toast.LENGTH_LONG).show();
+//
+//                }
+//
+//            default:
+//                // do nothing
+//        }
 
         super.onActivityResult(requestCode, resultCode, data);
 
