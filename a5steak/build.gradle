@@ -36,9 +36,7 @@ dependencies {
     compile 'com.facebook.device.yearclass:yearclass:1.0.0'
     compile 'com.facebook.network.connectionclass:connectionclass:1.0.0'
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
-    compile 'io.card:android-sdk:5.0.1'
+//    compile 'io.card:android-sdk:5.0.1'
 
-    // compile 'com.nineoldandroids:library:2.4.0'
-    // compile 'com.github.ozodrukh:CircularReveal:1.0.4@aar'
 
 }

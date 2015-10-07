@@ -1,32 +1,61 @@
 package com.tommytao.a5steak.sample;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
-import com.tommytao.a5steak.util.Encyclopedia;
-import com.tommytao.a5steak.util.google.GeocodeManager;
-import com.tommytao.a5steak.util.google.PlacesApiManager;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
+import com.tommytao.a5steak.util.sensor.CardIoSensor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import io.card.payment.CreditCard;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
-    @Bind(R.id.tvMsg)
-    TextView tvMsg;
 
     private PayPalConfiguration config;
     private PayPalPayment item;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode){
+
+            case 1234:
+                if (resultCode== Activity.RESULT_OK){
+
+                    PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+
+                    if (confirm!=null)
+                        Toast.makeText(MainActivity.this, "paid", Toast.LENGTH_LONG).show();
+
+                }
+
+            default:
+                // do nothing
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,23 +67,34 @@ public class MainActivity extends AppCompatActivity {
         // setup config
         config = new PayPalConfiguration()
                 .environment(PayPalConfiguration.ENVIRONMENT_NO_NETWORK)
-                .clientId("")
-                .merchantName("merchant name")
-                .merchantPrivacyPolicyUri(Uri.parse("http://google.com"))
-                .merchantUserAgreementUri(Uri.parse("http://yahoo.com"));
+                .clientId("");
 
+        item = new PayPalPayment(new BigDecimal("1.5"), "HKD", "testingItem", PayPalPayment.PAYMENT_INTENT_SALE);
 
+        Intent intent = new Intent(this, PayPalService.class);
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+        startService(intent);
 
 
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return false;
+    @OnClick(R.id.btnGo)
+    public void go(){
+//        Intent intent = new Intent(this, PaymentActivity.class);
+//        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+//        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, item);
+//        startActivityForResult(intent, 1234);
+
+        CardIoSensor.getInstance().scan(this, true, true, true, new CardIoSensor.OnScanListener() {
+            @Override
+            public void onComplete(CreditCard creditCard) {
+                Log.d("", "");
+            }
+        });
+
     }
+
 
 
 }
