@@ -38,13 +38,19 @@ import java.util.ArrayList;
 
 public class BarcodeCamView extends RelativeLayout {
 
-    public static interface Listener {
+    public static interface OnBarcodeChangedListener {
 
         public void onCreate(int id, Barcode barcode);
 
         public void onUpdate(int id, Barcode barcode);
 
         public void onDelete(int id, Barcode barcode);
+
+    }
+
+    public static interface OnVideoSizeChangeRequestedListener {
+
+        public void onVideoSizeChangeRequested(int width, int height);
 
     }
 
@@ -65,7 +71,9 @@ public class BarcodeCamView extends RelativeLayout {
 
     private ArrayList<Pair<Integer, Barcode>> idBarcodesOnScreen = new ArrayList<>();
 
-    private Listener listener;
+    private OnBarcodeChangedListener onBarcodeChangedListener;
+
+    private OnVideoSizeChangeRequestedListener onVideoSizeChangeRequestedListener;
 
     public BarcodeCamView(Context context) {
         super(context);
@@ -109,8 +117,12 @@ public class BarcodeCamView extends RelativeLayout {
         addView(surfaceView);
     }
 
-    public void setListener(Listener listener) {
-        this.listener = listener;
+    public void setOnBarcodeChangedListener(OnBarcodeChangedListener listener) {
+        this.onBarcodeChangedListener = listener;
+    }
+
+    public void setOnVideoSizeChangeRequestedListener(OnVideoSizeChangeRequestedListener listener) {
+        this.onVideoSizeChangeRequestedListener = listener;
     }
 
     public ArrayList<Pair<Integer, Barcode>> getIdBarcodesOnScreen() {
@@ -120,10 +132,10 @@ public class BarcodeCamView extends RelativeLayout {
     // size assign
     @Override
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
-        fitSurfaceViewToFaceCamView(width, height);
+        fitSurfaceViewToBarcodeCamView(width, height);
     }
 
-    private void fitSurfaceViewToFaceCamView(int viewWidth, int viewHeight) {
+    private void fitSurfaceViewToBarcodeCamView(final int viewWidth, final int viewHeight) {
         // get resolution size
         if (cameraSource == null) {
             return;
@@ -171,10 +183,22 @@ public class BarcodeCamView extends RelativeLayout {
 
         assignViewMarginUnderRelativeLayout(surfaceView, leftMargin, topMargin, rightMargin, bottomMargin);
 
+        final int leftMarginFinal = leftMargin;
+        final int rightMarginFinal = rightMargin;
+        final int topMarginFinal = rightMargin;
+        final int bottomMarginFinal = bottomMargin;
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 requestLayout();
+
+                int width = viewWidth - leftMarginFinal - rightMarginFinal;
+                int height = viewHeight - topMarginFinal - bottomMarginFinal;
+
+                if (onVideoSizeChangeRequestedListener != null)
+                    onVideoSizeChangeRequestedListener.onVideoSizeChangeRequested(width, height);
+
             }
         });
     }
@@ -231,8 +255,8 @@ public class BarcodeCamView extends RelativeLayout {
 
                                             idBarcodesOnScreen.add(new Pair<>(this.id, this.barcode));
 
-                                            if (listener != null)
-                                                listener.onCreate(this.id, this.barcode);
+                                            if (onBarcodeChangedListener != null)
+                                                onBarcodeChangedListener.onCreate(this.id, this.barcode);
 
                                         }
 
@@ -254,12 +278,12 @@ public class BarcodeCamView extends RelativeLayout {
                                             Pair<Integer, Barcode> updatedIdBarcode = new Pair<>(this.id, this.barcode);
                                             if (indexOfSameId == -1) {
                                                 idBarcodesOnScreen.add(updatedIdBarcode);
-                                                if (listener != null)
-                                                    listener.onCreate(this.id, this.barcode);
+                                                if (onBarcodeChangedListener != null)
+                                                    onBarcodeChangedListener.onCreate(this.id, this.barcode);
                                             } else {
                                                 idBarcodesOnScreen.set(indexOfSameId, updatedIdBarcode);
-                                                if (listener != null)
-                                                    listener.onUpdate(this.id, this.barcode);
+                                                if (onBarcodeChangedListener != null)
+                                                    onBarcodeChangedListener.onUpdate(this.id, this.barcode);
                                             }
 
 
@@ -270,8 +294,8 @@ public class BarcodeCamView extends RelativeLayout {
 
                                             removeIdBarcodeOnScreen(this.id);
 
-                                            if (listener != null)
-                                                listener.onDelete(this.id, this.barcode);
+                                            if (onBarcodeChangedListener != null)
+                                                onBarcodeChangedListener.onDelete(this.id, this.barcode);
                                         }
 
                                         @Override
@@ -279,8 +303,8 @@ public class BarcodeCamView extends RelativeLayout {
 
                                             removeIdBarcodeOnScreen(this.id);
 
-                                            if (listener != null)
-                                                listener.onDelete(this.id, this.barcode);
+                                            if (onBarcodeChangedListener != null)
+                                                onBarcodeChangedListener.onDelete(this.id, this.barcode);
 
                                         }
 
@@ -293,12 +317,12 @@ public class BarcodeCamView extends RelativeLayout {
             int proposedWidth = getMeasuredWidth();
             int proposedHeight = getMeasuredHeight();
 
-            if (proposedWidth <= 0 || proposedHeight <= 0){
+            if (proposedWidth <= 0 || proposedHeight <= 0) {
                 proposedWidth = SUGGESTED_PREVIEW_WIDTH;
                 proposedHeight = SUGGESTED_PREVIEW_HEIGHT;
             }
 
-            if (proposedWidth < proposedHeight){
+            if (proposedWidth < proposedHeight) {
                 proposedHeight = SUGGESTED_PREVIEW_WIDTH * proposedHeight / proposedWidth;
                 proposedWidth = SUGGESTED_PREVIEW_WIDTH;
             } else {
@@ -315,7 +339,7 @@ public class BarcodeCamView extends RelativeLayout {
             surfaceView.setBackgroundColor(Color.TRANSPARENT);
             started = true;
 
-            fitSurfaceViewToFaceCamView(getWidth(), getHeight());
+            fitSurfaceViewToBarcodeCamView(getWidth(), getHeight());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -370,6 +394,26 @@ public class BarcodeCamView extends RelativeLayout {
 
     public boolean isStarted() {
         return started;
+    }
+
+
+    /**
+     * Return margin of video inside BarcodeCamView, margin region is represented as black region.
+     *
+     * @return Array of margins (i.e. margin[0] is margin left, margin[1] is margin top, margin[2] is margin right, margin[3] is margin bottom)
+     */
+    public int[] getVideoMargin() {
+
+        int[] result = new int[4];
+
+        LayoutParams lp = ((LayoutParams) surfaceView.getLayoutParams());
+
+        result[0] = lp.leftMargin;
+        result[1] = lp.topMargin;
+        result[2] = lp.rightMargin;
+        result[3] = lp.bottomMargin;
+
+        return result;
     }
 
 
