@@ -78,7 +78,7 @@ public class MainActivity extends Activity {
 //        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, item);
 //        startActivityForResult(intent, 1234);
 
-        CardIoSensor.getInstance().scan(this, true, true, true, new CardIoSensor.OnScanListener() {
+        CardIoSensor.getInstance().scan(this, true, true, false, new CardIoSensor.OnScanListener() {
             @Override
             public void onComplete(CreditCard creditCard) {
                 Log.d("", "");

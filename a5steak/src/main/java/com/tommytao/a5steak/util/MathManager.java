@@ -26,6 +26,11 @@ public class MathManager extends Foundation {
         return super.init(context);
     }
 
+    @Deprecated
+    public boolean isInitialized() {
+        return super.isInitialized();
+    }
+
     @Override
     public double calculateAngleDerivation(double from, double to){
         return super.calculateAngleDerivation(from, to);

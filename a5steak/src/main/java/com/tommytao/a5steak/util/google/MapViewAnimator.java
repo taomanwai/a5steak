@@ -127,6 +127,11 @@ public class MapViewAnimator extends GFoundation {
         return super.init(context);
     }
 
+    @Deprecated
+    public boolean isInitialized() {
+        return super.isInitialized();
+    }
+
 
     public void slideAndRotateMarker(final Marker marker, double latitude, double longitude, final float rotation, int durationInMs, final BaseLocationInterpolator baseLocationInterpolator, final Listener listener) {
 

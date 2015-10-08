@@ -3,7 +3,6 @@ package com.tommytao.a5steak.util.google;
 import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -205,6 +204,11 @@ public class GeocodeManager extends GFoundation {
     @Deprecated
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean isInitialized() {
+        return super.isInitialized();
     }
 
     public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {

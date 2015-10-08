@@ -370,6 +370,11 @@ public class NavMapView extends MapView {
             return super.init(context);
         }
 
+        @Deprecated
+        public boolean isInitialized() {
+            return super.isInitialized();
+        }
+
         public boolean isPrepareToBeReplaced() {
             return prepareToBeReplaced;
         }

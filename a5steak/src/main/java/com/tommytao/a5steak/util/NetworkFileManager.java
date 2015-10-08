@@ -36,7 +36,11 @@ public class NetworkFileManager extends Foundation {
     @Deprecated
     public boolean init(Context context) {
         return super.init(context);
+    }
 
+    @Deprecated
+    public boolean isInitialized() {
+        return super.isInitialized();
     }
 
     public static interface DownloadFileListener {

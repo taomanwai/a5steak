@@ -31,6 +31,11 @@ public class DataProcessor extends Foundation {
         return super.init(context);
     }
 
+    @Deprecated
+    public boolean isInitialized() {
+        return super.isInitialized();
+    }
+
     /**
      *
      * Low pass filter

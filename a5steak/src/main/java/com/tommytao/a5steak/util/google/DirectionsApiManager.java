@@ -70,6 +70,11 @@ public class DirectionsApiManager extends GFoundation {
             return super.init(context);
         }
 
+        @Deprecated
+        public boolean isInitialized() {
+            return super.isInitialized();
+        }
+
         public Polyline(String encodedPolyline) {
             this.encodedPolyline = encodedPolyline;
             this.locations = encodedPolylineToLocations(this.encodedPolyline);
@@ -295,6 +300,11 @@ public class DirectionsApiManager extends GFoundation {
         @Deprecated
         public boolean init(Context context) {
             return super.init(context);
+        }
+
+        @Deprecated
+        public boolean isInitialized() {
+            return super.isInitialized();
         }
 
         public int getDistanceInMeter() {

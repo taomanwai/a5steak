@@ -127,6 +127,11 @@ public class CardIoSensor extends Foundation {
         return super.init(context);
     }
 
+    @Deprecated
+    public boolean isInitialized() {
+        return super.isInitialized();
+    }
+
     public void scan(Activity activity, boolean requireExpiry, boolean requireCvv, boolean requirePostalCode, OnScanListener listener) {
 
         int id = genUniqueId();
