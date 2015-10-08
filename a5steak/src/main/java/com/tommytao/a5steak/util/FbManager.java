@@ -387,7 +387,6 @@ public class FbManager extends Foundation implements ConnectionClassManager.Conn
             shareDialog = new ShareDialog(this);
 
             Intent intent = getIntent();
-
             int idOfShareListener = intent.getIntExtra("idOfShareListener", -1);
             int idOfShareBitmap = intent.getIntExtra("idOfShareBitmap", -1);
             String shareContentType = intent.getStringExtra("shareContentType");

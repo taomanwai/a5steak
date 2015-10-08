@@ -51,6 +51,10 @@
         <activity android:name="com.paypal.android.sdk.payments.PayPalProfileSharingActivity" />
         <activity android:name="com.paypal.android.sdk.payments.ProfileSharingConsentActivity" />
 
+        <activity
+            android:name=".util.PayPalManager$PayPalPayActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <!-- Activities responsible for Card IO -->
         <activity
             android:name="io.card.payment.CardIOActivity"
