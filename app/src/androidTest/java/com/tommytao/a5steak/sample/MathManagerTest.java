@@ -68,7 +68,7 @@ public class MathManagerTest extends ApplicationTestCase<Application> {
     public void testNormalizeToOneLoopBearing_shouldReturnKeepUnchangeWhenAngleLesserThan360() throws Exception {
 
         double result = MathManager.getInstance().normalizeToOneLoopBearing(70);
-        assertTrue(result == 70);;
+        assertTrue(result == 70);
 
     }
 
