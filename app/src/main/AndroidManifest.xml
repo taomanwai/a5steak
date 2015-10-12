@@ -18,9 +18,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         >
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
+            <uses-library android:name="android.test.runner" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

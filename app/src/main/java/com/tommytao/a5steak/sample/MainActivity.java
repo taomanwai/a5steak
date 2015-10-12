@@ -3,6 +3,7 @@ package com.tommytao.a5steak.sample;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.animation.LinearInterpolator;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +22,9 @@ public class MainActivity extends Activity {
     @Bind(R.id.ivSample)
     ImageView ivSample;
 
+    @Bind(R.id.ediInput)
+    EditText ediInput;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +35,8 @@ public class MainActivity extends Activity {
 //        BosonNlpManager.getInstance().init(this, "Se9DNydp.3665.8FudbgZo3UGG");
 
         DeviceInfoManager.getInstance().init(this);
+
+
 
 
 
@@ -70,7 +76,9 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go(){
 
-        tvMsg.setText("go");
+        String s = "" + ediInput.getText();
+
+        tvMsg.setText(s);
 
     }
 

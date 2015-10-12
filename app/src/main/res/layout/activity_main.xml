@@ -24,9 +24,14 @@
         android:src="@drawable/ic_marker_current_location"
         android:layout_marginTop="0dp"/>
 
-
-
-
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ediInput"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/btnGo"
+        android:layout_toEndOf="@+id/btnGo"
+        android:text="Ready" />
 
 
 </RelativeLayout>
