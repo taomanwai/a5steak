@@ -268,28 +268,43 @@ public class UxUtils {
 
     }
 
-    public static void slideViewAbsolutely(final View view, int fromX, int fromY, int toX, int toY, float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, Interpolator interpolator, final Listener listener){
+    public static void slideViewAbsolutely(final View view, final int fromX, final int fromY, final int toX, final int toY, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, final Interpolator interpolator, final Listener listener){
 
-        int viewCenterX = view.getLeft() + view.getMeasuredWidth() / 2;
-        int viewCenterY = view.getTop() + view.getMeasuredHeight() / 2;
+        view.post(new Runnable() {
+            @Override
+            public void run() {
 
-        int fromXDelta = fromX - viewCenterX;
-        int fromYDelta = fromY - viewCenterY;
+                int viewCenterX = view.getLeft() + view.getMeasuredWidth() / 2;
+                int viewCenterY = view.getTop() + view.getMeasuredHeight() / 2;
 
-        int toXDelta = toX - viewCenterX;
-        int toYDelta = toY - viewCenterY;
+                int fromXDelta = fromX - viewCenterX;
+                int fromYDelta = fromY - viewCenterY;
+
+                int toXDelta = toX - viewCenterX;
+                int toYDelta = toY - viewCenterY;
+
+                slideView(view, fromXDelta, toXDelta, fromYDelta, toYDelta, fromAlpha, toAlpha, delayInMs, durationInMs, interpolator, listener);
+
+            }
+        });
 
 
-        slideView(view, fromXDelta, toXDelta, fromYDelta, toYDelta, fromAlpha, toAlpha, delayInMs, durationInMs, interpolator, listener);
 
     }
 
-    public static void slideViewTo(final View view, int toX, int toY, float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, Interpolator interpolator, final Listener listener){
+    public static void slideViewTo(final View view, final int toX, final int toY, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, final Interpolator interpolator, final Listener listener){
 
-        int viewCenterX = view.getLeft() + view.getMeasuredWidth() / 2;
-        int viewCenterY = view.getTop() + view.getMeasuredHeight() / 2;
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                int viewCenterX = view.getLeft() + view.getMeasuredWidth() / 2;
+                int viewCenterY = view.getTop() + view.getMeasuredHeight() / 2;
 
-        slideViewAbsolutely(view, viewCenterX, viewCenterY, toX, toY, fromAlpha, toAlpha, delayInMs, durationInMs, interpolator, listener);
+                slideViewAbsolutely(view, viewCenterX, viewCenterY, toX, toY, fromAlpha, toAlpha, delayInMs, durationInMs, interpolator, listener);
+
+            }
+        });
+
 
     }
 
