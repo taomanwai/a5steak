@@ -268,7 +268,6 @@ public class UxUtils {
 
     }
 
-
     public static void slideViewAbsolutely(final View view, final int fromX, final int fromY, final int toX, final int toY, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, final Interpolator interpolator, final Listener listener){
 
         view.post(new Runnable() {
@@ -289,8 +288,6 @@ public class UxUtils {
             }
         });
 
-
-
     }
 
     public static void slideViewTo(final View view, final int toX, final int toY, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, final Interpolator interpolator, final Listener listener){
@@ -305,7 +302,6 @@ public class UxUtils {
 
             }
         });
-
 
     }
 
