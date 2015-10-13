@@ -1,7 +1,9 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,29 +39,22 @@ public class MainActivity extends Activity {
         DeviceInfoManager.getInstance().init(this);
 
 
+    }
 
+    public void pop() {
 
+        final int fromY = DeviceInfoManager.getInstance().getScreenSize().y * 13 / 10;
 
+        ivSample.setVisibility(View.VISIBLE);
+        UxUtils.slideViewAbsolutely(ivSample, 0, fromY, 0, 0, 1.0f, 1.0f, 0, 5000, new LinearInterpolator(), new UxUtils.Listener() {
+            @Override
+            public void onComplete() {
 
+            }
+        });
 
     }
 
-    public void pop(){
-
-        final int fromY = DeviceInfoManager.getInstance().getScreenSize().y  * 13 /10;
-
-        UxUtils.slideViewAbsolutely(ivSample, 0, fromY, 0, 0, 1.0f, 1.0f, 0, 5000, new LinearInterpolator(), null);
-
-//        ivSample.post(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//            }
-//        });
-
-
-
-    }
 
     @Override
     protected void onResume() {
@@ -74,14 +69,26 @@ public class MainActivity extends Activity {
     }
 
     @OnClick(R.id.btnGo)
-    public void go(){
-
-        String s = "" + ediInput.getText();
-
-        tvMsg.setText(s);
+    public void go() {
 
     }
 
+    @OnClick(R.id.btnGet)
+    public void get() {
+
+        final int fromY = DeviceInfoManager.getInstance().getScreenSize().y * 13 / 10;
+
+        UxUtils.slideViewAbsolutely(ivSample, 0, 0, 0, fromY, 1.0f, 1.0f, 0, 5000, new LinearInterpolator(), new UxUtils.Listener() {
+            @Override
+            public void onComplete() {
+                ivSample.setVisibility(View.INVISIBLE);
+                startActivity(new Intent(MainActivity.this, SecondActivity.class));
+            }
+        });
+
+
+
+    }
 
 
 }
