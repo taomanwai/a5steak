@@ -256,6 +256,7 @@ public class UxUtils {
         });
     }
 
+
     public static void slideLeftHideView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
             @Override
