@@ -185,7 +185,7 @@ public class UxUtils {
 
     }
 
-    // ==
+    // == at bottom ==
     public static void slideDownHideView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
             @Override
@@ -204,7 +204,7 @@ public class UxUtils {
         });
     }
 
-    // ==
+    // == at top ==
     public static void slideDownShowView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
             @Override
@@ -221,10 +221,9 @@ public class UxUtils {
                 slideView(view, 0, 0, 0, -view.getMeasuredHeight(), 1.0f, 0.0f, delayInMs, durationInMs, interpolator, listener);
             }
         });
-
     }
 
-    // ==
+    // == at right ==
     public static void slideLeftShowView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
             @Override
@@ -232,7 +231,6 @@ public class UxUtils {
                 slideView(view, view.getMeasuredWidth(), 0, 0, 0, 1.0f, 1.0f, delayInMs, durationInMs, interpolator, listener);
             }
         });
-
     }
 
     public static void slideRightHideView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
@@ -244,9 +242,7 @@ public class UxUtils {
         });
     }
 
-
-    // ==
-
+    // == at left ==
     public static void slideRightShowView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
             @Override
@@ -255,7 +251,6 @@ public class UxUtils {
             }
         });
     }
-
 
     public static void slideLeftHideView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
@@ -267,7 +262,6 @@ public class UxUtils {
     }
 
     // ==
-
 
     public static void slideView(final View view, int fromXDelta, int toXDelta, int fromYDelta, int toYDelta, float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
