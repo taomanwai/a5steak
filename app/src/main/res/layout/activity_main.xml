@@ -24,14 +24,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnGo"
-        android:text="Ready"/>
+        android:text="abc"/>
 
     <ImageView
         android:id="@+id/ivSample"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_marker_current_location"
-        android:layout_marginTop="0dp"/>
+        android:layout_marginTop="0dp"
+        android:visibility="invisible"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -40,7 +41,8 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/btnGo"
         android:layout_toEndOf="@+id/btnGo"
-        android:text="Ready" />
+
+        android:text="" />
 
 
 </RelativeLayout>

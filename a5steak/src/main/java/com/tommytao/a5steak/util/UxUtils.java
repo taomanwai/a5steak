@@ -309,7 +309,7 @@ public class UxUtils {
 
     }
 
-    public static void slideViewAbsolutely(final View view, final int fromX, final int fromY, final int toX, final int toY, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, final Interpolator interpolator, final Listener listener){
+    public static void slideViewAbsolutely(final View view, final int fromX, final int fromY, final int toX, final int toY, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, final Interpolator interpolator, final Listener listener) {
 
         view.post(new Runnable() {
             @Override
@@ -331,7 +331,7 @@ public class UxUtils {
 
     }
 
-    public static void slideViewTo(final View view, final int toX, final int toY, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, final Interpolator interpolator, final Listener listener){
+    public static void slideViewTo(final View view, final int toX, final int toY, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, final Interpolator interpolator, final Listener listener) {
 
         view.post(new Runnable() {
             @Override
@@ -460,6 +460,41 @@ public class UxUtils {
             @Override
             public void onAnimationEnd(Animation animation) {
                 view.setVisibility(View.INVISIBLE);
+                if (listener != null)
+                    listener.onComplete();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+        });
+
+        view.startAnimation(anim);
+    }
+
+    // TODO MVP seems having performance issue
+    public static void fadeView(final View view, final float startAlpha, final float endAlpha, final long durationInMs, Interpolator interpolator, final Listener listener) {
+
+        if (null == view)
+            return;
+
+        Animation anim = new AlphaAnimation(startAlpha, endAlpha);
+        anim.setDuration(durationInMs);
+        anim.setInterpolator(interpolator);
+
+        anim.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                view.setVisibility(endAlpha == 0.0f ? View.INVISIBLE : View.VISIBLE);
+
                 if (listener != null)
                     listener.onComplete();
             }

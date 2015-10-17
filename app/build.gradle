@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
     buildTypes {
@@ -22,12 +22,6 @@ android {
     }
 
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'LICENSE'
         exclude 'LICENSE.txt'
     }
 
@@ -49,8 +43,6 @@ dependencies {
 
     testCompile 'junit:junit:4.6'
 
-    androidTestCompile 'com.android.support.test:runner:0.4'
-    androidTestCompile 'com.android.support.test:rules:0.4'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
 
 }
