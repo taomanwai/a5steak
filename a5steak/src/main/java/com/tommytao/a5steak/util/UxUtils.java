@@ -493,7 +493,13 @@ public class UxUtils {
             @Override
             public void onAnimationEnd(Animation animation) {
 
-                view.setVisibility(endAlpha == 0.0f ? View.INVISIBLE : View.VISIBLE);
+//                view.setVisibility(endAlpha == 0.0f ? View.INVISIBLE : View.VISIBLE);
+
+                if (endAlpha>0){
+                    view.setAlpha(endAlpha);
+                } else {
+                    view.setVisibility(View.INVISIBLE);
+                }
 
                 if (listener != null)
                     listener.onComplete();
@@ -538,6 +544,52 @@ public class UxUtils {
         p.height = height;
 
         layout.setLayoutParams(p);
+
+    }
+
+    public static void marqueeTextView(final float highlightAlpha, final float unhighlightAlpha, final  long durationInMs, final  Interpolator interpolator, final TextView... textViews) {
+
+        int indexOfHighlightedAlpha = -1;
+
+        // find index of highlight alpha
+        int i = 0;
+        for (TextView textView : textViews) {
+            if (textView.getVisibility() == View.VISIBLE && textView.getAlpha() == highlightAlpha) {
+                indexOfHighlightedAlpha = i;
+                break;
+            }
+            i++;
+        }
+
+        // set unhighlight alpha for all textview
+        i = 0;
+        for (TextView textView : textViews) {
+            if (i!=indexOfHighlightedAlpha) {
+                textView.setVisibility(View.VISIBLE);
+                textView.setAlpha(unhighlightAlpha);
+            }
+            i++;
+        }
+
+        // set/marquee highlight for particular textview
+        if (indexOfHighlightedAlpha == -1) {
+            return;
+        }
+
+
+        final int indexOfHighlightedAlphaFinal = indexOfHighlightedAlpha;
+        fadeView(textViews[indexOfHighlightedAlpha], highlightAlpha, unhighlightAlpha, durationInMs/2, interpolator, new Listener(){
+
+            @Override
+            public void onComplete() {
+
+                int targetIndexOfHighlightedAlpha = (indexOfHighlightedAlphaFinal>=(textViews.length-1)) ? 0 : indexOfHighlightedAlphaFinal+1;
+                fadeView(textViews[targetIndexOfHighlightedAlpha], unhighlightAlpha, highlightAlpha, durationInMs/2, interpolator, null);
+
+            }
+
+        });
+
 
     }
 

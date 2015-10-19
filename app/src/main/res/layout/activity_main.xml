@@ -10,39 +10,32 @@
         android:text="Go"
         />
 
-    <Button
-        android:id="@+id/btnGet"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        />
+        android:text="TST"
+        android:id="@+id/tvMsg1"
+        android:layout_below="@+id/btnGo"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
-        android:id="@+id/tvMsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="TST"
+        android:id="@+id/tvMsg2"
         android:layout_below="@+id/btnGo"
-        android:text="abc"/>
+        android:layout_toRightOf="@+id/tvMsg1"
+        android:layout_toEndOf="@+id/tvMsg1" />
 
-    <ImageView
-        android:id="@+id/ivSample"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_marker_current_location"
-        android:layout_marginTop="0dp"
-        android:visibility="invisible"/>
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ediInput"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/btnGo"
-        android:layout_toEndOf="@+id/btnGo"
-
-        android:text="" />
+        android:text="TST"
+        android:id="@+id/tvMsg3"
+        android:layout_alignTop="@+id/tvMsg2"
+        android:layout_toRightOf="@+id/tvMsg2"
+        android:layout_toEndOf="@+id/tvMsg2" />
 
 
 </RelativeLayout>
