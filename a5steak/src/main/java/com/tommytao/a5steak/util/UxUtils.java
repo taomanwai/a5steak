@@ -128,6 +128,19 @@ public class UxUtils {
 
     }
 
+    public static void clearAnimationTo(final View view, float alpha) {
+
+        if (null == view)
+            return;
+
+        Animation anim = new AlphaAnimation(alpha, alpha);
+        anim.setDuration(0);
+
+        view.setVisibility(alpha != 0.0f ? View.VISIBLE : View.INVISIBLE);
+        view.startAnimation(anim);
+
+    }
+
     // == End of Core of anim ==
 
     public static void fadeView(final View view, final float fromAlpha, final float toAlpha, final long durationInMs, Interpolator interpolator, final Listener listener) {
@@ -501,14 +514,33 @@ public class UxUtils {
 
     public static void blastViewForTwoAndHalfSecond(Context ctx, final View view, final Listener listener) {
 
-        playXmlAnim(ctx, view, R.anim.blast, listener);
+        playXmlAnim(ctx, view, R.anim.blast, new Listener() {
+            @Override
+            public void onComplete() {
+                view.setVisibility(View.INVISIBLE);
+                if (listener != null)
+                    listener.onComplete();
+            }
+        });
 
     }
 
 
     public static void doubleBlinkViewForHalfSecond(Context ctx, final View view, final Listener listener) {
 
-        playXmlAnim(ctx, view, R.anim.double_blink, listener);
+        final int origVisibility = view.getVisibility();
+
+        playXmlAnim(ctx, view, R.anim.double_blink, new Listener() {
+            @Override
+            public void onComplete() {
+
+                view.setVisibility(origVisibility);
+
+                if (listener!=null)
+                    listener.onComplete();
+
+            }
+        });
 
     }
 
@@ -521,22 +553,6 @@ public class UxUtils {
     public static void spinViewInfinitely(Context ctx, final View view, final Listener listener) {
 
         playXmlAnim(ctx, view, R.anim.spin, listener);
-
-    }
-
-
-    public static void clearAnimationTo(final View view, boolean visible) {
-
-        if (null == view)
-            return;
-
-        float alphaValue = visible ? 1.0f : 0;
-
-        Animation anim = new AlphaAnimation(alphaValue, alphaValue);
-        anim.setDuration(0);
-
-        view.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
-        view.startAnimation(anim);
 
     }
 
