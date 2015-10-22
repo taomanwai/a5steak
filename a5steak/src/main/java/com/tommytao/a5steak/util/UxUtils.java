@@ -45,6 +45,236 @@ public class UxUtils {
     public static int DEFAULT_ANIM_DURATION_IN_MS = 300;
     public static float DEFAULT_ALPHA_SEMI_TRANSPARENT = 0.7f;
 
+
+    // == Core of anim ==
+
+
+    public static void slideView(final View view, int fromXDelta, int toXDelta, int fromYDelta, int toYDelta, float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, Interpolator interpolator, final Listener listener) {
+
+        if (view == null)
+            return;
+
+        AnimationSet animSet = new AnimationSet(true);
+        Animation slideAnim = new TranslateAnimation(fromXDelta, toXDelta, fromYDelta, toYDelta);
+
+        slideAnim.setStartOffset(delayInMs);
+        slideAnim.setDuration(durationInMs);
+
+        animSet.addAnimation(slideAnim);
+
+        Animation fadeOutAnim = new AlphaAnimation(fromAlpha, toAlpha);
+        fadeOutAnim.setDuration(durationInMs);
+        animSet.addAnimation(fadeOutAnim);
+        animSet.setInterpolator(interpolator);
+
+        animSet.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                if (toAlpha > 0)
+                    view.setAlpha(toAlpha);
+                else
+                    view.setVisibility(View.INVISIBLE);
+
+                if (listener != null)
+                    listener.onComplete();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.startAnimation(animSet);
+
+    }
+
+    private static void playXmlAnim(Context ctx, final View view, final int resId, final Listener listener) {
+
+        if (null == view)
+            return;
+
+        Animation anim = AnimationUtils.loadAnimation(ctx, resId);
+
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                if (listener != null)
+                    listener.onComplete();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.startAnimation(anim);
+
+    }
+
+    // == End of Core of anim ==
+
+    public static void fadeView(final View view, final float fromAlpha, final float toAlpha, final long durationInMs, Interpolator interpolator, final Listener listener) {
+
+//        // TODO MVP seems having performance issue
+//
+//        if (null == view)
+//            return;
+//
+//        Animation anim = new AlphaAnimation(startAlpha, endAlpha);
+//        anim.setDuration(durationInMs);
+//        anim.setInterpolator(interpolator);
+//
+//        anim.setAnimationListener(new Animation.AnimationListener() {
+//
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//                view.setVisibility(View.VISIBLE);
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//
+//                if (endAlpha > 0)
+//                    view.setAlpha(endAlpha);
+//                else
+//                    view.setVisibility(View.INVISIBLE);
+//
+//                if (listener != null)
+//                    listener.onComplete();
+//
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//            }
+//
+//        });
+//
+//        view.startAnimation(anim);
+
+        slideView(view, 0, 0, 0, 0, fromAlpha, toAlpha, 0, durationInMs, interpolator, listener);
+
+
+    }
+
+    public static void fadeInView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
+
+//        if (null == view)
+//            return;
+//
+//        Animation anim = new AlphaAnimation(0, 1.0f);
+//        anim.setDuration(durationInMs);
+//        anim.setInterpolator(interpolator);
+//
+//        anim.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//                view.setVisibility(View.VISIBLE);
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//
+//                if (listener != null)
+//                    listener.onComplete();
+//
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//
+//            }
+//        });
+//
+//        view.startAnimation(anim);
+
+        fadeView(view, 0, 1.0f, durationInMs, interpolator, listener);
+
+    }
+
+
+    public static void fadeOutView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
+
+//        if (null == view)
+//            return;
+//
+//        Animation anim = new AlphaAnimation(1.0f, 0);
+//        anim.setDuration(durationInMs);
+//        anim.setInterpolator(interpolator);
+//
+//        anim.setAnimationListener(new Animation.AnimationListener() {
+//
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//                view.setVisibility(View.VISIBLE);
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//                view.setVisibility(View.INVISIBLE);
+//                if (listener != null)
+//                    listener.onComplete();
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//            }
+//
+//        });
+//
+//        view.startAnimation(anim);
+
+        fadeView(view, 1.0f, 0, durationInMs, interpolator, listener);
+
+    }
+
+    public static void fadeChangeTextViewText(final TextView textView, final String text, final int durationInMs, final Listener listener) {
+
+        if (null == textView)
+            return;
+
+        final int halfDurationInMs = durationInMs / 2;
+
+        UxUtils.fadeOutView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
+            @Override
+            public void onComplete() {
+
+                textView.setText(text);
+
+                UxUtils.fadeInView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
+                    @Override
+                    public void onComplete() {
+
+                        if (listener != null)
+                            listener.onComplete();
+
+                    }
+                });
+
+
+            }
+        });
+
+    }
+
+
     public static boolean setNumberPickerTextColor(NumberPicker numberPicker, int color) {
         final int count = numberPicker.getChildCount();
         for (int i = 0; i < count; i++) {
@@ -138,35 +368,6 @@ public class UxUtils {
 
     }
 
-    public static void fadeChangeTextViewText(final TextView textView, final String text, final int durationInMs, final Listener listener) {
-
-        if (null == textView)
-            return;
-
-        final int halfDurationInMs = durationInMs / 2;
-
-        UxUtils.fadeOutView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
-            @Override
-            public void onComplete() {
-
-                textView.setText(text);
-
-                UxUtils.fadeInView(textView, halfDurationInMs, new LinearInterpolator(), new Listener() {
-                    @Override
-                    public void onComplete() {
-
-                        if (listener != null)
-                            listener.onComplete();
-
-                    }
-                });
-
-
-            }
-        });
-
-    }
-
     public static TextView getToolBarTextView(Toolbar mToolBar) {
 
         TextView titleTextView = null;
@@ -185,7 +386,7 @@ public class UxUtils {
 
     }
 
-    // == at bottom ==
+
     public static void slideDownHideView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
             @Override
@@ -204,7 +405,6 @@ public class UxUtils {
         });
     }
 
-    // == at top ==
     public static void slideDownShowView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
             @Override
@@ -223,7 +423,6 @@ public class UxUtils {
         });
     }
 
-    // == at right ==
     public static void slideLeftShowView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
             @Override
@@ -242,7 +441,6 @@ public class UxUtils {
         });
     }
 
-    // == at left ==
     public static void slideRightShowView(final View view, final int delayInMs, final int durationInMs, final Interpolator interpolator, final Listener listener) {
         view.post(new Runnable() {
             @Override
@@ -261,53 +459,6 @@ public class UxUtils {
         });
     }
 
-    // ==
-
-    public static void slideView(final View view, int fromXDelta, int toXDelta, int fromYDelta, int toYDelta, float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, Interpolator interpolator, final Listener listener) {
-
-        if (view == null)
-            return;
-
-        AnimationSet animSet = new AnimationSet(true);
-        Animation slideAnim = new TranslateAnimation(fromXDelta, toXDelta, fromYDelta, toYDelta);
-
-        slideAnim.setStartOffset(delayInMs);
-        slideAnim.setDuration(durationInMs);
-
-        animSet.addAnimation(slideAnim);
-
-        Animation fadeOutAnim = new AlphaAnimation(fromAlpha, toAlpha);
-        fadeOutAnim.setDuration(durationInMs);
-        animSet.addAnimation(fadeOutAnim);
-        animSet.setInterpolator(interpolator);
-
-        animSet.setAnimationListener(new Animation.AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-                view.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-                if (toAlpha == 0)
-                    view.setVisibility(View.INVISIBLE);
-
-                if (listener != null)
-                    listener.onComplete();
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        view.startAnimation(animSet);
-
-    }
 
     public static void slideViewAbsolutely(final View view, final int fromX, final int fromY, final int toX, final int toY, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, final Interpolator interpolator, final Listener listener) {
 
@@ -348,71 +499,6 @@ public class UxUtils {
     }
 
 
-    public static void fadeInView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
-
-        if (null == view)
-            return;
-
-        Animation anim = new AlphaAnimation(0, 1.0f);
-        anim.setDuration(durationInMs);
-        anim.setInterpolator(interpolator);
-
-        anim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                view.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-                if (listener != null)
-                    listener.onComplete();
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-
-        view.startAnimation(anim);
-    }
-
-    private static void playXmlAnim(Context ctx, final View view, final int resId, final Listener listener) {
-
-        if (null == view)
-            return;
-
-        Animation anim = AnimationUtils.loadAnimation(ctx, resId);
-
-        anim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                view.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-                if (listener != null)
-                    listener.onComplete();
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        view.startAnimation(anim);
-
-    }
-
-
     public static void blastViewForTwoAndHalfSecond(Context ctx, final View view, final Listener listener) {
 
         playXmlAnim(ctx, view, R.anim.blast, listener);
@@ -438,81 +524,6 @@ public class UxUtils {
 
     }
 
-
-    // TODO MVP seems having performance issue
-    public static void fadeOutView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
-
-        if (null == view)
-            return;
-
-        Animation anim = new AlphaAnimation(1.0f, 0);
-        anim.setDuration(durationInMs);
-        anim.setInterpolator(interpolator);
-
-
-        anim.setAnimationListener(new Animation.AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-                view.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                view.setVisibility(View.INVISIBLE);
-                if (listener != null)
-                    listener.onComplete();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-        });
-
-        view.startAnimation(anim);
-    }
-
-    // TODO MVP seems having performance issue
-    public static void fadeView(final View view, final float startAlpha, final float endAlpha, final long durationInMs, Interpolator interpolator, final Listener listener) {
-
-        if (null == view)
-            return;
-
-        Animation anim = new AlphaAnimation(startAlpha, endAlpha);
-        anim.setDuration(durationInMs);
-        anim.setInterpolator(interpolator);
-
-        anim.setAnimationListener(new Animation.AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-                view.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-//                view.setVisibility(endAlpha == 0.0f ? View.INVISIBLE : View.VISIBLE);
-
-                if (endAlpha>0){
-                    view.setAlpha(endAlpha);
-                } else {
-                    view.setVisibility(View.INVISIBLE);
-                }
-
-                if (listener != null)
-                    listener.onComplete();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-        });
-
-        view.startAnimation(anim);
-    }
 
     public static void clearAnimationTo(final View view, boolean visible) {
 
@@ -547,7 +558,7 @@ public class UxUtils {
 
     }
 
-    public static void marqueeTextView(final float highlightAlpha, final float unhighlightAlpha, final  long durationInMs, final  Interpolator interpolator, final TextView... textViews) {
+    public static void marqueeTextView(final float highlightAlpha, final float unhighlightAlpha, final long durationInMs, final Interpolator interpolator, final TextView... textViews) {
 
         int indexOfHighlightedAlpha = -1;
 
@@ -564,7 +575,7 @@ public class UxUtils {
         // set unhighlight alpha for all textview
         i = 0;
         for (TextView textView : textViews) {
-            if (i!=indexOfHighlightedAlpha) {
+            if (i != indexOfHighlightedAlpha) {
                 textView.setVisibility(View.VISIBLE);
                 textView.setAlpha(unhighlightAlpha);
             }
@@ -578,13 +589,13 @@ public class UxUtils {
 
 
         final int indexOfHighlightedAlphaFinal = indexOfHighlightedAlpha;
-        fadeView(textViews[indexOfHighlightedAlpha], highlightAlpha, unhighlightAlpha, durationInMs/2, interpolator, new Listener(){
+        fadeView(textViews[indexOfHighlightedAlpha], highlightAlpha, unhighlightAlpha, durationInMs / 2, interpolator, new Listener() {
 
             @Override
             public void onComplete() {
 
-                int targetIndexOfHighlightedAlpha = (indexOfHighlightedAlphaFinal>=(textViews.length-1)) ? 0 : indexOfHighlightedAlphaFinal+1;
-                fadeView(textViews[targetIndexOfHighlightedAlpha], unhighlightAlpha, highlightAlpha, durationInMs/2, interpolator, null);
+                int targetIndexOfHighlightedAlpha = (indexOfHighlightedAlphaFinal >= (textViews.length - 1)) ? 0 : indexOfHighlightedAlphaFinal + 1;
+                fadeView(textViews[targetIndexOfHighlightedAlpha], unhighlightAlpha, highlightAlpha, durationInMs / 2, interpolator, null);
 
             }
 

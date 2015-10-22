@@ -1,8 +1,16 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tommytao.a5steak.util.UxUtils;
@@ -13,14 +21,71 @@ import butterknife.OnClick;
 
 public class MainActivity extends Activity {
 
-    @Bind(R.id.tvMsg1)
-    TextView tvMsg1;
+    @Bind(R.id.btnGo)
+    Button btnGo;
 
-    @Bind(R.id.tvMsg2)
-    TextView tvMsg2;
+    @Bind(R.id.btnGet)
+    Button btnGet;
 
-    @Bind(R.id.tvMsg3)
-    TextView tvMsg3;
+
+    private class DataAdapter extends BaseAdapter {
+
+        public class ViewHolder {
+            public TextView tvMsg;
+        }
+
+        private Context ctx;
+
+        public DataAdapter(Context ctx) {
+            this.ctx = ctx;
+        }
+
+        @Override
+        public int getCount() {
+            return 50;
+        }
+
+
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            Log.d("rtemp", "get_view_t : start");
+
+            if (convertView==null){
+
+                Log.d("rtemp", "get_view_t : null");
+
+                convertView = LayoutInflater.from(ctx).inflate(R.layout.data_listitem, null);
+                TextView tvMsg = (TextView) convertView.findViewById(R.id.tvMsg);
+                ViewHolder holder = new ViewHolder();
+                holder.tvMsg = tvMsg;
+                convertView.setTag(holder);
+
+
+            }
+
+            ((ViewHolder) convertView.getTag()).tvMsg.setText("" + position);
+
+            return convertView;
+
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+    }
+
+
+    @Bind(R.id.listViewMain)
+    ListView listViewMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +96,11 @@ public class MainActivity extends Activity {
 
 //        BosonNlpManager.getInstance().init(this, "Se9DNydp.3665.8FudbgZo3UGG");
 
+        listViewMain.setAdapter(new DataAdapter(this));
+
+
+
+
 
     }
 
@@ -38,9 +108,24 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGo)
     public void go() {
 
-        UxUtils.marqueeTextView(1.0f, 0.3f, UxUtils.DEFAULT_ANIM_DURATION_IN_MS, new LinearInterpolator(), tvMsg1, tvMsg2, tvMsg3);
+//        UxUtils.fadeOutView(
+//
+//                ((DataAdapter.ViewHolder) listViewMain.getChildAt(0).getTag()).tvMsg, 10000, new LinearInterpolator(), null);
+        UxUtils.fadeOutView(btnGo, 10000, new LinearInterpolator(), new UxUtils.Listener() {
+            @Override
+            public void onComplete() {
+                Log.d("", "fade_out_t");
+            }
+        });
+    }
+
+    @OnClick(R.id.btnGet)
+    public void get() {
+
+        UxUtils.blastViewForTwoAndHalfSecond(this, btnGo, null);
 
     }
+
 
 
 }
