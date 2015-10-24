@@ -128,7 +128,7 @@ public class UxUtils {
 
     }
 
-    public static void clearAnimationTo(final View view, float alpha) {
+    public static void clearViewAnimTo(View view, float alpha) {
 
         if (null == view)
             return;
@@ -138,6 +138,20 @@ public class UxUtils {
 
         view.setVisibility(alpha != 0.0f ? View.VISIBLE : View.INVISIBLE);
         view.startAnimation(anim);
+
+    }
+
+    public static void clearTextViewAnimTo(TextView textView, String text, float alpha) {
+
+        if (null == textView)
+            return;
+
+        Animation anim = new AlphaAnimation(alpha, alpha);
+        anim.setDuration(0);
+
+        textView.setText(text);
+        textView.setVisibility(alpha != 0.0f ? View.VISIBLE : View.INVISIBLE);
+        textView.startAnimation(anim);
 
     }
 

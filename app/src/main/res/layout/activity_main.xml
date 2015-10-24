@@ -25,5 +25,14 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/btnGo"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="msg"
+        android:id="@+id/tvMsg"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/btnGo"
+        android:layout_toEndOf="@+id/btnGo" />
+
 
 </RelativeLayout>
