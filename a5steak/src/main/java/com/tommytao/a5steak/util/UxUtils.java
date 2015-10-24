@@ -72,6 +72,7 @@ public class UxUtils {
             @Override
             public void onAnimationStart(Animation animation) {
                 view.setVisibility(View.VISIBLE);
+                view.setAlpha(1.0f);
             }
 
             @Override
@@ -108,6 +109,7 @@ public class UxUtils {
             @Override
             public void onAnimationStart(Animation animation) {
                 view.setVisibility(View.VISIBLE);
+                view.setAlpha(1.0f);
             }
 
             @Override

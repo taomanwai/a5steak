@@ -7,12 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tommytao.a5steak.util.UxUtils;
 
@@ -124,12 +124,14 @@ public class MainActivity extends Activity {
 
 //        UxUtils.fadeOutView(
 //                ((DataAdapter.ViewHolder) listViewMain.getChildAt(0).getTag()).tvMsg, 10000, new LinearInterpolator(), null);
+//
+//        TextView tvMsg = ((DataAdapter.ViewHolder) listViewMain.getChildAt(0).getTag()).tvMsg;
+//        String s = "" + tvMsg.getText();
+//
+//        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 
-        TextView tvMsg = ((DataAdapter.ViewHolder) listViewMain.getChildAt(0).getTag()).tvMsg;
-        String s = "" + tvMsg.getText();
-
-
-        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+        UxUtils.fadeView(((DataAdapter.ViewHolder) listViewMain.getChildAt(0).getTag()).tvMsg,
+                0.3f, 1.0f, 5000, new LinearInterpolator(), null);
 
 
 
