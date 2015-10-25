@@ -161,78 +161,12 @@ public class UxUtils {
 
     public static void fadeView(final View view, final float fromAlpha, final float toAlpha, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
-//        // TODO MVP seems having performance issue
-//
-//        if (null == view)
-//            return;
-//
-//        Animation anim = new AlphaAnimation(startAlpha, endAlpha);
-//        anim.setDuration(durationInMs);
-//        anim.setInterpolator(interpolator);
-//
-//        anim.setAnimationListener(new Animation.AnimationListener() {
-//
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//
-//                if (endAlpha > 0)
-//                    view.setAlpha(endAlpha);
-//                else
-//                    view.setVisibility(View.INVISIBLE);
-//
-//                if (listener != null)
-//                    listener.onComplete();
-//
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//            }
-//
-//        });
-//
-//        view.startAnimation(anim);
-
         slideView(view, 0, 0, 0, 0, fromAlpha, toAlpha, 0, durationInMs, interpolator, listener);
 
 
     }
 
     public static void fadeInView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
-
-//        if (null == view)
-//            return;
-//
-//        Animation anim = new AlphaAnimation(0, 1.0f);
-//        anim.setDuration(durationInMs);
-//        anim.setInterpolator(interpolator);
-//
-//        anim.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//
-//                if (listener != null)
-//                    listener.onComplete();
-//
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//
-//        view.startAnimation(anim);
 
         fadeView(view, 0, 1.0f, durationInMs, interpolator, listener);
 
@@ -241,36 +175,7 @@ public class UxUtils {
 
     public static void fadeOutView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
-//        if (null == view)
-//            return;
-//
-//        Animation anim = new AlphaAnimation(1.0f, 0);
-//        anim.setDuration(durationInMs);
-//        anim.setInterpolator(interpolator);
-//
-//        anim.setAnimationListener(new Animation.AnimationListener() {
-//
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                view.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                view.setVisibility(View.INVISIBLE);
-//                if (listener != null)
-//                    listener.onComplete();
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//            }
-//
-//        });
-//
-//        view.startAnimation(anim);
-
-        fadeView(view, 1.0f, 0, durationInMs, interpolator, listener);
+        fadeView(view, view.getAlpha(), 0, durationInMs, interpolator, listener);
 
     }
 
