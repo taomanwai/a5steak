@@ -13,7 +13,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.tommytao.a5steak.util.TimeManager;
 import com.tommytao.a5steak.util.UxUtils;
 
 import butterknife.Bind;
@@ -140,6 +142,12 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btnGet)
     public void get() {
+
+        TimeManager.getInstance().init(this);
+
+        String s = TimeManager.getInstance().getCurrentYear() + " " + TimeManager.getInstance().getCurrentMonth() + " " + TimeManager.getInstance().getCurrentDayOfMonth() + " " + TimeManager.getInstance().getCurrentDayOfWeek();
+
+        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 
 
 

@@ -4,11 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 
 import com.tommytao.a5steak.ext.net.ntp.NTPUDPClient;
 
 import java.net.InetAddress;
+import java.util.GregorianCalendar;
 
 /**
  * 
@@ -49,23 +49,7 @@ public class TimeManager extends Foundation {
 
 	// --
 
-	@Override
-	public boolean init(Context appContext) {
-
-		if (!super.init(appContext)) {
-			log( "time_manager: " + "init REJECTED: already initialized"); 
-			return false;
-		}
-		
-		log( "time_manager: " + "init"); 
-
-		appContext.registerReceiver(new TimeSetReceiver(), new IntentFilter("android.intent.action.TIME_SET"));
-
-		refreshLastKnownNtpTimeDiff();
-
-		return true;
-
-	}
+	public static final String[] TIME_SERVER_LIST = {"time-a.nist.gov", "time-c.nist.gov", "time.nist.gov", "time.asia.apple.com" };
 
 	public class TimeSetReceiver extends BroadcastReceiver {
 
@@ -95,7 +79,36 @@ public class TimeManager extends Foundation {
 
 	}
 
-	public static final String[] TIME_SERVER_LIST = { "time-a.nist.gov", "time-c.nist.gov", "time.nist.gov", "time.asia.apple.com" };
+	private GregorianCalendar calendar;
+
+	@Override
+	public boolean init(Context appContext) {
+
+		if (!super.init(appContext)) {
+			log( "time_manager: " + "init REJECTED: already initialized"); 
+			return false;
+		}
+		
+		log( "time_manager: " + "init"); 
+
+		appContext.registerReceiver(new TimeSetReceiver(), new IntentFilter("android.intent.action.TIME_SET"));
+
+		refreshLastKnownNtpTimeDiff();
+
+		return true;
+
+	}
+
+	private GregorianCalendar getCalendar() {
+
+		if (calendar==null){
+
+			calendar = new GregorianCalendar();
+
+		}
+
+		return calendar;
+	}
 
 	private long lastKnownNtpTimeDiff;
 
@@ -166,8 +179,6 @@ public class TimeManager extends Foundation {
 	}
 
 	private NTPUDPClient client;
-
-	private Handler handler;
 
 	/**
 	 * Get NTP time in sync style
@@ -254,6 +265,23 @@ public class TimeManager extends Foundation {
     public long getNtpTimeBasedOnLastKnownNtpTimeDiff(){
         return System.currentTimeMillis() - getLastKnownNtpTimeDiff();
     }
+
+	public int getCurrentYear(){
+		return getCalendar().get(GregorianCalendar.YEAR);
+	}
+
+	public int getCurrentMonth(){
+		return getCalendar().get(GregorianCalendar.MONTH) + 1;
+	}
+
+	public int getCurrentDayOfMonth(){
+		return getCalendar().get(GregorianCalendar.DAY_OF_MONTH) ;
+	}
+
+	public int getCurrentDayOfWeek(){
+		return getCalendar().get(GregorianCalendar.DAY_OF_WEEK) - 1;
+	}
+
 
 
 
