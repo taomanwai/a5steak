@@ -3,6 +3,7 @@ package com.tommytao.a5steak.sample;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.tommytao.a5steak.util.TimeManager;
+import com.tommytao.a5steak.util.BitmapManager;
 import com.tommytao.a5steak.util.UxUtils;
 
 import butterknife.Bind;
@@ -143,13 +143,13 @@ public class MainActivity extends Activity {
     @OnClick(R.id.btnGet)
     public void get() {
 
-        TimeManager.getInstance().init(this);
-
-        String s = TimeManager.getInstance().getCurrentYear() + " " + TimeManager.getInstance().getCurrentMonth() + " " + TimeManager.getInstance().getCurrentDayOfMonth() + " " + TimeManager.getInstance().getCurrentDayOfWeek();
-
-        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+        String s = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM).getAbsolutePath();
 
 
+        BitmapManager.getInstance().init(this);
+
+        BitmapManager.getInstance().saveSamplePic("/storage/emulated/0/DCIM/Camera/", "ferry.jpg"); // /storage/emulated/0/DCIM/Camera/IMG_20150830_222647.jpg
 
 
 

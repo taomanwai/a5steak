@@ -17,6 +17,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.ImageView;
 
+import com.tommytao.a5steak.R;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -413,6 +415,14 @@ public class BitmapManager extends Foundation {
             }
         }
 
+
+    }
+
+    public void saveSamplePic(String foldername, String fileName){
+
+        Bitmap bitmap = loadResId(R.drawable.maneuver_ferry, -1, -1, false, false);
+
+        save(bitmap, foldername, fileName);
 
     }
 
