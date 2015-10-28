@@ -130,7 +130,7 @@ public class UxUtils {
 
     }
 
-    public static void clearViewAnim(View view) {
+    public static void finishViewCurrentSingularAnim(View view) {
 
         if (null == view)
             return;
