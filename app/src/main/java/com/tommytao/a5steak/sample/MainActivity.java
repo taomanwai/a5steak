@@ -3,11 +3,12 @@ package com.tommytao.a5steak.sample;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
@@ -15,7 +16,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.tommytao.a5steak.util.BitmapManager;
 import com.tommytao.a5steak.util.UxUtils;
 
 import butterknife.Bind;
@@ -52,13 +52,12 @@ public class MainActivity extends Activity {
         }
 
 
-
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
             Log.d("rtemp", "get_view_t : start");
 
-            if (convertView==null){
+            if (convertView == null) {
 
                 Log.d("rtemp", "get_view_t : null");
 
@@ -68,10 +67,10 @@ public class MainActivity extends Activity {
                 holder.tvMsg = tvMsg;
                 convertView.setTag(holder);
 
-
             }
 
             ((ViewHolder) convertView.getTag()).tvMsg.setText("" + position);
+            ((ViewHolder) convertView.getTag()).tvMsg.setVisibility(View.INVISIBLE);
 
             return convertView;
 
@@ -108,15 +107,32 @@ public class MainActivity extends Activity {
             @Override
             public void onMovedToScrapHeap(View view) {
 
-                TextView tvMsg = ((DataAdapter.ViewHolder) view.getTag()).tvMsg;
+                final TextView tvMsg = ((DataAdapter.ViewHolder) view.getTag()).tvMsg;
 
-                UxUtils.clearTextViewAnimTo(tvMsg, "" + tvMsg.getText(), 1.0f);
+//                UxUtils.clearTextViewAnimTo(tvMsg, "recycle" + tvMsg.getText(), 1.0f);
+
+                tvMsg.setText("recycle");
+                tvMsg.setVisibility(View.VISIBLE);
+
+                if (tvMsg.getAnimation() != null && !tvMsg.getAnimation().hasEnded()) {
+                    Animation anim = new AlphaAnimation(1.0f, 1.0f);
+                    anim.setDuration(0);
+                    tvMsg.startAnimation(anim);
+                }
+
+
+//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//
+//
+//                    }
+//                }, 1000);
+
+
             }
         });
-
-
-
-
 
     }
 
@@ -133,28 +149,15 @@ public class MainActivity extends Activity {
 //        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 
         UxUtils.fadeView(((DataAdapter.ViewHolder) listViewMain.getChildAt(0).getTag()).tvMsg,
-                0.3f, 1.0f, 5000, new LinearInterpolator(), null);
-
-
-
+                0.0f, 1.0f, 5000, new LinearInterpolator(), null);
 
     }
 
     @OnClick(R.id.btnGet)
     public void get() {
 
-        String s = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DCIM).getAbsolutePath();
-
-
-        BitmapManager.getInstance().init(this);
-
-        BitmapManager.getInstance().saveSamplePic("/storage/emulated/0/DCIM/Camera/", "ferry.jpg"); // /storage/emulated/0/DCIM/Camera/IMG_20150830_222647.jpg
-
-
 
     }
-
 
 
 }

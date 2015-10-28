@@ -130,32 +130,36 @@ public class UxUtils {
 
     }
 
-    public static void clearViewAnimTo(View view, float alpha) {
+    public static void clearViewAnim(View view) {
 
         if (null == view)
             return;
 
-        Animation anim = new AlphaAnimation(alpha, alpha);
-        anim.setDuration(0);
+        float targetAlpha = view.getAlpha();
 
-        view.setVisibility(alpha != 0.0f ? View.VISIBLE : View.INVISIBLE);
-        view.startAnimation(anim);
-
-    }
-
-    public static void clearTextViewAnimTo(TextView textView, String text, float alpha) {
-
-        if (null == textView)
-            return;
-
-        Animation anim = new AlphaAnimation(alpha, alpha);
-        anim.setDuration(0);
-
-        textView.setText(text);
-        textView.setVisibility(alpha != 0.0f ? View.VISIBLE : View.INVISIBLE);
-        textView.startAnimation(anim);
+        if (view.getAnimation() != null && !view.getAnimation().hasEnded()) {
+            Animation anim = new AlphaAnimation(targetAlpha, targetAlpha);
+            anim.setDuration(0);
+            view.startAnimation(anim);
+        }
 
     }
+
+//    public static void clearTextViewAnimTo(TextView textView, String text, float alpha) {
+//
+//        if (null == textView)
+//            return;
+//
+//        textView.setText(text);
+//        textView.setVisibility(alpha != 0.0f ? View.VISIBLE : View.INVISIBLE);
+//
+//        if (textView.getAnimation() != null && !textView.getAnimation().hasEnded()) {
+//            Animation anim = new AlphaAnimation(alpha, alpha);
+//            anim.setDuration(0);
+//            textView.startAnimation(anim);
+//        }
+//
+//    }
 
     // == End of Core of anim ==
 
@@ -457,7 +461,7 @@ public class UxUtils {
 
                 view.setVisibility(origVisibility);
 
-                if (listener!=null)
+                if (listener != null)
                     listener.onComplete();
 
             }
