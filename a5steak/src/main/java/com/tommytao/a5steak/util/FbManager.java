@@ -855,5 +855,9 @@ public class FbManager extends Foundation implements ConnectionClassManager.Conn
 
     }
 
+    public void logout(){
+        LoginManager.getInstance().logOut();
+    }
+
 
 }

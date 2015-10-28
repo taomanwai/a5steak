@@ -135,12 +135,13 @@ public class UxUtils {
         if (null == view)
             return;
 
-        float targetAlpha = view.getAlpha();
-
         if (view.getAnimation() != null && !view.getAnimation().hasEnded()) {
-            Animation anim = new AlphaAnimation(targetAlpha, targetAlpha);
-            anim.setDuration(0);
-            view.startAnimation(anim);
+//            float targetAlpha = view.getAlpha();
+//            Animation anim = new AlphaAnimation(targetAlpha, targetAlpha);
+//            anim.setDuration(0);
+//            view.startAnimation(anim);
+
+            view.clearAnimation();
         }
 
     }
