@@ -164,23 +164,23 @@ public class UxUtils {
 
     // == End of Core of anim ==
 
-    public static void fadeView(final View view, final float fromAlpha, final float toAlpha, final long durationInMs, Interpolator interpolator, final Listener listener) {
+    public static void fadeView(final View view, final float fromAlpha, final float toAlpha, final long delayInMs, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
-        slideView(view, 0, 0, 0, 0, fromAlpha, toAlpha, 0, durationInMs, interpolator, listener);
+        slideView(view, 0, 0, 0, 0, fromAlpha, toAlpha, delayInMs, durationInMs, interpolator, listener);
 
 
     }
 
     public static void fadeInView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
-        fadeView(view, 0, 1.0f, durationInMs, interpolator, listener);
+        fadeView(view, 0, 1.0f, 0, durationInMs, interpolator, listener);
 
     }
 
 
     public static void fadeOutView(final View view, final long durationInMs, Interpolator interpolator, final Listener listener) {
 
-        fadeView(view, view.getAlpha(), 0, durationInMs, interpolator, listener);
+        fadeView(view, view.getAlpha(), 0, 0, durationInMs, interpolator, listener);
 
     }
 
@@ -531,13 +531,13 @@ public class UxUtils {
 
 
         final int indexOfHighlightedAlphaFinal = indexOfHighlightedAlpha;
-        fadeView(textViews[indexOfHighlightedAlpha], highlightAlpha, unhighlightAlpha, durationInMs / 2, interpolator, new Listener() {
+        fadeView(textViews[indexOfHighlightedAlpha], highlightAlpha, unhighlightAlpha, 0, durationInMs / 2, interpolator, new Listener() {
 
             @Override
             public void onComplete() {
 
                 int targetIndexOfHighlightedAlpha = (indexOfHighlightedAlphaFinal >= (textViews.length - 1)) ? 0 : indexOfHighlightedAlphaFinal + 1;
-                fadeView(textViews[targetIndexOfHighlightedAlpha], unhighlightAlpha, highlightAlpha, durationInMs / 2, interpolator, null);
+                fadeView(textViews[targetIndexOfHighlightedAlpha], unhighlightAlpha, highlightAlpha, 0, durationInMs / 2, interpolator, null);
 
             }
 

@@ -149,7 +149,7 @@ public class MainActivity extends Activity {
 //        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 
         UxUtils.fadeView(((DataAdapter.ViewHolder) listViewMain.getChildAt(0).getTag()).tvMsg,
-                0.0f, 1.0f, 5000, new LinearInterpolator(), null);
+                0.0f, 1.0f, 0, 5000, new LinearInterpolator(), null);
 
     }
 
