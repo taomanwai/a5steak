@@ -107,6 +107,8 @@ public class TimeManager extends Foundation {
 
 		}
 
+		calendar.setTimeInMillis(System.currentTimeMillis());
+
 		return calendar;
 	}
 
@@ -274,14 +276,41 @@ public class TimeManager extends Foundation {
 		return getCalendar().get(GregorianCalendar.MONTH) + 1;
 	}
 
-	public int getCurrentDayOfMonth(){
-		return getCalendar().get(GregorianCalendar.DAY_OF_MONTH) ;
+	public int getCurrentDay(){
+		return getCalendar().get(GregorianCalendar.DAY_OF_MONTH);
 	}
 
-	public int getCurrentDayOfWeek(){
+	public int getCurrentWeekday(){
 		return getCalendar().get(GregorianCalendar.DAY_OF_WEEK) - 1;
 	}
 
+	public int[] getCurrentYearMonthDayWeekDay(){
+
+		int[] result = new int[4];
+		GregorianCalendar currentCalendar = getCalendar();
+
+		int year = currentCalendar.get(GregorianCalendar.YEAR);
+		int month = currentCalendar.get(GregorianCalendar.MONTH) + 1;
+		int day = currentCalendar.get(GregorianCalendar.DAY_OF_MONTH);
+		int weekDay = currentCalendar.get(GregorianCalendar.DAY_OF_WEEK) - 1;
+
+		result[0] = year;
+		result[1] = month;
+		result[2] = day;
+		result[3] = weekDay;
+
+		return result;
+
+	}
+
+	public static long trimMillisToDateOnly(long timeInMillis){
+
+		timeInMillis = timeInMillis / 1000 / 60 / 60 / 24;
+		timeInMillis = timeInMillis * 24 * 60 * 60 * 1000;
+
+		return timeInMillis;
+
+	}
 
 
 

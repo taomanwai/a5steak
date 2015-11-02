@@ -9,14 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.tommytao.a5steak.util.UxUtils;
+import com.tommytao.a5steak.util.TimeManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -148,8 +147,12 @@ public class MainActivity extends Activity {
 //
 //        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 
-        UxUtils.fadeView(((DataAdapter.ViewHolder) listViewMain.getChildAt(0).getTag()).tvMsg,
-                0.0f, 1.0f, 0, 5000, new LinearInterpolator(), null);
+//        UxUtils.fadeView(((DataAdapter.ViewHolder) listViewMain.getChildAt(0).getTag()).tvMsg,
+//                0.0f, 1.0f, 0, 5000, new LinearInterpolator(), null);
+
+        long r = TimeManager.trimMillisToDateOnly(System.currentTimeMillis());
+
+        Log.d("", "");
 
     }
 
