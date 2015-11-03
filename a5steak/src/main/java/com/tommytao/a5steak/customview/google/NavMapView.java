@@ -24,8 +24,8 @@ import com.tommytao.a5steak.R;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
-import com.tommytao.a5steak.util.google.gapiclient.LocationFusedSensor;
 import com.tommytao.a5steak.util.google.TextSpeaker;
+import com.tommytao.a5steak.util.google.gapiclient.LocationFusedSensor;
 import com.tommytao.a5steak.util.sensor.GSensor;
 import com.tommytao.a5steak.util.sensor.MagneticSensor;
 import com.tommytao.a5steak.util.sensor.analyzer.OrientationAnalyzer;
@@ -265,11 +265,8 @@ public class NavMapView extends MapView {
             if (navMapView == null)
                 return;
 
-            if (r == null)
-                return;
-
-            if (!navMapView.route.isPrepareToBeReplaced())
-                return;
+//            if (r == null)
+//                return;
 
             if (queryStartLatitude != navMapView.rerouteLocation.getLatitude() ||
                     queryStartLongitude != navMapView.rerouteLocation.getLongitude() ||
@@ -278,6 +275,9 @@ public class NavMapView extends MapView {
                     !queryLocale.equals(navMapView.locale) ||
                     queryElapsedTimestamp != navMapView.latestMockRouteElapsedTimestamp
                     )
+                return;
+
+            if (navMapView.route != null && !navMapView.route.isPrepareToBeReplaced())
                 return;
 
             if (r == null) {
@@ -1301,11 +1301,10 @@ public class NavMapView extends MapView {
 
     /**
      * Stop NavMapView, then disconnect IO resources (i.e. GSensor, MagneticSensor, LocationFusedSensor, TextSpeaker) used by NavMapView (if disconnectIo is true)
-     *
+     * <p/>
      * Note: If disconnectIo is false, it is programmers responsibility to disconnect related IO resources at appropriate time.
      *
      * @param disconnectIo True: disconnect IO resources after stopping NavMapView; False: Not disconnect IO resources after stopping NavMapView
-     *
      */
     public void disconnectNavigation(boolean disconnectIo) {
 
