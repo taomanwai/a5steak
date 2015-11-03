@@ -958,6 +958,8 @@ public class NavMapView extends MapView {
     private long latestMockRouteElapsedTimestamp = -1;
     private Route route;
 
+    private boolean ttsEnabled = true;
+
     private com.google.android.gms.maps.model.Polyline routePolyline;
     private GroundOverlay currentLocationGroundOverlay;
 
@@ -992,6 +994,14 @@ public class NavMapView extends MapView {
                 .bearing(rotation).zIndex(1.0f);
         return getMap().addGroundOverlay(groundOverlayOptions);
 
+    }
+
+    public boolean isTtsEnabled() {
+        return ttsEnabled;
+    }
+
+    public void setTtsEnabled(boolean ttsEnabled) {
+        this.ttsEnabled = ttsEnabled;
     }
 
     // == OnUpdateListener ==
@@ -1156,7 +1166,7 @@ public class NavMapView extends MapView {
                     return;
                 }
 
-                if (route.getCurrentRouteDistanceFromEndOfStepInMeter() < Route.MAX_DISTANCE_BEFORE_SPEAK_IN_METER) {
+                if (ttsEnabled && route.getCurrentRouteDistanceFromEndOfStepInMeter() < Route.MAX_DISTANCE_BEFORE_SPEAK_IN_METER) {
                     route.speakNextRouteStep(true);
                 }
 
