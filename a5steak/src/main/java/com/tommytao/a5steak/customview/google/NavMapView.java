@@ -281,7 +281,11 @@ public class NavMapView extends MapView {
                 return;
 
             if (r == null) {
-                navMapView.route.setPrepareToBeReplaced(false);
+                try {
+                    navMapView.route.setPrepareToBeReplaced(false);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
                 return;
             }
 
