@@ -164,16 +164,22 @@ public class NavMapView extends MapView {
             if (navMapView == null)
                 return;
 
-
             navMapView.onStartListeners.remove(onStartListener);
 
-            if (queryStartLatitude != navMapView.startLocation.getLatitude() ||
-                    queryStartLongitude != navMapView.startLocation.getLongitude() ||
-                    queryDestLatitude != navMapView.destLocation.getLatitude() ||
-                    queryDestLongitude != navMapView.destLocation.getLongitude() ||
-                    !queryLocale.equals(navMapView.locale) ||
-                    queryElapsedTimestamp != navMapView.latestMockRouteElapsedTimestamp) {
+            boolean matchLatestQuery = false;
 
+            try{
+                matchLatestQuery = queryStartLatitude == navMapView.startLocation.getLatitude() &&
+                        queryStartLongitude == navMapView.startLocation.getLongitude() &&
+                        queryDestLatitude == navMapView.destLocation.getLatitude() &&
+                        queryDestLongitude == navMapView.destLocation.getLongitude() &&
+                        queryLocale.equals(navMapView.locale) &&
+                        queryElapsedTimestamp == navMapView.latestMockRouteElapsedTimestamp;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            if (!matchLatestQuery) {
                 if (onStartListener != null)
                     onStartListener.onIgnored();
 
@@ -268,13 +274,20 @@ public class NavMapView extends MapView {
 //            if (r == null)
 //                return;
 
-            if (queryStartLatitude != navMapView.rerouteLocation.getLatitude() ||
-                    queryStartLongitude != navMapView.rerouteLocation.getLongitude() ||
-                    queryDestLatitude != navMapView.destLocation.getLatitude() ||
-                    queryDestLongitude != navMapView.destLocation.getLongitude() ||
-                    !queryLocale.equals(navMapView.locale) ||
-                    queryElapsedTimestamp != navMapView.latestMockRouteElapsedTimestamp
-                    )
+            boolean matchLatestQuery = false;
+
+            try{
+                matchLatestQuery = queryStartLatitude == navMapView.rerouteLocation.getLatitude() &&
+                        queryStartLongitude == navMapView.rerouteLocation.getLongitude() &&
+                        queryDestLatitude == navMapView.destLocation.getLatitude() &&
+                        queryDestLongitude == navMapView.destLocation.getLongitude() &&
+                        queryLocale.equals(navMapView.locale) &&
+                        queryElapsedTimestamp == navMapView.latestMockRouteElapsedTimestamp;
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
+            if (!matchLatestQuery)
                 return;
 
             if (navMapView.route != null && !navMapView.route.isPrepareToBeReplaced())
