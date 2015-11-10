@@ -35,22 +35,22 @@ import java.util.ArrayList;
  * View which displays a bitmap containing a face along with overlay graphics that identify the
  * locations of detected facial landmarks.
  */
-public class FaceView extends ImageView {
+public class MobileVisionView extends ImageView {
 
     private ArrayList<Face> faces = new ArrayList<>();
 
     private boolean drawLandmark = true;
     private boolean drawBoundary = true;
 
-    public FaceView(Context context) {
+    public MobileVisionView(Context context) {
         super(context);
     }
 
-    public FaceView(Context context, AttributeSet attrs) {
+    public MobileVisionView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public FaceView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MobileVisionView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

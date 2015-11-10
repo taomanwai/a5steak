@@ -71,17 +71,6 @@ public class TextSpeaker extends Foundation {
 
     private boolean connected;
 
-//    private Locale locale = DEFAULT_LOCALE;
-
-//    public void setLocale(Locale locale) {
-//        if (isConnected()) {
-//            int setLangResult = tts.setLanguage(this.locale);
-//            if (setLangResult == TextToSpeech.LANG_NOT_SUPPORTED) {
-//                tts.setLanguage(DEFAULT_LOCALE);
-//            }
-//        }
-//    }
-
     @Override
     public boolean init(Context context) {
         return super.init(context);
@@ -343,17 +332,6 @@ public class TextSpeaker extends Foundation {
         }
         clearAndOnUiThreadTriggerCantoneseOnSpeakCompleteListener(true);
 
-//            if (onSpeakListenerOfCantonese != null) {
-//                final OnSpeakListener pendingOnSpeakListenerOfCantonese = onSpeakListenerOfCantonese;
-//                onSpeakListenerOfCantonese = null;
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (pendingOnSpeakListenerOfCantonese != null)
-//                            pendingOnSpeakListenerOfCantonese.onComplete(true);
-//                    }
-//                });
-//            }
 
         try {
 
@@ -392,19 +370,12 @@ public class TextSpeaker extends Foundation {
                         e.printStackTrace();
                         succeed = false;
 
-//                        cantoneseOnSpeakListener = null;
-//                        if (listener != null) {
-//                            listener.onComplete(false);
-//                        }
-
                         clearAndTriggerCantoneseOnSpeakCompleteListener(false);
 
                     }
 
                     if (succeed) {
-//                        listener.onStart();
                         triggerCantoneseOnSpeakStartListener();
-
                     }
 
                 }
@@ -419,11 +390,6 @@ public class TextSpeaker extends Foundation {
                         e.printStackTrace();
                     }
 
-//                    onSpeakListenerOfCantonese = null;
-//                    if (listener != null) {
-//                        listener.onComplete(true);
-//                    }
-
                     clearAndTriggerCantoneseOnSpeakCompleteListener(true);
                 }
             });
@@ -436,11 +402,6 @@ public class TextSpeaker extends Foundation {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-
-//                    onSpeakListenerOfCantonese = null;
-//                    if (listener != null) {
-//                        listener.onComplete(false);
-//                    }
 
                     clearAndTriggerCantoneseOnSpeakCompleteListener(false);
 

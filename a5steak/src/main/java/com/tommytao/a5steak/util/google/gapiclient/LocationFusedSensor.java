@@ -217,9 +217,22 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         if (!isConnected() && !isConnecting())
             return;
 
-        LocationServices.GeofencingApi.removeGeofences(getClient(), getGeofencePendingIntent());
+        // TODO MVP don't know why when client not connected, but still run code below
+        try {
+            LocationServices.GeofencingApi.removeGeofences(getClient(), getGeofencePendingIntent());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         circularRegions.clear();
-        getClient().disconnect();
+
+        // TODO MVP
+        try {
+            getClient().disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         connected = false;
         clearAndOnUiThreadTriggerOnConnectListeners(false);
 
