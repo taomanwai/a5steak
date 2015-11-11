@@ -212,6 +212,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
                 onGeofenceListener.onExit(geofences);
     }
 
+    @Override
     public void disconnect() {
 
         if (!isConnected() && !isConnecting())
@@ -300,6 +301,11 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
     }
 
     // == END of onConnectListener ==
+
+    @Deprecated
+    protected void connect() {
+        super.connect();
+    }
 
     public void connect(int priority, int intervalInMs, final OnConnectListener onConnectListener) {
 
@@ -407,6 +413,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         }
 
         return client;
+
     }
 
     public boolean isConnected() {

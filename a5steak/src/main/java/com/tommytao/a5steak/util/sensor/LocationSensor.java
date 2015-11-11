@@ -117,6 +117,7 @@ public class LocationSensor extends Foundation implements LocationListener {
         return onLocationChangeListeners.remove(onLocationChangeListener);
     }
 
+    @Override
     public void disconnect() {
 
         if (!isConnected()) {
@@ -189,6 +190,11 @@ public class LocationSensor extends Foundation implements LocationListener {
 
         });
 
+    }
+
+    @Deprecated
+    protected void connect() {
+        super.connect();
     }
 
     public void connect(int updateIntervalInMs, final OnConnectListener onConnectListener) {
