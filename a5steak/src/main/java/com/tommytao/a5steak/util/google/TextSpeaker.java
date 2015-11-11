@@ -56,18 +56,20 @@ public class TextSpeaker extends Foundation {
 
     }
 
-    public static final String SERVER_CANTONESE_SPEAKER_PREFIX = "http://translate.google.com/translate_tts?&tl=zh-yue&ie=UTF-8&client=t&q=";
+//    public static final String SERVER_G_TRANSLATE_SPEAKER_PREFIX = "http://translate.google.com/translate_tts?&tl=zh-yue&ie=UTF-8&client=t&q=";
+
+    public static final String SERVER_G_TRANSLATE_SPEAKER_PREFIX = "http://translate.google.com/translate_tts?&ie=UTF-8&client=t";
 
     public static final Locale DEFAULT_LOCALE = new Locale("en", "US");
 
     private TextToSpeech tts;
 
-    private MediaPlayer cantoneseMediaPlayer;
+    private MediaPlayer gTranslateMediaPlayer;
 
     private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
 
     private HashMap<String, OnSpeakListener> ttsOnSpeakListeners = new HashMap<>();
-    private OnSpeakListener cantoneseOnSpeakListener;
+    private OnSpeakListener gTranslateOnSpeakListener;
 
     private boolean connected;
 
@@ -85,6 +87,12 @@ public class TextSpeaker extends Foundation {
             return false;
 
         return true;
+
+    }
+
+    private boolean isEnglish(Locale locale) {
+
+        return "en".equals(locale.getLanguage());
 
     }
 
@@ -210,11 +218,11 @@ public class TextSpeaker extends Foundation {
         clearAndOnUiThreadTriggerTtsOnSpeakCompleteListeners(true);
 
         try {
-            cantoneseMediaPlayer.release();
+            gTranslateMediaPlayer.release();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        clearAndOnUiThreadTriggerCantoneseOnSpeakCompleteListener(true);
+        clearAndOnUiThreadTriggerGTranslateOnSpeakCompleteListener(true);
 
         connected = false;
     }
@@ -262,39 +270,39 @@ public class TextSpeaker extends Foundation {
 
     }
 
-    private void clearAndOnUiThreadTriggerCantoneseOnSpeakCompleteListener(final boolean succeed) {
+    private void clearAndOnUiThreadTriggerGTranslateOnSpeakCompleteListener(final boolean succeed) {
 
-        final OnSpeakListener pendingCantoneseOnSpeakListener = cantoneseOnSpeakListener;
+        final OnSpeakListener pendingGTranslateOnSpeakListener = gTranslateOnSpeakListener;
 
-        cantoneseOnSpeakListener = null;
+        gTranslateOnSpeakListener = null;
 
         handler.post(new Runnable() {
             @Override
             public void run() {
 
-                if (pendingCantoneseOnSpeakListener != null)
-                    pendingCantoneseOnSpeakListener.onComplete(succeed);
+                if (pendingGTranslateOnSpeakListener != null)
+                    pendingGTranslateOnSpeakListener.onComplete(succeed);
 
             }
         });
 
     }
 
-    private void clearAndTriggerCantoneseOnSpeakCompleteListener(boolean succeed) {
+    private void clearAndTriggerGTranslateOnSpeakCompleteListener(boolean succeed) {
 
-        final OnSpeakListener pendingCantoneseOnSpeakListener = cantoneseOnSpeakListener;
+        final OnSpeakListener pendingGTranslateOnSpeakListener = gTranslateOnSpeakListener;
 
-        cantoneseOnSpeakListener = null;
+        gTranslateOnSpeakListener = null;
 
-        if (pendingCantoneseOnSpeakListener != null)
-            pendingCantoneseOnSpeakListener.onComplete(succeed);
+        if (pendingGTranslateOnSpeakListener != null)
+            pendingGTranslateOnSpeakListener.onComplete(succeed);
 
     }
 
-    private void triggerCantoneseOnSpeakStartListener() {
+    private void triggerGTranslateOnSpeakStartListener() {
 
-        if (cantoneseOnSpeakListener != null)
-            cantoneseOnSpeakListener.onStart();
+        if (gTranslateOnSpeakListener != null)
+            gTranslateOnSpeakListener.onStart();
 
     }
 
@@ -303,16 +311,28 @@ public class TextSpeaker extends Foundation {
         tts.stop();
 
         try {
-            cantoneseMediaPlayer.release();
+            gTranslateMediaPlayer.release();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        clearAndOnUiThreadTriggerCantoneseOnSpeakCompleteListener(true);
+        clearAndOnUiThreadTriggerGTranslateOnSpeakCompleteListener(true);
 
     }
 
-    private void speakInCantonese(String text, final OnSpeakListener listener) {
+    private String genGTranslateLocaleStr(Locale locale){
+
+        if (isCantonese(locale))
+            return "zh-yue";
+
+        if (isEnglish(locale))
+            return "en-us";
+
+        return locale.getLanguage() + "-" + locale.getCountry().toLowerCase(Locale.US);
+
+    }
+
+    private void speakInGTranslate(String text, Locale locale, final OnSpeakListener listener) {
 
         if (!isConnected()) {
             handler.post(new Runnable() {
@@ -326,16 +346,16 @@ public class TextSpeaker extends Foundation {
         }
 
         try {
-            cantoneseMediaPlayer.release();
+            gTranslateMediaPlayer.release();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        clearAndOnUiThreadTriggerCantoneseOnSpeakCompleteListener(true);
+        clearAndOnUiThreadTriggerGTranslateOnSpeakCompleteListener(true);
 
 
         try {
 
-            cantoneseOnSpeakListener = listener;
+            gTranslateOnSpeakListener = listener;
 
             String urlEncodedText = text;
             try {
@@ -344,9 +364,9 @@ public class TextSpeaker extends Foundation {
                 e.printStackTrace();
             }
 
-            String link = SERVER_CANTONESE_SPEAKER_PREFIX + urlEncodedText;
+            String link = SERVER_G_TRANSLATE_SPEAKER_PREFIX + "&tl=" + genGTranslateLocaleStr(locale) + "&q=" + urlEncodedText;
 
-            log("text_speaker: speak cantonese: link: " + link);
+            log("text_speaker: speak by g translate: link: " + link);
 
             Uri uri = Uri.parse(link);
 
@@ -354,11 +374,11 @@ public class TextSpeaker extends Foundation {
             headers.put("User-Agent", "stagefright/1.2 (Linux;Android 5.0)");
             headers.put("Referer", "http://translate.google.com/");
 
-            cantoneseMediaPlayer = new MediaPlayer();
-            cantoneseMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            cantoneseMediaPlayer.setDataSource(appContext, uri, headers);
+            gTranslateMediaPlayer = new MediaPlayer();
+            gTranslateMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            gTranslateMediaPlayer.setDataSource(appContext, uri, headers);
 
-            cantoneseMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            gTranslateMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
 
@@ -370,18 +390,18 @@ public class TextSpeaker extends Foundation {
                         e.printStackTrace();
                         succeed = false;
 
-                        clearAndTriggerCantoneseOnSpeakCompleteListener(false);
+                        clearAndTriggerGTranslateOnSpeakCompleteListener(false);
 
                     }
 
                     if (succeed) {
-                        triggerCantoneseOnSpeakStartListener();
+                        triggerGTranslateOnSpeakStartListener();
                     }
 
                 }
             });
 
-            cantoneseMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            gTranslateMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     try {
@@ -390,12 +410,12 @@ public class TextSpeaker extends Foundation {
                         e.printStackTrace();
                     }
 
-                    clearAndTriggerCantoneseOnSpeakCompleteListener(true);
+                    clearAndTriggerGTranslateOnSpeakCompleteListener(true);
                 }
             });
 
 
-            cantoneseMediaPlayer.prepareAsync();
+            gTranslateMediaPlayer.prepareAsync();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -403,7 +423,7 @@ public class TextSpeaker extends Foundation {
                 @Override
                 public void run() {
 
-                    clearAndTriggerCantoneseOnSpeakCompleteListener(false);
+                    clearAndTriggerGTranslateOnSpeakCompleteListener(false);
 
                 }
             });
@@ -443,11 +463,20 @@ public class TextSpeaker extends Foundation {
 
     }
 
+    public boolean isLanguageAvailable(Locale locale) {
+
+        if (!isConnected())
+            return false;
+
+        return tts.isLanguageAvailable(locale) == TextToSpeech.LANG_COUNTRY_AVAILABLE;
+
+    }
+
 
     public void speak(String text, Locale locale, final OnSpeakListener listener) {
 
-        if (isCantonese(locale))
-            speakInCantonese(text, listener);
+        if (!isLanguageAvailable(locale)) // isCantonese(locale)
+            speakInGTranslate(text, locale, listener);
         else
             speakInTts(text, locale, listener);
 
