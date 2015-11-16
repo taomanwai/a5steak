@@ -69,7 +69,7 @@ public class BosonNlpManager extends Foundation {
 
     }
 
-    fdsad
+
 
     public static String GET_KEYWORD_LINK = "http://api.bosonnlp.com/keywords/analysis";
     public static String ANALYZE_GRAMMAR_LINK = "http://api.bosonnlp.com/depparser/analysis";
