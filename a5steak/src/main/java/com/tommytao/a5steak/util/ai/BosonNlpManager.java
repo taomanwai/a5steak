@@ -75,6 +75,7 @@ public class BosonNlpManager extends Foundation {
     public static String GET_TIME_IN_MILLIS_LINK_PREFIX = "http://api.bosonnlp.com/time/analysis";
     public static String ANALYZE_PART_OF_SPEECH_LINK_PREFIX = "http://api.bosonnlp.com/tag/analysis";
 
+
     public static String INPUT_BRANKET_PREFIX = "[\"";
     public static String INPUT_BRANKET_SUFFIX = "\"]";
 
