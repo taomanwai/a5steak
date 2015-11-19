@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class NetworkTest extends ApplicationTestCase<Application> {
 
-    public static int AWAIT_TIME_IN_SECOND = 16; // 8
+    public static int AWAIT_TIME_IN_SECOND = 120;
 
     public NetworkTest() {
         super(Application.class);
