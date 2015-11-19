@@ -353,31 +353,31 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 //        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
 //    }
 //
-//    public void testSearchByCountry_shouldReturnCnResultInEnWhenCountryCnLocaleEnUs() throws Exception {
-//        final CountDownLatch signal = new CountDownLatch(1);
-//
-//        final String query = "天安門";
-//        GeocodeManager.getInstance().searchByCountry(query, "CN", new Locale("en", "US"), new GeocodeManager.OnSearchListener() {
-//            @Override
-//            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
-//
-//                if (!query.equals(keyword))
-//                    return;
-//
-//                if (poiPoints.isEmpty())
-//                    return;
-//
-//                if (!"Tiananmen, Dongcheng, Beijing, China".equals(
-//                        poiPoints.get(0).getFormattedAddress()))
-//                    return;
-//
-//                signal.countDown();
-//
-//            }
-//        });
-//
-//        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
-//    }
+    public void testSearchByCountry_shouldReturnCnResultInEnWhenCountryCnLocaleEnUs() throws Exception {
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final String query = "天安門";
+        GeocodeManager.getInstance().searchByCountry(query, "CN", new Locale("en", "US"), new GeocodeManager.OnSearchListener() {
+            @Override
+            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
+
+                if (!query.equals(keyword))
+                    return;
+
+                if (poiPoints.isEmpty())
+                    return;
+
+                if (!"Tiananmen, Dongcheng, Beijing, China".equals(
+                        poiPoints.get(0).getFormattedAddress()))
+                    return;
+
+                signal.countDown();
+
+            }
+        });
+
+        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
+    }
 //
 //    public void testSearchByCountry_shouldReturnCnResultInTcWhenCountryCnLocaleZhHk() throws Exception {
 //        final CountDownLatch signal = new CountDownLatch(1);
