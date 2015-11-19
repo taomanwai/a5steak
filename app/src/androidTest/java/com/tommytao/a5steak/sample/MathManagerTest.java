@@ -4,6 +4,7 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 
 import com.tommytao.a5steak.util.MathManager;
+import com.tommytao.a5steak.util.NetworkInfoManager;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -93,6 +94,14 @@ public class MathManagerTest extends ApplicationTestCase<Application> {
         assertTrue(result == -10);
 
     }
+
+    public void testNetwork() throws Exception {
+
+        assertTrue(NetworkInfoManager.getInstance().isConnected());
+
+    }
+
+
     
 
 

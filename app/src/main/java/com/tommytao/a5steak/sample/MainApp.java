@@ -3,6 +3,7 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.content.Context;
 
+import com.tommytao.a5steak.util.NetworkInfoManager;
 import com.tommytao.a5steak.util.google.GeocodeManager;
 import com.tommytao.a5steak.util.google.PlacesApiManager;
 
@@ -32,6 +33,8 @@ public class MainApp extends Application {
         GeocodeManager.getInstance().init(this,GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
 
         PlacesApiManager.getInstance().init(this, GOOGLE_PLACES_API_KEY);
+
+        NetworkInfoManager.getInstance().init(this);
 
 
     }
