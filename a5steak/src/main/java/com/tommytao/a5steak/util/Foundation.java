@@ -86,7 +86,7 @@ public class Foundation implements SensorEventListener {
     }
 
 
-    public final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 60000; // 10000
+    public final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 120000; // 10000
     public final int DEFAULT_READ_TIMEOUT_IN_MS = DEFAULT_CONNECT_TIMEOUT_IN_MS;
     public final int BUFFER_SIZE_IN_BYTE = 1024;
     public final String BOUNDARY_OF_HTTP_POST_BYTE_ARRAY = "&&3rewfwefwfewfhyrjfhdncyuriwefr"; // Not &&3rewfwefwfewfhufrbewfuweriwefr NOT 0xKhTmLbOuNdArY
