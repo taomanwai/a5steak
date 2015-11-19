@@ -3,6 +3,7 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
+import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.NetworkInfoManager;
 
 import java.util.concurrent.CountDownLatch;
@@ -12,8 +13,6 @@ import java.util.concurrent.TimeUnit;
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
 public class NetworkTest extends ApplicationTestCase<Application> {
-
-    public static int AWAIT_TIME_IN_SECOND = 120;
 
     public NetworkTest() {
         super(Application.class);
@@ -47,7 +46,7 @@ public class NetworkTest extends ApplicationTestCase<Application> {
             }
         });
 
-        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
+        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.SECONDS));
 
     }
 
@@ -65,7 +64,7 @@ public class NetworkTest extends ApplicationTestCase<Application> {
             }
         });
 
-        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
+        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.SECONDS));
 
     }
 

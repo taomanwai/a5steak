@@ -8,8 +8,6 @@ import android.test.ApplicationTestCase;
  */
 public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
 
-    public static int AWAIT_TIME_IN_SECOND = 8; // 8
-
     public PlacesApiManagerTest() {
         super(Application.class);
 
