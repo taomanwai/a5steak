@@ -27,7 +27,11 @@ public class NetworkTest extends ApplicationTestCase<Application> {
         createApplication();
     }
 
+    public void testNetwork() throws Exception {
 
+        assertTrue(NetworkInfoManager.getInstance().isConnected());
+
+    }
 
     public void testGoogleNetwork() throws Exception {
 
