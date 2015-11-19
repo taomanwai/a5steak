@@ -3,6 +3,13 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
+import com.tommytao.a5steak.util.google.GeocodeManager;
+
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
@@ -541,28 +548,28 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 //        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
 //    }
 //
-//    public void testSearchByBounds_shouldReturnEmptyResultWhenBoundsInValidLocaleEnUs() throws Exception {
-//        final CountDownLatch signal = new CountDownLatch(1);
-//
-//        final String query = "長沙灣政府合署";
-//
-//        GeocodeManager.getInstance().searchByBounds(query,
-//                99, 113.835078, Double.NaN, 114.4069561, Locale.US, new GeocodeManager.OnSearchListener() {
-//                    @Override
-//                    public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
-//                        if (!query.equals(keyword))
-//                            return;
-//
-//                        if (!poiPoints.isEmpty())
-//                            return;
-//
-//                        signal.countDown();
-//                    }
-//                }
-//        );
-//
-//        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
-//    }
+    public void testSearchByBounds_shouldReturnEmptyResultWhenBoundsInValidLocaleEnUs() throws Exception {
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final String query = "長沙灣政府合署";
+
+        GeocodeManager.getInstance().searchByBounds(query,
+                99, 113.835078, Double.NaN, 114.4069561, Locale.US, new GeocodeManager.OnSearchListener() {
+                    @Override
+                    public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
+                        if (!query.equals(keyword))
+                            return;
+
+                        if (!poiPoints.isEmpty())
+                            return;
+
+                        signal.countDown();
+                    }
+                }
+        );
+
+        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
+    }
 
    
 
