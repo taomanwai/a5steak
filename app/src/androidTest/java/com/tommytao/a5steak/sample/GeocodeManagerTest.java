@@ -263,32 +263,32 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 //        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
 //    }
 //
-//    public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleEnUs() throws Exception {
-//        final CountDownLatch signal = new CountDownLatch(1);
-//
-//        final String query = "長沙灣政府合署";
-//        GeocodeManager.getInstance().searchByCountry(query, "HK", Locale.US, new GeocodeManager.OnSearchListener() {
-//            @Override
-//            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
-//
-//                if (!query.equals(keyword))
-//                    return;
-//
-//                if (poiPoints.isEmpty())
-//                    return;
-//
-//                if (!"Cheung Sha Wan Government Offices, 303 Cheung Sha Wan Rd, Sham Shui Po, Hong Kong".equals(
-//                        poiPoints.get(0).getFormattedAddress()))
-//                    return;
-//
-//                signal.countDown();
-//
-//            }
-//        });
-//
-//        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
-//
-//    }
+    public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleEnUs() throws Exception {
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final String query = "長沙灣政府合署";
+        GeocodeManager.getInstance().searchByCountry(query, "HK", Locale.US, new GeocodeManager.OnSearchListener() {
+            @Override
+            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
+
+                if (!query.equals(keyword))
+                    return;
+
+                if (poiPoints.isEmpty())
+                    return;
+
+                if (!"Cheung Sha Wan Government Offices, 303 Cheung Sha Wan Rd, Sham Shui Po, Hong Kong".equals(
+                        poiPoints.get(0).getFormattedAddress()))
+                    return;
+
+                signal.countDown();
+
+            }
+        });
+
+        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
+
+    }
 //
 //    public void testSearchByCountry_shouldReturnHkResultInTcWhenCountryHkLocaleZhHk() throws Exception {
 //
