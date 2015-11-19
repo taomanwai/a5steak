@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class NetworkTest extends ApplicationTestCase<Application> {
 
+    public static int AWAIT_TIME_IN_SECOND = 16; // 8
+
     public NetworkTest() {
         super(Application.class);
 
@@ -27,7 +29,7 @@ public class NetworkTest extends ApplicationTestCase<Application> {
 
 
 
-    public void testNetwork() throws Exception {
+    public void testGoogleNetwork() throws Exception {
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -41,8 +43,25 @@ public class NetworkTest extends ApplicationTestCase<Application> {
             }
         });
 
+        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
 
-        assertTrue(signal.await(10, TimeUnit.SECONDS));
+    }
+
+    public void testYahooNetwork() throws Exception {
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        NetworkInfoManager.getInstance().isYahooAccessible(new NetworkInfoManager.Listener() {
+            @Override
+            public void onComplete(boolean accessible) {
+
+                if (accessible)
+                    signal.countDown();
+
+            }
+        });
+
+        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
 
     }
 

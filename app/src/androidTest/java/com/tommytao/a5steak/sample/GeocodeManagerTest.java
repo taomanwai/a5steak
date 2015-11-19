@@ -548,28 +548,28 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 //        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
 //    }
 //
-    public void testSearchByBounds_shouldReturnEmptyResultWhenBoundsInValidLocaleEnUs() throws Exception {
-        final CountDownLatch signal = new CountDownLatch(1);
-
-        final String query = "長沙灣政府合署";
-
-        GeocodeManager.getInstance().searchByBounds(query,
-                99, 113.835078, Double.NaN, 114.4069561, Locale.US, new GeocodeManager.OnSearchListener() {
-                    @Override
-                    public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
-                        if (!query.equals(keyword))
-                            return;
-
-                        if (!poiPoints.isEmpty())
-                            return;
-
-                        signal.countDown();
-                    }
-                }
-        );
-
-        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
-    }
+//    public void testSearchByBounds_shouldReturnEmptyResultWhenBoundsInValidLocaleEnUs() throws Exception {
+//        final CountDownLatch signal = new CountDownLatch(1);
+//
+//        final String query = "長沙灣政府合署";
+//
+//        GeocodeManager.getInstance().searchByBounds(query,
+//                99, 113.835078, Double.NaN, 114.4069561, Locale.US, new GeocodeManager.OnSearchListener() {
+//                    @Override
+//                    public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
+//                        if (!query.equals(keyword))
+//                            return;
+//
+//                        if (!poiPoints.isEmpty())
+//                            return;
+//
+//                        signal.countDown();
+//                    }
+//                }
+//        );
+//
+//        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
+//    }
 
    
 

@@ -53,7 +53,9 @@ public class NetworkInfoManager extends Foundation {
 
 	}
 
-	public static final String GOOGLE_LINK = "http://www.google.hk";
+	public static final String GOOGLE_LINK = "http://www.google.com";
+
+	public static final String YAHOO_LINK = "http://www.yahoo.com";
 
 	public static interface Listener {
 
@@ -164,19 +166,43 @@ public class NetworkInfoManager extends Foundation {
 
 		}
 
-
-//		httpGetJSON(GOOGLE_LINK, 1, new Foundation.OnHttpGetJSONListener() {
-//
-//			@Override
-//			public void onComplete(JSONObject response) {
-//
-//				listener.onComplete(response != null);
-//
-//			}
-//
-//		});
-
 		httpGetByteArray(GOOGLE_LINK, new OnHttpGetByteArrayListener() {
+			@Override
+			public void onDownloaded(byte[] ba) {
+				listener.onComplete(ba.length > 0);
+			}
+
+			@Override
+			public void onDownloading(int percentage) {
+
+			}
+		});
+
+	}
+
+	/**
+	 * Check if Yahoo accessible
+	 *
+	 * @param listener
+	 *            Listener which is used to return result
+	 */
+	public void isYahooAccessible(final Listener listener) {
+
+		if (listener==null)
+			return;
+
+		if (!this.isConnected()) {
+
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					listener.onComplete(false);
+				}
+			});
+
+		}
+
+		httpGetByteArray(YAHOO_LINK, new OnHttpGetByteArrayListener() {
 			@Override
 			public void onDownloaded(byte[] ba) {
 				listener.onComplete(ba.length > 0);
