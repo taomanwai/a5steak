@@ -15,11 +15,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
-    public static int AWAIT_TIME_IN_SECOND = 8; // 8
+    public static int AWAIT_TIME_IN_SECOND = 16; // 8
 
     public GeocodeManagerTest() {
         super(Application.class);
-
 
     }
 
