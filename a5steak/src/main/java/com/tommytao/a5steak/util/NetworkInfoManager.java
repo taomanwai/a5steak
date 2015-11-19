@@ -4,8 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import org.json.JSONObject;
-
 /**
  * Responsible for getting network info (e.g. connectivity, etc.)
  * 
@@ -158,49 +156,36 @@ public class NetworkInfoManager extends Foundation {
 		if (!this.isConnected()) {
 
 			handler.post(new Runnable() {
-
 				@Override
 				public void run() {
-					listener.onComplete(false); 
-
+					listener.onComplete(false);
 				}
-
 			}); 
 
 		}
 
-		// StringRequest strRequest = new StringRequest(Request.Method.GET,
-		// GOOGLE_LINK, new Response.Listener<String>() {
-		//
-		// @Override
-		// public void onResponse(String response) {
-		// listener.onComplete(true);
-		// }
-		// }, new Response.ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError error) {
-		// listener.onComplete(false); 
-		// }
-		// });
-		//
-		// volleyReqQueue.add(strRequest);
 
-		httpGetJSON(GOOGLE_LINK, 1, new Foundation.OnHttpGetJSONListener() {
+//		httpGetJSON(GOOGLE_LINK, 1, new Foundation.OnHttpGetJSONListener() {
+//
+//			@Override
+//			public void onComplete(JSONObject response) {
+//
+//				listener.onComplete(response != null);
+//
+//			}
+//
+//		});
 
+		httpGetByteArray(GOOGLE_LINK, new OnHttpGetByteArrayListener() {
 			@Override
-			public void onComplete(JSONObject response) {
-
-				// if (listener != null)
-				// if (response != null)
-				// FileUtils.saveLog(linkFinal + "\n" + response.toString(),
-				// true, ApiManager.class);
-				// listener.apiResponse(response);
-
-				listener.onComplete(response != null);
-
+			public void onDownloaded(byte[] ba) {
+				listener.onComplete(ba.length > 0);
 			}
 
+			@Override
+			public void onDownloading(int percentage) {
+
+			}
 		});
 
 	}
