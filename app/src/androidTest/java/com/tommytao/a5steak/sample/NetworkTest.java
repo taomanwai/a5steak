@@ -68,5 +68,25 @@ public class NetworkTest extends ApplicationTestCase<Application> {
 
     }
 
+    public void testGeocodeNetwork() throws Exception {
+        String link = "https://maps.google.com/maps/api/geocode/json?address=長沙灣政府合署&components=country:HK&language=en-US&client=gme-easyvanhongkonglimited&signature=IN92Tp0yF_fRMBzpo4JUtZUUzcA=";
+
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        NetworkInfoManager.getInstance().isLinkAccessible(link, new NetworkInfoManager.Listener() {
+            @Override
+            public void onComplete(boolean accessible) {
+
+                if (accessible)
+                    signal.countDown();
+
+            }
+        });
+
+        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
+
+    }
+
 
 }

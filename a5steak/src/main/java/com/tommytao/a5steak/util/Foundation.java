@@ -428,6 +428,7 @@ public class Foundation implements SensorEventListener {
                         try {
 
                             jObj = new JSONObject(sb.toString());
+
                         } catch (Exception e) {
                             e.printStackTrace();
 
