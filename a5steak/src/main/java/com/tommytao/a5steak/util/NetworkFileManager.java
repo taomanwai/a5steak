@@ -60,7 +60,7 @@ public class NetworkFileManager extends Foundation {
 
     public void download(final String link, final String directory, final String fileName, final DownloadFileListener listener) {
 
-        this.httpGetFile(link, directory, fileName, new Foundation.OnHttpGetFileListener() {
+        this.httpGetFile(link, 1, directory, fileName, new Foundation.OnHttpGetFileListener() {
 
             @Override
             public void onDownloading(int percentage) {

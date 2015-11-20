@@ -360,7 +360,7 @@ public class AppManager extends Foundation {
             return;
         }
 
-        httpGetFile(link, appContext.getExternalFilesDir(null).getAbsolutePath(), LATEST_APP_APK, new Foundation.OnHttpGetFileListener() {
+        httpGetFile(link, 1, appContext.getExternalFilesDir(null).getAbsolutePath(), LATEST_APP_APK, new Foundation.OnHttpGetFileListener() {
 
             @Override
             public void onDownloading(int percentage) {

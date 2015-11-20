@@ -154,7 +154,7 @@ public class BitmapManager extends Foundation {
             return;
         }
 
-        httpGetByteArray(link, new OnHttpGetByteArrayListener() {
+        httpGetByteArray(link, 1, new OnHttpGetByteArrayListener() {
 
             public void onDownloaded(byte[] data) {
 

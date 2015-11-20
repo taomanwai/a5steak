@@ -36,6 +36,8 @@ public class NetworkInfoManager extends Foundation {
 
 	// --
 
+	public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
+
 	@Override
 	public boolean init(Context appContext) {
 
@@ -166,7 +168,7 @@ public class NetworkInfoManager extends Foundation {
 
 		}
 
-		httpGetByteArray(GOOGLE_LINK, new OnHttpGetByteArrayListener() {
+		httpGetByteArray(GOOGLE_LINK, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetByteArrayListener() {
 			@Override
 			public void onDownloaded(byte[] ba) {
 				listener.onComplete(ba.length > 0);
@@ -202,7 +204,7 @@ public class NetworkInfoManager extends Foundation {
 
 		}
 
-		httpGetByteArray(YAHOO_LINK, new OnHttpGetByteArrayListener() {
+		httpGetByteArray(YAHOO_LINK, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetByteArrayListener() {
 			@Override
 			public void onDownloaded(byte[] ba) {
 				listener.onComplete(ba.length > 0);

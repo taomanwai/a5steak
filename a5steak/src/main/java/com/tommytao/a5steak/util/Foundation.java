@@ -165,7 +165,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected void httpGetFile(final String link, final String directory, final String fileName, final OnHttpGetFileListener listener) {
+    protected void httpGetFile(final String link, final int maxNoOfRetries, final String directory, final String fileName, final OnHttpGetFileListener listener) {
 
         log("base: file: " + link);
 
@@ -189,7 +189,7 @@ public class Foundation implements SensorEventListener {
                     return null;
                 }
 
-                Object[] objs = link2HttpGetConnectionAndInputStream(links[0], 1);
+                Object[] objs = link2HttpGetConnectionAndInputStream(links[0], maxNoOfRetries);
 
                 if (objs == null) {
                     log("base: ERR: " + "ConnectionAndInputStream err for " + links[0]);
@@ -486,7 +486,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected void httpGetByteArray(final String link, final OnHttpGetByteArrayListener listener) {
+    protected void httpGetByteArray(final String link, final int maxNoOfRetries, final OnHttpGetByteArrayListener listener) {
 
         log("base: byte_array: " + link);
 
@@ -510,7 +510,7 @@ public class Foundation implements SensorEventListener {
                     return null;
                 }
 
-                Object[] objs = link2HttpGetConnectionAndInputStream(links[0], 1);
+                Object[] objs = link2HttpGetConnectionAndInputStream(links[0], maxNoOfRetries);
 
                 if (objs == null) {
                     log("base: ERR: " + "ConnectionAndInputStream err for " + links[0]);
