@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimeZone;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -866,14 +867,14 @@ public class BosonNlpManager extends Foundation {
 
                             }
 
-                        }.execute(responseStr);
+                        }.executeOnExecutor(Executors.newCachedThreadPool(), responseStr);
 
                     }
                 });
 
             }
 
-        }.execute(sentence);
+        }.executeOnExecutor(Executors.newCachedThreadPool(), sentence);
 
 
     }

@@ -11,6 +11,7 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
 
 /**
  * Responsible for GCM.
@@ -364,7 +365,7 @@ public class GcmPusher extends GFoundation {
 
             }
 
-        }.execute(getGCM());
+        }.executeOnExecutor(Executors.newCachedThreadPool(), getGCM());
 
     }
 

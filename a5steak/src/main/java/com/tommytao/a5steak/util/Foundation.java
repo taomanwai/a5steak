@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -260,7 +261,7 @@ public class Foundation implements SensorEventListener {
 
             }
 
-        }.execute(link);
+        }.executeOnExecutor(Executors.newCachedThreadPool(), link);
 
     }
 
@@ -456,7 +457,7 @@ public class Foundation implements SensorEventListener {
 
             }
 
-        }.execute(link);
+        }.executeOnExecutor(Executors.newCachedThreadPool(), link);
 
     }
 
@@ -578,7 +579,7 @@ public class Foundation implements SensorEventListener {
 
             }
 
-        }.execute(link);
+        }.executeOnExecutor(Executors.newCachedThreadPool(), link);
 
     }
 

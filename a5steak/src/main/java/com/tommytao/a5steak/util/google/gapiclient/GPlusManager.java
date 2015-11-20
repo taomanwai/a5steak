@@ -22,6 +22,7 @@ import com.google.android.gms.plus.Plus;
 import com.tommytao.a5steak.util.google.GFoundation;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
 
 /**
  * Responsible for Facebook operations
@@ -571,7 +572,7 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
 
             }
 
-        }.execute(getClient());
+        }.executeOnExecutor(Executors.newCachedThreadPool(), getClient());
 
 
     }

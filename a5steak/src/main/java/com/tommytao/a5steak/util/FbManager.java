@@ -45,6 +45,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -781,7 +782,7 @@ public class FbManager extends Foundation implements ConnectionClassManager.Conn
 
             }
 
-        }.execute();
+        }.executeOnExecutor(Executors.newCachedThreadPool());
 
     }
 
@@ -850,7 +851,7 @@ public class FbManager extends Foundation implements ConnectionClassManager.Conn
                 clearAndTriggerOnGetConnectionClassListeners(ConnectionClassManager.getInstance().getCurrentBandwidthQuality());
 
             }
-        }.execute(GET_CONNECTION_CLASS_SAMPLE_LINK);
+        }.executeOnExecutor(Executors.newCachedThreadPool(), GET_CONNECTION_CLASS_SAMPLE_LINK);
 
 
     }

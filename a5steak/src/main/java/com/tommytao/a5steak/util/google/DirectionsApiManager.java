@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 /**
  * Responsible for Google Directions API
@@ -630,7 +631,7 @@ public class DirectionsApiManager extends GFoundation {
                 listener.returnSteps(result.first, result.second);
             }
 
-        }.execute(responseJObj);
+        }.executeOnExecutor(Executors.newCachedThreadPool(), responseJObj);
 
         // == End of run in bg ==
 
