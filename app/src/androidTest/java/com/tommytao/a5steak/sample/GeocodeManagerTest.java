@@ -294,7 +294,9 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS) && succeeds.get(0));
+        assertTrue("Timeout occurs", signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
+
+        assertTrue("Unexpected result", succeeds.get(0));
 
     }
 //
