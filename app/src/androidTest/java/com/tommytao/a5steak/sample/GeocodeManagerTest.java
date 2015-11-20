@@ -263,28 +263,38 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 //
     public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleEnUs() throws Exception {
         final CountDownLatch signal = new CountDownLatch(1);
+        final ArrayList<Boolean> succeeds = new ArrayList<>();
+        succeeds.add(false);
 
         final String query = "長沙灣政府合署";
         GeocodeManager.getInstance().searchByCountry(query, "HK", Locale.US, new GeocodeManager.OnSearchListener() {
             @Override
             public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
 
-                if (!query.equals(keyword))
+                if (!query.equals(keyword)) {
+                    signal.countDown();
                     return;
+                }
 
-                if (poiPoints.isEmpty())
+                if (poiPoints.isEmpty()) {
+                    signal.countDown();
                     return;
+                }
 
                 if (!"Cheung Sha Wan Government Offices, 303 Cheung Sha Wan Rd, Sham Shui Po, Hong Kong".equals(
-                        poiPoints.get(0).getFormattedAddress()))
+                        poiPoints.get(0).getFormattedAddress())) {
+                    signal.countDown();
                     return;
+                }
+
+                succeeds.set(0, true);
 
                 signal.countDown();
 
             }
         });
 
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
+        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS) && succeeds.get(0));
 
     }
 //
@@ -351,31 +361,31 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 //        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
 //    }
 //
-    public void testSearchByCountry_shouldReturnCnResultInEnWhenCountryCnLocaleEnUs() throws Exception {
-        final CountDownLatch signal = new CountDownLatch(1);
-
-        final String query = "天安門";
-        GeocodeManager.getInstance().searchByCountry(query, "CN", new Locale("en", "US"), new GeocodeManager.OnSearchListener() {
-            @Override
-            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
-
-                if (!query.equals(keyword))
-                    return;
-
-                if (poiPoints.isEmpty())
-                    return;
-
-                if (!"Tiananmen, Dongcheng, Beijing, China".equals(
-                        poiPoints.get(0).getFormattedAddress()))
-                    return;
-
-                signal.countDown();
-
-            }
-        });
-
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
-    }
+//    public void testSearchByCountry_shouldReturnCnResultInEnWhenCountryCnLocaleEnUs() throws Exception {
+//        final CountDownLatch signal = new CountDownLatch(1);
+//
+//        final String query = "天安門";
+//        GeocodeManager.getInstance().searchByCountry(query, "CN", new Locale("en", "US"), new GeocodeManager.OnSearchListener() {
+//            @Override
+//            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
+//
+//                if (!query.equals(keyword))
+//                    return;
+//
+//                if (poiPoints.isEmpty())
+//                    return;
+//
+//                if (!"Tiananmen, Dongcheng, Beijing, China".equals(
+//                        poiPoints.get(0).getFormattedAddress()))
+//                    return;
+//
+//                signal.countDown();
+//
+//            }
+//        });
+//
+//        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
+//    }
 //
 //    public void testSearchByCountry_shouldReturnCnResultInTcWhenCountryCnLocaleZhHk() throws Exception {
 //        final CountDownLatch signal = new CountDownLatch(1);
