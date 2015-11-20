@@ -38,7 +38,7 @@ public class NetworkInfoManager extends Foundation {
 
     // --
 
-    public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
+    public final int DEFAULT_MAX_NUM_OF_RETRIES = 10;
 
     @Override
     public boolean init(Context appContext) {
