@@ -3,11 +3,7 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
-import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.NetworkInfoManager;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -32,59 +28,13 @@ public class NetworkTest extends ApplicationTestCase<Application> {
 
     }
 
-    public void testGoogleNetwork() throws Exception {
-
-        final CountDownLatch signal = new CountDownLatch(1);
-
-        NetworkInfoManager.getInstance().isGoogleAccessible(new NetworkInfoManager.Listener() {
-            @Override
-            public void onComplete(boolean accessible) {
-
-                if (accessible)
-                    signal.countDown();
-
-            }
-        });
-
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
-
-    }
-
-    public void testYahooNetwork() throws Exception {
-
-        final CountDownLatch signal = new CountDownLatch(1);
-
-        NetworkInfoManager.getInstance().isYahooAccessible(new NetworkInfoManager.Listener() {
-            @Override
-            public void onComplete(boolean accessible) {
-
-                if (accessible)
-                    signal.countDown();
-
-            }
-        });
-
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
-
-    }
-
-    public void testGeocodeNetwork() throws Exception {
-        String link = "https://maps.google.com/maps/api/geocode/json?address=長沙灣政府合署&components=country:HK&language=en-US&client=gme-easyvanhongkonglimited&signature=IN92Tp0yF_fRMBzpo4JUtZUUzcA=";
 
 
-        final CountDownLatch signal = new CountDownLatch(1);
+    public void testMiscNetwork() throws Exception {
+        String link = "http://maps.google.com/maps/api/geocode/json?address=長沙灣政府合署&components=country:HK&language=en-US&client=gme-easyvanhongkonglimited&signature=IN92Tp0yF_fRMBzpo4JUtZUUzcA=";
 
-        NetworkInfoManager.getInstance().isLinkAccessible(link, new NetworkInfoManager.Listener() {
-            @Override
-            public void onComplete(boolean accessible) {
+        TestUtils.startLinkNetworkTestAndAssert(this, link);
 
-                if (accessible)
-                    signal.countDown();
-
-            }
-        });
-
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
 
     }
 

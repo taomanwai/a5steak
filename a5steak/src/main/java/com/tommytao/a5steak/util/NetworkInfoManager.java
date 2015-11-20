@@ -3,6 +3,9 @@ package com.tommytao.a5steak.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
+
+import org.json.JSONObject;
 
 /**
  * Responsible for getting network info (e.g. connectivity, etc.)
@@ -58,9 +61,21 @@ public class NetworkInfoManager extends Foundation {
 
     public static final String YAHOO_LINK = "http://www.yahoo.com";
 
-    public static interface Listener {
+    public static interface IsLinkAccessibleInStrListener {
 
-        public void onComplete(boolean accessible);
+        public void onComplete(boolean accessible, String str);
+
+    }
+
+    public static interface IsLinkAccessibleInJSONListener {
+
+        public void onComplete(boolean accessible, JSONObject jObj);
+
+    }
+
+    public static interface IsLinkAccessibleInByteArrayListener {
+
+        public void onComplete(boolean accessible, byte[] ba);
 
     }
 
@@ -145,14 +160,8 @@ public class NetworkInfoManager extends Foundation {
         return networkInfo.isConnected();
     }
 
-    /**
-     * Check if link accessible
-     *
-     * @param link String of link
-     * @param listener Listener which is used to return result
-     *
-     */
-    public void isLinkAccessible(String link, final Listener listener) {
+
+    public void isLinkAccessibleInJSON(String link, final IsLinkAccessibleInJSONListener listener) {
 
         if (listener == null)
             return;
@@ -162,7 +171,32 @@ public class NetworkInfoManager extends Foundation {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    listener.onComplete(false);
+                    listener.onComplete(false, null);
+                }
+            });
+
+        }
+
+        httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
+            @Override
+            public void onComplete(JSONObject response) {
+                listener.onComplete(response != null, response);
+            }
+        });
+
+    }
+
+    public void isLinkAccessibleInByteArray(String link, final IsLinkAccessibleInByteArrayListener listener) {
+
+        if (listener == null)
+            return;
+
+        if (!this.isConnected()) {
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onComplete(false, new byte[0]);
                 }
             });
 
@@ -171,12 +205,48 @@ public class NetworkInfoManager extends Foundation {
         httpGetByteArray(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetByteArrayListener() {
             @Override
             public void onDownloaded(byte[] ba) {
-                listener.onComplete(ba.length > 0);
+
+                listener.onComplete(ba.length > 0, ba);
+
             }
 
             @Override
             public void onDownloading(int percentage) {
 
+            }
+        });
+
+
+    }
+
+
+    /**
+     * Check if link accessible
+     *
+     * @param link     String of link
+     * @param listener Listener which is used to return result
+     */
+    public void isLinkAccessibleInStr(String link, final IsLinkAccessibleInStrListener listener) {
+
+        if (listener == null)
+            return;
+
+        if (!this.isConnected()) {
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onComplete(false, "");
+                }
+            });
+
+        }
+
+        httpGetStr(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetStrListener() {
+            @Override
+            public void onComplete(String str) {
+
+                listener.onComplete(!TextUtils.isEmpty(str), str);
             }
         });
 
@@ -187,35 +257,9 @@ public class NetworkInfoManager extends Foundation {
      *
      * @param listener Listener which is used to return result
      */
-    public void isGoogleAccessible(final Listener listener) {
+    public void isGoogleAccessibleInStr(final IsLinkAccessibleInStrListener listener) {
 
-//        if (listener == null)
-//            return;
-//
-//        if (!this.isConnected()) {
-//
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    listener.onComplete(false);
-//                }
-//            });
-//
-//        }
-//
-//        httpGetByteArray(GOOGLE_LINK, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetByteArrayListener() {
-//            @Override
-//            public void onDownloaded(byte[] ba) {
-//                listener.onComplete(ba.length > 0);
-//            }
-//
-//            @Override
-//            public void onDownloading(int percentage) {
-//
-//            }
-//        });
-
-        isLinkAccessible(GOOGLE_LINK, listener);
+        isLinkAccessibleInStr(GOOGLE_LINK, listener);
 
     }
 
@@ -224,35 +268,9 @@ public class NetworkInfoManager extends Foundation {
      *
      * @param listener Listener which is used to return result
      */
-    public void isYahooAccessible(final Listener listener) {
+    public void isYahooAccessibleInStr(final IsLinkAccessibleInStrListener listener) {
 
-//        if (listener == null)
-//            return;
-//
-//        if (!this.isConnected()) {
-//
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    listener.onComplete(false);
-//                }
-//            });
-//
-//        }
-//
-//        httpGetByteArray(YAHOO_LINK, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetByteArrayListener() {
-//            @Override
-//            public void onDownloaded(byte[] ba) {
-//                listener.onComplete(ba.length > 0);
-//            }
-//
-//            @Override
-//            public void onDownloading(int percentage) {
-//
-//            }
-//        });
-
-        isLinkAccessible(YAHOO_LINK, listener);
+        isLinkAccessibleInStr(YAHOO_LINK, listener);
 
     }
 

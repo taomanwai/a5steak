@@ -254,7 +254,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 //    }
 //
 
-
+// ===
 
 //    public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleEnUs() throws Exception {
 //        final CountDownLatch signal = new CountDownLatch(1);
@@ -301,6 +301,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 //
 //    }
 
+    // ===
 
 //
 //    public void testSearchByCountry_shouldReturnHkResultInTcWhenCountryHkLocaleZhHk() throws Exception {

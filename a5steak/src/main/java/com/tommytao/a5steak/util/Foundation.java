@@ -58,6 +58,12 @@ public class Foundation implements SensorEventListener {
 
     }
 
+    public static interface OnHttpGetStrListener {
+
+        public void onComplete(String str);
+
+    }
+
     public static interface OnHttpGetFileListener {
 
         public void onDownloaded(File file);
@@ -358,6 +364,99 @@ public class Foundation implements SensorEventListener {
         }
 
         return hasException ? null : new Object[]{conn, is};
+
+    }
+
+    protected void httpGetStr(final String link, final int maxNoOfRetries, final OnHttpGetStrListener listener) {
+
+        log("base: str: " + link);
+
+        new AsyncTask<String, Void, String>() {
+
+            @Override
+            protected String doInBackground(String... links) {
+
+                if (links.length != 1) {
+                    log("base: ERR: " + "Number of link is not 1 but " + links.length);
+                    return "";
+                }
+
+                URL url = null;
+                try {
+                    url = new URL(link);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (url == null) {
+                    log("base: ERR: " + "URL is invalid for " + link);
+                    return "";
+                }
+
+                HttpURLConnection conn = null;
+
+                StringBuilder sb = new StringBuilder();
+
+                try {
+
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
+                    conn.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
+
+                    int countOfRetries = 0;
+                    InputStream in = null;
+
+                    while (in == null && countOfRetries < maxNoOfRetries) {
+
+                        if (countOfRetries >= 1) {
+                            log("base: RETRY (" + (countOfRetries + 1) + "): " + link);
+                        }
+
+                        try {
+                            in = new BufferedInputStream(conn.getInputStream());
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                        }
+                        countOfRetries++;
+                    }
+
+                    if (in != null) {
+
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                        String line = "";
+                        while ((line = reader.readLine()) != null)
+                            sb.append(line);
+
+
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                } finally {
+                    if (conn != null)
+                        conn.disconnect();
+                }
+
+                return "" + sb;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+
+                log("base: str_result: " + "for link: " + link + " result: " + result);
+
+                if (listener != null)
+                    listener.onComplete(result);
+
+            }
+
+        }.executeOnExecutor(Executors.newCachedThreadPool(), link);
 
     }
 
