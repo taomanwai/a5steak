@@ -266,23 +266,29 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
         final ArrayList<Boolean> succeeds = new ArrayList<>();
         succeeds.add(false);
 
+        final ArrayList<String> errMsg = new ArrayList<>();
+        errMsg.add("");
+
         final String query = "長沙灣政府合署";
         GeocodeManager.getInstance().searchByCountry(query, "HK", Locale.US, new GeocodeManager.OnSearchListener() {
             @Override
             public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
 
                 if (!query.equals(keyword)) {
+                    errMsg.set(0, "Result from other keyword, other keyword: " + keyword + ", orig query: " + query);
                     signal.countDown();
                     return;
                 }
 
                 if (poiPoints.isEmpty()) {
+                    errMsg.set(0, "poiPoints is empty");
                     signal.countDown();
                     return;
                 }
 
                 if (!"Cheung Sha Wan Government Offices, 303 Cheung Sha Wan Rd, Sham Shui Po, Hong Kong".equals(
                         poiPoints.get(0).getFormattedAddress())) {
+                    errMsg.set(0, "Strange formatted address: " + poiPoints.get(0).getFormattedAddress());
                     signal.countDown();
                     return;
                 }
@@ -296,7 +302,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
         assertTrue("Timeout occurs", signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
 
-        assertTrue("Unexpected result", succeeds.get(0));
+        assertTrue("Unexpected result: " + errMsg.get(0), succeeds.get(0));
 
     }
 //
