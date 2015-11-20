@@ -28,13 +28,33 @@ public class NetworkTest extends ApplicationTestCase<Application> {
 
     }
 
+    public void testGoogleGeocodeNetwork() throws Exception {
 
-
-    public void testMiscNetwork() throws Exception {
         String link = "http://maps.google.com/maps/api/geocode/json?address=長沙灣政府合署&components=country:HK&language=en-US";
 
         TestUtils.startLinkNetworkTestAndAssert(this, link);
 
+    }
+
+    public void testGoogleNetwork() throws Exception {
+
+        String link = "http://google.com";
+
+        TestUtils.startLinkNetworkTestAndAssert(this, link);
+
+    }
+
+    public void testYahooNetwork() throws Exception {
+        String link = "http://yahoo.com";
+
+        TestUtils.startLinkNetworkTestAndAssert(this, link);
+
+    }
+
+    public void testHotmailNetwork() throws Exception {
+        String link = "http://hotmail.com";
+
+        TestUtils.startLinkNetworkTestAndAssert(this, link);
 
     }
 

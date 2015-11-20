@@ -252,28 +252,6 @@ public class NetworkInfoManager extends Foundation {
 
     }
 
-    /**
-     * Check if Google accessible
-     *
-     * @param listener Listener which is used to return result
-     */
-    public void isGoogleAccessibleInStr(final IsLinkAccessibleInStrListener listener) {
-
-        isLinkAccessibleInStr(GOOGLE_LINK, listener);
-
-    }
-
-    /**
-     * Check if Yahoo accessible
-     *
-     * @param listener Listener which is used to return result
-     */
-    public void isYahooAccessibleInStr(final IsLinkAccessibleInStrListener listener) {
-
-        isLinkAccessibleInStr(YAHOO_LINK, listener);
-
-    }
-
     public boolean isConnectedOrConnecting() {
 
         refreshNetworkInfo();
