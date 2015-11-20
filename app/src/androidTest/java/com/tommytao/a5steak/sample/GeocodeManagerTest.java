@@ -284,7 +284,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.SECONDS));
+        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
 
     }
 //
@@ -374,7 +374,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.SECONDS));
+        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
     }
 //
 //    public void testSearchByCountry_shouldReturnCnResultInTcWhenCountryCnLocaleZhHk() throws Exception {

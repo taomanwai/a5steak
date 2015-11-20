@@ -46,7 +46,7 @@ public class NetworkTest extends ApplicationTestCase<Application> {
             }
         });
 
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.SECONDS));
+        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
 
     }
 
@@ -64,7 +64,7 @@ public class NetworkTest extends ApplicationTestCase<Application> {
             }
         });
 
-        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.SECONDS));
+        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
 
     }
 
