@@ -31,7 +31,7 @@ public class NetworkTest extends ApplicationTestCase<Application> {
 
 
     public void testMiscNetwork() throws Exception {
-        String link = "http://maps.google.com/maps/api/geocode/json?address=長沙灣政府合署&components=country:HK&language=en-US&client=gme-easyvanhongkonglimited&signature=IN92Tp0yF_fRMBzpo4JUtZUUzcA=";
+        String link = "http://maps.google.com/maps/api/geocode/json?address=長沙灣政府合署&components=country:HK&language=en-US";
 
         TestUtils.startLinkNetworkTestAndAssert(this, link);
 
