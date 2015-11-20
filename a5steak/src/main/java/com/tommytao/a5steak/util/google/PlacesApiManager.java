@@ -160,10 +160,6 @@ public class PlacesApiManager extends GFoundation {
         return super.init(context);
     }
 
-	@Deprecated
-	public boolean isInitialized() {
-		return super.isInitialized();
-	}
 
 	/**
 	 *

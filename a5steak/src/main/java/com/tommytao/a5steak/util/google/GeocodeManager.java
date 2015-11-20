@@ -206,11 +206,6 @@ public class GeocodeManager extends GFoundation {
         return super.init(context);
     }
 
-    @Deprecated
-    public boolean isInitialized() {
-        return super.isInitialized();
-    }
-
     public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {
 
         if (!super.init(appContext)) {
