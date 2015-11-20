@@ -13,9 +13,11 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -465,99 +467,131 @@ public class Foundation implements SensorEventListener {
 
         log("base: json: " + link);
 
-        new AsyncTask<String, Void, JSONObject>() {
+        httpGetStr(link, maxNoOfRetries, new OnHttpGetStrListener() {
 
             @Override
-            protected JSONObject doInBackground(String... links) {
+            public void onComplete(String str) {
 
-                if (links.length != 1) {
-                    log("base: ERR: " + "Number of link is not 1 but " + links.length);
-                    return null;
+                if (TextUtils.isEmpty(str)){
+                    if (listener != null)
+                        listener.onComplete(null);
+                    return;
                 }
 
-                URL url = null;
-                try {
-                    url = new URL(link);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if (url == null) {
-                    log("base: ERR: " + "URL is invalid for " + link);
-                    return null;
-                }
-
-                JSONObject jObj = null;
-                HttpURLConnection conn = null;
+                JSONObject result = null;
 
                 try {
-
-                    conn = (HttpURLConnection) url.openConnection();
-                    conn.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
-                    conn.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
-
-                    int countOfRetries = 0;
-                    InputStream in = null;
-
-                    while (in == null && countOfRetries < maxNoOfRetries) {
-
-                        if (countOfRetries >= 1) {
-                            log("base: RETRY (" + (countOfRetries + 1) + "): " + link);
-                        }
-
-                        try {
-                            in = new BufferedInputStream(conn.getInputStream());
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-
-                        }
-                        countOfRetries++;
-                    }
-
-                    if (in != null) {
-
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-                        StringBuilder sb = new StringBuilder();
-                        String line = "";
-                        while ((line = reader.readLine()) != null)
-                            sb.append(line);
-
-                        try {
-
-                            jObj = new JSONObject(sb.toString());
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-
-                        }
-
-                    }
-
-                } catch (Exception e) {
+                    result = new JSONObject(str);
+                } catch (JSONException e) {
                     e.printStackTrace();
-
-                } finally {
-                    if (conn != null)
-                        conn.disconnect();
                 }
-
-                return jObj;
-
-            }
-
-            @Override
-            protected void onPostExecute(JSONObject result) {
 
                 log("base: json_result: " + "for link: " + link + " result: " + result);
+
 
                 if (listener != null)
                     listener.onComplete(result);
 
             }
 
-        }.executeOnExecutor(Executors.newCachedThreadPool(), link);
+        });
+
+
+//        new AsyncTask<String, Void, JSONObject>() {
+//
+//            @Override
+//            protected JSONObject doInBackground(String... links) {
+//
+//                if (links.length != 1) {
+//                    log("base: ERR: " + "Number of link is not 1 but " + links.length);
+//                    return null;
+//                }
+//
+//                URL url = null;
+//                try {
+//                    url = new URL(link);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                if (url == null) {
+//                    log("base: ERR: " + "URL is invalid for " + link);
+//                    return null;
+//                }
+//
+//                JSONObject jObj = null;
+//                HttpURLConnection conn = null;
+//
+//                try {
+//
+//                    conn = (HttpURLConnection) url.openConnection();
+//                    conn.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
+//                    conn.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
+//
+//                    int countOfRetries = 0;
+//                    InputStream in = null;
+//
+//                    while (in == null && countOfRetries < maxNoOfRetries) {
+//
+//                        if (countOfRetries >= 1) {
+//                            log("base: RETRY (" + (countOfRetries + 1) + "): " + link);
+//                        }
+//
+//                        try {
+//                            in = new BufferedInputStream(conn.getInputStream());
+//
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//
+//                        }
+//                        countOfRetries++;
+//                    }
+//
+//                    if (in != null) {
+//
+//                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+//
+//                        StringBuilder sb = new StringBuilder();
+//                        String line = "";
+//                        while ((line = reader.readLine()) != null)
+//                            sb.append(line);
+//
+//                        try {
+//
+//                            jObj = new JSONObject(sb.toString());
+//
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//
+//                        }
+//
+//                    }
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//
+//                } finally {
+//                    if (conn != null)
+//                        conn.disconnect();
+//                }
+//
+//                return jObj;
+//
+//            }
+//
+//            @Override
+//            protected void onPostExecute(JSONObject result) {
+//
+//                log("base: json_result: " + "for link: " + link + " result: " + result);
+//
+//                if (listener != null)
+//                    listener.onComplete(result);
+//
+//            }
+//
+//        }.executeOnExecutor(Executors.newCachedThreadPool(), link);
+
+
 
     }
 
