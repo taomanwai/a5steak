@@ -272,7 +272,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
         final String query = "長沙灣政府合署";
         GeocodeManager.getInstance().searchByCountry(query, "HK", Locale.US, new GeocodeManager.OnSearchListener() {
             @Override
-            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword) {
+            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword, String origJsonStr) {
 
                 if (!query.equals(keyword)) {
                     errMsg.set(0, "Result from other keyword, other keyword: " + keyword + ", orig query: " + query);
@@ -281,7 +281,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
                 }
 
                 if (poiPoints.isEmpty()) {
-                    errMsg.set(0, "poiPoints is empty");
+                    errMsg.set(0, "poiPoints is empty: origJsonStr: " + origJsonStr);
                     signal.countDown();
                     return;
                 }

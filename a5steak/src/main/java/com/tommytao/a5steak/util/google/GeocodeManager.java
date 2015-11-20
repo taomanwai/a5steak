@@ -38,7 +38,7 @@ public class GeocodeManager extends GFoundation {
 
     public static interface OnSearchListener {
 
-        public void returnPOIPoints(ArrayList<POIPoint> poiPoints, String keyword);
+        public void returnPOIPoints(ArrayList<POIPoint> poiPoints, String keyword, String origJsonStr);
 
     }
 
@@ -441,7 +441,7 @@ public class GeocodeManager extends GFoundation {
 
                 @Override
                 public void run() {
-                    listener.returnPOIPoints(new ArrayList<POIPoint>(), keyword);
+                    listener.returnPOIPoints(new ArrayList<POIPoint>(), keyword, "");
                 }
 
             });
@@ -482,8 +482,6 @@ public class GeocodeManager extends GFoundation {
             return;
 
         String link = genSearchByCountryLink(keyword, country, locale);
-
-
 
         httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
@@ -542,6 +540,8 @@ public class GeocodeManager extends GFoundation {
 
         ArrayList<POIPoint> poiPoints = new ArrayList<>();
 
+        String origJsonStr = "" + responseJObj;
+
         try {
             JSONArray resultsJArray = responseJObj.getJSONArray("results");
 
@@ -559,12 +559,12 @@ public class GeocodeManager extends GFoundation {
 
             }
 
-            listener.returnPOIPoints(poiPoints, keyword);
+            listener.returnPOIPoints(poiPoints, keyword, origJsonStr);
 
         } catch (Exception e) {
             e.printStackTrace();
 
-            listener.returnPOIPoints(new ArrayList<POIPoint>(), keyword);
+            listener.returnPOIPoints(new ArrayList<POIPoint>(), keyword, origJsonStr);
         }
 
     }
