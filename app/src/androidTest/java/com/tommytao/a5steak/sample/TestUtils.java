@@ -20,6 +20,8 @@ public class TestUtils {
         final CountDownLatch signal = new CountDownLatch(1);
         final ArrayList<Boolean> succeeds = new ArrayList<>();
         succeeds.add(false);
+        final ArrayList<String> replies = new ArrayList<>();
+        replies.add("");
 
         if (!NetworkInfoManager.getInstance().isInitialized())
             NetworkInfoManager.getInstance().init(MainApp.getContext());
@@ -28,13 +30,14 @@ public class TestUtils {
             @Override
             public void onComplete(boolean accessible, String str) {
                 succeeds.set(0, accessible);
+                replies.set(0, str);
                 signal.countDown();
             }
         });
 
         testCase.assertTrue("Timeout occurs", signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
 
-        testCase.assertTrue("Not accessible", succeeds.get(0));
+        testCase.assertTrue("Not accessible: reply: " + replies.get(0), succeeds.get(0));
     }
 
 }
