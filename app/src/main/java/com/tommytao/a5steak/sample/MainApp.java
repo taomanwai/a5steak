@@ -30,7 +30,7 @@ public class MainApp extends Application {
 
         context = this;
 
-        GeocodeManager.getInstance().init(this, "", ""); // this, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+        GeocodeManager.getInstance().init(this, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
 
         PlacesApiManager.getInstance().init(this, GOOGLE_PLACES_API_KEY);
 
