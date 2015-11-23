@@ -147,7 +147,7 @@ public class PlacesApiManager extends GFoundation {
 
     }
 
-    public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
+    public static final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
 
     public static final int GET_PLACE_FROM_LAT_LNG_IN_METER = 5;
 
@@ -175,11 +175,13 @@ public class PlacesApiManager extends GFoundation {
 	 * @return TRUE when init succeed
 	 *
 	 */
-    public boolean init(Context appContext, String key) {
+    public boolean init(Context appContext, RequestQueue requestQueue, String key) {
 
         if (!super.init(appContext)){
             return false;
         }
+
+		this.requestQueue = requestQueue;
 
         this.key = key;
 

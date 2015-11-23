@@ -67,6 +67,8 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
 //
 //    }
 //
+// ===
+//
 //    public void testGetPlaceFromLatLng_shouldReturnChineseWhenLocaleChinese() throws Exception {
 //
 //        final CountDownLatch signal = new CountDownLatch(1);
@@ -86,9 +88,11 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
 //            }
 //        });
 //
-//        assertTrue(signal.await(AWAIT_TIME_IN_SECOND, TimeUnit.SECONDS));
+//        assertTrue(signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS * PlacesApiManager.DEFAULT_MAX_NUM_OF_RETRIES, TimeUnit.SECONDS));
 //
 //    }
+//
+// ===
 //
 //    public void testGetPlaceFromLatLng_shouldReturnNullWhenLatLngInvalid() throws Exception {
 //

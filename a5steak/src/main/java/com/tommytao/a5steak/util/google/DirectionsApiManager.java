@@ -410,13 +410,13 @@ public class DirectionsApiManager extends GFoundation {
         return super.init(context, requestQueue);
     }
 
-
-
-    public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {
+    public boolean init(Context appContext, RequestQueue requestQueue, String clientIdForWork, String cryptoForWork) {
 
         if (!super.init(appContext)) {
             return false;
         }
+
+        this.requestQueue = requestQueue;
 
         this.clientIdForWork = clientIdForWork;
         this.cryptoForWork = cryptoForWork;

@@ -1261,7 +1261,7 @@ public class NavMapView extends MapView {
 
     // == Init ==
     private void init() {
-        DirectionsApiManager.getInstance().init(getContext(), "", "");
+        DirectionsApiManager.getInstance().init(getContext(), null, "", "");
         LocationFusedSensor.getInstance().init(getContext());
         GSensor.getInstance().init(getContext());
         MagneticSensor.getInstance().init(getContext());

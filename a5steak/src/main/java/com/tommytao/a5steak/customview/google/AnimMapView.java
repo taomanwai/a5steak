@@ -204,7 +204,7 @@ public class AnimMapView extends MapView {
         LocationSensor.getInstance().init(getContext());
         Converter.getInstance().init(getContext());
 
-        DirectionsApiManager.getInstance().init(getContext(), "", "");
+        DirectionsApiManager.getInstance().init(getContext(), null, "", "");
 
     }
 

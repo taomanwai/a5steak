@@ -3,13 +3,7 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
-import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.google.GeocodeManager;
-
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -266,50 +260,50 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
 // ===
 
-    public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleEnUs() throws Exception {
-        final CountDownLatch signal = new CountDownLatch(1);
-        final ArrayList<Boolean> succeeds = new ArrayList<>();
-        succeeds.add(false);
-
-        final ArrayList<String> errMsgs = new ArrayList<>();
-        errMsgs.add("");
-
-        final String query = "長沙灣政府合署";
-        GeocodeManager.getInstance().searchByCountry(query, "HK", Locale.US, new GeocodeManager.OnSearchListener() {
-            @Override
-            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword, String origJsonStr) {
-
-                if (!query.equals(keyword)) {
-                    errMsgs.set(0, "Result from other keyword, other keyword: " + keyword + ", orig query: " + query);
-                    signal.countDown();
-                    return;
-                }
-
-                if (poiPoints.isEmpty()) {
-                    errMsgs.set(0, "poiPoints is empty: origJsonStr: " + origJsonStr);
-                    signal.countDown();
-                    return;
-                }
-
-                if (!"Cheung Sha Wan Government Offices, 303 Cheung Sha Wan Rd, Sham Shui Po, Hong Kong".equals(
-                        poiPoints.get(0).getFormattedAddress())) {
-                    errMsgs.set(0, "Strange formatted address: " + poiPoints.get(0).getFormattedAddress());
-                    signal.countDown();
-                    return;
-                }
-
-                succeeds.set(0, true);
-
-                signal.countDown();
-
-            }
-        });
-
-        assertTrue("Timeout occurs", signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
-
-        assertTrue("Unexpected result: " + errMsgs.get(0), succeeds.get(0));
-
-    }
+//    public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleEnUs() throws Exception {
+//        final CountDownLatch signal = new CountDownLatch(1);
+//        final ArrayList<Boolean> succeeds = new ArrayList<>();
+//        succeeds.add(false);
+//
+//        final ArrayList<String> errMsgs = new ArrayList<>();
+//        errMsgs.add("");
+//
+//        final String query = "長沙灣政府合署";
+//        GeocodeManager.getInstance().searchByCountry(query, "HK", Locale.US, new GeocodeManager.OnSearchListener() {
+//            @Override
+//            public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword, String origJsonStr) {
+//
+//                if (!query.equals(keyword)) {
+//                    errMsgs.set(0, "Result from other keyword, other keyword: " + keyword + ", orig query: " + query);
+//                    signal.countDown();
+//                    return;
+//                }
+//
+//                if (poiPoints.isEmpty()) {
+//                    errMsgs.set(0, "poiPoints is empty: origJsonStr: " + origJsonStr);
+//                    signal.countDown();
+//                    return;
+//                }
+//
+//                if (!"Cheung Sha Wan Government Offices, 303 Cheung Sha Wan Rd, Sham Shui Po, Hong Kong".equals(
+//                        poiPoints.get(0).getFormattedAddress())) {
+//                    errMsgs.set(0, "Strange formatted address: " + poiPoints.get(0).getFormattedAddress());
+//                    signal.countDown();
+//                    return;
+//                }
+//
+//                succeeds.set(0, true);
+//
+//                signal.countDown();
+//
+//            }
+//        });
+//
+//        assertTrue("Timeout occurs", signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
+//
+//        assertTrue("Unexpected result: " + errMsgs.get(0), succeeds.get(0));
+//
+//    }
 
     // ===
 
