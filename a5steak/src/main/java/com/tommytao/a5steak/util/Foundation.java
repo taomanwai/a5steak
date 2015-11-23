@@ -22,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
@@ -409,7 +410,7 @@ public class Foundation implements SensorEventListener {
 
                 log("base: str_result (volley): " + "for link: " + link + " result: " + response);
 
-                if (listener!=null)
+                if (listener != null)
                     listener.onComplete(response);
 
             }
@@ -417,7 +418,9 @@ public class Foundation implements SensorEventListener {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                if (listener!=null)
+                log("base: str_result (volley): " + "for link: " + link + " result: " + "");
+
+                if (listener != null)
                     listener.onComplete("");
 
             }
@@ -525,17 +528,74 @@ public class Foundation implements SensorEventListener {
 
     }
 
+    protected boolean httpGetJSONByVolley(final String link, final int maxNoOfRetries, final OnHttpGetJSONListener listener) {
+        if (requestQueue==null){
+            log("base: json (volley): ERR: " + "requestQueue not found for: " + link);
+            return false;
+        }
+
+
+        log("base: json (volley): " + link);
+
+        requestQueue.add(new JsonObjectRequest(Request.Method.GET, link, "", new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                log("base: json_result (volley): " + "for link: " + link + " result: " + response);
+
+                if (listener != null)
+                    listener.onComplete(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                log("base: json_result (volley): " + "for link: " + link + " result: " + null);
+
+                if (listener != null)
+                    listener.onComplete(null);
+
+            }
+        })).setRetryPolicy(new DefaultRetryPolicy(DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, maxNoOfRetries, 0));
+
+
+//        requestQueue.add(new StringRequest(Request.Method.GET, link, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//
+//                log("base: str_result (volley): " + "for link: " + link + " result: " + response);
+//
+//                if (listener != null)
+//                    listener.onComplete(response);
+//
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//                if (listener != null)
+//                    listener.onComplete("");
+//
+//            }
+//        }).setRetryPolicy(new DefaultRetryPolicy(DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, maxNoOfRetries, 0)));
+
+
+        return true;
+    }
+
 
     protected void httpGetJSON(final String link, final int maxNoOfRetries, final OnHttpGetJSONListener listener) {
 
         log("base: json: " + link);
+
+        if (httpGetJSONByVolley(link, maxNoOfRetries, listener))
+            return;
 
         httpGetStr(link, maxNoOfRetries, new OnHttpGetStrListener() {
 
             @Override
             public void onComplete(String str) {
 
-                if (TextUtils.isEmpty(str)){
+                if (TextUtils.isEmpty(str)) {
                     if (listener != null)
                         listener.onComplete(null);
                     return;
@@ -558,7 +618,6 @@ public class Foundation implements SensorEventListener {
             }
 
         });
-
 
     }
 

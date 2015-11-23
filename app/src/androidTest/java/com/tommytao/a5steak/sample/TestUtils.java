@@ -16,7 +16,6 @@ public class TestUtils {
 
     public static void startLinkNetworkTestAndAssert(ApplicationTestCase testCase, String link) throws Exception {
 
-
         final CountDownLatch signal = new CountDownLatch(1);
         final ArrayList<Boolean> succeeds = new ArrayList<>();
         succeeds.add(false);
@@ -24,7 +23,7 @@ public class TestUtils {
         replies.add("");
 
         if (!NetworkInfoManager.getInstance().isInitialized())
-            NetworkInfoManager.getInstance().init(MainApp.getContext());
+            NetworkInfoManager.getInstance().init(MainApp.getContext(), MainApp.getRequestQueue());
 
         NetworkInfoManager.getInstance().isLinkAccessibleInStr(link, new NetworkInfoManager.IsLinkAccessibleInStrListener() {
             @Override

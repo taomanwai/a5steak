@@ -8,6 +8,7 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.tommytao.a5steak.util.NetworkInfoManager;
+import com.tommytao.a5steak.util.google.GeocodeManager;
 
 
 /**
@@ -45,11 +46,11 @@ public class MainApp extends Application {
 
         requestQueue.start();
 
-//        GeocodeManager.getInstance().init(this, requestQueue, "", ""); // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+        GeocodeManager.getInstance().init(this, requestQueue, "", ""); // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 //
 //        PlacesApiManager.getInstance().init(this, GOOGLE_PLACES_API_KEY);
 
-        NetworkInfoManager.getInstance().init(this, null);
+        NetworkInfoManager.getInstance().init(this, requestQueue);
 
 
     }
