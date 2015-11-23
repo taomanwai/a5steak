@@ -7,6 +7,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
+import com.android.volley.RequestQueue;
 import com.tommytao.a5steak.util.Foundation;
 import java.util.ArrayList;
 
@@ -106,6 +108,11 @@ public class LocationSensor extends Foundation implements LocationListener {
 
         return true;
 
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
 

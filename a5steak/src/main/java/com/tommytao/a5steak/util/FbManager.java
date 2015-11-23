@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
+import com.android.volley.RequestQueue;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -536,6 +537,12 @@ public class FbManager extends Foundation implements ConnectionClassManager.Conn
 
         return true;
     }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
+    }
+
 
     /**
      * Login to Facebook

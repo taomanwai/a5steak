@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
+import com.android.volley.RequestQueue;
 import com.tommytao.a5steak.util.Foundation;
 
 
@@ -32,6 +33,11 @@ public class ProximitySensor extends Foundation implements SensorEventListener {
     @Override
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     @Override

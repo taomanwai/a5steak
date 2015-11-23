@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.android.volley.RequestQueue;
+
 public class AlarmSetter extends Foundation {
 
     private static AlarmSetter instance;
@@ -32,6 +34,10 @@ public class AlarmSetter extends Foundation {
         return super.init(context);
     }
 
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
+    }
 
     protected AlarmManager am;
 

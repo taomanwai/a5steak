@@ -14,6 +14,8 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.SparseArray;
 
+import com.android.volley.RequestQueue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -152,6 +154,11 @@ public class SpeechRecognitionManager extends GFoundation {
     @Override
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     private Intent genIntent(boolean isWebSearchOnly, Locale locale) {

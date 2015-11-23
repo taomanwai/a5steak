@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 
+import com.android.volley.RequestQueue;
+
 /**
  * Responsible for battery stuff (e.g. reading battery level, status)
  * 
@@ -52,6 +54,11 @@ public class BatteryInfoManager extends Foundation {
 
 		return true;
 
+	}
+
+	@Deprecated
+	public boolean init(Context context, RequestQueue requestQueue) {
+		return super.init(context, requestQueue);
 	}
 
 	public class PowerConnectionReceiver extends BroadcastReceiver {

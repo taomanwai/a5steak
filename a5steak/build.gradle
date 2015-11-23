@@ -51,6 +51,7 @@ dependencies {
     compile 'com.facebook.network.connectionclass:connectionclass:1.0.0'
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
 
+    compile 'com.mcxiaoke.volley:library:1.0.19'
 
 }
 

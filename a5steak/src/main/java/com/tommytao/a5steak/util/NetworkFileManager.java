@@ -2,6 +2,8 @@ package com.tommytao.a5steak.util;
 
 import android.content.Context;
 
+import com.android.volley.RequestQueue;
+
 import java.io.File;
 import java.util.Map;
 
@@ -36,6 +38,11 @@ public class NetworkFileManager extends Foundation {
     @Deprecated
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     @Deprecated

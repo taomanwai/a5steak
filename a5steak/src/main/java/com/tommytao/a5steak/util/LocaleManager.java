@@ -8,6 +8,8 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
+import com.android.volley.RequestQueue;
+
 import java.util.Currency;
 import java.util.Locale;
 
@@ -104,6 +106,11 @@ public class LocaleManager extends Foundation {
 		
 		return true;
 
+	}
+
+	@Deprecated
+	public boolean init(Context context, RequestQueue requestQueue) {
+		return super.init(context, requestQueue);
 	}
 
 	public boolean isAppLocaleFollowingSystem() {

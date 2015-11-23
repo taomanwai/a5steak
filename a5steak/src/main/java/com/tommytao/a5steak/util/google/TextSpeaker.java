@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
+import com.android.volley.RequestQueue;
 import com.tommytao.a5steak.util.Foundation;
 
 import java.net.URLEncoder;
@@ -76,6 +77,11 @@ public class TextSpeaker extends Foundation {
     @Override
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     private boolean isCantonese(Locale locale) {

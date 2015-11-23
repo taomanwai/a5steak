@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 
+import com.android.volley.RequestQueue;
+
 
 // <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
@@ -53,6 +55,11 @@ public class SmsMonitor extends Foundation {
 
 		return true;
 		
+	}
+
+	@Deprecated
+	public boolean init(Context context, RequestQueue requestQueue) {
+		return super.init(context, requestQueue);
 	}
 	
 	public static final int PRIORITY = Integer.MAX_VALUE;

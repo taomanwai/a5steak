@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import com.android.volley.RequestQueue;
 import com.tommytao.a5steak.ext.net.ntp.NTPUDPClient;
 
 import java.net.InetAddress;
@@ -97,6 +98,11 @@ public class TimeManager extends Foundation {
 
 		return true;
 
+	}
+
+	@Deprecated
+	public boolean init(Context context, RequestQueue requestQueue) {
+		return super.init(context, requestQueue);
 	}
 
 	private GregorianCalendar getCalendar() {

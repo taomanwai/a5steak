@@ -8,6 +8,8 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 
+import com.android.volley.RequestQueue;
+
 public class MusicManager extends Foundation {
 
     private static MusicManager instance;
@@ -40,6 +42,11 @@ public class MusicManager extends Foundation {
     @Override
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
 

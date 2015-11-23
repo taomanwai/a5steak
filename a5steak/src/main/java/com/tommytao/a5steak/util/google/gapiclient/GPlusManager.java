@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.util.SparseArray;
 
+import com.android.volley.RequestQueue;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
@@ -318,6 +319,11 @@ public class GPlusManager extends GFoundation implements GoogleApiClient.Connect
 
         return true;
 
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     public boolean isConnecting() {

@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
+import com.android.volley.RequestQueue;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -125,6 +126,12 @@ public class PayPalManager extends Foundation {
     public boolean init(Context context) {
         return super.init(context);
     }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
+    }
+
 
     public boolean init(Context context, String environment, String clientId, boolean acceptCreditCard) {
         if (!super.init(context)) {

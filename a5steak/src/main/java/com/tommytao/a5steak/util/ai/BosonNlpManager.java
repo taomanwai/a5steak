@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
+import com.android.volley.RequestQueue;
 import com.tommytao.a5steak.util.Foundation;
 
 import org.json.JSONArray;
@@ -295,6 +296,11 @@ public class BosonNlpManager extends Foundation {
     @Deprecated
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     public boolean init(Context context, String token) {

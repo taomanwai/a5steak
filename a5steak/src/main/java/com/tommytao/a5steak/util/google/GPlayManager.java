@@ -8,6 +8,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.android.volley.RequestQueue;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -46,6 +47,12 @@ public class GPlayManager extends GFoundation {
 	public boolean init(Context context) {
 		return super.init(context);
 	}
+
+	@Deprecated
+	public boolean init(Context context, RequestQueue requestQueue) {
+		return super.init(context, requestQueue);
+	}
+
 
 	public boolean isGPlayExistAndUpToDate() {
 		return super.isGPlayExistAndUpToDate();

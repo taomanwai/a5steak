@@ -4,6 +4,8 @@ import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
 
+import com.android.volley.RequestQueue;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -204,6 +206,11 @@ public class GeocodeManager extends GFoundation {
     @Deprecated
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {

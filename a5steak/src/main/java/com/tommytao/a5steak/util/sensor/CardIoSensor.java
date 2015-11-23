@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.SparseArray;
 
+import com.android.volley.RequestQueue;
 import com.tommytao.a5steak.util.Foundation;
 
 import io.card.payment.CardIOActivity;
@@ -125,6 +126,11 @@ public class CardIoSensor extends Foundation {
     @Deprecated
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     @Deprecated

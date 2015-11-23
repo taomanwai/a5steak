@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import com.android.volley.RequestQueue;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,6 +107,11 @@ public class AppManager extends Foundation {
 
         return true;
 
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     public void setManifestReceiverEnabled(Class<?> cls, boolean enabled) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.android.volley.RequestQueue;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.util.HashMap;
@@ -41,6 +42,11 @@ public class AssetDatabaseManager extends Foundation {
     @Override
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     private SQLiteDatabase getDatabase(String databaseName) {

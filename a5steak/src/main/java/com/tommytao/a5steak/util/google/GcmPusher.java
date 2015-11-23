@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
+import com.android.volley.RequestQueue;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.util.ArrayList;
@@ -68,6 +69,12 @@ public class GcmPusher extends GFoundation {
     public boolean init(Context context) {
         return super.init(context);
     }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
+    }
+
 
     public boolean isOnReceiveIntentListenerAssigned() {
         return (this.onReceiveIntentListeners.size() != 0);

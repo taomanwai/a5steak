@@ -11,6 +11,8 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.android.volley.RequestQueue;
+
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,6 +91,11 @@ public class DeviceInfoManager extends Foundation {
 
         return true;
 
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
 

@@ -3,6 +3,8 @@ package com.tommytao.a5steak.util;
 import android.content.Context;
 import android.util.DisplayMetrics;
 
+import com.android.volley.RequestQueue;
+
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -35,6 +37,12 @@ public class Converter extends Foundation {
     @Override
     public boolean init(Context context) {
         return super.init(context);
+    }
+
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     public String timeInSecond2FriendlyStr(int timeInSecond, String minUnit, String secondUnit) {

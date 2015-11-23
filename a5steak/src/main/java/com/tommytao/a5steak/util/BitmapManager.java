@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.ImageView;
 
+import com.android.volley.RequestQueue;
 import com.tommytao.a5steak.R;
 
 import java.io.File;
@@ -77,6 +78,11 @@ public class BitmapManager extends Foundation {
 
         return true;
 
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     public Point obtainSizeFromBitmap(Bitmap bitmap) {

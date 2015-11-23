@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 
+import com.android.volley.RequestQueue;
+
 /**
  * Responsible for prompt & cancel notification (status bar)
  *
@@ -56,6 +58,12 @@ public class NotificationBarManager extends Foundation {
         return true;
 
     }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
+    }
+
 
     private NotificationManager notificationManager;
 

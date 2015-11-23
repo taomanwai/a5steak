@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import com.android.volley.RequestQueue;
+
 import org.json.JSONObject;
 
 /**
@@ -55,6 +57,11 @@ public class NetworkInfoManager extends Foundation {
 
         return true;
 
+    }
+
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
     }
 
     public static final String GOOGLE_LINK = "http://www.google.com";

@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.android.volley.RequestQueue;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -385,6 +386,11 @@ public class NavMapView extends MapView {
         @Deprecated
         public boolean init(Context context) {
             return super.init(context);
+        }
+
+        @Deprecated
+        public boolean init(Context context, RequestQueue requestQueue) {
+            return super.init(context, requestQueue);
         }
 
         @Deprecated

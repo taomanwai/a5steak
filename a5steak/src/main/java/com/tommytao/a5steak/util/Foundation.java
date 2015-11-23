@@ -17,6 +17,8 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -107,6 +109,8 @@ public class Foundation implements SensorEventListener {
 
     protected Context appContext;
 
+    protected RequestQueue requestQueue;
+
     public boolean init(Context context) {
 
         if (isInitialized()) {
@@ -117,6 +121,23 @@ public class Foundation implements SensorEventListener {
         log("base: init");
 
         this.appContext = context.getApplicationContext();
+
+        return true;
+
+    }
+
+    public boolean init(Context context, RequestQueue requestQueue) {
+
+        if (isInitialized()) {
+            log("base: init (with requestQueue) rejected: already initialized");
+            return false;
+        }
+
+        log("base: init (with requestQueue)");
+
+        this.appContext = context.getApplicationContext();
+
+        this.requestQueue = requestQueue;
 
         return true;
 
