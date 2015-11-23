@@ -35,7 +35,7 @@ public class TestUtils {
             }
         });
 
-        testCase.assertTrue("Timeout occurs", signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS));
+        testCase.assertTrue("Timeout occurs", signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS * NetworkInfoManager.DEFAULT_MAX_NUM_OF_RETRIES, TimeUnit.MILLISECONDS));
 
         testCase.assertTrue("Not accessible: reply: " + replies.get(0), succeeds.get(0));
     }

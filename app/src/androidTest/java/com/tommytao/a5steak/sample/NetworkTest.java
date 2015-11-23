@@ -1,6 +1,5 @@
 package com.tommytao.a5steak.sample;
 
-import android.app.Application;
 import android.test.ApplicationTestCase;
 
 import com.tommytao.a5steak.util.NetworkInfoManager;
@@ -8,10 +7,10 @@ import com.tommytao.a5steak.util.NetworkInfoManager;
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
-public class NetworkTest extends ApplicationTestCase<Application> {
+public class NetworkTest extends ApplicationTestCase<MainApp> {
 
     public NetworkTest() {
-        super(Application.class);
+        super(MainApp.class);
 
     }
 
@@ -19,7 +18,10 @@ public class NetworkTest extends ApplicationTestCase<Application> {
     protected void setUp() throws Exception {
         super.setUp();
 
+        NetworkInfoManager.getInstance().removeContextB4UnitTest();
+
         createApplication();
+
     }
 
     public void testNetwork() throws Exception {

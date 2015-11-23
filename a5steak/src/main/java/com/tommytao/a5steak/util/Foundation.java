@@ -17,7 +17,12 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -113,6 +118,12 @@ public class Foundation implements SensorEventListener {
 
     public boolean init(Context context) {
 
+        return init(context, null);
+
+    }
+
+    public boolean init(Context context, RequestQueue requestQueue) {
+
         if (isInitialized()) {
             log("base: init rejected: already initialized");
             return false;
@@ -122,26 +133,18 @@ public class Foundation implements SensorEventListener {
 
         this.appContext = context.getApplicationContext();
 
-        return true;
-
-    }
-
-    public boolean init(Context context, RequestQueue requestQueue) {
-
-        if (isInitialized()) {
-            log("base: init (with requestQueue) rejected: already initialized");
-            return false;
-        }
-
-        log("base: init (with requestQueue)");
-
-        this.appContext = context.getApplicationContext();
-
         this.requestQueue = requestQueue;
 
         return true;
 
     }
+
+    public void removeContextB4UnitTest(){
+
+        this.appContext = null;
+
+    }
+
 
 
     public boolean isDebugMode() {
@@ -390,10 +393,49 @@ public class Foundation implements SensorEventListener {
 
     }
 
+    protected boolean httpGetStrByVolley(final String link, final int maxNoOfRetries, final OnHttpGetStrListener listener){
+
+        if (requestQueue==null){
+            log("base: str (volley): ERR: " + "requestQueue not found for: " + link);
+            return false;
+        }
+
+
+        log("base: str (volley): " + link);
+
+        requestQueue.add(new StringRequest(Request.Method.GET, link, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                log("base: str_result (volley): " + "for link: " + link + " result: " + response);
+
+                if (listener!=null)
+                    listener.onComplete(response);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                if (listener!=null)
+                    listener.onComplete("");
+
+            }
+        }).setRetryPolicy(new DefaultRetryPolicy(DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, maxNoOfRetries, 0)));
+
+
+        return true;
+
+    }
+
     protected void httpGetStr(final String link, final int maxNoOfRetries, final OnHttpGetStrListener listener) {
 
         log("base: str: " + link);
 
+        if (httpGetStrByVolley(link, maxNoOfRetries, listener))
+            return;
+
+        // Volley not ready, use traditional method for network comm.
         new AsyncTask<String, Void, String>() {
 
             @Override

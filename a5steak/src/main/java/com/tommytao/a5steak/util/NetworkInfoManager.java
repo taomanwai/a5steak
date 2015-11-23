@@ -40,12 +40,16 @@ public class NetworkInfoManager extends Foundation {
 
     // --
 
-    public final int DEFAULT_MAX_NUM_OF_RETRIES = 10;
+    public static final int DEFAULT_MAX_NUM_OF_RETRIES = 10;
+
+    @Deprecated
+    public boolean init(Context context) {
+        return super.init(context);
+    }
 
     @Override
-    public boolean init(Context appContext) {
-
-        if (!super.init(appContext)) {
+    public boolean init(Context context, RequestQueue requestQueue) {
+        if (!super.init(context, requestQueue)) {
 
             log("network_info_manager: " + "init REJECTED: already initialized");
 
@@ -56,12 +60,6 @@ public class NetworkInfoManager extends Foundation {
         log("network_info_manager: " + "init");
 
         return true;
-
-    }
-
-    @Deprecated
-    public boolean init(Context context, RequestQueue requestQueue) {
-        return super.init(context, requestQueue);
     }
 
     public static final String GOOGLE_LINK = "http://www.google.com";

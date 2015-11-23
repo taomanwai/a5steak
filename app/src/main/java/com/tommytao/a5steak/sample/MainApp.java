@@ -3,9 +3,11 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.content.Context;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
 import com.tommytao.a5steak.util.NetworkInfoManager;
-import com.tommytao.a5steak.util.google.GeocodeManager;
-import com.tommytao.a5steak.util.google.PlacesApiManager;
 
 
 /**
@@ -20,8 +22,14 @@ public class MainApp extends Application {
 
     private static Context context;
 
+    private static RequestQueue requestQueue;
+
     public static Context getContext() {
         return context;
+    }
+
+    public static RequestQueue getRequestQueue() {
+        return requestQueue;
     }
 
     @Override
@@ -30,11 +38,18 @@ public class MainApp extends Application {
 
         context = this;
 
-        GeocodeManager.getInstance().init(this, "", ""); // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+        BasicNetwork basicNetwork = new BasicNetwork(new HurlStack());
+        DiskBasedCache cache = new DiskBasedCache(getCacheDir(), 0);
 
-        PlacesApiManager.getInstance().init(this, GOOGLE_PLACES_API_KEY);
+        requestQueue = new RequestQueue(cache, basicNetwork);
 
-        NetworkInfoManager.getInstance().init(this);
+        requestQueue.start();
+
+//        GeocodeManager.getInstance().init(this, requestQueue, "", ""); // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+//
+//        PlacesApiManager.getInstance().init(this, GOOGLE_PLACES_API_KEY);
+
+        NetworkInfoManager.getInstance().init(this, null);
 
 
     }

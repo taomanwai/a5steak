@@ -213,9 +213,9 @@ public class GeocodeManager extends GFoundation {
         return super.init(context, requestQueue);
     }
 
-    public boolean init(Context appContext, String clientIdForWork, String cryptoForWork) {
+    public boolean init(Context appContext, RequestQueue requestQueue, String clientIdForWork, String cryptoForWork) {
 
-        if (!super.init(appContext)) {
+        if (!super.init(appContext, requestQueue)) {
             return false;
         }
 
@@ -225,6 +225,7 @@ public class GeocodeManager extends GFoundation {
         return true;
 
     }
+
 
     private String genGetLink(double latitude, double longitude, Locale locale) {
 
