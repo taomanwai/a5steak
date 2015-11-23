@@ -838,7 +838,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    private void httpPostString(final String link, final String dataStr, final HashMap<String, String> headers, final OnHttpPostStringListener listener) {
+    protected void httpPostString(final String link, final String dataStr, final HashMap<String, String> headers, final OnHttpPostStringListener listener) {
 
         if (httpPostStringByVolley(link, dataStr, headers, listener))
             return;
