@@ -49,7 +49,7 @@ public class MainApp extends Application {
         requestQueue.start();
 
         GeocodeManager.getInstance().init(this, requestQueue, "", ""); // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
-//
+
         PlacesApiManager.getInstance().init(this, requestQueue, GOOGLE_PLACES_API_KEY);
 
         DirectionsApiManager.getInstance().init(this, requestQueue, "", "");

@@ -17,7 +17,9 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -47,6 +49,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -776,8 +779,70 @@ public class Foundation implements SensorEventListener {
     }
 
 
-    protected void httpPostString(final String link, final String dataStr, final HashMap<String, String> headers, final OnHttpPostStringListener listener) {
+    protected boolean httpPostStringByVolley(final String link, final String dataStr, final HashMap<String, String> headers, final OnHttpPostStringListener listener) {
 
+        if (requestQueue==null){
+            return false;
+        }
+
+        requestQueue.add(new StringRequest(Request.Method.POST, link, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                if (listener != null)
+                    listener.onComplete(response);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                if (listener != null)
+                    listener.onComplete("");
+
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return headers;
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return dataStr.getBytes();
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                final String CONTENT_TYPE = "Content-Type";
+                final String CHARSET_UTF_8_IN_LOWER_CASE = "charset=utf-8";
+                final String UTF_8_IN_LOWER_CASE = "utf-8";
+
+                try {
+                    String type = response.headers.get(CONTENT_TYPE);
+                    if (type == null) {
+                        response.headers.put(CONTENT_TYPE, CHARSET_UTF_8_IN_LOWER_CASE);
+                    } else if (!type.toLowerCase(Locale.US).contains(UTF_8_IN_LOWER_CASE)) {
+                        response.headers.put(CONTENT_TYPE, type + ";" + CHARSET_UTF_8_IN_LOWER_CASE);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return super.parseNetworkResponse(response);
+            }
+        }.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_CONNECT_READ_TIMEOUT_IN_MS, 0, 0)));
+
+        return true;
+
+    }
+
+// TODO MVP private it later
+    public void httpPostString(final String link, final String dataStr, final HashMap<String, String> headers, final OnHttpPostStringListener listener) {
+
+        if (httpPostStringByVolley(link, dataStr, headers, listener))
+            return;
 
         new Thread() {
             @Override
