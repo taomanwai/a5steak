@@ -71,7 +71,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    public static interface OnHttpGetStrListener {
+    public static interface OnHttpGetStringListener {
 
         public void onComplete(String str);
 
@@ -104,7 +104,6 @@ public class Foundation implements SensorEventListener {
         public void onComplete(String responseStr);
 
     }
-
 
     public static final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 15 * 1000; // 10000
     public static final int DEFAULT_READ_TIMEOUT_IN_MS = DEFAULT_CONNECT_TIMEOUT_IN_MS;
@@ -397,7 +396,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected boolean httpGetStrByVolley(final String link, final int maxNoOfRetries, final OnHttpGetStrListener listener){
+    protected boolean httpGetStringByVolley(final String link, final int maxNoOfRetries, final OnHttpGetStringListener listener){
 
         if (requestQueue==null){
             log("base: str (volley): ERR: " + "requestQueue not found for: " + link);
@@ -434,11 +433,11 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected void httpGetStr(final String link, final int maxNoOfRetries, final OnHttpGetStrListener listener) {
+    protected void httpGetString(final String link, final int maxNoOfRetries, final OnHttpGetStringListener listener) {
 
         log("base: str: " + link);
 
-        if (httpGetStrByVolley(link, maxNoOfRetries, listener))
+        if (httpGetStringByVolley(link, maxNoOfRetries, listener))
             return;
 
         // Volley not ready, use traditional method for network comm.
@@ -593,7 +592,7 @@ public class Foundation implements SensorEventListener {
         if (httpGetJSONByVolley(link, maxNoOfRetries, listener))
             return;
 
-        httpGetStr(link, maxNoOfRetries, new OnHttpGetStrListener() {
+        httpGetString(link, maxNoOfRetries, new OnHttpGetStringListener() {
 
             @Override
             public void onComplete(String str) {

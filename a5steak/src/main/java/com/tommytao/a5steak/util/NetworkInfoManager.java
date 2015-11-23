@@ -247,7 +247,7 @@ public class NetworkInfoManager extends Foundation {
 
         }
 
-        httpGetStr(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetStrListener() {
+        httpGetString(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetStringListener() {
             @Override
             public void onComplete(String str) {
 
