@@ -5,20 +5,21 @@ import android.location.Location;
 import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
- *
  * Responsible for get or search location info through Google Places API
- *
+ * <p/>
  * Ref: <a href="https://developers.google.com/places/webservice/autocomplete#location_biasing">here</a>
- *
  */
 public class PlacesApiManager extends GFoundation {
 
@@ -38,74 +39,73 @@ public class PlacesApiManager extends GFoundation {
 
     // --
 
-	public static class Place {
+    public static class Place {
 
-		private String placeId = "";
-		private String name = "";
-		private String formattedAddress = "";
+        private String placeId = "";
+        private String name = "";
+        private String formattedAddress = "";
 
-		private double latitude = Double.NaN;
-		private double longitude = Double.NaN;
-
-
-
-		public String getName() {
-			return name;
-		}
-
-		public double getLatitude() {
-			return latitude;
-		}
-
-		public double getLongitude() {
-			return longitude;
-		}
-
-		public Place(String placeId, String name, String formattedAddress, double latitude, double longitude) {
-			this.placeId = placeId;
-			this.name = name;
-			this.formattedAddress = formattedAddress;
-
-			this.latitude = latitude;
-			this.longitude = longitude;
-		}
-
-		public String getPlaceId() {
-			return placeId;
-		}
-
-		public String getFormattedAddress() {
-			return formattedAddress;
-		}
-
-		public float distanceBetween(double anotherLatitude, double anotherLongitude) {
-
-			float[] results = new float[3];
-
-			Location.distanceBetween(latitude, longitude, anotherLatitude, anotherLongitude, results);
-
-			return results[0];
-
-		}
+        private double latitude = Double.NaN;
+        private double longitude = Double.NaN;
 
 
-	}
+        public String getName() {
+            return name;
+        }
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public double getLongitude() {
+            return longitude;
+        }
+
+        public Place(String placeId, String name, String formattedAddress, double latitude, double longitude) {
+            this.placeId = placeId;
+            this.name = name;
+            this.formattedAddress = formattedAddress;
+
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        public String getPlaceId() {
+            return placeId;
+        }
+
+        public String getFormattedAddress() {
+            return formattedAddress;
+        }
+
+        public float distanceBetween(double anotherLatitude, double anotherLongitude) {
+
+            float[] results = new float[3];
+
+            Location.distanceBetween(latitude, longitude, anotherLatitude, anotherLongitude, results);
+
+            return results[0];
+
+        }
+
+
+    }
 
     public static class AutoComplete {
 
 
-         private String placeId = "";
-         private String description = "";
-         private int offset = -1;
-         private int length = -1;
-		private ArrayList<String> terms = new ArrayList<String>();
+        private String placeId = "";
+        private String description = "";
+        private int offset = -1;
+        private int length = -1;
+        private ArrayList<String> terms = new ArrayList<String>();
 
         public AutoComplete(String placeId, String description, int offset, int length, ArrayList<String> terms) {
             this.placeId = placeId;
             this.description = description;
             this.offset = offset;
             this.length = length;
-			this.terms = new ArrayList<>(terms);
+            this.terms = new ArrayList<>(terms);
         }
 
         public String getPlaceId() {
@@ -124,26 +124,177 @@ public class PlacesApiManager extends GFoundation {
             return length;
         }
 
-		public ArrayList<String> getTerms() {
-			return terms;
-		}
-	}
+        public ArrayList<String> getTerms() {
+            return terms;
+        }
+    }
 
-	public static interface OnGetPlaceListener {
+    private class ResponseSearch {
 
-		public void returnPlace(Place place);
+        public class Location {
 
-	}
+            @SerializedName("lat")
+            @Expose
+            private Double lat;
+            @SerializedName("lng")
+            @Expose
+            private Double lng;
 
-	public static interface OnSearchPlacesListener {
+            public Double getLat() {
 
-		public void returnPlaces(ArrayList<Place> places, String keyword, String status);
+                if (lat == null)
+                    return Double.NaN;
 
-	}
+                return lat;
+            }
+
+            public void setLat(Double lat) {
+                this.lat = lat;
+            }
+
+            public Double getLng() {
+
+
+                if (lng == null)
+                    return Double.NaN;
+
+
+                return lng;
+            }
+
+            public void setLng(Double lng) {
+                this.lng = lng;
+            }
+
+        }
+
+        public class Geometry {
+
+            @SerializedName("location")
+            @Expose
+            private Location location;
+
+            public Location getLocation() {
+                return location;
+            }
+
+            public void setLocation(Location location) {
+                this.location = location;
+            }
+
+        }
+
+        public class Result {
+
+            @SerializedName("geometry")
+            @Expose
+            private Geometry geometry;
+            @SerializedName("name")
+            @Expose
+            private String name;
+            @SerializedName("place_id")
+            @Expose
+            private String placeId;
+            @SerializedName("vicinity")
+            @Expose
+            private String vicinity;
+
+            public Geometry getGeometry() {
+                return geometry;
+            }
+
+            public void setGeometry(Geometry geometry) {
+                this.geometry = geometry;
+            }
+
+            public String getName() {
+
+                if (name == null)
+                    return "";
+
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getPlaceId() {
+
+
+                if (placeId == null)
+                    return "";
+
+                return placeId;
+            }
+
+            public void setPlaceId(String placeId) {
+                this.placeId = placeId;
+            }
+
+            public String getVicinity() {
+
+
+                if (vicinity == null)
+                    return "";
+                return vicinity;
+            }
+
+            public void setVicinity(String vicinity) {
+                this.vicinity = vicinity;
+            }
+
+        }
+
+
+        @SerializedName("results")
+        @Expose
+        private List<Result> results = new ArrayList<Result>();
+
+        @SerializedName("status")
+        @Expose
+        private String status;
+
+        public List<Result> getResults() {
+
+            if (results == null)
+                return new ArrayList<>();
+
+            return results;
+        }
+
+        public void setResults(List<Result> results) {
+            this.results = results;
+        }
+
+        public String getStatus() {
+
+            if (status == null)
+                return "";
+
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+    }
+
+    public static interface OnGetPlaceListener {
+
+        public void returnPlace(Place place);
+
+    }
+
+    public static interface OnSearchPlacesListener {
+
+        public void returnPlaces(ArrayList<Place> places, String keyword, String status);
+
+    }
 
     public static interface OnAutoCompleteListener {
 
-        public void returnAutoCompletes(ArrayList<AutoComplete> autoCompletes, String input, JSONObject response );
+        public void returnAutoCompletes(ArrayList<AutoComplete> autoCompletes, String input, JSONObject response);
 
     }
 
@@ -162,26 +313,24 @@ public class PlacesApiManager extends GFoundation {
         return super.init(context);
     }
 
-	@Deprecated
-	public boolean init(Context context, RequestQueue requestQueue) {
-		return super.init(context, requestQueue);
-	}
+    @Deprecated
+    public boolean init(Context context, RequestQueue requestQueue) {
+        return super.init(context, requestQueue);
+    }
 
 
-	/**
-	 *
-	 * @param appContext Application context
-	 * @param key Places API key, to know how to get it, please browse <a href="http://stackoverflow.com/questions/24302920/how-do-i-get-a-google-places-api-key-for-my-android-app">here</a>
-	 * @return TRUE when init succeed
-	 *
-	 */
+    /**
+     * @param appContext Application context
+     * @param key        Places API key, to know how to get it, please browse <a href="http://stackoverflow.com/questions/24302920/how-do-i-get-a-google-places-api-key-for-my-android-app">here</a>
+     * @return TRUE when init succeed
+     */
     public boolean init(Context appContext, RequestQueue requestQueue, String key) {
 
-        if (!super.init(appContext)){
+        if (!super.init(appContext)) {
             return false;
         }
 
-		this.requestQueue = requestQueue;
+        this.requestQueue = requestQueue;
 
         this.key = key;
 
@@ -190,109 +339,108 @@ public class PlacesApiManager extends GFoundation {
     }
 
 
+    private Location obtainLocationFromGeometryJObj(JSONObject geometryJObj) {
 
-	private Location obtainLocationFromGeometryJObj(JSONObject geometryJObj) {
+        double lat = 0;
+        double lng = 0;
 
-		double lat = 0;
-		double lng = 0;
+        boolean succeed = false;
 
-		boolean succeed = false;
+        try {
+            JSONObject locationJObj = geometryJObj.getJSONObject("location");
+            lat = locationJObj.getDouble("lat");
+            lng = locationJObj.getDouble("lng");
+            succeed = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		try {
-			JSONObject locationJObj = geometryJObj.getJSONObject("location");
-			lat = locationJObj.getDouble("lat");
-			lng = locationJObj.getDouble("lng");
-			succeed = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        if (!succeed)
+            return null;
 
-		if (!succeed)
-			return null;
+        Location location = new Location("");
+        location.setLatitude(lat);
+        location.setLongitude(lng);
+        return location;
 
-		Location location = new Location("");
-		location.setLatitude(lat);
-		location.setLongitude(lng);
-		return location;
+    }
 
-	}
+    // TODO change match to matches (ArrayList<String>)
+    private boolean isResultType(JSONObject result, String match) {
 
-	// TODO change match to matches (ArrayList<String>)
-	private boolean isResultType(JSONObject result, String match) {
+        if (result == null)
+            return false;
 
-		if (result == null)
-			return false;
+        JSONArray types = null;
+        try {
+            types = result.getJSONArray("types");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (types == null)
+            return false;
 
-		JSONArray types = null;
-		try {
-			types = result.getJSONArray("types");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (types == null)
-			return false;
+        for (int i = 0; i < types.length(); i++) {
+            try {
+                if (match.equals(types.getString(i)))
+                    return true;
 
-		for (int i = 0; i < types.length(); i++) {
-			try {
-				if (match.equals(types.getString(i)))
-					return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+        return false;
 
-		return false;
+    }
 
-	}
+    private String localeToLocaleStr(Locale locale) {
+        if (locale == null)
+            locale = Locale.US;
 
-	private String localeToLocaleStr(Locale locale) {
-		if (locale == null)
-			locale = Locale.US;
+        return locale.getLanguage() + "-" + locale.getCountry();
+    }
 
-		return locale.getLanguage() + "-" + locale.getCountry();
-	}
+    private String genPlaceIdLink(String placeId, Locale locale) {
 
-	private String genPlaceIdLink(String placeId, Locale locale) {
+        // https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJN1t_tDeuEmsRUsoyG83frY4&key=AddYourOwnKeyHere
+        // Ref:
+        // https://developers.google.com/places/documentation/details#PlaceDetailsRequests
 
-		// https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJN1t_tDeuEmsRUsoyG83frY4&key=AddYourOwnKeyHere
-		// Ref:
-		// https://developers.google.com/places/documentation/details#PlaceDetailsRequests
+        String localeStr = localeToLocaleStr(locale);
 
-		String localeStr = localeToLocaleStr(locale);
+        String result = String.format("https://maps.googleapis.com/maps/api/place/details/json?placeid=%s&language=%s&key=%s", placeId, localeStr, getKey());
 
-		String result = String.format("https://maps.googleapis.com/maps/api/place/details/json?placeid=%s&language=%s&key=%s", placeId, localeStr, getKey());
+        return result;
 
-		return result;
+    }
 
-	}
+    private String genQueryLink(double latitude, double longitude, int radiusInMeter, String keyword, Locale locale, boolean isRankByDistance) {
 
-	private String genQueryLink(double latitude, double longitude, int radiusInMeter, String keyword, Locale locale, boolean isRankByDistance) {
+        String localeStr = localeToLocaleStr(locale);
 
-		String localeStr = localeToLocaleStr(locale);
+        String keywordURLEncoded = "";
+        try {
+            keywordURLEncoded = URLEncoder.encode(keyword, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		String keywordURLEncoded = "";
-		try {
-			keywordURLEncoded = URLEncoder.encode(keyword, "UTF-8");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        // TODO testing purpose, del later
+        // radiusInMeter = 50000;
+        // localeStr = "th";
+        // ===========================
 
-		// TODO testing purpose, del later
-		// radiusInMeter = 50000;
-		// localeStr = "th";
-		// ===========================
-
-		String result = String.format("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%.6f,%.6f&keyword=%s&language=%s&key=%s",
+        String result = String.format("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%.6f,%.6f&keyword=%s&language=%s&key=%s",
                 latitude, longitude, keywordURLEncoded, localeStr, getKey());
 
-		result += !isRankByDistance ? ("&radius=" + radiusInMeter) : "&rankby=distance";
+        result += !isRankByDistance ? ("&radius=" + radiusInMeter) : "&rankby=distance";
 
-		return result;
+        return result;
 
-	}
+    }
 
-    private String genAutoCompleteLink(String input, Locale locale ) {
+    private String genAutoCompleteLink(String input, Locale locale) {
 
         String localeStr = localeToLocaleStr(locale);
 
@@ -306,77 +454,76 @@ public class PlacesApiManager extends GFoundation {
         String result = String.format("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=%s&language=%s&key=%s",
                 inputURLEncoded, localeStr, getKey());
 
-		result += "&components=country:" + locale.getCountry().toString().toLowerCase();
+        result += "&components=country:" + locale.getCountry().toString().toLowerCase();
 
         return result;
 
     }
 
 
+    public void getPlaceFromLatLng(double latitude, double longitude, final Locale locale, final OnGetPlaceListener listener) {
 
-	public void getPlaceFromLatLng(double latitude, double longitude, final Locale locale, final OnGetPlaceListener listener) {
+        if (listener == null)
+            return;
 
-		if (listener == null)
-			return;
+        String link = genQueryLink(latitude, longitude, GET_PLACE_FROM_LAT_LNG_IN_METER, "", locale, false);
 
-		String link = genQueryLink(latitude, longitude, GET_PLACE_FROM_LAT_LNG_IN_METER, "", locale, false);
+        if (!isLatLngValid(latitude, longitude) || link.isEmpty()) {
+            handler.post(new Runnable() {
 
-		if (!isLatLngValid(latitude, longitude) || link.isEmpty()) {
-			handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.returnPlace(null);
+                }
 
-				@Override
-				public void run() {
-					listener.returnPlace(null);
-				}
-
-			});
-			return;
-		}
+            });
+            return;
+        }
 
 
-		httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
+        httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
-			@Override
-			public void onComplete(JSONObject response) {
+            @Override
+            public void onComplete(JSONObject response) {
 
-				response2GetPlaceFromLatLng(response, locale, listener);
+                response2GetPlaceFromLatLng(response, locale, listener);
 
-			}
+            }
 
-		});
+        });
 
-	}
+    }
 
-	public void getPlaceFromPlaceId(String placeId, final Locale locale, final OnGetPlaceListener listener) {
+    public void getPlaceFromPlaceId(String placeId, final Locale locale, final OnGetPlaceListener listener) {
 
-		if (listener == null)
-			return;
+        if (listener == null)
+            return;
 
-		String link = genPlaceIdLink(placeId, locale);
+        String link = genPlaceIdLink(placeId, locale);
 
-		if (link.isEmpty()) {
-			handler.post(new Runnable() {
+        if (link.isEmpty()) {
+            handler.post(new Runnable() {
 
-				@Override
-				public void run() {
-					listener.returnPlace(null);
-				}
+                @Override
+                public void run() {
+                    listener.returnPlace(null);
+                }
 
-			});
-			return;
-		}
+            });
+            return;
+        }
 
-		httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
+        httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
-			@Override
-			public void onComplete(JSONObject response) {
+            @Override
+            public void onComplete(JSONObject response) {
 
-				response2GetPlaceFromPlaceId(response, locale, listener);
+                response2GetPlaceFromPlaceId(response, locale, listener);
 
-			}
+            }
 
-		});
-	}
+        });
+    }
 
 //	public static String returnPlacesStr(ArrayList<Place> places) {
 //
@@ -387,77 +534,70 @@ public class PlacesApiManager extends GFoundation {
 //		return sb.toString();
 //	}
 
-	/**
-	 * Search nearby places by Google Places API
-	 *
-	 * @param keyword
-	 *            Search keyword
-	 * @param latitude
-	 *            Latitude of location
-	 * @param longitude
-	 *            Longitude of location
-	 * @param radiusInMeter
-	 *            Radius in meter. It should be at least 1. Note: if
-	 *            rankByDistance is true, original value will be ignored and
-	 *            auto-set to be 50km
-	 * @param locale
-	 *            Expected locale of result
-	 * @param rankByDistance
-	 *            Whether result is sorted based on distance between latLng and
-	 *            searched result. Nearest=first. Note: if rankByDistance is
-	 *            true, radiusInMeter will be ignored and auto-set to be 50km
-	 * @param listener
-	 *            Listener which will be triggered when search results are
-	 *            returned
-	 */
-	public void searchPlaces(final String keyword, double latitude, double longitude, int radiusInMeter, final Locale locale,
-			boolean rankByDistance, final OnSearchPlacesListener listener) {
+    /**
+     * Search nearby places by Google Places API
+     *
+     * @param keyword        Search keyword
+     * @param latitude       Latitude of location
+     * @param longitude      Longitude of location
+     * @param radiusInMeter  Radius in meter. It should be at least 1. Note: if
+     *                       rankByDistance is true, original value will be ignored and
+     *                       auto-set to be 50km
+     * @param locale         Expected locale of result
+     * @param rankByDistance Whether result is sorted based on distance between latLng and
+     *                       searched result. Nearest=first. Note: if rankByDistance is
+     *                       true, radiusInMeter will be ignored and auto-set to be 50km
+     * @param listener       Listener which will be triggered when search results are
+     *                       returned
+     */
+    public void searchPlaces(final String keyword, double latitude, double longitude, int radiusInMeter, final Locale locale,
+                             boolean rankByDistance, final OnSearchPlacesListener listener) {
 
-		if (listener == null)
-			return;
+        if (listener == null)
+            return;
 
-		String link = genQueryLink(latitude, longitude, radiusInMeter, keyword, locale, rankByDistance);
+        String link = genQueryLink(latitude, longitude, radiusInMeter, keyword, locale, rankByDistance);
 
-		if (!isLatLngValid(latitude, longitude) || TextUtils.isEmpty(keyword) || link.isEmpty()) {
-			handler.post(new Runnable() {
+        if (!isLatLngValid(latitude, longitude) || TextUtils.isEmpty(keyword) || link.isEmpty()) {
+            handler.post(new Runnable() {
 
-				@Override
-				public void run() {
-					listener.returnPlaces(new ArrayList<Place>(), keyword, "");
-				}
+                @Override
+                public void run() {
+                    listener.returnPlaces(new ArrayList<Place>(), keyword, "");
+                }
 
-			});
-			return;
-		}
+            });
+            return;
+        }
 
-		httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
+        httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 
-			@Override
-			public void onComplete(JSONObject response) {
+            @Override
+            public void onComplete(JSONObject response) {
 
-				response2SearchPlaces(response, keyword, locale, listener);
+                response2SearchPlaces(response, keyword, locale, listener);
 
-			}
+            }
 
-		});
+        });
 
-	}
+    }
 
-    public void autoComplete(final String input, final Locale locale, final OnAutoCompleteListener listener){
+    public void autoComplete(final String input, final Locale locale, final OnAutoCompleteListener listener) {
 
         if (listener == null)
             return;
 
         if (input.isEmpty()) {
-			handler.post(new Runnable() {
+            handler.post(new Runnable() {
 
-				@Override
-				public void run() {
-					listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input, null);
+                @Override
+                public void run() {
+                    listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input, null);
 
-				}
+                }
 
-			});
+            });
 
             return;
         }
@@ -465,15 +605,15 @@ public class PlacesApiManager extends GFoundation {
         String link = genAutoCompleteLink(input, locale);
 
         if (link.isEmpty()) {
-			handler.post(new Runnable() {
+            handler.post(new Runnable() {
 
-				@Override
-				public void run() {
-					listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input, null);
+                @Override
+                public void run() {
+                    listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input, null);
 
-				}
+                }
 
-			});
+            });
 
             return;
         }
@@ -483,7 +623,7 @@ public class PlacesApiManager extends GFoundation {
             @Override
             public void onComplete(JSONObject response) {
 
-				response2AutoComplete(response, input, locale, listener);
+                response2AutoComplete(response, input, locale, listener);
 
             }
 
@@ -491,31 +631,32 @@ public class PlacesApiManager extends GFoundation {
 
     }
 
-	private void response2SearchPlaces(JSONObject responseJObj, String keyword, Locale locale, OnSearchPlacesListener listener) {
+    private void response2SearchPlaces(JSONObject responseJObj, String keyword, Locale locale, OnSearchPlacesListener listener) {
 
-		if (listener == null)
-			return;
+        if (listener == null)
+            return;
 
-		if (responseJObj == null)
-			listener.returnPlaces(new ArrayList<Place>(), keyword, "");
+        ArrayList<Place> results = new ArrayList<>();
+        String status = "";
 
-		String status = "";
-		JSONArray resultsJArray = null;
-		JSONObject resultJObj = null;
+        if (responseJObj == null)
+            listener.returnPlaces(results, keyword, "");
 
-		ArrayList<Place> results = new ArrayList<Place>();
 
-		boolean hasException = false;
-		try {
+        try {
 
-			status = responseJObj.getString("status");
-			if (!"OK".equals(status)) {
-				listener.returnPlaces(new ArrayList<Place>(), keyword, status);
+            ResponseSearch responseSearch = getGson().fromJson("" + responseJObj, ResponseSearch.class);
 
-				return;
-			}
-			/*
-			 * OK indicates that no errors occurred; the place was successfully
+            status = responseSearch.getStatus();
+
+            if (!"OK".equals(responseSearch.getStatus())) {
+                listener.returnPlaces(results, keyword, status);
+
+                return;
+            }
+
+             /*
+             * OK indicates that no errors occurred; the place was successfully
 			 * detected and at least one result was returned. ZERO_RESULTS
 			 * indicates that the search was successful but returned no results.
 			 * This may occur if the search was passed a latlng in a remote
@@ -525,137 +666,141 @@ public class PlacesApiManager extends GFoundation {
 			 * INVALID_REQUEST generally indicates that a required query
 			 * parameter (location or radius) is missing.
 			 */
-			resultsJArray = responseJObj.getJSONArray("results");
 
-			Location location = null;
-			String placeId = "";
-			String name = "";
-			String formattedAddress = "";
+            String placeId = "";
+            String name = "";
+            String formattedAddress = "";
+            double lat = Double.NaN;
+            double lng = Double.NaN;
 
-			for (int i = 0; i < resultsJArray.length(); i++) {
-				resultJObj = resultsJArray.getJSONObject(i);
+            for (int i = 0; i < responseSearch.getResults().size(); i++) {
 
-				placeId = resultJObj.optString("place_id");
-				name = resultJObj.optString("name");
-				location = obtainLocationFromGeometryJObj(resultJObj.optJSONObject("geometry"));
-				formattedAddress = resultJObj.optString("vicinity");
+                try {
+                    placeId = responseSearch.getResults().get(i).getPlaceId();
+                    name = responseSearch.getResults().get(i).getName();
+                    formattedAddress = responseSearch.getResults().get(i).getVicinity();
+                    lat = responseSearch.getResults().get(i).getGeometry().getLocation().getLat();
+                    lng = responseSearch.getResults().get(i).getGeometry().getLocation().getLng();
 
-				if (location != null)
-					results.add(new Place(placeId, name, formattedAddress, location.getLatitude(), location.getLongitude() ));
+                    results.add(new Place(placeId, name, formattedAddress, lat, lng));
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
 
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			hasException = true;
-		}
-
-		listener.returnPlaces((!hasException) ? results : new ArrayList<Place>(), keyword, status);
-
-	}
-
-	private void response2GetPlaceFromLatLng(JSONObject responseJObj, Locale locale, OnGetPlaceListener listener) {
-
-		if (listener == null)
-			return;
-
-		if (responseJObj == null)
-			listener.returnPlace(null);
-
-		String status = "";
-		JSONArray resultsJArray = null;
-		JSONObject resultJObj = null;
-
-		String placeId = "";
-		String name = "";
-		Location location = null;
-		String formattedAddress = "";
-
-		boolean hasException = false;
-
-		try {
-
-			status = responseJObj.getString("status");
-			if (!"OK".equals(status)) {
-				listener.returnPlace(null);
-				return;
-			}
-
-			resultsJArray = responseJObj.getJSONArray("results");
+            }
 
 
+        } catch (Exception e) {
+            e.printStackTrace();
 
-			for (int i = 0; i < resultsJArray.length(); i++) {
-				resultJObj = resultsJArray.getJSONObject(i);
-
-				placeId = resultJObj.optString("place_id", "");
-				name = resultJObj.optString("name", "");
-				formattedAddress = resultJObj.optString("vicinity", "");
-				location = obtainLocationFromGeometryJObj(resultJObj.optJSONObject("geometry"));
+            results = new ArrayList<>();
+        }
 
 
-				if (location != null)
-					break;
+        listener.returnPlaces(results, keyword, status);
 
-			}
+    }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			hasException = true;
-		}
+    private void response2GetPlaceFromLatLng(JSONObject responseJObj, Locale locale, OnGetPlaceListener listener) {
 
-		boolean isResultValid = !placeId.isEmpty() && !name.isEmpty() && location!=null;
+        if (listener == null)
+            return;
 
-		listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, formattedAddress, location.getLatitude(), location.getLongitude()));
+        if (responseJObj == null)
+            listener.returnPlace(null);
 
-	}
+        String status = "";
+        JSONArray resultsJArray = null;
+        JSONObject resultJObj = null;
 
-	private void response2GetPlaceFromPlaceId(JSONObject responseJObj, Locale locale, OnGetPlaceListener listener) {
+        String placeId = "";
+        String name = "";
+        Location location = null;
+        String formattedAddress = "";
 
-		if (listener == null)
-			return;
+        boolean hasException = false;
 
-		if (responseJObj == null)
-			listener.returnPlace(null);
+        try {
 
-		String status = "";
-		JSONObject resultJObj = null;
+            status = responseJObj.getString("status");
+            if (!"OK".equals(status)) {
+                listener.returnPlace(null);
+                return;
+            }
 
-		String placeId = "";
-		String name = "";
-		String formattedAddress = "";
-
-		Location location = null;
-
-		boolean hasException = false;
-
-		try {
-
-			status = responseJObj.getString("status");
-			if (!"OK".equals(status)) {
-				listener.returnPlace(null);
-				return;
-			}
-
-			resultJObj = responseJObj.getJSONObject("result");
-
-			placeId = resultJObj.optString("place_id");
-			name = resultJObj.optString("name");
-			formattedAddress = resultJObj.optString("formatted_address");
-			location = obtainLocationFromGeometryJObj(resultJObj.optJSONObject("geometry"));
+            resultsJArray = responseJObj.getJSONArray("results");
 
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			hasException = true;
-		}
+            for (int i = 0; i < resultsJArray.length(); i++) {
+                resultJObj = resultsJArray.getJSONObject(i);
 
-		boolean isResultValid = !placeId.isEmpty() && !name.isEmpty() && location!=null;
+                placeId = resultJObj.optString("place_id", "");
+                name = resultJObj.optString("name", "");
+                formattedAddress = resultJObj.optString("vicinity", "");
+                location = obtainLocationFromGeometryJObj(resultJObj.optJSONObject("geometry"));
 
-		listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, formattedAddress, location.getLatitude(), location.getLongitude()));
 
-	}
+                if (location != null)
+                    break;
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            hasException = true;
+        }
+
+        boolean isResultValid = !placeId.isEmpty() && !name.isEmpty() && location != null;
+
+        listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, formattedAddress, location.getLatitude(), location.getLongitude()));
+
+    }
+
+    private void response2GetPlaceFromPlaceId(JSONObject responseJObj, Locale locale, OnGetPlaceListener listener) {
+
+        if (listener == null)
+            return;
+
+        if (responseJObj == null)
+            listener.returnPlace(null);
+
+        String status = "";
+        JSONObject resultJObj = null;
+
+        String placeId = "";
+        String name = "";
+        String formattedAddress = "";
+
+        Location location = null;
+
+        boolean hasException = false;
+
+        try {
+
+            status = responseJObj.getString("status");
+            if (!"OK".equals(status)) {
+                listener.returnPlace(null);
+                return;
+            }
+
+            resultJObj = responseJObj.getJSONObject("result");
+
+            placeId = resultJObj.optString("place_id");
+            name = resultJObj.optString("name");
+            formattedAddress = resultJObj.optString("formatted_address");
+            location = obtainLocationFromGeometryJObj(resultJObj.optJSONObject("geometry"));
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            hasException = true;
+        }
+
+        boolean isResultValid = !placeId.isEmpty() && !name.isEmpty() && location != null;
+
+        listener.returnPlace((hasException || !isResultValid) ? null : new Place(placeId, name, formattedAddress, location.getLatitude(), location.getLongitude()));
+
+    }
 
     private void response2AutoComplete(JSONObject response, String input, Locale locale, OnAutoCompleteListener listener) {
 
@@ -665,19 +810,19 @@ public class PlacesApiManager extends GFoundation {
         if (response == null)
             listener.returnAutoCompletes(new ArrayList<AutoComplete>(), input, response);
 
-		ArrayList<AutoComplete> results = new ArrayList<AutoComplete>();
+        ArrayList<AutoComplete> results = new ArrayList<AutoComplete>();
 
         JSONArray predictionsJArray = null;
-		JSONObject predictionJObj = null;
-		JSONObject firstMatchedSubstring = null;
-		JSONArray termJArray = null;
+        JSONObject predictionJObj = null;
+        JSONObject firstMatchedSubstring = null;
+        JSONArray termJArray = null;
 
         String status = "";
         String placeId = "";
         String description = "";
         int offset = -1;
         int length = -1;
-		ArrayList<String> terms = new ArrayList<>();
+        ArrayList<String> terms = new ArrayList<>();
 
         boolean hasException = false;
         try {
@@ -690,49 +835,48 @@ public class PlacesApiManager extends GFoundation {
 
             predictionsJArray = response.getJSONArray("predictions");
 
-			for (int i = 0; i < predictionsJArray.length(); i++) {
-				predictionJObj = predictionsJArray.getJSONObject(i);
+            for (int i = 0; i < predictionsJArray.length(); i++) {
+                predictionJObj = predictionsJArray.getJSONObject(i);
 
-				placeId = predictionJObj.optString("place_id", "");
-				description = predictionJObj.optString("description", "");
-
-
-				try {
-					firstMatchedSubstring = predictionJObj.getJSONArray("matched_substrings").getJSONObject(0);
-					offset = firstMatchedSubstring.getInt("offset");
-					length = firstMatchedSubstring.getInt("length");
-				} catch (Exception e){
-					e.printStackTrace();
-					offset = 0;
-					length = 0;
-				}
-
-				try {
-
-					terms = new ArrayList<>();
-					termJArray = predictionJObj.getJSONArray("terms");
-					for (int j=0; j <termJArray.length(); j++) {
-						terms.add(termJArray.getJSONObject(j).getString("value"));
-					}
+                placeId = predictionJObj.optString("place_id", "");
+                description = predictionJObj.optString("description", "");
 
 
-				} catch (Exception e){
-					e.printStackTrace();
-					terms = new ArrayList<>();
-				}
+                try {
+                    firstMatchedSubstring = predictionJObj.getJSONArray("matched_substrings").getJSONObject(0);
+                    offset = firstMatchedSubstring.getInt("offset");
+                    length = firstMatchedSubstring.getInt("length");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    offset = 0;
+                    length = 0;
+                }
+
+                try {
+
+                    terms = new ArrayList<>();
+                    termJArray = predictionJObj.getJSONArray("terms");
+                    for (int j = 0; j < termJArray.length(); j++) {
+                        terms.add(termJArray.getJSONObject(j).getString("value"));
+                    }
 
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    terms = new ArrayList<>();
+                }
 
-				results.add(new AutoComplete(placeId, description, offset, length, terms));
 
-			}
+                results.add(new AutoComplete(placeId, description, offset, length, terms));
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             hasException = true;
         }
 
-		listener.returnAutoCompletes(hasException ? new ArrayList<AutoComplete>() : results, input, response);
+        listener.returnAutoCompletes(hasException ? new ArrayList<AutoComplete>() : results, input, response);
 
     }
 

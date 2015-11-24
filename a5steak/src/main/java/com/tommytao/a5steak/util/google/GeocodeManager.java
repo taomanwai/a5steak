@@ -5,7 +5,6 @@ import android.location.Location;
 import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
-import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -476,7 +475,6 @@ public class GeocodeManager extends GFoundation {
 
     public static final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
 
-    private Gson gson;
 
     @Deprecated
     public boolean init(Context context) {
@@ -498,15 +496,6 @@ public class GeocodeManager extends GFoundation {
         this.cryptoForWork = cryptoForWork;
 
         return true;
-
-    }
-
-    private Gson getGson() {
-
-        if (gson == null)
-            gson = new Gson();
-
-        return gson;
 
     }
 

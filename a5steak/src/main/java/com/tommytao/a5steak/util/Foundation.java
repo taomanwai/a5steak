@@ -31,6 +31,7 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.OkUrlFactory;
 
@@ -1928,6 +1929,18 @@ public class Foundation implements SensorEventListener {
         requestQueue.start();
 
         return requestQueue;
+    }
+
+    // == GSON ==
+    protected Gson gson;
+
+    protected Gson getGson(){
+
+        if (gson==null)
+            gson = new Gson();
+
+        return gson;
+
     }
 
 }
