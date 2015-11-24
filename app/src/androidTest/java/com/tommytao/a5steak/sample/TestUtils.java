@@ -39,4 +39,10 @@ public class TestUtils {
         testCase.assertTrue("Not accessible: reply: " + replies.get(0), succeeds.get(0));
     }
 
+    public static void assertResult(ApplicationTestCase testCase, CountDownLatch signal, ArrayList<Boolean> succeeds, long awaitTimeInMs) throws Exception {
+        testCase.assertTrue("Timeout", signal.await(awaitTimeInMs, TimeUnit.MILLISECONDS));
+
+        testCase.assertTrue("Unexpected result", succeeds.get(0));
+    }
+
 }

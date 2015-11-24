@@ -201,7 +201,7 @@ public class GeocodeManager extends GFoundation {
     public static final String WORLD_BOUNDS = "-90,-180|90,180";
     public static final String HK_BOUNDS = "22.1533884,113.835078|22.561968,114.4069561";
 
-    public final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
+    public static final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
 
     @Deprecated
     public boolean init(Context context) {
