@@ -3,9 +3,11 @@ package com.tommytao.a5steak.customview.google;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.location.Location;
 import android.util.AttributeSet;
 
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
@@ -13,6 +15,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.tommytao.a5steak.R;
 import com.tommytao.a5steak.util.Converter;
 import com.tommytao.a5steak.util.LocaleManager;
 import com.tommytao.a5steak.util.MathManager;
@@ -147,8 +150,8 @@ public class AnimMapView extends MapView {
     public static final int MAX_DURATION_TURN_TO_FINAL_ROTATION_IN_MS = 300;
     public static final double MAX_RATIO_TURN_TO_FINAL_ROTATION = 0.05;
 
-
-//    private ArrayList<AnimMarker> hashMapAnimMarker = new ArrayList<>();
+    private String clientIdForWork = "";
+    private String cryptoForWork = "";
 
     private HashMap<String, AnimMarker> hashMapAnimMarker = new HashMap<>();
 
@@ -159,11 +162,13 @@ public class AnimMapView extends MapView {
 
     public AnimMapView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        obtainAttrs(context, attrs, 0);
         init();
     }
 
     public AnimMapView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        obtainAttrs(context, attrs, defStyle);
         init();
     }
 
@@ -172,6 +177,15 @@ public class AnimMapView extends MapView {
         init();
     }
 
+    private void obtainAttrs(Context context, AttributeSet attrs, int defStyle){
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AnimMapView, defStyle, 0);
+
+        clientIdForWork = a.getString(R.styleable.AnimMapView_clientIdForWork);
+        cryptoForWork = a.getString(R.styleable.AnimMapView_cryptoForWork);
+
+        a.recycle();
+    }
 
     public boolean addAnimMarker(String id, double lat, double lng, float rotation, int iconResId) {
 
@@ -204,7 +218,7 @@ public class AnimMapView extends MapView {
         LocationSensor.getInstance().init(getContext());
         Converter.getInstance().init(getContext());
 
-        DirectionsApiManager.getInstance().init(getContext(), null, "", "");
+        DirectionsApiManager.getInstance().init(getContext(), Volley.newRequestQueue(getContext()), clientIdForWork, cryptoForWork);
 
     }
 

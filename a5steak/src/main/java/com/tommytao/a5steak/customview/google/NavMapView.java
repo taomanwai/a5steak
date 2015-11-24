@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.customview.google;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -986,6 +988,9 @@ public class NavMapView extends MapView {
     private com.google.android.gms.maps.model.Polyline routePolyline;
     private GroundOverlay currentLocationGroundOverlay;
 
+    private String clientIdForWork = "";
+    private String cryptoForWork = "";
+
 
     public NavMapView(Context context) {
         super(context);
@@ -994,17 +999,29 @@ public class NavMapView extends MapView {
 
     public NavMapView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        obtainAttrs(context, attrs, 0);
         init();
     }
 
     public NavMapView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        obtainAttrs(context, attrs, defStyle);
         init();
     }
 
     public NavMapView(Context context, GoogleMapOptions options) {
         super(context, options);
         init();
+    }
+
+    private void obtainAttrs(Context context, AttributeSet attrs, int defStyle){
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.NavMapView, defStyle, 0);
+
+        clientIdForWork = a.getString(R.styleable.NavMapView_clientIdForWork);
+        cryptoForWork = a.getString(R.styleable.NavMapView_cryptoForWork);
+
+        a.recycle();
     }
 
     private GroundOverlay drawGroundOverlayAtLatLngRotation(double lat, double lng, float rotation, int resId) {
@@ -1261,7 +1278,7 @@ public class NavMapView extends MapView {
 
     // == Init ==
     private void init() {
-        DirectionsApiManager.getInstance().init(getContext(), null, "", "");
+        DirectionsApiManager.getInstance().init(getContext(), Volley.newRequestQueue(getContext()), clientIdForWork, cryptoForWork);
         LocationFusedSensor.getInstance().init(getContext());
         GSensor.getInstance().init(getContext());
         MagneticSensor.getInstance().init(getContext());
