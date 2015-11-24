@@ -5,13 +5,16 @@ import android.location.Location;
 import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
+import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class GeocodeManager extends GFoundation {
@@ -43,6 +46,276 @@ public class GeocodeManager extends GFoundation {
         public void returnPOIPoints(ArrayList<POIPoint> poiPoints, String keyword, String origJsonStr);
 
     }
+
+    private class ResponseGet {
+
+        public class AddressComponent {
+
+            @SerializedName("long_name")
+            @Expose
+            private String longName;
+            @SerializedName("short_name")
+            @Expose
+            private String shortName;
+            @SerializedName("types")
+            @Expose
+            private List<String> types = new ArrayList<>();
+
+            public String getLongName() {
+
+                if (longName == null)
+                    return "";
+
+                return longName;
+            }
+
+            public void setLongName(String longName) {
+                this.longName = longName;
+            }
+
+            public String getShortName() {
+
+                if (shortName == null)
+                    return "";
+
+                return shortName;
+            }
+
+            public void setShortName(String shortName) {
+                this.shortName = shortName;
+            }
+
+            public List<String> getTypes() {
+
+                if (types == null)
+                    return new ArrayList<>();
+
+                return types;
+            }
+
+            public void setTypes(List<String> types) {
+                this.types = types;
+            }
+
+        }
+
+        @SerializedName("address_components")
+        @Expose
+        private List<AddressComponent> addressComponents = new ArrayList<>();
+        @SerializedName("formatted_address")
+        @Expose
+        private String formattedAddress;
+        @SerializedName("place_id")
+        @Expose
+        private String placeId;
+        @SerializedName("types")
+        @Expose
+        private List<String> types = new ArrayList<>();
+
+        public List<AddressComponent> getAddressComponents() {
+
+            if (addressComponents == null)
+                return new ArrayList<>();
+
+            return addressComponents;
+        }
+
+        public void setAddressComponents(List<AddressComponent> addressComponents) {
+            this.addressComponents = addressComponents;
+        }
+
+
+        public String getFormattedAddress() {
+
+            if (formattedAddress == null)
+                return "";
+            return formattedAddress;
+        }
+
+
+        public void setFormattedAddress(String formattedAddress) {
+            this.formattedAddress = formattedAddress;
+        }
+
+
+        public String getPlaceId() {
+
+            if (placeId == null)
+                return "";
+
+            return placeId;
+        }
+
+
+        public void setPlaceId(String placeId) {
+            this.placeId = placeId;
+        }
+
+
+        public List<String> getTypes() {
+
+            if (types == null)
+                return new ArrayList<>();
+
+            return types;
+        }
+
+        public void setTypes(List<String> types) {
+            this.types = types;
+        }
+
+    }
+
+    private class ResponseSearch {
+
+        public class Location {
+
+            @SerializedName("lat")
+            @Expose
+            private Double lat;
+            @SerializedName("lng")
+            @Expose
+            private Double lng;
+
+            public Double getLat() {
+
+                if (lat == null)
+                    return Double.NaN;
+
+                return lat;
+            }
+
+            public void setLat(Double lat) {
+                this.lat = lat;
+            }
+
+            public Double getLng() {
+
+                if (lng == null)
+                    return Double.NaN;
+
+                return lng;
+            }
+
+            public void setLng(Double lng) {
+                this.lng = lng;
+            }
+
+        }
+
+        public class Geometry {
+
+            @SerializedName("location")
+            @Expose
+            private Location location;
+            @SerializedName("location_type")
+            @Expose
+            private String locationType;
+
+            public Location getLocation() {
+                return location;
+            }
+
+            public void setLocation(Location location) {
+                this.location = location;
+            }
+
+
+            public String getLocationType() {
+
+                if (locationType == null)
+                    return "";
+
+                return locationType;
+            }
+
+            public void setLocationType(String locationType) {
+                this.locationType = locationType;
+            }
+
+        }
+
+        public class Result {
+
+            @SerializedName("formatted_address")
+            @Expose
+            private String formattedAddress;
+            @SerializedName("geometry")
+            @Expose
+            private Geometry geometry;
+            @SerializedName("place_id")
+            @Expose
+            private String placeId;
+            @SerializedName("types")
+            @Expose
+            private List<String> types = new ArrayList<String>();
+
+            public String getFormattedAddress() {
+
+                if (formattedAddress == null)
+                    return "";
+
+                return formattedAddress;
+            }
+
+            public void setFormattedAddress(String formattedAddress) {
+                this.formattedAddress = formattedAddress;
+            }
+
+            public Geometry getGeometry() {
+                return geometry;
+            }
+
+
+            public void setGeometry(Geometry geometry) {
+                this.geometry = geometry;
+            }
+
+            public String getPlaceId() {
+
+                if (placeId == null)
+                    return "";
+
+                return placeId;
+            }
+
+            public void setPlaceId(String placeId) {
+                this.placeId = placeId;
+            }
+
+            public List<String> getTypes() {
+
+                if (types == null)
+                    return new ArrayList<>();
+
+                return types;
+            }
+
+            public void setTypes(List<String> types) {
+                this.types = types;
+            }
+
+        }
+
+        @SerializedName("results")
+        @Expose
+        private List<Result> results = new ArrayList<Result>();
+
+        public List<Result> getResults() {
+
+            if (results == null)
+                return new ArrayList<>();
+
+            return results;
+        }
+
+        public void setResults(List<Result> results) {
+            this.results = results;
+        }
+
+
+    }
+
 
     public class POIPoint {
 
@@ -203,6 +476,8 @@ public class GeocodeManager extends GFoundation {
 
     public static final int DEFAULT_MAX_NUM_OF_RETRIES = 3;
 
+    private Gson gson;
+
     @Deprecated
     public boolean init(Context context) {
         return super.init(context);
@@ -223,6 +498,15 @@ public class GeocodeManager extends GFoundation {
         this.cryptoForWork = cryptoForWork;
 
         return true;
+
+    }
+
+    private Gson getGson() {
+
+        if (gson == null)
+            gson = new Gson();
+
+        return gson;
 
     }
 
@@ -291,97 +575,72 @@ public class GeocodeManager extends GFoundation {
         if (listener == null)
             return;
 
+        Geocode geocode = new Geocode("No response, maybe network error");
+
         if (responseJObj == null)
-            listener.returnGeocode(new Geocode("No response, maybe network error"));
+            listener.returnGeocode(geocode);
 
-        String streetNo = "";
-        String route = "";
-        String neighborhood = "";
-        String sublocality = "";
-        String locality = "";
-        String administrativeAreaLevel1 = "";
-        String country = "";
-        String postalCode = "";
-        String formattedAddress = "";
+        geocode = new Geocode("");
 
-        String status = "";
-
-        boolean hasException = false;
         try {
+            geocode = new Geocode(responseJObj.optString("status", ""));
 
-            status = responseJObj.getString("status");
-            JSONArray resultsJArray = responseJObj.getJSONArray("results");
-            formattedAddress = resultsJArray.getJSONObject(0).getString("formatted_address");
-            JSONArray addressComponentsJArray = resultsJArray.getJSONObject(0).getJSONArray("address_components");
-            JSONArray typesJArray = null;
-            String type = "";
-            for (int i = 0; i < addressComponentsJArray.length(); i++) {
-                typesJArray = addressComponentsJArray.getJSONObject(i).getJSONArray("types");
-                for (int j = 0; j < typesJArray.length(); j++) {
-                    type = typesJArray.getString(j);
+            ResponseGet responseGet = getGson().fromJson("" + responseJObj.optJSONArray("results").optJSONObject(0), ResponseGet.class);
 
-                    if (type.equals("street_number")) {
-                        try {
-                            streetNo = addressComponentsJArray.getJSONObject(i).getString("long_name");
-                        } catch (Exception e) {
+            String streetNo = "";
+            String route = "";
+            String neighborhood = "";
+            String sublocality = "";
+            String locality = "";
+            String administrativeAreaLevel1 = "";
+            String country = "";
 
-                            e.printStackTrace();
-                        }
-                        continue;
-                    }
+            String postalCode = "";
+            String formattedAddress = responseGet.getFormattedAddress();
 
-                    if (type.equals("route")) {
-                        try {
-                            route = addressComponentsJArray.getJSONObject(i).getString("long_name");
-                        } catch (Exception e) {
+            String longName = "";
 
-                            e.printStackTrace();
-                        }
-                        continue;
-                    }
+            for (int i = 0; i < responseGet.getAddressComponents().size(); i++) {
 
-                    if (type.equals("neighborhood")) {
-                        try {
-                            neighborhood = addressComponentsJArray.getJSONObject(i).getString("long_name");
-                        } catch (Exception e) {
+                longName = responseGet.getAddressComponents().get(i).getLongName();
 
-                            e.printStackTrace();
-                        }
-                        continue;
-                    }
+                for (int j = 0; j < responseGet.getAddressComponents().get(i).getTypes().size(); j++) {
 
-                    if (type.equals("administrative_area_level_1")) {
-                        try {
-                            administrativeAreaLevel1 = addressComponentsJArray.getJSONObject(i).getString("long_name");
-                        } catch (Exception e) {
-
-                            e.printStackTrace();
-                        }
-                        continue;
-                    }
-
-                    if (type.equals("country")) {
-                        try {
-                            country = addressComponentsJArray.getJSONObject(i).getString("long_name");
-                        } catch (Exception e) {
-
-                            e.printStackTrace();
-                        }
-                        continue;
+                    switch (responseGet.getAddressComponents().get(i).getTypes().get(j)) {
+                        case "street_number":
+                            streetNo = longName;
+                            break;
+                        case "route":
+                            route = longName;
+                            break;
+                        case "neighborhood":
+                            neighborhood = longName;
+                            break;
+                        case "sublocality":
+                            sublocality = longName;
+                            break;
+                        case "locality":
+                            locality = longName;
+                            break;
+                        case "administrative_area_level_1":
+                            administrativeAreaLevel1 = longName;
+                            break;
+                        case "country":
+                            country = longName;
+                            break;
                     }
 
                 }
+
             }
+
+            geocode = new Geocode(streetNo, route, neighborhood, sublocality, locality, administrativeAreaLevel1, country, postalCode, formattedAddress, locale);
+
         } catch (Exception e) {
-
             e.printStackTrace();
-
-            hasException = true;
-
         }
 
-        listener.returnGeocode(hasException ? new Geocode(status) : new Geocode(streetNo, route, neighborhood, sublocality, locality, administrativeAreaLevel1,
-                country, postalCode, formattedAddress, locale));
+        listener.returnGeocode(geocode);
 
     }
 
@@ -426,14 +685,14 @@ public class GeocodeManager extends GFoundation {
     /**
      * Search nearby location based on Google Geocode protocol
      *
-     * @param keyword  Search query
-     * @param leftTopLat Latitude of left top of bounds
-     * @param leftTopLng Longitude of left top of bounds
+     * @param keyword        Search query
+     * @param leftTopLat     Latitude of left top of bounds
+     * @param leftTopLng     Longitude of left top of bounds
      * @param rightBottomLat Latitude of right bottom of bounds
      * @param rightBottomLng Longitude of right bottom of bounds
-     * @param locale   Locale of search query
-     * @param listener Listener which will be triggered when search completed,
-     *                 listener will also return search result
+     * @param locale         Locale of search query
+     * @param listener       Listener which will be triggered when search completed,
+     *                       listener will also return search result
      */
     public void searchByBounds(final String keyword,
                                final double leftTopLat, final double leftTopLng,
@@ -443,7 +702,7 @@ public class GeocodeManager extends GFoundation {
         if (listener == null)
             return;
 
-        if (!isLatLngValid(leftTopLat, leftTopLng) || !isLatLngValid(rightBottomLat, rightBottomLng)){
+        if (!isLatLngValid(leftTopLat, leftTopLng) || !isLatLngValid(rightBottomLat, rightBottomLng)) {
 
             handler.post(new Runnable() {
 
@@ -475,12 +734,11 @@ public class GeocodeManager extends GFoundation {
     }
 
     /**
-     *
      * Search nearby location based on Google Geocode protocol
      *
-     * @param keyword Search query
-     * @param country Country code (2 letters) follows ISO 3166-1 standard Ref: https://en.wikipedia.org/wiki/ISO_3166-1
-     * @param locale Locale of search query
+     * @param keyword  Search query
+     * @param country  Country code (2 letters) follows ISO 3166-1 standard Ref: https://en.wikipedia.org/wiki/ISO_3166-1
+     * @param locale   Locale of search query
      * @param listener Listener which will be triggered when search completed,
      *                 listener will also return search result
      */
@@ -546,34 +804,41 @@ public class GeocodeManager extends GFoundation {
         if (listener == null)
             return;
 
-        ArrayList<POIPoint> poiPoints = new ArrayList<>();
-
         String origJsonStr = "" + responseJObj;
 
+        ArrayList<POIPoint> poiPoints = new ArrayList<>();
+
+
         try {
-            JSONArray resultsJArray = responseJObj.getJSONArray("results");
 
-            for (int i = 0; i < resultsJArray.length(); i++) {
-                String formattedAddress = resultsJArray.getJSONObject(i).getString("formatted_address");
-                JSONObject geometryJObj = resultsJArray.getJSONObject(i).getJSONObject("geometry");
-                JSONObject locationJObj = geometryJObj.getJSONObject("location");
-                double lat = locationJObj.getDouble("lat");
-                double lng = locationJObj.getDouble("lng");
+            ResponseSearch responseSearch = getGson().fromJson(origJsonStr, ResponseSearch.class);
 
-                if (!isInsideBounds(lat, lng, bounds))
-                    continue;
+            for (int i = 0; i < responseSearch.getResults().size(); i++) {
 
-                poiPoints.add(new POIPoint(i, formattedAddress, lat, lng));
+                try {
+                    String formattedAddress = responseSearch.getResults().get(i).getFormattedAddress();
+                    double lat = responseSearch.getResults().get(i).getGeometry().getLocation().getLat();
+                    double lng = responseSearch.getResults().get(i).getGeometry().getLocation().getLng();
+
+                    if (!isInsideBounds(lat, lng, bounds))
+                        continue;
+
+                    poiPoints.add(new POIPoint(i, formattedAddress, lat, lng));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
-
-            listener.returnPOIPoints(poiPoints, keyword, origJsonStr);
 
         } catch (Exception e) {
             e.printStackTrace();
 
-            listener.returnPOIPoints(new ArrayList<POIPoint>(), keyword, origJsonStr);
+            poiPoints = new ArrayList<>();
         }
+
+        listener.returnPOIPoints(poiPoints, keyword, origJsonStr);
+
 
     }
 

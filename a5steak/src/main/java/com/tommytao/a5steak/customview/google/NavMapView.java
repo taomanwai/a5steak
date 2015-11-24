@@ -1278,7 +1278,7 @@ public class NavMapView extends MapView {
 
     // == Init ==
     private void init() {
-        DirectionsApiManager.getInstance().init(getContext(), Volley.newRequestQueue(getContext()), clientIdForWork, cryptoForWork);
+        DirectionsApiManager.getInstance().init(getContext(), Volley.newRequestQueue(getContext(), new Foundation.OkHttpStack()), clientIdForWork, cryptoForWork);
         LocationFusedSensor.getInstance().init(getContext());
         GSensor.getInstance().init(getContext());
         MagneticSensor.getInstance().init(getContext());

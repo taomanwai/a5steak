@@ -4,10 +4,9 @@ import android.app.Application;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.BasicNetwork;
-import com.android.volley.toolbox.DiskBasedCache;
-import com.android.volley.toolbox.HurlStack;
+import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.NetworkInfoManager;
+import com.tommytao.a5steak.util.VolleyManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 import com.tommytao.a5steak.util.google.GeocodeManager;
 import com.tommytao.a5steak.util.google.PlacesApiManager;
@@ -41,12 +40,10 @@ public class MainApp extends Application {
 
         context = this;
 
-        BasicNetwork basicNetwork = new BasicNetwork(new HurlStack());
-        DiskBasedCache cache = new DiskBasedCache(getCacheDir(), 0);
 
-        requestQueue = new RequestQueue(cache, basicNetwork);
-
-        requestQueue.start();
+//        requestQueue = null;
+//        requestQueue = VolleyManager.getInstance().getCustomRequestQueue(this, new HurlStack(), 0);
+        requestQueue = VolleyManager.getInstance().getCustomRequestQueue(this, new Foundation.OkHttpStack(), 0);
 
         GeocodeManager.getInstance().init(this, requestQueue, "", ""); // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 

@@ -36,7 +36,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
 
 
-    public void testGet_shouldReturnEnWhenLocaleEnUs() throws Exception {
+    public void testGetInDetail_shouldReturnEnWhenLocaleEnUs() throws Exception {
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -47,7 +47,17 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             @Override
             public void returnGeocode(GeocodeManager.Geocode geocode) {
 
-                if (geocode != null && "25 Yuen Wo Rd, Sha Tin, Hong Kong".equals(geocode.getFormattedAddress()))
+                if (geocode != null
+                        && "25 Yuen Wo Rd, Sha Tin, Hong Kong".equals(geocode.getFormattedAddress())
+                        && "25".equals(geocode.getStreetNo())
+                        && "Yuen Wo Road".equals(geocode.getRoute())
+                        && "Sha Tin".equals(geocode.getNeighborhood())
+                        && "New Territories".equals(geocode.getAdministrativeAreaLevel1())
+                        && "Hong Kong".equals(geocode.getCountry())
+                        && "".equals(geocode.getPostalCode())
+                        && "".equals(geocode.getSublocality())
+                        && "".equals(geocode.getLocality())
+                        )
                     succeeds.set(0, true);
 
                 signal.countDown();
@@ -331,7 +341,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
     }
 
-    public void testSearchByCountry_shouldReturnHkResultInScWhenCountryHkLocaleZhCn() throws Exception {
+    public void testSearchByCountryInDetail_shouldReturnHkResultInScWhenCountryHkLocaleZhCn() throws Exception {
         final CountDownLatch signal = new CountDownLatch(1);
 
         final ArrayList<Boolean> succeeds = new ArrayList<>();
@@ -342,10 +352,12 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             @Override
             public void returnPOIPoints(ArrayList<GeocodeManager.POIPoint> poiPoints, String keyword, String origJsonStr) {
 
-
-                if (query.equals(keyword) && !poiPoints.isEmpty() &&
-                        "香港深水埗長沙灣道303號长沙湾政府合署".equals(
-                                poiPoints.get(0).getFormattedAddress()))
+                if (query.equals(keyword) && !poiPoints.isEmpty()
+                        && "香港深水埗長沙灣道303號长沙湾政府合署".equals(
+                                poiPoints.get(0).getFormattedAddress())
+                        && poiPoints.get(0).getLatitude() == 22.3318512
+                        && poiPoints.get(0).getLongitude() == 114.1603199
+                        )
                     succeeds.set(0, true);
 
                 signal.countDown();

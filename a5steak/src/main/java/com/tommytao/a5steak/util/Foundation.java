@@ -24,8 +24,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HttpStack;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.OkUrlFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1881,6 +1888,46 @@ public class Foundation implements SensorEventListener {
 
         return bitmap.copy(config, false);
 
+    }
+
+    // == Volley ==
+    public static class OkHttpStack extends HurlStack {
+        private final OkUrlFactory mFactory;
+
+        public OkHttpStack() {
+            this(new OkHttpClient());
+        }
+
+        public OkHttpStack(OkHttpClient client) {
+            if (client == null) {
+                throw new NullPointerException("Client must not be null.");
+            }
+            mFactory = new OkUrlFactory(client);
+        }
+
+        @Override protected HttpURLConnection createConnection(URL url) throws IOException {
+            return mFactory.open(url);
+        }
+    }
+
+
+    protected RequestQueue getDefaultRequestQueue(Context context){
+        return Volley.newRequestQueue(context);
+    }
+
+    protected RequestQueue getOkHttpRequestQueue(Context context){
+        return Volley.newRequestQueue(context, new OkHttpStack());
+    }
+
+    protected RequestQueue getCustomRequestQueue(Context context, HttpStack httpStack, int cacheSizeInByte){
+        BasicNetwork basicNetwork = new BasicNetwork(httpStack);
+        DiskBasedCache cache = new DiskBasedCache(context.getCacheDir(), cacheSizeInByte);
+
+        RequestQueue requestQueue = new RequestQueue(cache, basicNetwork);
+
+        requestQueue.start();
+
+        return requestQueue;
     }
 
 }

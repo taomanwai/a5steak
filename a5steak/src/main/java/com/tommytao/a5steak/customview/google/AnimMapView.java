@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tommytao.a5steak.R;
 import com.tommytao.a5steak.util.Converter;
+import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.LocaleManager;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
@@ -218,7 +219,7 @@ public class AnimMapView extends MapView {
         LocationSensor.getInstance().init(getContext());
         Converter.getInstance().init(getContext());
 
-        DirectionsApiManager.getInstance().init(getContext(), Volley.newRequestQueue(getContext()), clientIdForWork, cryptoForWork);
+        DirectionsApiManager.getInstance().init(getContext(), Volley.newRequestQueue(getContext(), new Foundation.OkHttpStack()), clientIdForWork, cryptoForWork);
 
     }
 

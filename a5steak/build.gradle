@@ -52,6 +52,8 @@ dependencies {
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
 
     compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.squareup.okhttp:okhttp:2.6.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.6.0'
 
 }
 

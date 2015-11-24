@@ -28,6 +28,8 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
     protected void setUp() throws Exception {
         super.setUp();
 
+        PlacesApiManager.getInstance().removeContextB4UnitTest();
+
         createApplication();
     }
 
