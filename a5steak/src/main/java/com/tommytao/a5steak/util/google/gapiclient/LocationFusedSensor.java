@@ -431,6 +431,7 @@ public class LocationFusedSensor extends Foundation implements GoogleApiClient.C
         clearAndTriggerOnConnectListeners(false);
     }
 
+
     @Override
     public void goToLocationSourceSettings(Activity activity) {
         super.goToLocationSourceSettings(activity);

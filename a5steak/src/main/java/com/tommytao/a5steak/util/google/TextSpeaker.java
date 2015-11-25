@@ -264,7 +264,7 @@ public class TextSpeaker extends Foundation {
 
         final HashMap<String, OnSpeakListener> pendingTtsOnSpeakListeners = new HashMap<>(ttsOnSpeakListeners);
 
-        ttsOnSpeakListeners.clear();
+        ttsOnSpeakListeners.clear(); dsfa
 
         handler.post(new Runnable() {
             @Override
