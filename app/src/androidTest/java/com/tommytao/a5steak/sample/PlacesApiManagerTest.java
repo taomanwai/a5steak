@@ -156,7 +156,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
 
     }
 
-    public void testGetPlaceFromPlaceId_shouldReturnChineseWhenLocaleChinese() throws Exception {
+    public void testGetPlaceFromPlaceIdInDetail_shouldReturnChineseWhenLocaleChinese() throws Exception {
 
         final CountDownLatch signal = new CountDownLatch(1);
 

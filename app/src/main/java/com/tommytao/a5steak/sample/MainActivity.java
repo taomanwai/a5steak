@@ -2,51 +2,33 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.util.Log;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import com.tommytao.a5steak.util.google.DirectionsApiManager;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends Activity {
 
-    @Bind(R.id.btnGo)
-    Button btnGo;
-
-    @Bind(R.id.btnGet)
-    Button btnGet;
-
-    @Bind(R.id.tvMsg)
-    TextView tvMsg;
-
-
-    @Bind(R.id.listViewMain)
-    ListView listViewMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ButterKnife.bind(this);
+
+        DirectionsApiManager.getInstance().route(22.337154, 114.147422, 22.336023, 114.155276, "", Locale.US, new DirectionsApiManager.OnRouteListener() {
+            @Override
+            public void returnSteps(ArrayList<DirectionsApiManager.Step> steps, DirectionsApiManager.Polyline polyline) {
+                Log.d("", "");
+            }
+        });
 
 
     }
 
 
-    @OnClick(R.id.btnGo)
-    public void go() {
-
-
-    }
-
-    @OnClick(R.id.btnGet)
-    public void get() {
-
-
-    }
 
 
 }

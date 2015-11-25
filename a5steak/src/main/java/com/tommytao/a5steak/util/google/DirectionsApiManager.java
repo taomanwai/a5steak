@@ -9,14 +9,14 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.tommytao.a5steak.util.Foundation;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -55,6 +55,383 @@ public class DirectionsApiManager extends GFoundation {
     }
 
     // --
+
+    private class ResponseRoute {
+
+        public class Step {
+
+            @SerializedName("distance")
+            @Expose
+            private Distance distance;
+            @SerializedName("duration")
+            @Expose
+            private Duration duration;
+            @SerializedName("end_location")
+            @Expose
+            private EndLocation endLocation;
+            @SerializedName("html_instructions")
+            @Expose
+            private String htmlInstructions;
+
+            @SerializedName("maneuver")
+            @Expose
+            private String maneuver;
+
+            @SerializedName("polyline")
+            @Expose
+            private Polyline polyline;
+            @SerializedName("start_location")
+            @Expose
+            private StartLocation startLocation;
+            @SerializedName("travel_mode")
+            @Expose
+            private String travelMode;
+
+            public String getManeuver() {
+                if (maneuver==null)
+                    return "";
+                return maneuver;
+            }
+
+            public void setManeuver(String maneuver) {
+                this.maneuver = maneuver;
+            }
+
+            public Distance getDistance() {
+                return distance;
+            }
+
+
+            public void setDistance(Distance distance) {
+                this.distance = distance;
+            }
+
+            public Duration getDuration() {
+                return duration;
+            }
+
+            public void setDuration(Duration duration) {
+                this.duration = duration;
+            }
+
+
+            public EndLocation getEndLocation() {
+                return endLocation;
+            }
+
+
+            public void setEndLocation(EndLocation endLocation) {
+                this.endLocation = endLocation;
+            }
+
+
+            public String getHtmlInstructions() {
+
+                if (htmlInstructions==null)
+                    return "";
+                return htmlInstructions;
+            }
+
+
+            public void setHtmlInstructions(String htmlInstructions) {
+                this.htmlInstructions = htmlInstructions;
+            }
+
+
+            public Polyline getPolyline() {
+                return polyline;
+            }
+
+
+            public void setPolyline(Polyline polyline) {
+                this.polyline = polyline;
+            }
+
+
+            public StartLocation getStartLocation() {
+                return startLocation;
+            }
+
+
+            public void setStartLocation(StartLocation startLocation) {
+                this.startLocation = startLocation;
+            }
+
+
+            public String getTravelMode() {
+                if (travelMode==null)
+                    return "";
+                return travelMode;
+            }
+
+
+            public void setTravelMode(String travelMode) {
+                this.travelMode = travelMode;
+            }
+
+        }
+
+        public class StartLocation {
+
+            @SerializedName("lat")
+            @Expose
+            private Double lat;
+            @SerializedName("lng")
+            @Expose
+            private Double lng;
+
+
+            public Double getLat() {
+                if (lat==null)
+                    return Double.NaN;
+                return lat;
+            }
+
+
+            public void setLat(Double lat) {
+                this.lat = lat;
+            }
+
+
+            public Double getLng() {
+                if (lng==null)
+                    return Double.NaN;
+                return lng;
+            }
+
+            public void setLng(Double lng) {
+                this.lng = lng;
+            }
+
+        }
+
+        public class Polyline {
+
+            @SerializedName("points")
+            @Expose
+            private String points;
+
+
+            public String getPoints() {
+                if (points==null)
+                    return "";
+                return points;
+            }
+
+
+            public void setPoints(String points) {
+                this.points = points;
+            }
+
+        }
+
+        public class OverviewPolyline {
+
+            @SerializedName("points")
+            @Expose
+            private String points;
+
+
+            public String getPoints() {
+                if (points==null)
+                    return "";
+                return points;
+            }
+
+            public void setPoints(String points) {
+                this.points = points;
+            }
+
+        }
+
+        public class Leg {
+
+            @SerializedName("steps")
+            @Expose
+            private List<Step> steps = new ArrayList<Step>();
+
+
+            public List<Step> getSteps() {
+                if (steps==null)
+                    return new ArrayList<>();
+                return steps;
+            }
+
+
+            public void setSteps(List<Step> steps) {
+                this.steps = steps;
+            }
+
+        }
+
+        public class EndLocation {
+
+            @SerializedName("lat")
+            @Expose
+            private Double lat;
+            @SerializedName("lng")
+            @Expose
+            private Double lng;
+
+            public Double getLat() {
+                if (lat==null)
+                    return Double.NaN;
+                return lat;
+            }
+
+            public void setLat(Double lat) {
+                this.lat = lat;
+            }
+
+            public Double getLng() {
+                if (lng==null)
+                    return Double.NaN;
+                return lng;
+            }
+
+
+            public void setLng(Double lng) {
+                this.lng = lng;
+            }
+
+        }
+
+        public class Duration {
+
+            @SerializedName("text")
+            @Expose
+            private String text;
+            @SerializedName("value")
+            @Expose
+            private Integer value;
+
+
+            public String getText() {
+                if (text==null)
+                    return "";
+                return text;
+            }
+
+
+            public void setText(String text) {
+                this.text = text;
+            }
+
+
+            public Integer getValue() {
+                if (value==null)
+                    return -1;
+                return value;
+            }
+
+
+            public void setValue(Integer value) {
+                this.value = value;
+            }
+
+        }
+
+        public class Distance {
+
+            @SerializedName("text")
+            @Expose
+            private String text;
+            @SerializedName("value")
+            @Expose
+            private Integer value;
+
+
+            public String getText() {
+                if (text==null)
+                    return "";
+                return text;
+            }
+
+
+            public void setText(String text) {
+                this.text = text;
+            }
+
+
+            public Integer getValue() {
+                if (value==null)
+                    return -1;
+                return value;
+            }
+
+
+            public void setValue(Integer value) {
+                this.value = value;
+            }
+
+        }
+
+        public class Route {
+
+            @SerializedName("legs")
+            @Expose
+            private List<Leg> legs = new ArrayList<Leg>();
+            @SerializedName("overview_polyline")
+            @Expose
+            private OverviewPolyline overviewPolyline;
+
+
+            public List<Leg> getLegs() {
+                if(legs==null)
+                    return new ArrayList<>();
+                return legs;
+            }
+
+
+            public void setLegs(List<Leg> legs) {
+                this.legs = legs;
+            }
+
+
+            public OverviewPolyline getOverviewPolyline() {
+                return overviewPolyline;
+            }
+
+
+            public void setOverviewPolyline(OverviewPolyline overviewPolyline) {
+                this.overviewPolyline = overviewPolyline;
+            }
+
+        }
+
+        @SerializedName("routes")
+        @Expose
+        private List<Route> routes = new ArrayList<Route>();
+        @SerializedName("status")
+        @Expose
+        private String status;
+
+
+        public List<Route> getRoutes() {
+            if (routes==null)
+                return new ArrayList<>();
+            return routes;
+        }
+
+
+        public void setRoutes(List<Route> routes) {
+            this.routes = routes;
+        }
+
+
+        public String getStatus() {
+            if (status==null)
+                return "";
+            return status;
+        }
+
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+    }
+
 
     public static interface OnRouteListener {
 
@@ -462,25 +839,36 @@ public class DirectionsApiManager extends GFoundation {
 
         // == run in bg ==
 
+        // init GSON in main thread
+        getGson();
+
         new AsyncTask<JSONObject, Void, Pair<ArrayList<Step>, Polyline>>() {
 
             @Override
             protected Pair<ArrayList<Step>, Polyline> doInBackground(JSONObject... responsesJObj) {
 
+                Pair<ArrayList<Step>, Polyline> resultPair = null;
+
                 if (responsesJObj.length != 1) {
-                    return null;
+                    return resultPair;
                 }
 
                 JSONObject responseJObj = responsesJObj[0];
 
-                String overviewPolylinePoints = "";
-                ArrayList<Step> steps = new ArrayList<>();
+                ResponseRoute responseRoute = getGson().fromJson("" + responseJObj, ResponseRoute.class);
 
-                boolean hasException = false;
-                try {
 
-                    String status = "";
-                    Step step = null;
+                try{
+
+                    if (!"OK".equals(responseRoute.getStatus())) {
+                        return resultPair;
+                    }
+
+                    ArrayList<Step> steps = new ArrayList<>();
+                    String overviewPolylinePoints = responseRoute.getRoutes().get(0).getOverviewPolyline().getPoints();
+
+
+                    ResponseRoute.Step step = null;
                     int distanceInMeter = -1;
                     String distanceInText = "";
                     int durationInMs = -1;
@@ -491,40 +879,25 @@ public class DirectionsApiManager extends GFoundation {
                     double endLongitude = Double.NaN;
                     String encodedPolyline = "";
                     String instructionsInHtml = "";
-                    int maneuver = Step.MANEUVER_NONE;
                     String maneuverStr = "";
+                    int maneuver = Step.MANEUVER_NONE;
                     String travelMode = "";
-                    JSONObject stepJObj = null;
 
-                    status = responseJObj.getString("status");
+                    for (int i=0; i<responseRoute.getRoutes().get(0).getLegs().get(0).getSteps().size(); i++){
+                        step = responseRoute.getRoutes().get(0).getLegs().get(0).getSteps().get(i);
+                        distanceInMeter = step.getDistance().getValue();
+                        distanceInText = step.getDistance().getText();
+                        durationInMs = step.getDuration().getValue() * 1000;
+                        durationInText = step.getDuration().getText();
+                        startLatitude = step.getStartLocation().getLat();
+                        startLongitude = step.getStartLocation().getLng();
+                        endLatitude = step.getEndLocation().getLat();
+                        endLongitude = step.getEndLocation().getLng();
+                        encodedPolyline = step.getPolyline().getPoints();
+                        instructionsInHtml = step.getHtmlInstructions();
+                        travelMode = step.getTravelMode();
 
-                    if (!"OK".equals(status)) {
-                        return null;
-                    }
-
-                    JSONArray routesJArray = responseJObj.getJSONArray("routes");
-                    JSONArray legsJArray = routesJArray.getJSONObject(0).getJSONArray("legs");
-                    JSONArray stepsJArray = legsJArray.getJSONObject(0).getJSONArray("steps");
-                    overviewPolylinePoints = routesJArray.getJSONObject(0).getJSONObject("overview_polyline").getString("points");
-
-
-                    for (int i = 0; i < stepsJArray.length(); i++) {
-
-                        stepJObj = stepsJArray.getJSONObject(i);
-                        distanceInMeter = stepJObj.getJSONObject("distance").getInt("value");
-                        distanceInText = stepJObj.getJSONObject("distance").getString("text");
-                        durationInMs = stepJObj.getJSONObject("duration").getInt("value") * 1000;
-                        durationInText = stepJObj.getJSONObject("duration").getString("text");
-
-                        startLatitude = stepJObj.getJSONObject("start_location").getDouble("lat");
-                        startLongitude = stepJObj.getJSONObject("start_location").getDouble("lng");
-                        endLatitude = stepJObj.getJSONObject("end_location").getDouble("lat");
-                        endLongitude = stepJObj.getJSONObject("end_location").getDouble("lng");
-
-                        encodedPolyline = stepJObj.getJSONObject("polyline").getString("points");
-                        instructionsInHtml = stepJObj.getString("html_instructions");
-
-                        maneuverStr = stepJObj.optString("maneuver", "");
+                        maneuverStr = step.getManeuver();
                         switch (maneuverStr) {
                             case "turn-sharp-left":
                                 maneuver = Step.MANEUVER_TURN_SHARP_LEFT;
@@ -613,28 +986,22 @@ public class DirectionsApiManager extends GFoundation {
                                 break;
                         }
 
-                        travelMode = stepJObj.getString("travel_mode");
-
-                        step = new Step(distanceInMeter, distanceInText, durationInMs, durationInText,
+                        steps.add(new Step(distanceInMeter, distanceInText, durationInMs, durationInText,
                                 startLatitude, startLongitude, endLatitude, endLongitude,
                                 encodedPolyline, instructionsInHtml,
-                                maneuver, travelMode);
-
-                        steps.add(step);
+                                maneuver, travelMode));
 
                     }
 
-                } catch (Exception e) {
+                    resultPair =  new Pair<>(steps, new Polyline(overviewPolylinePoints) );
 
+
+                } catch (Exception e){
                     e.printStackTrace();
-                    hasException = true;
-
                 }
 
-                Pair<ArrayList<Step>, Polyline> result =
-                        new Pair<ArrayList<Step>, Polyline>(hasException ? new ArrayList<Step>() : steps, new Polyline(overviewPolylinePoints) );
+                return resultPair;
 
-                return result;
 
             }
 
@@ -699,7 +1066,6 @@ public class DirectionsApiManager extends GFoundation {
 
         String link = genRouteLink(startLatitude, startLongitude, endLatitude, endLongitude, avoid, locale);
 
-        Log.d("rtemp", "nav_t: link: " + link);
 
         httpGetJSON(link, DEFAULT_MAX_NUM_OF_RETRIES, new OnHttpGetJSONListener() {
 

@@ -5,45 +5,7 @@
     android:layout_height="match_parent" tools:context=".MainActivity">
 
 
-    <ListView
-        android:id="@+id/listViewMain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/btnGo"/>
 
-    <Button
-        android:id="@+id/btnGo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go"
-        />
-
-    <Button
-        android:id="@+id/btnGet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Get"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        />
-
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="msg"
-        android:id="@+id/tvMsg"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/btnGo"
-        android:layout_toEndOf="@+id/btnGo" />
-
-    <com.tommytao.a5steak.customview.google.AnimMapView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:clientIdForWork="gme-easyvanhongkonglimited"
-        app:cryptoForWork="RglSWAR2KO9R2OghAMwyj4WqIXg="
-        />
 
 
 </RelativeLayout>
