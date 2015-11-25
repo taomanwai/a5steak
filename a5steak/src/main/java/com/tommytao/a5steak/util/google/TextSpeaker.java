@@ -234,7 +234,13 @@ public class TextSpeaker extends Foundation {
     }
 
     public boolean isConnecting() {
-        return tts != null && !connected;
+//        return tts != null && !connected;
+
+        if (isConnected())
+            return false;
+
+        return !onConnectListeners.isEmpty();
+
     }
 
     public boolean isConnected() {
