@@ -168,7 +168,11 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
             public void returnPlace(PlacesApiManager.Place place) {
 
 
-                if (place!=null && "人大会堂西路".equals(place.getName()))
+                if (place!=null && "人大会堂西路".equals(place.getName())
+                        && "中國北京市西城区人大会堂西路".equals(place.getFormattedAddress())
+                        && "ChIJO39LEZdS8DURbd3-N2hFGcM".equals(place.getPlaceId())
+                        && place.getLatitude() == 39.9032102
+                        && place.getLongitude() == 116.391676)
                     succeeds.set(0, true);
 
                 signal.countDown();
