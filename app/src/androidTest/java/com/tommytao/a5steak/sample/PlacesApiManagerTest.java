@@ -234,6 +234,8 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
 
 
 
+
+
     public void testSearchPlacesInDetail_shouldReturnEnWhenLocaleEn() throws Exception {
 
         final CountDownLatch signal = new CountDownLatch(1);
