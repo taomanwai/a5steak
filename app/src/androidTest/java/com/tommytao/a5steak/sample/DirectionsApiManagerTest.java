@@ -34,6 +34,8 @@ public class DirectionsApiManagerTest extends ApplicationTestCase<Application> {
     }
 
 
+
+
     public void testRoute_shouldReturnEnWhenLocaleEnglish() throws Exception {
 
         final CountDownLatch signal = new CountDownLatch(1);
