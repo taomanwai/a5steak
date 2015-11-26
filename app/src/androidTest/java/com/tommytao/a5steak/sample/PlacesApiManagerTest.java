@@ -3,8 +3,15 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
+import com.tommytao.a5steak.util.Encyclopedia;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.google.PlacesApiManager;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -277,57 +284,57 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
 //
 //    }
 //
-//    public void testSearchPlaces_shouldReturnEmptyResultWhenLatLngInvalid() throws Exception {
-//
-//        final CountDownLatch signal = new CountDownLatch(1);
-//
-//        final ArrayList<Boolean> succeeds = new ArrayList<>();
-//        succeeds.add(false);
-//
-//        PlacesApiManager.getInstance().searchPlaces(
-//                "Sport", Double.NaN, Encyclopedia.HKSIL_LNG, 50, Locale.US, true, new PlacesApiManager.OnSearchPlacesListener() {
-//                    @Override
-//                    public void returnPlaces(ArrayList<PlacesApiManager.Place> places, String keyword, String status) {
-//
-//                        if ("Sport".equals(keyword) && places.isEmpty())
-//                            succeeds.set(0, true);
-//
-//                        signal.countDown();
-//                    }
-//                });
-//
-//        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
-//
-//    }
-//
-//    public void testAutoComplete_shouldReturnTcWhenLocaleZhHk() throws Exception {
-//
-//        final CountDownLatch signal = new CountDownLatch(1);
-//
-//        final ArrayList<Boolean> succeeds = new ArrayList<>();
-//        succeeds.add(false);
-//
-//        PlacesApiManager.getInstance().autoComplete("IFC", new Locale("zh", "HK"), new PlacesApiManager.OnAutoCompleteListener() {
-//            @Override
-//            public void returnAutoCompletes(ArrayList<PlacesApiManager.AutoComplete> autoCompletes, String input, JSONObject response) {
-//                if ("IFC".equals(input)
-//                        && !autoCompletes.isEmpty()
-//                        && "國際金融中心, 香港".equals(autoCompletes.get(0).getDescription())
-//                        && "ChIJEULc_GIABDQRfY_ZL9npKAM".equals(autoCompletes.get(0).getPlaceId())
-//                        && autoCompletes.get(0).getOffset() == 0
-//                        && autoCompletes.get(0).getLength() == 6
-//                        && "國際金融中心".equals(autoCompletes.get(0).getTerms().get(0))
-//                        && "香港".equals(autoCompletes.get(0).getTerms().get(1))
-//                        )
-//                    succeeds.set(0, true);
-//
-//                signal.countDown();
-//            }
-//        });
-//
-//        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
-//
-//    }
+    public void testSearchPlaces_shouldReturnEmptyResultWhenLatLngInvalid() throws Exception {
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final ArrayList<Boolean> succeeds = new ArrayList<>();
+        succeeds.add(false);
+
+        PlacesApiManager.getInstance().searchPlaces(
+                "Sport", Double.NaN, Encyclopedia.HKSIL_LNG, 50, Locale.US, true, new PlacesApiManager.OnSearchPlacesListener() {
+                    @Override
+                    public void returnPlaces(ArrayList<PlacesApiManager.Place> places, String keyword, String status) {
+
+                        if ("fdsaf".equals(keyword) && places.isEmpty()) // Sport
+                            succeeds.set(0, true);
+
+                        signal.countDown();
+                    }
+                });
+
+        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+
+    }
+
+    public void testAutoComplete_shouldReturnTcWhenLocaleZhHk() throws Exception {
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final ArrayList<Boolean> succeeds = new ArrayList<>();
+        succeeds.add(false);
+
+        PlacesApiManager.getInstance().autoComplete("IFC", new Locale("zh", "HK"), new PlacesApiManager.OnAutoCompleteListener() {
+            @Override
+            public void returnAutoCompletes(ArrayList<PlacesApiManager.AutoComplete> autoCompletes, String input, JSONObject response) {
+                if ("IFC".equals(input)
+                        && !autoCompletes.isEmpty()
+                        && "dfsfsd".equals(autoCompletes.get(0).getDescription()) // 國際金融中心, 香港
+                        && "ChIJEULc_GIABDQRfY_ZL9npKAM".equals(autoCompletes.get(0).getPlaceId())
+                        && autoCompletes.get(0).getOffset() == 0
+                        && autoCompletes.get(0).getLength() == 6
+                        && "國際金融中心".equals(autoCompletes.get(0).getTerms().get(0))
+                        && "香港".equals(autoCompletes.get(0).getTerms().get(1))
+                        )
+                    succeeds.set(0, true);
+
+                signal.countDown();
+            }
+        });
+
+        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+
+    }
 
 
 
