@@ -68,7 +68,7 @@ public class MusicManager extends Foundation {
         try {
             mediaPlayer.release();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
 
@@ -100,7 +100,7 @@ public class MusicManager extends Foundation {
                     try {
                         mediaPlayer.release();
                     } catch (Exception e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
                     }
 
                     if (listener != null)
@@ -157,7 +157,7 @@ public class MusicManager extends Foundation {
                     try {
                         mediaPlayer.release();
                     } catch (Exception e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
                     }
 
                     if (listener != null)
@@ -227,7 +227,7 @@ public class MusicManager extends Foundation {
                     try {
                         mediaPlayer.release();
                     } catch (Exception e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
                     }
 
                     if (listener != null)

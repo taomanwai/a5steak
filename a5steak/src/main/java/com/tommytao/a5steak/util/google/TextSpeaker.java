@@ -226,7 +226,7 @@ public class TextSpeaker extends Foundation {
         try {
             gTranslateMediaPlayer.release();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         clearAndOnUiThreadTriggerGTranslateOnSpeakCompleteListener(true);
 
@@ -327,7 +327,7 @@ public class TextSpeaker extends Foundation {
         try {
             gTranslateMediaPlayer.release();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         clearAndOnUiThreadTriggerGTranslateOnSpeakCompleteListener(true);
@@ -362,7 +362,7 @@ public class TextSpeaker extends Foundation {
         try {
             gTranslateMediaPlayer.release();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         clearAndOnUiThreadTriggerGTranslateOnSpeakCompleteListener(true);
 
@@ -421,7 +421,7 @@ public class TextSpeaker extends Foundation {
                     try {
                         mediaPlayer.release();
                     } catch (Exception e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
                     }
 
                     clearAndTriggerGTranslateOnSpeakCompleteListener(true);
