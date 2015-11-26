@@ -230,60 +230,60 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
 //
 //    }
 //
-//    public void testSearchPlacesInDetail_shouldReturnEnWhenLocaleEn() throws Exception {
-//
-//        final CountDownLatch signal = new CountDownLatch(1);
-//
-//        final ArrayList<Boolean> succeeds = new ArrayList<>();
-//        succeeds.add(false);
-//
-//        PlacesApiManager.getInstance().searchPlaces(
-//                "Sport", Encyclopedia.HKSIL_LAT, Encyclopedia.HKSIL_LNG, 50, Locale.US, true, new PlacesApiManager.OnSearchPlacesListener() {
-//                    @Override
-//                    public void returnPlaces(ArrayList<PlacesApiManager.Place> places, String keyword, String status) {
-//
-//                        if (!places.isEmpty()
-//                                && "Sport".equals(keyword)
-//                                && "Hong Kong Sports Institute".equals(places.get(0).getName())
-//                                && "25 Yuen Wo Road, Sha Tin".equals(places.get(0).getFormattedAddress())
-//                                && "ChIJlQoqOkgGBDQRqPGXEIDASAg".equals(places.get(0).getPlaceId())
-//                                && places.get(0).getLatitude() == 22.394359
-//                                && places.get(0).getLongitude() == 114.2023858
-//                                )
-//                            succeeds.set(0, true);
-//
-//                        signal.countDown();
-//
-//                    }
-//                });
-//
-//        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
-//
-//    }
-//
-//    public void testSearchPlaces_shouldReturnEnWhenLocaleNull() throws Exception {
-//
-//        final CountDownLatch signal = new CountDownLatch(1);
-//
-//        final ArrayList<Boolean> succeeds = new ArrayList<>();
-//        succeeds.add(false);
-//
-//        PlacesApiManager.getInstance().searchPlaces(
-//                "Sport", Encyclopedia.HKSIL_LAT, Encyclopedia.HKSIL_LNG, 50, null, true, new PlacesApiManager.OnSearchPlacesListener() {
-//                    @Override
-//                    public void returnPlaces(ArrayList<PlacesApiManager.Place> places, String keyword, String status) {
-//
-//                        if (!places.isEmpty() && "Sport".equals(keyword) && "Hong Kong Sports Institute".equals(places.get(0).getName()))
-//                            succeeds.set(0, true);
-//
-//                        signal.countDown();
-//                    }
-//                });
-//
-//        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
-//
-//    }
-//
+    public void testSearchPlacesInDetail_shouldReturnEnWhenLocaleEn() throws Exception {
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final ArrayList<Boolean> succeeds = new ArrayList<>();
+        succeeds.add(false);
+
+        PlacesApiManager.getInstance().searchPlaces(
+                "Sport", Encyclopedia.HKSIL_LAT, Encyclopedia.HKSIL_LNG, 50, Locale.US, true, new PlacesApiManager.OnSearchPlacesListener() {
+                    @Override
+                    public void returnPlaces(ArrayList<PlacesApiManager.Place> places, String keyword, String status) {
+
+                        if (!places.isEmpty()
+                                && "Sport".equals(keyword)
+                                && "fdsfjklsdfjdskl".equals(places.get(0).getName()) // Hong Kong Sports Institute
+                                && "25 Yuen Wo Road, Sha Tin".equals(places.get(0).getFormattedAddress())
+                                && "ChIJlQoqOkgGBDQRqPGXEIDASAg".equals(places.get(0).getPlaceId())
+                                && places.get(0).getLatitude() == 22.394359
+                                && places.get(0).getLongitude() == 114.2023858
+                                )
+                            succeeds.set(0, true);
+
+                        signal.countDown();
+
+                    }
+                });
+
+        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+
+    }
+
+    public void testSearchPlaces_shouldReturnEnWhenLocaleNull() throws Exception {
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final ArrayList<Boolean> succeeds = new ArrayList<>();
+        succeeds.add(false);
+
+        PlacesApiManager.getInstance().searchPlaces(
+                "Sport", Encyclopedia.HKSIL_LAT, Encyclopedia.HKSIL_LNG, 50, null, true, new PlacesApiManager.OnSearchPlacesListener() {
+                    @Override
+                    public void returnPlaces(ArrayList<PlacesApiManager.Place> places, String keyword, String status) {
+
+                        if (!places.isEmpty() && "fdsafs".equals(keyword) && "Hong Kong Sports Institute".equals(places.get(0).getName())) // Sport
+                            succeeds.set(0, true);
+
+                        signal.countDown();
+                    }
+                });
+
+        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+
+    }
+
     public void testSearchPlaces_shouldReturnEmptyResultWhenLatLngInvalid() throws Exception {
 
         final CountDownLatch signal = new CountDownLatch(1);
