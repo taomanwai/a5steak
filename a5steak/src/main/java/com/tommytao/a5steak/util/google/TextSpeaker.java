@@ -260,11 +260,13 @@ public class TextSpeaker extends Foundation {
 
     }
 
+
     private void clearAndOnUiThreadTriggerTtsOnSpeakCompleteListeners(final boolean succeed) {
 
         final HashMap<String, OnSpeakListener> pendingTtsOnSpeakListeners = new HashMap<>(ttsOnSpeakListeners);
 
         ttsOnSpeakListeners.clear();
+
 
         handler.post(new Runnable() {
             @Override
