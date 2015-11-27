@@ -261,6 +261,9 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
     }
 
     public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleNull() throws Exception {
+
+        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+
         final CountDownLatch signal = new CountDownLatch(1);
 
         final ArrayList<Boolean> succeeds = new ArrayList<>();
@@ -289,6 +292,9 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
 
     public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleEnUs() throws Exception {
+
+        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+
         final CountDownLatch signal = new CountDownLatch(1);
 
         final ArrayList<Boolean> succeeds = new ArrayList<>();
@@ -316,6 +322,8 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
 
     public void testSearchByCountry_shouldReturnHkResultInTcWhenCountryHkLocaleZhHk() throws Exception {
+
+        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
