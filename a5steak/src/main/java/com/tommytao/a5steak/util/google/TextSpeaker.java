@@ -334,7 +334,7 @@ public class TextSpeaker extends Foundation {
 
     }
 
-    private String genGTranslateLocaleStr(Locale locale){
+    private String genGTranslateLocaleStr(Locale locale) {
 
         if (isCantonese(locale))
             return "zh-yue";
@@ -446,6 +446,24 @@ public class TextSpeaker extends Foundation {
 
     }
 
+    /**
+     * Turns invalid or strange locale to standard locale
+     *
+     * @param locale
+     * @return
+     */
+    private Locale normalizeLocale(Locale locale) {
+
+        if (locale == null)
+            return DEFAULT_LOCALE;
+
+        if ("en".equals(locale.getLanguage()))
+            return new Locale("en", "US");
+
+        return new Locale(locale.getLanguage(), locale.getCountry(), locale.getVariant());
+
+    }
+
     private void speakInTts(String text, Locale locale, final OnSpeakListener listener) {
 
         if (!isConnected()) {
@@ -461,8 +479,11 @@ public class TextSpeaker extends Foundation {
             return;
         }
 
-        if (locale == null)
-            locale = DEFAULT_LOCALE;
+//        if (locale == null)
+//            locale = DEFAULT_LOCALE;
+
+        locale = normalizeLocale(locale);
+
         int setLangResult = tts.setLanguage(locale);
         if (setLangResult == TextToSpeech.LANG_NOT_SUPPORTED)
             tts.setLanguage(DEFAULT_LOCALE);
@@ -481,6 +502,11 @@ public class TextSpeaker extends Foundation {
 
         if (!isConnected())
             return false;
+
+        if (locale == null)
+            return false;
+
+        locale = normalizeLocale(locale);
 
         return tts.isLanguageAvailable(locale) == TextToSpeech.LANG_COUNTRY_AVAILABLE;
 
