@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class TestUtils {
 
+    public static final int GENERAL_DELAY_IN_MS = 3 * 1000;
+
     public static void startLinkNetworkTestAndAssert(ApplicationTestCase testCase, String link) throws Exception {
 
         final CountDownLatch signal = new CountDownLatch(1);

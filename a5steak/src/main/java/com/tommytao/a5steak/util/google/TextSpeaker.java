@@ -488,7 +488,6 @@ public class TextSpeaker extends Foundation {
         if (setLangResult == TextToSpeech.LANG_NOT_SUPPORTED)
             tts.setLanguage(DEFAULT_LOCALE);
 
-
         HashMap<String, String> hashMap = new HashMap<>();
         String utteranceId = "" + genUniqueId();
         hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utteranceId);

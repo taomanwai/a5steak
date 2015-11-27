@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Application;
+import android.os.SystemClock;
 import android.test.ApplicationTestCase;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,7 +34,6 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
         createApplication();
     }
-
 
 
     public void testGetInDetail_shouldReturnEnWhenLocaleEnUs() throws Exception {
@@ -342,6 +342,9 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
     }
 
     public void testSearchByCountryInDetail_shouldReturnHkResultInScWhenCountryHkLocaleZhCn() throws Exception {
+
+        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+
         final CountDownLatch signal = new CountDownLatch(1);
 
         final ArrayList<Boolean> succeeds = new ArrayList<>();
@@ -354,7 +357,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
                 if (query.equals(keyword) && !poiPoints.isEmpty()
                         && "香港深水埗長沙灣道303號长沙湾政府合署".equals(
-                                poiPoints.get(0).getFormattedAddress())
+                        poiPoints.get(0).getFormattedAddress())
                         && poiPoints.get(0).getLatitude() == 22.3318512
                         && poiPoints.get(0).getLongitude() == 114.1603199
                         )
@@ -453,7 +456,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
                                 poiPoints.get(0).getFormattedAddress()))
                     succeeds.set(0, true);
 
-                    signal.countDown();
+                signal.countDown();
 
             }
         });
@@ -462,11 +465,13 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
     }
 
     public void testSearchByBounds_shouldReturnResultInTcWhenBoundsValidLocaleTc() throws Exception {
+
+        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+
         final CountDownLatch signal = new CountDownLatch(1);
 
         final ArrayList<Boolean> succeeds = new ArrayList<>();
         succeeds.add(false);
-
 
         final String query = "長沙灣政府合署";
         GeocodeManager.getInstance().searchByBounds(query,
@@ -481,7 +486,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
                             succeeds.set(0, true);
 
 
-                            signal.countDown();
+                        signal.countDown();
                     }
                 }
         );
@@ -490,6 +495,9 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
     }
 
     public void testSearchByBounds_shouldReturnResultInScWhenBoundsValidLocaleZhCn() throws Exception {
+
+        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+
         final CountDownLatch signal = new CountDownLatch(1);
 
         final ArrayList<Boolean> succeeds = new ArrayList<>();
@@ -508,7 +516,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
                                         poiPoints.get(0).getFormattedAddress()))
                             succeeds.set(0, true);
 
-                            signal.countDown();
+                        signal.countDown();
                     }
                 }
         );
