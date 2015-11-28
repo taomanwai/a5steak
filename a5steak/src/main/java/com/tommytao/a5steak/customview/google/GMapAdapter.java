@@ -6,41 +6,20 @@ import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.CancelableCallback;
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tommytao.a5steak.customview.IMapAdapter;
 
 import java.util.ArrayList;
 
 public class GMapAdapter implements IMapAdapter {
-
-    public static interface OnAnimationCameraCallback {
-
-        public void onCancel();
-
-        public void onFinish();
-
-    }
-
-    public static interface OnCameraChangeCallback {
-
-        public void onCameraChange(Location location);
-
-    }
-
-    public static interface OnMapLoadedCallback {
-
-        public void onMapLoaded();
-
-    }
 
     private com.google.android.gms.maps.MapView mapView;
 
@@ -50,14 +29,14 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    // == Get map core ==
-
+    @Override
     public Object getMapView() {
 
         return mapView;
 
     }
 
+    @Override
     public Object getMap() {
 
         if (mapView == null)
@@ -67,12 +46,10 @@ public class GMapAdapter implements IMapAdapter {
         return result;
     }
 
-    // == Movement ==
+    @Override
+    public void moveCameraByLatLng(double latitude, double longitude, float zoom) {
 
-    public void moveCameraByLatLng(double latitude, double longitude, float zoom, double bearing, double tilt) {
-
-        ((GoogleMap) getMap()).moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(zoom).bearing((float) bearing).tilt((float) tilt).build()));
-        // CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), zoom)
+        ((GoogleMap) getMap()).moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), zoom));
 
     }
 
@@ -83,11 +60,12 @@ public class GMapAdapter implements IMapAdapter {
         ((GoogleMap) getMap()).moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, paddingInPx));
     }
 
-    public void animateCamera(double latitude, double longitude, float zoomTo, int durationInMs, final OnAnimationCameraCallback callback) {
+    @Override
+    public void animateCamera(double latitude, double longitude, float zoomTo, int durationInMs, final IMapAdapter.OnAnimationCameraCallback callback) {
 
         ((GoogleMap) getMap()).animateCamera(
                 CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(zoomTo).build()), durationInMs,
-                new CancelableCallback() {
+                new GoogleMap.CancelableCallback() {
 
                     @Override
                     public void onCancel() {
@@ -109,39 +87,22 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    // == Control map ==
-
+    @Override
     public void setZoomControlsEnabled(boolean enabled) {
 
         ((GoogleMap) getMap()).getUiSettings().setZoomControlsEnabled(enabled);
 
     }
 
+    @Override
     public void setTrafficEnabled(boolean enabled) {
 
         ((GoogleMap) getMap()).setTrafficEnabled(enabled);
 
     }
 
-    public void setCompassEnabled(boolean enabled) {
-
-        ((GoogleMap) getMap()).getUiSettings().setCompassEnabled(enabled);
-
-
-
-    }
-
-    public void setMyLocationButtonEnabled(boolean enabled){
-
-
-        ((GoogleMap) getMap()).setMyLocationEnabled(enabled);
-        ((GoogleMap) getMap()).getUiSettings().setMyLocationButtonEnabled(enabled);
-
-    }
-
-
-    // == Marker ==
-    public Object addMarker(double latitude, double longitude, int iconResId, String title, String snippet) {
+    @Override
+    public Object addMarker(double latitude, double longitude, int iconResId, String title , String snippet) {
 
         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(latitude, longitude)).title(title).snippet(snippet);
 
@@ -153,17 +114,20 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    public void setInfoWindowAdapter(Object adapter) {
+    @Override
+    public void notifyMarkerShowInfoWindow(Object marker) {
 
-        if (!(adapter instanceof InfoWindowAdapter))
+        if (marker == null)
             return;
 
-        mapView.getMap().setInfoWindowAdapter((InfoWindowAdapter) adapter);
+        if (!(marker instanceof Marker))
+            return;
+
+        ((Marker) marker).showInfoWindow();
 
     }
 
-
-    // == Polyline ==
+    @Override
     public Object addPolyline(ArrayList<Location> locations, float width, int color) {
 
         PolylineOptions lineOptions = new PolylineOptions();
@@ -182,8 +146,7 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    // == Camera ==
-
+    @Override
     public Location getCameraLocation() {
 
         LatLng latLng = ((GoogleMap) getMap()).getCameraPosition().target;
@@ -198,9 +161,10 @@ public class GMapAdapter implements IMapAdapter {
         return result;
     }
 
-    public void setOnCameraChangeListener(final OnCameraChangeCallback callback) {
+    @Override
+    public void setOnCameraChangeListener(final IMapAdapter.OnCameraChangeCallback callback) {
 
-        ((GoogleMap) getMap()).setOnCameraChangeListener(new OnCameraChangeListener() {
+        ((GoogleMap) getMap()).setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
 
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
@@ -225,9 +189,8 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
-    // == Setup & init ==
-
-    public void init(Activity activity, final OnMapLoadedCallback callback) {
+    @Override
+    public void init(Activity activity, final IMapAdapter.OnMapLoadedCallback callback) {
 
         mapView.getMap().setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
@@ -247,6 +210,7 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
 
         if (mapView == null)
@@ -256,6 +220,7 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
+    @Override
     public void onResume() {
 
         if (mapView == null)
@@ -265,6 +230,7 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
+    @Override
     public void onDestroy() {
 
         if (mapView == null)
@@ -274,6 +240,7 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
+    @Override
     public void onPause() {
 
         if (mapView == null)
@@ -283,6 +250,7 @@ public class GMapAdapter implements IMapAdapter {
 
     }
 
+    @Override
     public void onLowMemory() {
 
         if (mapView == null)
@@ -290,8 +258,10 @@ public class GMapAdapter implements IMapAdapter {
 
         mapView.onLowMemory();
 
+
     }
 
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
         if (mapView == null)
@@ -303,40 +273,40 @@ public class GMapAdapter implements IMapAdapter {
     }
 
 
-//    public void notifyMarkerRemoveItself(Object marker) {
-//
-//        if (marker == null)
-//            return;
-//
-//        if (!(marker instanceof Marker))
-//            return;
-//
-//        ((Marker) marker).remove();
-//
-//    }
-//
-//    public void notifyPolylineRemoveItself(Object polyline) {
-//
-//        if (polyline == null)
-//            return;
-//
-//        if (!(polyline instanceof Polyline))
-//            return;
-//
-//        ((Polyline) polyline).remove();
-//
-//    }
-//
-//    public void notifyMarkerShowInfoWindow(Object marker) {
-//
-//     if (marker == null)
-//        return;
-//
-//     if (!(marker instanceof Marker))
-//        return;
-//
-//     ((Marker) marker).showInfoWindow();
-//
-//    }
+    @Override
+    public void notifyMarkerRemoveItself(Object marker) {
+
+        if (marker == null)
+            return;
+
+        if (!(marker instanceof Marker))
+            return;
+
+        ((Marker) marker).remove();
+
+    }
+
+    @Override
+    public void notifyPolylineRemoveItself(Object polyline) {
+
+        if (polyline == null)
+            return;
+
+        if (!(polyline instanceof Polyline))
+            return;
+
+        ((Polyline) polyline).remove();
+
+    }
+
+    @Override
+    public void setInfoWindowAdapter(Object adapter) {
+
+        if (!(adapter instanceof GoogleMap.InfoWindowAdapter))
+            return;
+
+        mapView.getMap().setInfoWindowAdapter((GoogleMap.InfoWindowAdapter) adapter);
+
+    }
 
 }
