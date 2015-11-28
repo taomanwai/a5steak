@@ -113,6 +113,14 @@ public class Foundation implements SensorEventListener {
 
     }
 
+    public static interface OnHttpPostJSONRecvJSONListener {
+
+        public void onComplete(JSONObject response);
+
+
+    }
+
+
     public static final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 15 * 1000; // 10000
     public static final int DEFAULT_READ_TIMEOUT_IN_MS = DEFAULT_CONNECT_TIMEOUT_IN_MS;
     public static final int DEFAULT_CONNECT_READ_TIMEOUT_IN_MS = DEFAULT_CONNECT_TIMEOUT_IN_MS + DEFAULT_READ_TIMEOUT_IN_MS;
@@ -782,6 +790,144 @@ public class Foundation implements SensorEventListener {
 
             }
         });
+
+    }
+
+    protected void triggerHttpPostJSONListener(final OnHttpPostJSONRecvJSONListener listener, final JSONObject response) {
+
+        if (listener == null)
+            return;
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                listener.onComplete(response);
+
+            }
+        });
+
+    }
+
+    protected void httpPostJSONRecvJSON(final String link, final JSONObject jObj, final HashMap<String, String> headers, final OnHttpPostJSONRecvJSONListener listener) {
+
+        final String BOUNDARY = BOUNDARY_OF_HTTP_POST_BYTE_ARRAY;
+        final String TWO_HYPHENS = "--";
+        final String NEW_LINE = "\r\n";
+
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+
+                URL url = null;
+                try {
+                    url = new URL(link);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (url == null) {
+                    triggerHttpPostJSONListener(listener, null);
+                    return;
+                }
+
+                HttpURLConnection connection = null;
+                try {
+                    connection = (HttpURLConnection) url.openConnection();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (connection == null) {
+                    triggerHttpPostJSONListener(listener, null);
+                    return;
+                }
+
+                JSONObject response = null;
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setRequestProperty("Content-Type", "application/json");
+
+                if (headers!=null && !headers.isEmpty()){
+
+                    Set<String> keys = headers.keySet();
+                    for (String key : keys){
+                        connection.setRequestProperty(key, headers.get(key));
+                    }
+
+                }
+
+                connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_IN_MS);
+                connection.setReadTimeout(DEFAULT_READ_TIMEOUT_IN_MS);
+                boolean succeedOfSettingPost = false;
+                try {
+                    connection.setRequestMethod("POST");
+                    succeedOfSettingPost = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (!succeedOfSettingPost) {
+                    triggerHttpPostJSONListener(listener, null);
+                    return;
+                }
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+
+                boolean succeedOfConnection = false;
+                try {
+                    connection.connect();
+                    succeedOfConnection = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (!succeedOfConnection) {
+                    triggerHttpPostJSONListener(listener, null);
+                    return;
+                }
+
+                DataOutputStream os = null;
+                try {
+
+                    os = new DataOutputStream(connection.getOutputStream());
+                    os.writeBytes(jObj.toString());
+                    os.flush();
+
+                    // Ensure we got the HTTP 200 response code
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        InputStream in = null;
+                        try {
+                            in = new BufferedInputStream(connection.getInputStream());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (in != null) {
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                            StringBuilder sb = new StringBuilder();
+                            String line = "";
+                            while ((line = reader.readLine()) != null)
+                                sb.append(line);
+                            try {
+                                response = new JSONObject(sb.toString());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+
+                            }
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        os.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                triggerHttpPostJSONListener(listener, response);
+
+
+            }
+        }.start();
 
     }
 
