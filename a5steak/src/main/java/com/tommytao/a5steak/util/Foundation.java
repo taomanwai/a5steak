@@ -158,12 +158,11 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    public void removeContextB4UnitTest(){
+    public void removeContextB4UnitTest() {
 
         this.appContext = null;
 
     }
-
 
 
     public boolean isDebugMode() {
@@ -200,7 +199,8 @@ public class Foundation implements SensorEventListener {
 
     protected void log(String msg) {
 
-        Log.d(Foundation.class.getName(), msg);
+        if (debugMode)
+            Log.d(Foundation.class.getName(), msg);
 
     }
 
@@ -412,9 +412,9 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected boolean httpGetStringByVolley(final String link, final int maxNoOfRetries, final OnHttpGetStringListener listener){
+    protected boolean httpGetStringByVolley(final String link, final int maxNoOfRetries, final OnHttpGetStringListener listener) {
 
-        if (requestQueue==null){
+        if (requestQueue == null) {
             log("base: str (volley): ERR: " + "requestQueue not found for: " + link);
             return false;
         }
@@ -517,7 +517,6 @@ public class Foundation implements SensorEventListener {
                             sb.append(line);
 
 
-
                     }
 
                 } catch (Exception e) {
@@ -547,7 +546,7 @@ public class Foundation implements SensorEventListener {
     }
 
     protected boolean httpGetJSONByVolley(final String link, final int maxNoOfRetries, final OnHttpGetJSONListener listener) {
-        if (requestQueue==null){
+        if (requestQueue == null) {
             log("base: json (volley): ERR: " + "requestQueue not found for: " + link);
             return false;
         }
@@ -846,10 +845,10 @@ public class Foundation implements SensorEventListener {
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setRequestProperty("Content-Type", "application/json");
 
-                if (headers!=null && !headers.isEmpty()){
+                if (headers != null && !headers.isEmpty()) {
 
                     Set<String> keys = headers.keySet();
-                    for (String key : keys){
+                    for (String key : keys) {
                         connection.setRequestProperty(key, headers.get(key));
                     }
 
@@ -934,7 +933,7 @@ public class Foundation implements SensorEventListener {
 
     protected boolean httpPostStringByVolley(final String link, final String dataStr, final HashMap<String, String> headers, final OnHttpPostStringListener listener) {
 
-        if (requestQueue==null){
+        if (requestQueue == null) {
             return false;
         }
 
@@ -2052,21 +2051,22 @@ public class Foundation implements SensorEventListener {
             mFactory = new OkUrlFactory(client);
         }
 
-        @Override protected HttpURLConnection createConnection(URL url) throws IOException {
+        @Override
+        protected HttpURLConnection createConnection(URL url) throws IOException {
             return mFactory.open(url);
         }
     }
 
 
-    protected RequestQueue getDefaultRequestQueue(Context context){
+    protected RequestQueue getDefaultRequestQueue(Context context) {
         return Volley.newRequestQueue(context);
     }
 
-    protected RequestQueue getOkHttpRequestQueue(Context context){
+    protected RequestQueue getOkHttpRequestQueue(Context context) {
         return Volley.newRequestQueue(context, new OkHttpStack());
     }
 
-    protected RequestQueue getCustomRequestQueue(Context context, HttpStack httpStack, int cacheSizeInByte){
+    protected RequestQueue getCustomRequestQueue(Context context, HttpStack httpStack, int cacheSizeInByte) {
         BasicNetwork basicNetwork = new BasicNetwork(httpStack);
         DiskBasedCache cache = new DiskBasedCache(context.getCacheDir(), cacheSizeInByte);
 
@@ -2080,9 +2080,9 @@ public class Foundation implements SensorEventListener {
     // == GSON ==
     protected Gson gson;
 
-    protected Gson getGson(){
+    protected Gson getGson() {
 
-        if (gson==null)
+        if (gson == null)
             gson = new Gson();
 
         return gson;
