@@ -29,6 +29,47 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
+ *
+ * Setup:
+ *
+ * Permission:
+ * <uses-permission android:name="android.permission.INTERNET"/>
+ * <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+ * <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE”/>
+ *
+ * Inside <application> tag:
+ * <meta-data
+ * android:name="com.google.android.gms.version"
+ * android:value="@integer/google_play_services_version" />
+ * <meta-data
+ * android:name="com.google.android.maps.v2.API_KEY"
+ * android:value=“KEY_OF_API" />
+ * <uses-library android:name='com.google.android.maps’/>
+ *
+ * Code:
+ * onCreate()
+ * mapView.onCreate(savedInstanceState)
+ * MapsInitializer.initialize(activity);
+ * onResume()
+ * super.onResume();
+ * mapView.onResume();
+ *
+ * onPause()
+ * navMapView.onPause();
+ * super.onPause();
+ *
+ * onDestroy()
+ * mapView.onDestroy();
+ * super.onDestroy();
+ *
+ * onLowMemory()
+ * super.onLowMemory();
+ * mapView.onLowMemory();
+ *
+ * onSaveInstanceState()
+ * super.onSaveInstanceState(outState);
+ * navMapView.onSaveInstanceState(outState);
+ *
  * Created by tommytao on 30/7/15.
  */
 public class AnimMapView extends MapView {

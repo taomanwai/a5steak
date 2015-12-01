@@ -40,7 +40,53 @@ import java.util.Locale;
 
 
 /**
+ *
+ * Show 3D map for navigation
+ *
+ * Setup:
+ *
+ * Permission:
+ * <uses-permission android:name="android.permission.INTERNET"/>
+ * <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+ * <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE”/>
+ * <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+ *
+ * Inside <application> tag:
+ * <meta-data
+ * android:name="com.google.android.gms.version"
+ * android:value="@integer/google_play_services_version" />
+ * <meta-data
+ * android:name="com.google.android.maps.v2.API_KEY"
+ * android:value=“KEY_OF_API" />
+ * <uses-library android:name='com.google.android.maps’/>
+ *
+ * Code:
+ * onCreate()
+ * mapView.onCreate(savedInstanceState)
+ * MapsInitializer.initialize(activity);
+ * onResume()
+ * super.onResume();
+ * mapView.onResume();
+ *
+ * onPause()
+ * navMapView.onPause();
+ * super.onPause();
+ *
+ * onDestroy()
+ * mapView.onDestroy();
+ * super.onDestroy();
+ *
+ * onLowMemory()
+ * super.onLowMemory();
+ * mapView.onLowMemory();
+ *
+ * onSaveInstanceState()
+ * super.onSaveInstanceState(outState);
+ * navMapView.onSaveInstanceState(outState);
+ *
  * Created by tommytao on 12/8/15.
+ *
+ *
  */
 public class NavMapView extends MapView {
 
@@ -334,6 +380,7 @@ public class NavMapView extends MapView {
         public static final int MIN_ANGLE_FROM_ROUTE_FOR_FREE_ROTATION_IN_DEGREE = 45;
         public static final int MAX_DISTANCE_BEFORE_SPEAK_IN_METER = 200;
         public static final int UPDATE_FAST_SCANNING_DISTANCE_IN_METER = MAX_DISTANCE_BEFORE_SPEAK_IN_METER;
+
         private DirectionsApiManager.Polyline polyline = new DirectionsApiManager.Polyline("");
         private ArrayList<DirectionsApiManager.Step> steps = new ArrayList<>();
         private Location currentRouteLocation;
@@ -721,6 +768,14 @@ public class NavMapView extends MapView {
 
         }
 
+        /**
+         *
+         * Update route in speedy manner (i.e. scan from current location to a position after UPDATE_FAST_SCANNING_DISTANCE_IN_METER rather than from current location to the end of next step)
+         *
+         * @param latitude
+         * @param longitude
+         * @param rotation
+         */
         public void updateFast(double latitude, double longitude, double rotation) {
 
             currentLocation = latLngToLocation(latitude, longitude);
@@ -760,8 +815,6 @@ public class NavMapView extends MapView {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-//            Log.d("rtemp", "batch_t: batch1StepIndex: " + batch1StepIndex + " batch1StartIndex: " + batch1StartIndex + " batch1EndIndex: " + batch1EndIndex + " batch1ApproxLocationIndex: " + batch1ApproxLocationIndex);
 
             int targetStepIndex = -1;
             int targetApproxLocationIndex = -1;
@@ -1211,8 +1264,6 @@ public class NavMapView extends MapView {
                 }
 
                 if (!route.isCurrentlyPassing() && !route.isPrepareToBeReplaced()) {
-
-                    Log.d("rtemp", "nav_t: not_isCurrentlyPassing: derivation:" + route.getCurrentRouteDerivation());
 
                     route.setPrepareToBeReplaced(true);
                     rerouteLocation = LocationFusedSensor.getInstance().getLastKnownLocation();
