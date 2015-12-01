@@ -200,7 +200,7 @@ public class Foundation implements SensorEventListener {
 
     protected void log(String msg) {
 
-//        Log.d(Foundation.class.getName(), msg);
+        Log.d(Foundation.class.getName(), msg);
 
     }
 
