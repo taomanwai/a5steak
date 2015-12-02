@@ -2,26 +2,18 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Button;
+import android.util.Log;
+import android.widget.RelativeLayout;
 
-import com.google.android.gms.maps.MapsInitializer;
-import com.tommytao.a5steak.customview.google.NavMapView;
-import com.tommytao.a5steak.util.Encyclopedia;
-
-import java.util.Locale;
+import com.tommytao.a5steak.customview.RangeSeekBar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends Activity {
 
-
-    @Bind(R.id.navMapView)
-    NavMapView navMapView;
-
-    @Bind(R.id.btnGo)
-    Button btnGo;
+    @Bind(R.id.rlRangeBar)
+    RelativeLayout rlRangeBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,57 +22,26 @@ public class MainActivity extends Activity {
 
         ButterKnife.bind(this);
 
-        navMapView.startNavigation(Encyclopedia.HKSIL_LAT, Encyclopedia.HKSIL_LNG, "", Locale.US, null);
+        RangeSeekBar<Integer> seekBar = new RangeSeekBar<Integer>(20, 75, this);
+        seekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+            @Override
+            public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
 
-        navMapView.onCreate(savedInstanceState);
-        MapsInitializer.initialize(this);
-
-        navMapView.connectNavigation(null);
+                Log.d("", "value_t: " + minValue + " " + maxValue);
 
 
+            }
+        });
 
-    }
 
-    @OnClick(R.id.btnGo)
-    public void go(){
 
-        navMapView.startNavigation(
-                Encyclopedia.HKSIL_LAT,
-                Encyclopedia.HKSIL_LNG,
-                "",
-                Locale.US,
-                null
-        );
+        rlRangeBar.addView(seekBar);
+
+
+
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        navMapView.onResume();
-    }
 
-    @Override
-    protected void onPause() {
-        navMapView.onPause();
-        super.onPause();
-    }
 
-    @Override
-    protected void onDestroy() {
-        navMapView.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        navMapView.onLowMemory();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        navMapView.onSaveInstanceState(outState);
-    }
 }
