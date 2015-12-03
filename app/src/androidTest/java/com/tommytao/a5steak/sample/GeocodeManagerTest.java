@@ -9,6 +9,7 @@ import android.util.Log;
 import com.tommytao.a5steak.util.Encyclopedia;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.google.GeocodeManager;
+import com.tommytao.a5steak.util.test.TestCaseUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -65,7 +66,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -90,7 +91,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -114,7 +115,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -137,7 +138,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
 
     }
@@ -161,7 +162,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
             }
         });
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -184,7 +185,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -207,7 +208,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -231,7 +232,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -256,13 +257,13 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
     public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleNull() throws Exception {
 
-        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -286,14 +287,14 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
 
     public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleEnUs() throws Exception {
 
-        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -316,14 +317,14 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
 
     public void testSearchByCountry_shouldReturnHkResultInTcWhenCountryHkLocaleZhHk() throws Exception {
 
-        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -345,13 +346,13 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
     public void testSearchByCountryInDetail_shouldReturnHkResultInScWhenCountryHkLocaleZhCn() throws Exception {
 
-        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -376,7 +377,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
             }
         });
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
     }
 
     public void testSearchByCountry_shouldReturnCnResultInEnWhenCountryCnLocaleEnUs() throws Exception {
@@ -401,7 +402,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
     }
 
     public void testSearchByCountry_shouldReturnCnResultInTcWhenCountryCnLocaleZhHk() throws Exception {
@@ -443,7 +444,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -469,12 +470,12 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
     }
 
     public void testSearchByBounds_shouldReturnResultInTcWhenBoundsValidLocaleTc() throws Exception {
 
-        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -499,12 +500,12 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
                 }
         );
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
     }
 
     public void testSearchByBounds_shouldReturnResultInScWhenBoundsValidLocaleZhCn() throws Exception {
 
-        SystemClock.sleep(TestUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -529,7 +530,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
                 }
         );
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
     }
 
     public void testSearchByBounds_shouldReturnResultInEnWhenBoundsValidLocaleEnUs() throws Exception {
@@ -555,7 +556,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
                 }
         );
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
     }
 
     public void testSearchByBounds_shouldReturnResultInEnWhenBoundsValidLocaleNull() throws Exception {
@@ -581,7 +582,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
                 }
         );
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
     }
 
     public void testSearchByBounds_shouldReturnEmptyResultWhenBoundsInValidLocaleEnUs() throws Exception {
@@ -609,7 +610,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
                 }
         );
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
     }
 
 

@@ -34,7 +34,7 @@ public class NetworkTest extends ApplicationTestCase<MainApp> {
 
         String link = "http://maps.google.com/maps/api/geocode/json?address=長沙灣政府合署&components=country:HK&language=en-US";
 
-        TestUtils.startLinkNetworkTestAndAssert(this, link);
+        A5SteakTestCaseUtils.startLinkNetworkTestAndAssert(this, link);
 
     }
 
@@ -42,21 +42,21 @@ public class NetworkTest extends ApplicationTestCase<MainApp> {
 
         String link = "http://google.com";
 
-        TestUtils.startLinkNetworkTestAndAssert(this, link);
+        A5SteakTestCaseUtils.startLinkNetworkTestAndAssert(this, link);
 
     }
 
     public void testYahooNetwork() throws Exception {
         String link = "http://yahoo.com";
 
-        TestUtils.startLinkNetworkTestAndAssert(this, link);
+        A5SteakTestCaseUtils.startLinkNetworkTestAndAssert(this, link);
 
     }
 
     public void testHotmailNetwork() throws Exception {
         String link = "http://hotmail.com";
 
-        TestUtils.startLinkNetworkTestAndAssert(this, link);
+        A5SteakTestCaseUtils.startLinkNetworkTestAndAssert(this, link);
 
     }
 

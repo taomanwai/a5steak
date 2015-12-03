@@ -10,11 +10,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by tommytao on 20/11/2015.
+ * Created by tommytao on 3/12/2015.
  */
-public class TestUtils {
-
-    public static final int GENERAL_DELAY_IN_MS = 3 * 1000;
+public class A5SteakTestCaseUtils {
 
     public static void startLinkNetworkTestAndAssert(ApplicationTestCase testCase, String link) throws Exception {
 

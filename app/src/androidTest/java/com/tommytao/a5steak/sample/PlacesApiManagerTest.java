@@ -54,7 +54,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -78,7 +78,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -103,7 +103,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -128,7 +128,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -152,7 +152,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -179,7 +179,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -203,7 +203,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
                     }
                 });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -226,7 +226,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
                     }
                 });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -257,7 +257,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
                     }
                 });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -280,7 +280,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
                     }
                 });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -303,7 +303,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
                     }
                 });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 
@@ -332,7 +332,7 @@ public class PlacesApiManagerTest extends ApplicationTestCase<Application> {
             }
         });
 
-        TestUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
+        A5SteakTestCaseUtils.assertResult(this, signal, succeeds, AWAIT_TIME_IN_MS);
 
     }
 

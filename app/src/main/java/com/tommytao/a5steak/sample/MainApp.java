@@ -1,6 +1,5 @@
 package com.tommytao.a5steak.sample;
 
-import android.app.Application;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
@@ -15,7 +14,7 @@ import com.tommytao.a5steak.util.google.PlacesApiManager;
 /**
  * Created by taomanwai on 5/10/2015.
  */
-public class MainApp extends Application {
+public class MainApp extends android.support.multidex.MultiDexApplication {
 
     public static final String GOOGLE_CLIENT_ID = "gme-easyvanhongkonglimited";
     public static final String GOOGLE_CLIENT_SECRET = "RglSWAR2KO9R2OghAMwyj4WqIXg=";
