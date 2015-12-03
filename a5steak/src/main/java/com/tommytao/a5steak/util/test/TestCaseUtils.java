@@ -31,8 +31,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFro
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
 
 /**
  * Created by tommytao on 20/11/2015.
