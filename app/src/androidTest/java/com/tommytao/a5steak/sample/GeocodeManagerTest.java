@@ -9,7 +9,6 @@ import android.util.Log;
 import com.tommytao.a5steak.util.Encyclopedia;
 import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.google.GeocodeManager;
-import com.tommytao.a5steak.util.test.TestCaseUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -263,7 +262,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
     public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleNull() throws Exception {
 
-        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(A5SteakTestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -294,7 +293,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
     public void testSearchByCountry_shouldReturnHkResultInEnWhenCountryHkLocaleEnUs() throws Exception {
 
-        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(A5SteakTestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -324,7 +323,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
     public void testSearchByCountry_shouldReturnHkResultInTcWhenCountryHkLocaleZhHk() throws Exception {
 
-        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(A5SteakTestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -352,7 +351,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
     public void testSearchByCountryInDetail_shouldReturnHkResultInScWhenCountryHkLocaleZhCn() throws Exception {
 
-        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(A5SteakTestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -475,7 +474,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
     public void testSearchByBounds_shouldReturnResultInTcWhenBoundsValidLocaleTc() throws Exception {
 
-        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(A5SteakTestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 
@@ -505,7 +504,7 @@ public class GeocodeManagerTest extends ApplicationTestCase<Application> {
 
     public void testSearchByBounds_shouldReturnResultInScWhenBoundsValidLocaleZhCn() throws Exception {
 
-        SystemClock.sleep(TestCaseUtils.GENERAL_DELAY_IN_MS);
+        SystemClock.sleep(A5SteakTestCaseUtils.GENERAL_DELAY_IN_MS);
 
         final CountDownLatch signal = new CountDownLatch(1);
 

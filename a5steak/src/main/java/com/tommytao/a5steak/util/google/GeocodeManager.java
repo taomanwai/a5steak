@@ -748,6 +748,7 @@ public class GeocodeManager extends GFoundation {
 
         });
 
+
     }
 
     private double[] boundsStr2DoubleArray(String bounds) {

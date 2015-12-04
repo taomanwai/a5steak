@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class A5SteakTestCaseUtils {
 
+    public static final int GENERAL_DELAY_IN_MS = 3 * 1000;
+
     public static void startLinkNetworkTestAndAssert(ApplicationTestCase testCase, String link) throws Exception {
 
         final CountDownLatch signal = new CountDownLatch(1);
@@ -37,6 +39,7 @@ public class A5SteakTestCaseUtils {
         testCase.assertTrue("Timeout occurs", signal.await(Foundation.DEFAULT_CONNECT_READ_TIMEOUT_IN_MS * NetworkInfoManager.DEFAULT_MAX_NUM_OF_RETRIES, TimeUnit.MILLISECONDS));
 
         testCase.assertTrue("Not accessible: reply: " + replies.get(0), succeeds.get(0));
+
     }
 
     public static void assertResult(ApplicationTestCase testCase, CountDownLatch signal, ArrayList<Boolean> succeeds, long awaitTimeInMs) throws Exception {
