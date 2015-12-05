@@ -2023,6 +2023,12 @@ public class Foundation implements SensorEventListener {
 
     }
 
+    protected String genUniqueIdInMd5() {
+
+        return md5("" + genUniqueId());
+
+    }
+
     // == BitmapManager ==
     protected Bitmap convertBitmapConfig(Bitmap bitmap, Bitmap.Config config) {
 //        Bitmap convertedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), config);
