@@ -163,12 +163,12 @@ public class AntiHackManager extends Foundation {
 	}
 
 	@Override
-	protected int genUniqueId() {
+	public int genUniqueId() {
 		return super.genUniqueId();
 	}
 
 	@Override
-	protected String genUniqueIdInMd5() {
+	public String genUniqueIdInMd5() {
 		return super.genUniqueIdInMd5();
 	}
 }
