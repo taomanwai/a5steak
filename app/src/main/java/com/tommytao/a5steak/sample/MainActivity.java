@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.tommytao.a5steak.customview.RangeSeekBar;
+import com.tommytao.a5steak.util.Converter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,6 +33,19 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        Converter.getInstance().init(this);
+
+        String b = Converter.getInstance().strToBase64("Hello, World");
+
+        Log.d("", "base64_t: b: " + b);
+
+        String o = Converter.getInstance().base64ToStr(b);
+
+        Log.d("", "base64_t: o: " + o);
+
+
+
 
 
 

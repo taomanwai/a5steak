@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.util;
 
 import android.content.Context;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 
 import com.android.volley.RequestQueue;
@@ -194,6 +195,8 @@ public class Converter extends Foundation {
 
 
 
+
+
     public byte[] hexRepresentationToByteArray(String input) {
 
         return super.hexRepresentationToByteArray(input);
@@ -227,4 +230,22 @@ public class Converter extends Foundation {
     public String scToTc(String text) {
         return super.scToTc(text);
     }
+
+
+    public String strToBase64(String input){
+
+        byte[] encode = Base64.encode(input.getBytes(), Base64.DEFAULT);
+
+        return new String(encode);
+
+    }
+
+    public String base64ToStr(String input){
+
+        byte[] result = Base64.decode(input, Base64.DEFAULT);
+
+        return new String(result);
+
+    }
+
 }
