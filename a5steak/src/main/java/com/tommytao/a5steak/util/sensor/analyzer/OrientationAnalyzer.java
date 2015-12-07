@@ -23,7 +23,7 @@ public class OrientationAnalyzer extends Foundation {
     }
 
     private OrientationAnalyzer() {
-        //
+
     }
 
     // --
