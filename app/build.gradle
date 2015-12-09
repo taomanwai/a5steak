@@ -11,13 +11,20 @@ android {
         versionCode 1
         versionName "1.0"
 
+        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
     buildTypes {
         release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
         }
+
+        debug {
+            minifyEnabled false
+        }
+
     }
 
 

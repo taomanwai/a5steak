@@ -14,12 +14,18 @@ android {
         versionCode 1
         versionName "1.0"
 
+        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
     }
 
 
     buildTypes {
         release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+        }
+
+        debug {
+            minifyEnabled false
         }
     }
 

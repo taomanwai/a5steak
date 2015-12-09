@@ -17,4 +17,6 @@ public class ShakeAnalyzer extends Foundation {
 
     // --
 
+
+
 }
