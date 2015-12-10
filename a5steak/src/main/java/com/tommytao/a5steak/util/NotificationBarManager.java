@@ -5,9 +5,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
 
@@ -111,17 +114,23 @@ public class NotificationBarManager extends Foundation {
      * notification ID is already existing on notification bar, existing
      * notification bar will be overwritten by new one.
      *
-     * @param iconResId      Resource ID of icon
-     * @param title          Title of notification
-     * @param msg            Message of notification
-     * @param notificationId ID of notification. It should be smaller or equal to
-     *                       MAX_ALLOWED_VALUE_OF_PROGRAMMER_DEFINED_NOTIFICATION_ID. If ID
-     *                       is -1, a unique id will be auto generated and will be returned
-     *                       after functions is finished.
-     * @param intent         Intent (for notification response)
+     * @param iconResId          Resource ID of icon
+     * @param title              Title of notification
+     * @param msg                Message of notification
+     * @param bigPicture         Big picture of notification
+     * @param soundFilenameInRaw Sound of notification (in raw)
+     * @param hasLights          Show light
+     * @param hasVibrate         Vibrate
+     * @param isAutoCancel       Notification will be cancelled automatically
+     * @param notificationId     ID of notification. It should be smaller or equal to
+     *                           MAX_ALLOWED_VALUE_OF_PROGRAMMER_DEFINED_NOTIFICATION_ID. If ID
+     *                           is -1, a unique id will be auto generated and will be returned
+     *                           after functions is finished.
+     * @param intent             Intent (for notification response)
      * @return ID of notification. -1 means failing to show notification
      */
-    public int notificate(int iconResId, String title, String msg, String soundFilenameInRaw, boolean hasLights, boolean hasVibrate, boolean isAutoCancel,
+    public int notificate(int iconResId, String title, String msg, Bitmap bigPicture, String soundFilenameInRaw,
+                          boolean hasLights, boolean hasVibrate, boolean isAutoCancel,
                           int notificationId, Intent intent) {
 
         if (notificationId > MAX_ALLOWED_VALUE_OF_PROGRAMMER_DEFINED_NOTIFICATION_ID)
@@ -143,11 +152,23 @@ public class NotificationBarManager extends Foundation {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(appContext);
         notificationBuilder.setSmallIcon(iconResId).setContentTitle(title).setContentText(msg).setContentIntent(genPendingIntent(intent));
 
-        notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(msg));
+        // TODO MVP bigTextStyle seems not work
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle().bigText(msg);
+
+        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
+        bigPictureStyle.bigLargeIcon(BitmapFactory.decodeResource(appContext.getResources(), iconResId));
+        bigPictureStyle.bigPicture(bigPicture);
+        bigPictureStyle.setBigContentTitle(title);
+        bigPictureStyle.setSummaryText(msg);
+
+        notificationBuilder.setStyle(bigPicture == null ?
+                bigTextStyle :
+                bigPictureStyle
+        );
 
         Notification notification = notificationBuilder.build();
 
-        if (!soundFilenameInRaw.isEmpty()) {
+        if (!TextUtils.isEmpty(soundFilenameInRaw)) {
             Uri uri = Uri.parse("android.resource://" + appContext.getPackageName() + "/raw/" + soundFilenameInRaw);
             notification.sound = uri;
         }
@@ -186,7 +207,6 @@ public class NotificationBarManager extends Foundation {
         return PendingIntent.getActivity(appContext, DEFAULT_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     }
-
 
 
 }

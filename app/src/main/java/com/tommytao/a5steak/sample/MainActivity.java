@@ -1,60 +1,52 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.RelativeLayout;
+import android.view.View;
+import android.widget.Button;
 
-import com.tommytao.a5steak.customview.RangeSeekBar;
-import com.tommytao.a5steak.util.Converter;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import com.tommytao.a5steak.util.BitmapManager;
+import com.tommytao.a5steak.util.NotificationBarManager;
 
 public class MainActivity extends Activity {
 
-    @Bind(R.id.rlRangeBar)
-    RelativeLayout rlRangeBar;
+    private Button btnGo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ButterKnife.bind(this);
+        btnGo = (Button) findViewById(R.id.btnGo);
 
-        RangeSeekBar<Integer> seekBar = new RangeSeekBar<Integer>(20, 75, this);
-        seekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+        btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+            public void onClick(View v) {
+                NotificationBarManager.getInstance().init(MainActivity.this);
 
-                Log.d("", "value_t: " + minValue + " " + maxValue);
+
+                BitmapManager.getInstance().init(MainActivity.this);
+                Bitmap bm = null;
+                bm = BitmapManager.getInstance().loadResId(R.drawable.androidifysteve, -1, -1, false , false);
+                NotificationBarManager.getInstance().notificate(R.drawable.maneuver_turn_left, "title", "msg", bm, "", false, false, true, 2048, null);
 
 
             }
         });
 
-        Converter.getInstance().init(this);
-
-        String b = Converter.getInstance().strToBase64("Hello, World");
-
-        Log.d("", "base64_t: b: " + b);
-
-        String o = Converter.getInstance().base64ToStr(b);
-
-        Log.d("", "base64_t: o: " + o);
 
 
 
 
-
-
-        rlRangeBar.addView(seekBar);
 
 
 
 
     }
+
+
+
 
 
 

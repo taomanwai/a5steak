@@ -113,8 +113,8 @@
     <orderEntry type="library" exported="" name="bolts-android-1.2.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-core-2.2.1" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-urlconnection-2.6.0" level="project" />
     <orderEntry type="library" exported="" name="sqliteassethelper-2.0.1" level="project" />
+    <orderEntry type="library" exported="" name="okhttp-urlconnection-2.6.0" level="project" />
     <orderEntry type="library" exported="" name="eventbus-2.4.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="runner-0.4.1" level="project" />
     <orderEntry type="library" exported="" name="gson-2.5" level="project" />
