@@ -164,6 +164,7 @@ public class ApiAiManager extends Foundation {
                         supportedLanguage = AIConfiguration.SupportedLanguages.ChineseChina;
                     }
                     break;
+
             }
 
 
