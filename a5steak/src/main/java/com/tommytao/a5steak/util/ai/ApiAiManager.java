@@ -120,6 +120,7 @@ public class ApiAiManager extends Foundation {
             String lang = locale.getLanguage();
             String country = locale.getCountry();
 
+
             switch (lang) {
                 case "en":
                     supportedLanguage = AIConfiguration.SupportedLanguages.English;
