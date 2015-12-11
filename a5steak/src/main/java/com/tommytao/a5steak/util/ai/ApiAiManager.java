@@ -2,6 +2,9 @@ package com.tommytao.a5steak.util.ai;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
 import com.tommytao.a5steak.util.Foundation;
@@ -227,6 +230,19 @@ public class ApiAiManager extends Foundation {
     }
 
     public void analyze(String input, final Listener listener) {
+
+        if (TextUtils.isEmpty(input)){
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.returnApiAiResult(new ApiAiResult("", new HashMap<String, String>()));
+                }
+            });
+
+            return;
+        }
 
         final AIRequest aiRequest = new AIRequest();
         aiRequest.setQuery(input); // e.g. "大圍去沙田"
