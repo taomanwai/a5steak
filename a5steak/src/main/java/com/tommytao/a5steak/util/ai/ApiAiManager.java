@@ -194,6 +194,7 @@ public class ApiAiManager extends Foundation {
 
         return action;
 
+
     }
 
     private HashMap<String, String> aiResponseToParameters(AIResponse aiResponse) {
