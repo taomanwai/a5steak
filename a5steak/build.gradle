@@ -61,8 +61,8 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.6.0'
 
-//    compile 'ai.api:sdk:1.7.6@aar'
-//    compile 'commons-io:commons-io:2.4'
+    compile 'ai.api:sdk:1.7.6@aar'
+    compile 'commons-io:commons-io:2.4'
 
 
 }
