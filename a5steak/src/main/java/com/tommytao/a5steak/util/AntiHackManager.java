@@ -47,13 +47,12 @@ public class AntiHackManager extends Foundation {
 	
 	
 	@Override
-	public boolean init(Context appContext) {
+	public boolean init(Context context) {
 		
-		if (!super.init(appContext)){
+		if (!super.init(context)){
 			log( "anti_hack: " + "init REJECTED: already initialized"); 
 			return false;
 		}
-		
 
 		log( "anti_hack: " + "init"); 
 		
@@ -65,10 +64,6 @@ public class AntiHackManager extends Foundation {
 	public boolean init(Context context, RequestQueue requestQueue) {
 		return super.init(context, requestQueue);
 	}
-
-
-
-
 
     @Override
 	public String md5(String input) {

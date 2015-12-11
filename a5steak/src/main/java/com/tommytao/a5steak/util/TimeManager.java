@@ -83,16 +83,16 @@ public class TimeManager extends Foundation {
 	private GregorianCalendar calendar;
 
 	@Override
-	public boolean init(Context appContext) {
+	public boolean init(Context context) {
 
-		if (!super.init(appContext)) {
+		if (!super.init(context)) {
 			log( "time_manager: " + "init REJECTED: already initialized"); 
 			return false;
 		}
 		
 		log( "time_manager: " + "init"); 
 
-		appContext.registerReceiver(new TimeSetReceiver(), new IntentFilter("android.intent.action.TIME_SET"));
+		context.registerReceiver(new TimeSetReceiver(), new IntentFilter("android.intent.action.TIME_SET"));
 
 		refreshLastKnownNtpTimeDiff();
 

@@ -787,9 +787,9 @@ public class DirectionsApiManager extends GFoundation {
         return super.init(context, requestQueue);
     }
 
-    public boolean init(Context appContext, RequestQueue requestQueue, String clientIdForWork, String cryptoForWork) {
+    public boolean init(Context context, RequestQueue requestQueue, String clientIdForWork, String cryptoForWork) {
 
-        if (!super.init(appContext)) {
+        if (!super.init(context)) {
             return false;
         }
 

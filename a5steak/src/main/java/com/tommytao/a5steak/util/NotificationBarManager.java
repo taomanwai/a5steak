@@ -46,9 +46,9 @@ public class NotificationBarManager extends Foundation {
 //	public static final int DEFAULT_REQUEST_CODE = 1001;
 
     @Override
-    public boolean init(Context appContext) {
+    public boolean init(Context context) {
 
-        if (!super.init(appContext)) {
+        if (!super.init(context)) {
 
             log("notification_bar_manager: " + "init REJECTED: already initialized");
 
@@ -151,6 +151,7 @@ public class NotificationBarManager extends Foundation {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(appContext);
         notificationBuilder.setSmallIcon(iconResId).setContentTitle(title).setContentText(msg).setContentIntent(genPendingIntent(intent));
+
 
         // TODO MVP bigTextStyle seems not work
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle().bigText(msg);

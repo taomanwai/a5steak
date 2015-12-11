@@ -77,9 +77,9 @@ public class DeviceInfoManager extends Foundation {
     }
 
     @Override
-    public boolean init(Context appContext) {
+    public boolean init(Context context) {
 
-        if (!super.init(appContext)) {
+        if (!super.init(context)) {
 
             log("device_info_manager: " + "init REJECTED: already initialized");
 

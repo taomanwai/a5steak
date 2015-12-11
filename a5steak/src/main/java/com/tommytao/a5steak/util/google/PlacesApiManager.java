@@ -838,13 +838,13 @@ public class PlacesApiManager extends GFoundation {
 
 
     /**
-     * @param appContext Application context
+     * @param context Application context
      * @param key        Places API key, to know how to get it, please browse <a href="http://stackoverflow.com/questions/24302920/how-do-i-get-a-google-places-api-key-for-my-android-app">here</a>
      * @return TRUE when init succeed
      */
-    public boolean init(Context appContext, RequestQueue requestQueue, String key) {
+    public boolean init(Context context, RequestQueue requestQueue, String key) {
 
-        if (!super.init(appContext)) {
+        if (!super.init(context)) {
             return false;
         }
 

@@ -83,9 +83,9 @@ public class LocaleManager extends Foundation {
 	 * 
 	 */
 	@Override
-	public boolean init(Context appContext) {
+	public boolean init(Context context) {
 
-		if (!super.init(appContext)){
+		if (!super.init(context)){
 			
 			log( "locale: " + "init REJECTED: already initialized"); 
 			
@@ -95,10 +95,10 @@ public class LocaleManager extends Foundation {
 		
 		log( "locale: " + "init"); 
 
-		lang = PreferenceManager.getDefaultSharedPreferences(appContext).getString(PREF_LOCALE_LANG, "");
+		lang = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_LOCALE_LANG, "");
 
-		country = PreferenceManager.getDefaultSharedPreferences(appContext).getString(PREF_LOCALE_COUNTRY, "");
-		variant = PreferenceManager.getDefaultSharedPreferences(appContext).getString(PREF_LOCALE_VARIANT, "");
+		country = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_LOCALE_COUNTRY, "");
+		variant = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_LOCALE_VARIANT, "");
 		
 
 		if (!isAppLocaleFollowingSystem())

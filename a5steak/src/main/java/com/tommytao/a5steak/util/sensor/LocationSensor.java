@@ -94,9 +94,9 @@ public class LocationSensor extends Foundation implements LocationListener {
 
 
     @Override
-    public boolean init(Context appContext) {
+    public boolean init(Context context) {
 
-        if (!super.init(appContext)) {
+        if (!super.init(context)) {
 
             log("lbs: " + "init REJECTED: already initialized");
 

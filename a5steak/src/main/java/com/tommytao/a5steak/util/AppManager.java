@@ -87,23 +87,23 @@ public class AppManager extends Foundation {
     private boolean justUpdated;
 
     @Override
-    public boolean init(Context appContext) {
+    public boolean init(Context context) {
 
-        if (!super.init(appContext)) {
+        if (!super.init(context)) {
             log("app_manager: " + "init REJECTED: already initialized");
             return false;
         }
 
         log("app_manager: " + "init");
 
-        int versionCodeInPref = PreferenceManager.getDefaultSharedPreferences(appContext).getInt(PREFS_LATEST_RECORDED_VERSION_CODE, -1);
+        int versionCodeInPref = PreferenceManager.getDefaultSharedPreferences(context).getInt(PREFS_LATEST_RECORDED_VERSION_CODE, -1);
 
         if (versionCodeInPref == -1)
             newInstall = true;
         else if (this.getVersionCode() > versionCodeInPref)
             justUpdated = true;
 
-        PreferenceManager.getDefaultSharedPreferences(appContext).edit().putInt(PREFS_LATEST_RECORDED_VERSION_CODE, this.getVersionCode()).apply();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(PREFS_LATEST_RECORDED_VERSION_CODE, this.getVersionCode()).apply();
 
         return true;
 

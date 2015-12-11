@@ -64,9 +64,9 @@ public class BitmapManager extends Foundation {
     public final static String VERSION_NO = "001";
 
     @Override
-    public boolean init(Context appContext) {
+    public boolean init(Context context) {
 
-        if (!super.init(appContext)) {
+        if (!super.init(context)) {
 
             log("bitmap_manager: " + "init REJECTED: already initialized");
 

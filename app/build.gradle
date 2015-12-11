@@ -52,6 +52,8 @@ dependencies {
 
     compile 'com.android.support:recyclerview-v7:23.1.1'
 
+
+
     testCompile 'junit:junit:4.6'
 
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'

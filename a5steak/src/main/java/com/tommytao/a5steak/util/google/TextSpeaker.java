@@ -226,7 +226,6 @@ public class TextSpeaker extends Foundation {
         try {
             gTranslateMediaPlayer.release();
         } catch (Exception e) {
-//            e.printStackTrace();
         }
         clearAndOnUiThreadTriggerGTranslateOnSpeakCompleteListener(true);
 
@@ -234,7 +233,6 @@ public class TextSpeaker extends Foundation {
     }
 
     public boolean isConnecting() {
-//        return tts != null && !connected;
 
         if (isConnected())
             return false;
