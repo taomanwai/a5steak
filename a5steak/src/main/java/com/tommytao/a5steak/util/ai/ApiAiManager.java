@@ -207,9 +207,16 @@ public class ApiAiManager extends Foundation {
             return parameters;
 
         Set<String> keys = aiResponse.getResult().getParameters().keySet();
+        String value = "";
 
         for (String key : keys) {
-            parameters.put(key, aiResponse.getResult().getParameters().get(key).getAsString());
+            value = "";
+            try {
+                value = aiResponse.getResult().getParameters().get(key).isJsonNull() ? "" : aiResponse.getResult().getParameters().get(key).getAsString();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            parameters.put(key, value);
         }
 
         return parameters;
@@ -239,8 +246,8 @@ public class ApiAiManager extends Foundation {
                 if (listener != null)
                     listener.returnApiAiResult(new ApiAiResult(aiResponseToAction(aiResponse), aiResponseToParameters(aiResponse)));
 
-
             }
+
         }.executeOnExecutor(Executors.newCachedThreadPool(), aiRequest);
 
     }
