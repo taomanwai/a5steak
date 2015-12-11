@@ -212,6 +212,9 @@ public class ApiAiManager extends Foundation {
         if (aiResponse.getResult() == null)
             return parameters;
 
+        if (aiResponse.getResult().getParameters()==null)
+            return parameters;
+
         Set<String> keys = aiResponse.getResult().getParameters().keySet();
         String value = "";
 
