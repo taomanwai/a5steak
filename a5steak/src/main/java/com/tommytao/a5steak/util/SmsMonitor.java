@@ -10,8 +10,6 @@ import android.telephony.SmsMessage;
 import com.android.volley.RequestQueue;
 
 
-// <uses-permission android:name="android.permission.RECEIVE_SMS" />
-
 /**
  * 
  * Responsible for monitor and receive SMS

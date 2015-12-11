@@ -20,6 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ *
+ * Responsible for speech recognition
+ *
+ * Note: Permission
+ * <uses-permission android:name="android.permission.INTERNET" />
+ * <uses-permission android:name="android.permission.RECORD_AUDIO" /> are required
+ *
+ *
+ */
 public class SpeechRecognitionManager extends GFoundation {
 
     private static SpeechRecognitionManager instance;

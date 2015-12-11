@@ -22,7 +22,13 @@ import ai.api.model.AIResponse;
 
 
 /**
+ *
+ * Responsible for accessing api.ai Siri-like web service
+ *
+ * Note: <uses-permission android:name="android.permission.INTERNET" /> required
+ *
  * Created by tommytao on 11/12/2015.
+ *
  */
 public class ApiAiManager extends Foundation {
     private static ApiAiManager instance = new ApiAiManager();
