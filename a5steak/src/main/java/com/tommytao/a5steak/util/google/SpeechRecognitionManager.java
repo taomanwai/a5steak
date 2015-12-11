@@ -188,6 +188,7 @@ public class SpeechRecognitionManager extends GFoundation {
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
 
         return intent;
+
     }
 
 
