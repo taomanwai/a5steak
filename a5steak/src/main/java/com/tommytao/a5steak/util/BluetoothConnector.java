@@ -3,12 +3,13 @@ package com.tommytao.a5steak.util;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
+import com.tommytao.a5steak.common.util.Foundation;
 
 /**
  * Responsible for getting gravity field reading
  *
  */
-public class BluetoothConnector extends Foundation  {
+public class BluetoothConnector extends Foundation {
 
     private static BluetoothConnector instance;
 

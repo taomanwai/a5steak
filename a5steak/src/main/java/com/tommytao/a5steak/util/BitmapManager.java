@@ -19,6 +19,7 @@ import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
 import com.tommytao.a5steak.R;
+import com.tommytao.a5steak.common.util.Foundation;
 
 import java.io.File;
 import java.io.FileNotFoundException;

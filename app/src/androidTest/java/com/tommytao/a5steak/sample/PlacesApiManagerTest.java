@@ -4,7 +4,7 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 
 import com.tommytao.a5steak.util.Encyclopedia;
-import com.tommytao.a5steak.util.Foundation;
+import com.tommytao.a5steak.common.util.Foundation;
 import com.tommytao.a5steak.util.google.PlacesApiManager;
 
 import org.json.JSONObject;

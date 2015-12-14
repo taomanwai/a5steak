@@ -1,1 +1,1 @@
-include ':app', ':a5steak'
+include ':app', ':a5steak', ':a5steak-base'

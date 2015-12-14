@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/a5steak" />
+            <option value="$PROJECT_DIR$/a5steak-base" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
@@ -17,6 +18,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/a5steak" />
+            <option value="$PROJECT_DIR$/a5steak-base" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>

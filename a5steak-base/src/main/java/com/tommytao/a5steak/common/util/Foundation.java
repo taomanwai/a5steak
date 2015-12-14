@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.util;
+package com.tommytao.a5steak.common.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -64,7 +64,6 @@ import java.util.concurrent.Executors;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 /**
  * Responsible for providing application context, debug mode flag and HTTP get
  * functions for extended Manager

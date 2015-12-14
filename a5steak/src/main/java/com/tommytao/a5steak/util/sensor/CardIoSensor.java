@@ -9,7 +9,7 @@ import android.os.Looper;
 import android.util.SparseArray;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.util.Foundation;
+import com.tommytao.a5steak.common.util.Foundation;
 
 import io.card.payment.CardIOActivity;
 import io.card.payment.CreditCard;

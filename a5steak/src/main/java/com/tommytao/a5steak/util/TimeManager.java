@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.android.volley.RequestQueue;
+import com.tommytao.a5steak.common.util.Foundation;
 import com.tommytao.a5steak.ext.net.ntp.NTPUDPClient;
 
 import java.net.InetAddress;
