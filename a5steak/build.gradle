@@ -50,9 +50,6 @@ dependencies {
 
     compile 'de.greenrobot:eventbus:2.4.0'
 
-
-
-
     compile 'com.facebook.android:facebook-android-sdk:4.6.0'
     compile 'com.facebook.device.yearclass:yearclass:1.0.0'
     compile 'com.facebook.network.connectionclass:connectionclass:1.0.0'

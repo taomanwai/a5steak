@@ -82,6 +82,7 @@ public class Foundation implements SensorEventListener {
 
         public void onComplete(String str);
 
+
     }
 
     public static interface OnHttpGetFileListener {
