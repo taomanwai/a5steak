@@ -107,7 +107,7 @@ public class ApiAiManager extends Foundation {
         return super.isInitialized();
     }
 
-    public AIDataService getAiDataService() {
+    private AIDataService getAiDataService() {
 
         if (aiDataService == null) {
 
