@@ -83,7 +83,7 @@ public class ApiAiManager extends Foundation {
         return super.init(context, requestQueue);
     }
 
-    public boolean init(Context context, String clientAccessToken, String subscriptionKey, Locale locale) {
+    public boolean init(Context context, String subscriptionKey, String clientAccessToken, Locale locale) {
 
         if (!super.init(context)) {
             log("apiai: " + "init REJECTED: already initialized");
