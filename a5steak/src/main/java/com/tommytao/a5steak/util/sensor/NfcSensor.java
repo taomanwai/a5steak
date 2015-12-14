@@ -2,7 +2,7 @@ package com.tommytao.a5steak.util.sensor;
 
 import android.hardware.SensorEventListener;
 
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 
 
 /**

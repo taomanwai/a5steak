@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 
 import org.json.JSONObject;
 

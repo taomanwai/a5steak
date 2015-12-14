@@ -7,7 +7,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 
 import java.util.HashMap;
 import java.util.Locale;

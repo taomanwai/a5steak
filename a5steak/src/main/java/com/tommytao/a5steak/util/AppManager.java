@@ -20,7 +20,6 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.common.util.Foundation;
 
 import java.io.File;
 import java.util.ArrayList;

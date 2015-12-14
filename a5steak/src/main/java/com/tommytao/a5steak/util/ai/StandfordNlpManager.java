@@ -1,6 +1,6 @@
 package com.tommytao.a5steak.util.ai;
 
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 
 /**
  * Responsible for Standford NLP (Under construction)

@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.common.util;
+package com.tommytao.a5steak.util;
 
 import android.app.Activity;
 import android.content.Context;

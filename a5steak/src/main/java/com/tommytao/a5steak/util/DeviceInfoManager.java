@@ -12,7 +12,6 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.common.util.Foundation;
 
 import java.lang.reflect.Method;
 import java.util.LinkedList;

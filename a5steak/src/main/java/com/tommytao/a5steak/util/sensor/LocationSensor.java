@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 import java.util.ArrayList;
 
 /**

@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/A5Steak.iml" filepath="$PROJECT_DIR$/A5Steak.iml" />
       <module fileurl="file://$PROJECT_DIR$/a5steak/a5steak.iml" filepath="$PROJECT_DIR$/a5steak/a5steak.iml" />
-      <module fileurl="file://$PROJECT_DIR$/a5steak-base/a5steak-base.iml" filepath="$PROJECT_DIR$/a5steak-base/a5steak-base.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

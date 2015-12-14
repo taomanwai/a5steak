@@ -13,7 +13,6 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.common.util.Foundation;
 
 /**
  * Responsible for prompt & cancel notification (status bar)

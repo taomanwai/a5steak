@@ -9,7 +9,6 @@ import android.media.AudioTrack;
 import android.media.MediaPlayer;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.common.util.Foundation;
 
 public class MusicManager extends Foundation {
 

@@ -3,7 +3,7 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 import com.tommytao.a5steak.util.google.PlacesApiManager;
 

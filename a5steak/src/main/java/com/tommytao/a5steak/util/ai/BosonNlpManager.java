@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

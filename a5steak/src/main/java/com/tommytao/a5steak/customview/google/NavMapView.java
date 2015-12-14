@@ -24,7 +24,7 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tommytao.a5steak.R;
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.MathManager;
 import com.tommytao.a5steak.util.google.DirectionsApiManager;
 import com.tommytao.a5steak.util.google.TextSpeaker;

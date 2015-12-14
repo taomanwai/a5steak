@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HttpStack;
-import com.tommytao.a5steak.common.util.Foundation;
 
 /**
  * Created by tommytao on 24/11/2015.

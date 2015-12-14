@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tommytao.a5steak.util.Encyclopedia;
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 import com.tommytao.a5steak.util.google.GeocodeManager;
 
 import java.util.ArrayList;

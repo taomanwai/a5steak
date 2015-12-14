@@ -3,7 +3,7 @@ package com.tommytao.a5steak.util.sensor.support;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.common.util.Foundation;
+import com.tommytao.a5steak.util.Foundation;
 
 import java.util.ArrayList;
 
