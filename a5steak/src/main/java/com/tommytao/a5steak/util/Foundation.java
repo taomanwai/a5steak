@@ -449,7 +449,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected void httpGetString(final String link, final int maxNoOfRetries, final OnHttpGetStringListener listener) {
+    public void httpGetString(final String link, final int maxNoOfRetries, final OnHttpGetStringListener listener) {
 
         log("base: str: " + link);
 
