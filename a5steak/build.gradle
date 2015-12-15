@@ -3,8 +3,6 @@ ext {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
-group = 'com.github.taomanwai'
 
 android {
     compileSdkVersion 23
