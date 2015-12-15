@@ -4,12 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.common.util.Foundation;
-import com.tommytao.a5steak.util.NetworkInfoManager;
-import com.tommytao.a5steak.util.VolleyManager;
-import com.tommytao.a5steak.util.google.DirectionsApiManager;
-import com.tommytao.a5steak.util.google.GeocodeManager;
-import com.tommytao.a5steak.util.google.PlacesApiManager;
 
 
 /**
@@ -40,18 +34,6 @@ public class MainApp extends Application {
 
         context = this;
 
-
-//        requestQueue = null;
-//        requestQueue = VolleyManager.getInstance().getCustomRequestQueue(this, new HurlStack(), 0);
-        requestQueue = VolleyManager.getInstance().getCustomRequestQueue(this, new Foundation.OkHttpStack(), 0);
-
-        GeocodeManager.getInstance().init(this, requestQueue, "", ""); // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
-
-        PlacesApiManager.getInstance().init(this, requestQueue, GOOGLE_PLACES_API_KEY);
-
-        DirectionsApiManager.getInstance().init(this, requestQueue, "", "");
-
-        NetworkInfoManager.getInstance().init(this, requestQueue);
 
 
     }

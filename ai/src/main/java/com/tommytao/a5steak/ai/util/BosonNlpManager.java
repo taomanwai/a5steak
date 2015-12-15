@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.util.ai;
+package com.tommytao.a5steak.ai.util;
 
 import android.content.Context;
 import android.os.AsyncTask;

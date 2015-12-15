@@ -6,10 +6,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.tommytao.a5steak.util.ai.ApiAiManager;
+import com.tommytao.a5steak.ai.util.ApiAiManager;
 
 import java.util.HashMap;
 import java.util.Locale;
+
 
 public class MainActivity extends Activity {
 
@@ -25,7 +26,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ApiAiManager.getInstance().init(this, CLIENT_ACCESS_TOKEN, SUBSCRIPTION_KEY, new Locale("zh", "HK"));
+        ApiAiManager.getInstance().init(this, SUBSCRIPTION_KEY , CLIENT_ACCESS_TOKEN, new Locale("zh", "HK"));
 
         btnGo = (Button) findViewById(R.id.btnGo);
 
@@ -47,12 +48,6 @@ public class MainActivity extends Activity {
 
             }
         });
-
-
-
-
-
-
 
 
 

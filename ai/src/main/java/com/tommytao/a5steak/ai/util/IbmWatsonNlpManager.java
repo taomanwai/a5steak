@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.util.ai;
+package com.tommytao.a5steak.ai.util;
 
 import com.tommytao.a5steak.common.util.Foundation;
 
