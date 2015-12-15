@@ -15,6 +15,7 @@ import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
+import com.tommytao.a5steak.common.util.Foundation;
 
 import java.math.BigDecimal;
 

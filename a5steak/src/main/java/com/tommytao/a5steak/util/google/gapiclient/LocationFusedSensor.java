@@ -21,7 +21,7 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.tommytao.a5steak.util.Foundation;
+import com.tommytao.a5steak.common.util.Foundation;
 
 import java.util.ArrayList;
 import java.util.HashMap;

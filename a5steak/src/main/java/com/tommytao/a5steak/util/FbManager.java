@@ -36,6 +36,7 @@ import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.model.ShareVideo;
 import com.facebook.share.model.ShareVideoContent;
 import com.facebook.share.widget.ShareDialog;
+import com.tommytao.a5steak.common.util.Foundation;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

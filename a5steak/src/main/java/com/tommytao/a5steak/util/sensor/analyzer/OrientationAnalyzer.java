@@ -4,7 +4,7 @@ import android.content.Context;
 import android.hardware.SensorManager;
 
 import com.android.volley.RequestQueue;
-import com.tommytao.a5steak.util.Foundation;
+import com.tommytao.a5steak.common.util.Foundation;
 
 /**
  * Responsible for getting gravity field reading

@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 
 import com.android.volley.RequestQueue;
+import com.tommytao.a5steak.common.util.Foundation;
 
 /**
  * Responsible for battery stuff (e.g. reading battery level, status)

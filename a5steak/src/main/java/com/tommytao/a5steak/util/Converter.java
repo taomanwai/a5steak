@@ -5,6 +5,7 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 
 import com.android.volley.RequestQueue;
+import com.tommytao.a5steak.common.util.Foundation;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;

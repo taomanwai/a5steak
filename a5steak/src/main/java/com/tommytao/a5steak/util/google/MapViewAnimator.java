@@ -8,7 +8,7 @@ import android.location.Location;
 import com.android.volley.RequestQueue;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.tommytao.a5steak.util.Foundation;
+import com.tommytao.a5steak.common.util.Foundation;
 
 /**
  * Created by tommytao on 29/7/15.

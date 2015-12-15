@@ -2,7 +2,7 @@ package com.tommytao.a5steak.util.google;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.tommytao.a5steak.util.Foundation;
+import com.tommytao.a5steak.common.util.Foundation;
 
 /**
  * Created by tommytao on 1/9/15.

@@ -8,7 +8,7 @@ import com.android.volley.RequestQueue;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
-import com.tommytao.a5steak.util.Foundation;
+import com.tommytao.a5steak.common.util.Foundation;
 
 import java.util.ArrayList;
 

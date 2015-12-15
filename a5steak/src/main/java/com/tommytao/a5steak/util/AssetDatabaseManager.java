@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.android.volley.RequestQueue;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
+import com.tommytao.a5steak.common.util.Foundation;
 
 import java.util.HashMap;
 

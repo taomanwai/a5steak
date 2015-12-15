@@ -2,7 +2,7 @@ package com.tommytao.a5steak.sample;
 
 import android.test.ApplicationTestCase;
 
-import com.tommytao.a5steak.util.Foundation;
+import com.tommytao.a5steak.common.util.Foundation;
 import com.tommytao.a5steak.util.NetworkInfoManager;
 
 import java.util.ArrayList;

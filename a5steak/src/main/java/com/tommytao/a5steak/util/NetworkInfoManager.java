@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
+import com.tommytao.a5steak.common.util.Foundation;
 
 import org.json.JSONObject;
 
