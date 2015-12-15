@@ -449,7 +449,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    public void httpGetString(final String link, final int maxNoOfRetries, final OnHttpGetStringListener listener) {
+    protected void httpGetString(final String link, final int maxNoOfRetries, final OnHttpGetStringListener listener) {
 
         log("base: str: " + link);
 
@@ -990,10 +990,10 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected void httpPostString(final String link, final String dataStr, final HashMap<String, String> headers, final OnHttpPostStringListener listener) {
+    protected boolean httpPostString(final String link, final String dataStr, final HashMap<String, String> headers, final OnHttpPostStringListener listener) {
 
         if (httpPostStringByVolley(link, dataStr, headers, listener))
-            return;
+            return true;
 
         new Thread() {
             @Override
@@ -1122,6 +1122,8 @@ public class Foundation implements SensorEventListener {
 
             }
         }.start();
+
+        return true;
 
     }
 
