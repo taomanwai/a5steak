@@ -16,11 +16,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tommytao.a5steak.common.Foundation;
-import com.tommytao.a5steak.converter.Converter;
 import com.tommytao.a5steak.gmapwebservice.DirectionsApiManager;
-import com.tommytao.a5steak.locale.LocaleManager;
+import com.tommytao.a5steak.misc.Converter;
 import com.tommytao.a5steak.misc.MathManager;
 import com.tommytao.a5steak.sensor.LocationSensor;
+import com.tommytao.a5steak.system.LocaleManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -40,87 +40,32 @@ dependencies {
 
     compile project(':base')
 
-    compile (project(':ai')) {
-        exclude module: 'base'
-    }
-
-    compile (project(':gson')) {
-        exclude module: 'base'
-    }
-    compile (project(':eventbus')) {
-        exclude module: 'base'
-    }
-    compile (project(':ux')) {
-        exclude module: 'base'
-    }
-    compile (project(':phone')) {
-        exclude module: 'base'
-    }
-    compile (project(':bluetooth')) {
-        exclude module: 'base'
-    }
-    compile (project(':time')) {
-        exclude module: 'base'
-    }
-    compile (project(':zip')) {
-        exclude module: 'base'
-    }
-    compile (project(':facebook')) {
-        exclude module: 'base'
-    }
-    compile (project(':network')) {
-        exclude module: 'base'
-    }
-    compile (project(':database')) {
-        exclude module: 'base'
-    }
-    compile (project(':alarm')) {
-        exclude module: 'base'
-    }
-    compile (project(':sensor')) {
-        exclude module: 'base'
-    }
-    compile (project(':paypal')) {
-        exclude module: 'base'
-    }
-    compile (project(':misc')) {
-        exclude module: 'base'
-    }
-    compile (project(':system')) {
-        exclude module: 'base'
-    }
-    compile (project(':customview')) {
-        exclude module: 'base'
-    }
-    compile (project(':gmapwebservice')) {
-        exclude module: 'base'
-    }
-    compile (project(':gspeech')) {
-        exclude module: 'base'
-    }
-    compile (project(':gplus')) {
-        exclude module: 'base'
-    }
-    compile (project(':gcm')) {
-        exclude module: 'base'
-    }
-    compile (project(':gmap')) {
-        exclude module: 'base'
-    }
-    compile (project(':gvision')) {
-        exclude module: 'base'
-    }
-    compile (project(':gplay')) {
-        exclude module: 'base'
-    }
-    compile (project(':glocation')) {
-        exclude module: 'base'
-    }
-
-
-//    compile (project(':gmapinteractive')) {
-//        exclude module: 'base'
-//    }
+    compile (project(':ai'))
+    compile (project(':gson'))
+    compile (project(':eventbus'))
+    compile (project(':ux'))
+    compile (project(':phone'))
+    compile (project(':bluetooth'))
+    compile (project(':time'))
+    compile (project(':zip'))
+    compile (project(':facebook'))
+    compile (project(':network'))
+    compile (project(':database'))
+    compile (project(':alarm'))
+    compile (project(':sensor'))
+    compile (project(':paypal'))
+    compile (project(':misc'))
+    compile (project(':system'))
+    compile (project(':customview'))
+    compile (project(':gmapwebservice'))
+    compile (project(':gspeech'))
+    compile (project(':gplus'))
+    compile (project(':gcm'))
+    compile (project(':gmap'))
+    compile (project(':gvision'))
+    compile (project(':gplay'))
+    compile (project(':glocation'))
+    compile (project(':gmapinteractive'))
 
 
 }
