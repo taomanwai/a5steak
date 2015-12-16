@@ -2,8 +2,8 @@ package com.tommytao.a5steak.sample;
 
 import android.test.ApplicationTestCase;
 
-import com.tommytao.a5steak.common.util.Foundation;
-import com.tommytao.a5steak.util.NetworkInfoManager;
+import com.tommytao.a5steak.common.Foundation;
+import com.tommytao.a5steak.network.NetworkInfoManager;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;

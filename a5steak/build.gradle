@@ -39,23 +39,88 @@ dependencies {
     compile files("${buildDir}/native-libs/native-libs.jar")
 
     compile project(':base')
+
     compile (project(':ai')) {
         exclude module: 'base'
     }
 
-    compile 'com.google.android.gms:play-services-base:8.3.0'
-    compile 'com.google.android.gms:play-services-gcm:8.3.0'
-    compile 'com.google.android.gms:play-services-maps:8.3.0'
-    compile 'com.google.android.gms:play-services-location:8.3.0'
-    compile 'com.google.android.gms:play-services-plus:8.3.0'
-    compile 'com.google.android.gms:play-services-vision:8.3.0'
+    compile (project(':gson')) {
+        exclude module: 'base'
+    }
+    compile (project(':eventbus')) {
+        exclude module: 'base'
+    }
+    compile (project(':ux')) {
+        exclude module: 'base'
+    }
+    compile (project(':phone')) {
+        exclude module: 'base'
+    }
+    compile (project(':bluetooth')) {
+        exclude module: 'base'
+    }
+    compile (project(':time')) {
+        exclude module: 'base'
+    }
+    compile (project(':zip')) {
+        exclude module: 'base'
+    }
+    compile (project(':facebook')) {
+        exclude module: 'base'
+    }
+    compile (project(':network')) {
+        exclude module: 'base'
+    }
+    compile (project(':database')) {
+        exclude module: 'base'
+    }
+    compile (project(':alarm')) {
+        exclude module: 'base'
+    }
+    compile (project(':sensor')) {
+        exclude module: 'base'
+    }
+    compile (project(':paypal')) {
+        exclude module: 'base'
+    }
+    compile (project(':misc')) {
+        exclude module: 'base'
+    }
+    compile (project(':system')) {
+        exclude module: 'base'
+    }
+    compile (project(':customview')) {
+        exclude module: 'base'
+    }
+    compile (project(':gmapwebservice')) {
+        exclude module: 'base'
+    }
+    compile (project(':gspeech')) {
+        exclude module: 'base'
+    }
+    compile (project(':gplus')) {
+        exclude module: 'base'
+    }
+    compile (project(':gcm')) {
+        exclude module: 'base'
+    }
+    compile (project(':gmap')) {
+        exclude module: 'base'
+    }
+    compile (project(':gvision')) {
+        exclude module: 'base'
+    }
+    compile (project(':gplay')) {
+        exclude module: 'base'
+    }
+    compile (project(':glocation')) {
+        exclude module: 'base'
+    }
 
-    compile 'de.greenrobot:eventbus:2.4.0'
 
-    compile 'com.facebook.android:facebook-android-sdk:4.6.0'
-    compile 'com.facebook.device.yearclass:yearclass:1.0.0'
-    compile 'com.facebook.network.connectionclass:connectionclass:1.0.0'
-    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
+//    compile (project(':gmapinteractive')) {
+//        exclude module: 'base'
+//    }
 
 
 }

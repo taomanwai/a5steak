@@ -6,9 +6,9 @@ import android.test.ApplicationTestCase;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tommytao.a5steak.util.Encyclopedia;
-import com.tommytao.a5steak.common.util.Foundation;
-import com.tommytao.a5steak.util.google.GeocodeManager;
+import com.tommytao.a5steak.misc.Encyclopedia;
+import com.tommytao.a5steak.common.Foundation;
+import com.tommytao.a5steak.gmapwebservice.GeocodeManager;
 
 import java.util.ArrayList;
 import java.util.Locale;

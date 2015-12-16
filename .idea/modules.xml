@@ -5,8 +5,33 @@
       <module fileurl="file://$PROJECT_DIR$/A5Steak.iml" filepath="$PROJECT_DIR$/A5Steak.iml" />
       <module fileurl="file://$PROJECT_DIR$/a5steak/a5steak.iml" filepath="$PROJECT_DIR$/a5steak/a5steak.iml" />
       <module fileurl="file://$PROJECT_DIR$/ai/ai.iml" filepath="$PROJECT_DIR$/ai/ai.iml" />
+      <module fileurl="file://$PROJECT_DIR$/alarm/alarm.iml" filepath="$PROJECT_DIR$/alarm/alarm.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/base/base.iml" filepath="$PROJECT_DIR$/base/base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bluetooth/bluetooth.iml" filepath="$PROJECT_DIR$/bluetooth/bluetooth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/customview/customview.iml" filepath="$PROJECT_DIR$/customview/customview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/database/database.iml" filepath="$PROJECT_DIR$/database/database.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eventbus/eventbus.iml" filepath="$PROJECT_DIR$/eventbus/eventbus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/facebook/facebook.iml" filepath="$PROJECT_DIR$/facebook/facebook.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gcm/gcm.iml" filepath="$PROJECT_DIR$/gcm/gcm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/glocation/glocation.iml" filepath="$PROJECT_DIR$/glocation/glocation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gmap/gmap.iml" filepath="$PROJECT_DIR$/gmap/gmap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gmapinteractive/gmapinteractive.iml" filepath="$PROJECT_DIR$/gmapinteractive/gmapinteractive.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gmapwebservice/gmapwebservice.iml" filepath="$PROJECT_DIR$/gmapwebservice/gmapwebservice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gplay/gplay.iml" filepath="$PROJECT_DIR$/gplay/gplay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gplus/gplus.iml" filepath="$PROJECT_DIR$/gplus/gplus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gson/gson.iml" filepath="$PROJECT_DIR$/gson/gson.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gspeech/gspeech.iml" filepath="$PROJECT_DIR$/gspeech/gspeech.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gvision/gvision.iml" filepath="$PROJECT_DIR$/gvision/gvision.iml" />
+      <module fileurl="file://$PROJECT_DIR$/misc/misc.iml" filepath="$PROJECT_DIR$/misc/misc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/network/network.iml" filepath="$PROJECT_DIR$/network/network.iml" />
+      <module fileurl="file://$PROJECT_DIR$/paypal/paypal.iml" filepath="$PROJECT_DIR$/paypal/paypal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phone/phone.iml" filepath="$PROJECT_DIR$/phone/phone.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sensor/sensor.iml" filepath="$PROJECT_DIR$/sensor/sensor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/system/system.iml" filepath="$PROJECT_DIR$/system/system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/time/time.iml" filepath="$PROJECT_DIR$/time/time.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ux/ux.iml" filepath="$PROJECT_DIR$/ux/ux.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zip/zip.iml" filepath="$PROJECT_DIR$/zip/zip.iml" />
     </modules>
   </component>
 </project>

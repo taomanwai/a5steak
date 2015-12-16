@@ -11,10 +11,10 @@ import com.android.volley.RequestQueue;
  */
 public class MainApp extends Application {
 
-    public static final String GOOGLE_CLIENT_ID = "gme-easyvanhongkonglimited";
-    public static final String GOOGLE_CLIENT_SECRET = "RglSWAR2KO9R2OghAMwyj4WqIXg=";
-    public static final String GOOGLE_PLACES_API_KEY = "AIzaSyDho8iArjPHWI7GiY1xGhefeB6LplFucdI";
-    public static final String GOOGLE_API_DOMAIN = "https://maps.googleapis.com";
+
+
+
+
 
     private static Context context;
 

@@ -2,7 +2,7 @@ package com.tommytao.a5steak.sample;
 
 import android.test.ApplicationTestCase;
 
-import com.tommytao.a5steak.util.NetworkInfoManager;
+import com.tommytao.a5steak.network.NetworkInfoManager;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>

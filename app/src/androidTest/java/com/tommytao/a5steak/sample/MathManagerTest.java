@@ -3,7 +3,7 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
-import com.tommytao.a5steak.util.MathManager;
+import com.tommytao.a5steak.misc.MathManager;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>

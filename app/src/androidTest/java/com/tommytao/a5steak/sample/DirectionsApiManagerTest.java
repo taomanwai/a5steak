@@ -3,9 +3,9 @@ package com.tommytao.a5steak.sample;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
-import com.tommytao.a5steak.common.util.Foundation;
-import com.tommytao.a5steak.util.google.DirectionsApiManager;
-import com.tommytao.a5steak.util.google.PlacesApiManager;
+import com.tommytao.a5steak.common.Foundation;
+import com.tommytao.a5steak.gmapwebservice.DirectionsApiManager;
+import com.tommytao.a5steak.gmapwebservice.PlacesApiManager;
 
 import java.util.ArrayList;
 import java.util.Locale;
