@@ -32,13 +32,11 @@
             <option value="$PROJECT_DIR$/misc" />
             <option value="$PROJECT_DIR$/network" />
             <option value="$PROJECT_DIR$/paypal" />
-            <option value="$PROJECT_DIR$/phone" />
             <option value="$PROJECT_DIR$/sensor" />
             <option value="$PROJECT_DIR$/system" />
             <option value="$PROJECT_DIR$/time" />
             <option value="$PROJECT_DIR$/ux" />
             <option value="$PROJECT_DIR$/wear" />
-            <option value="$PROJECT_DIR$/zip" />
           </set>
         </option>
         <option name="myModules">
@@ -67,13 +65,11 @@
             <option value="$PROJECT_DIR$/misc" />
             <option value="$PROJECT_DIR$/network" />
             <option value="$PROJECT_DIR$/paypal" />
-            <option value="$PROJECT_DIR$/phone" />
             <option value="$PROJECT_DIR$/sensor" />
             <option value="$PROJECT_DIR$/system" />
             <option value="$PROJECT_DIR$/time" />
             <option value="$PROJECT_DIR$/ux" />
             <option value="$PROJECT_DIR$/wear" />
-            <option value="$PROJECT_DIR$/zip" />
           </set>
         </option>
       </GradleProjectSettings>

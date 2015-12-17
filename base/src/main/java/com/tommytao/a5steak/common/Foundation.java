@@ -2059,7 +2059,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    // == Volley ==
+    // == Volley & OkHttp ==
     public static class OkHttpStack extends HurlStack {
         private final OkUrlFactory mFactory;
 
