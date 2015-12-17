@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.tommytao.a5steak.ai.ApiAiManager;
-
-import java.util.Locale;
+import com.tommytao.a5steak.gson.GsonManager;
 
 
 public class MainActivity extends Activity {
@@ -26,11 +24,14 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                ApiAiManager.getInstance().init(MainActivity.this, "", "", new Locale("zh", "HK"));
-
-
             }
         });
+
+        GsonManager.getInstance();
+
+
+
+
 
 
 
