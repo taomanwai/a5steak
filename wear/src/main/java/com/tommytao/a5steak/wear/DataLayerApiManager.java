@@ -293,10 +293,20 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
     }
 
 
-    public boolean send(String path, HashMap<String, String> payload, final OnSendListener listener) {
+    public void send(String path, HashMap<String, String> payload, final OnSendListener listener) {
 
-        if (!isConnected())
-            return false;
+        if (!isConnected()){
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onComplete(false);
+                }
+            });
+
+            return;
+        }
 
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
 
@@ -312,7 +322,6 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
             }
         });
 
-        return true;
 
     }
 
