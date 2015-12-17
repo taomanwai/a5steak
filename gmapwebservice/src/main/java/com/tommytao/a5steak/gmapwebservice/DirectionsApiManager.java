@@ -840,7 +840,7 @@ public class DirectionsApiManager extends Foundation {
         // == run in bg ==
 
         // init GSON in main thread
-        getGson();
+        getDefaultGson();
 
         new AsyncTask<JSONObject, Void, Pair<ArrayList<Step>, Polyline>>() {
 
@@ -855,7 +855,7 @@ public class DirectionsApiManager extends Foundation {
 
                 JSONObject responseJObj = responsesJObj[0];
 
-                ResponseRoute responseRoute = getGson().fromJson("" + responseJObj, ResponseRoute.class);
+                ResponseRoute responseRoute = getDefaultGson().fromJson("" + responseJObj, ResponseRoute.class);
 
 
                 try{

@@ -2,6 +2,7 @@ package com.tommytao.a5steak.wear;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.google.android.gms.common.ConnectionResult;
@@ -254,6 +255,9 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+
+        Log.d("rtemp", "conn_e_t: " + connectionResult.getErrorMessage());
+
         clearAndTriggerOnConnectListeners(false);
     }
 

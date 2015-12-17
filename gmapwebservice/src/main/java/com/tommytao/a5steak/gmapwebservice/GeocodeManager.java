@@ -575,7 +575,7 @@ public class GeocodeManager extends Foundation {
         try {
             geocode = new Geocode(responseJObj.optString("status", ""));
 
-            ResponseGet responseGet = getGson().fromJson("" + responseJObj.optJSONArray("results").optJSONObject(0), ResponseGet.class);
+            ResponseGet responseGet = getDefaultGson().fromJson("" + responseJObj.optJSONArray("results").optJSONObject(0), ResponseGet.class);
 
             String streetNo = "";
             String route = "";
@@ -802,7 +802,7 @@ public class GeocodeManager extends Foundation {
 
         try {
 
-            ResponseSearch responseSearch = getGson().fromJson(origJsonStr, ResponseSearch.class);
+            ResponseSearch responseSearch = getDefaultGson().fromJson(origJsonStr, ResponseSearch.class);
 
             for (int i = 0; i < responseSearch.getResults().size(); i++) {
 

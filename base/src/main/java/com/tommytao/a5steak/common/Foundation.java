@@ -32,6 +32,18 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.OkUrlFactory;
 
@@ -51,6 +63,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -2088,14 +2101,111 @@ public class Foundation implements SensorEventListener {
     }
 
     // == GSON ==
-    protected Gson gson;
+//    protected Gson gson;
+//
+//    protected Gson getGson() {
+//
+//        if (gson == null)
+//            gson = new Gson();
+//
+//        return gson;
+//
+//    }
 
-    protected Gson getGson() {
+    protected static class LocationSerializer implements JsonSerializer<Location> {
 
-        if (gson == null)
-            gson = new Gson();
+        @Override
+        public JsonElement serialize(Location location, Type type, JsonSerializationContext context) {
 
-        return gson;
+            JsonObject jObj = new JsonObject();
+            jObj.add("latitude", context.serialize(location.getLatitude()));
+            jObj.add("longitude", context.serialize(location.getLongitude()));
+
+            return jObj;
+
+        }
+
+    }
+
+    protected static class BooleanAsIntAdapter extends TypeAdapter<Boolean> {
+
+        @Override
+        public void write(JsonWriter out, Boolean value) throws IOException {
+            if (value == null) {
+                out.nullValue();
+            } else {
+                out.value(value);
+            }
+        }
+
+        @Override
+        public Boolean read(JsonReader in) throws IOException {
+            JsonToken peek = in.peek();
+            switch (peek) {
+                case BOOLEAN:
+                    return in.nextBoolean();
+                case NULL:
+                    in.nextNull();
+                    return null;
+                case NUMBER:
+                    return in.nextInt() != 0;
+                case STRING:
+                    return Boolean.parseBoolean(in.nextString());
+                default:
+                    throw new IllegalStateException("Expected BOOLEAN or NUMBER but was " + peek);
+            }
+        }
+
+    }
+
+    protected static class LocationDeserializer implements JsonDeserializer<Location> {
+
+        @Override
+        public Location deserialize(JsonElement jElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+            double lat = Double.NaN;
+            try {
+                lat = jElement.getAsJsonObject().get("latitude").getAsDouble();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            double lng = Double.NaN;
+            try {
+                lng = jElement.getAsJsonObject().get("longitude").getAsDouble();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (Double.isNaN(lat) || Double.isNaN(lng))
+                return null;
+
+            Location location = new Location("");
+            location.setLatitude(lat);
+            location.setLongitude(lng);
+
+            return location;
+        }
+
+    }
+
+    protected Gson defaultGson;
+
+    public Gson getDefaultGson() {
+
+        if (defaultGson == null) {
+
+            BooleanAsIntAdapter booleanAsIntAdapter = new BooleanAsIntAdapter();
+
+            defaultGson = new GsonBuilder().registerTypeAdapter(Boolean.class, booleanAsIntAdapter)
+                    .registerTypeAdapter(boolean.class, booleanAsIntAdapter).registerTypeAdapter(Location.class, new LocationSerializer())
+                    .registerTypeAdapter(Location.class, new LocationDeserializer())
+                    .serializeNulls()
+                    .create();
+
+        }
+
+        return defaultGson;
+
 
     }
 

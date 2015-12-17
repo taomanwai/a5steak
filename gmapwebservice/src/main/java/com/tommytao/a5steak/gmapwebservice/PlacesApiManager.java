@@ -1164,7 +1164,7 @@ public class PlacesApiManager extends Foundation {
 
         try {
 
-            ResponseSearch responseSearch = getGson().fromJson("" + responseJObj, ResponseSearch.class);
+            ResponseSearch responseSearch = getDefaultGson().fromJson("" + responseJObj, ResponseSearch.class);
 
             status = responseSearch.getStatus();
 
@@ -1232,7 +1232,7 @@ public class PlacesApiManager extends Foundation {
 
         try {
 
-            ResponseGetPlaceFromLatLng responseGetPlaceFromLatLng = getGson().fromJson("" + responseJObj, ResponseGetPlaceFromLatLng.class);
+            ResponseGetPlaceFromLatLng responseGetPlaceFromLatLng = getDefaultGson().fromJson("" + responseJObj, ResponseGetPlaceFromLatLng.class);
 
             if (!"OK".equals(responseGetPlaceFromLatLng.getStatus())) {
                 listener.returnPlace(place);
@@ -1333,7 +1333,7 @@ public class PlacesApiManager extends Foundation {
 
         try {
 
-            ResponseGetPlaceFromPlaceId responseGetPlaceFromPlaceId = getGson().fromJson("" + responseJObj, ResponseGetPlaceFromPlaceId.class);
+            ResponseGetPlaceFromPlaceId responseGetPlaceFromPlaceId = getDefaultGson().fromJson("" + responseJObj, ResponseGetPlaceFromPlaceId.class);
 
             if (!"OK".equals(responseGetPlaceFromPlaceId.getStatus())) {
                 listener.returnPlace(place);
@@ -1376,7 +1376,7 @@ public class PlacesApiManager extends Foundation {
             listener.returnAutoCompletes(results, input, response);
 
         try {
-            ResponseAutoComplete responseAutoComplete = getGson().fromJson("" + response, ResponseAutoComplete.class);
+            ResponseAutoComplete responseAutoComplete = getDefaultGson().fromJson("" + response, ResponseAutoComplete.class);
 
             String placeId = "";
             String description = "";
