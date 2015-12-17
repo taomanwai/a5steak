@@ -45,6 +45,7 @@ public class GsonManager extends Foundation{
 	}
 
 
+
 //	public static class LocationSerializer implements JsonSerializer<Location> {
 //
 //		@Override
