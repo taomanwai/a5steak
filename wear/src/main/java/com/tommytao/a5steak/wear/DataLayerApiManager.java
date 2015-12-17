@@ -1,6 +1,7 @@
 package com.tommytao.a5steak.wear;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -38,13 +39,13 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
     // --
 
-    public static interface OnSendListener {
+    public static interface OnPutListener {
 
         public void onComplete(boolean succeed);
 
     }
 
-    public static interface OnReceiveListener {
+    public static interface OnDataListener {
 
         public void onChanged(String path, HashMap<String, String> data);
 
@@ -61,7 +62,7 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
     // == OnDataListener ==
 
-    private ArrayList<OnReceiveListener> onReceiveListeners = new ArrayList<>();
+    private ArrayList<OnDataListener> onDataListeners = new ArrayList<>();
 
 
 //    private void clearAndTriggerOnDataListeners(String path, HashMap<String, String> data, boolean changedOrDeleted) {
@@ -89,8 +90,8 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
      */
     private void clearAndOnUiThreadTriggerOnDataListeners(final String path, final HashMap<String, String> data, final boolean changedOrDeleted) {
 
-        final ArrayList<OnReceiveListener> pendingListeners = new ArrayList<>(onReceiveListeners);
-        onReceiveListeners.clear();
+        final ArrayList<OnDataListener> pendingListeners = new ArrayList<>(onDataListeners);
+        onDataListeners.clear();
 
         if (pendingListeners.isEmpty())
             return;
@@ -98,7 +99,7 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
         handler.post(new Runnable() {
             @Override
             public void run() {
-                for (OnReceiveListener pendingListener : pendingListeners) {
+                for (OnDataListener pendingListener : pendingListeners) {
                     if (pendingListener != null) {
                         if (changedOrDeleted)
                             pendingListener.onChanged(path, data);
@@ -111,12 +112,12 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
     }
 
-    public void addOnReceiveListener(OnReceiveListener listener) {
-        onReceiveListeners.add(listener);
+    public void addOnReceiveListener(OnDataListener listener) {
+        onDataListeners.add(listener);
     }
 
-    public boolean removeOnReceiveListener(OnReceiveListener listener) {
-        return onReceiveListeners.remove(listener);
+    public boolean removeOnReceiveListener(OnDataListener listener) {
+        return onDataListeners.remove(listener);
     }
 
 
@@ -301,7 +302,7 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
     }
 
 
-    public void send(String path, HashMap<String, String> payload, final OnSendListener listener) {
+    public void put(String path, HashMap<String, String> payload, final OnPutListener listener) {
 
         if (!isConnected()){
 
@@ -324,8 +325,6 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
             @Override
             public void onResult(DataApi.DataItemResult result) {
 
-                Wearable.DataApi.deleteDataItems(getClient(), putDataMapRequest.getUri());
-
                 if (listener != null)
                     listener.onComplete(result.getStatus().isSuccess());
 
@@ -334,6 +333,11 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
 
     }
+
+    public void remove(String path){
+        Wearable.DataApi.deleteDataItems(getClient(), Uri.parse(path));
+    }
+
 
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
