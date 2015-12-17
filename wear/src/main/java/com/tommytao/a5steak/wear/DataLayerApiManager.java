@@ -180,16 +180,19 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
     protected GoogleApiClient getClient() {
 
-
-        if (client == null) {
+        if (client == null)
             this.client = new GoogleApiClient.Builder(appContext).addApi(Wearable.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
-        }
 
         return client;
 
     }
 
     private boolean connected;
+
+    @Deprecated
+    protected void connect() {
+        super.connect();
+    }
 
     public void connect(final OnConnectListener onConnectListener) {
 
@@ -218,7 +221,7 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
         if (!isConnected() && !isConnecting())
             return;
 
-        Wearable.DataApi.removeListener(client, this);
+        Wearable.DataApi.removeListener(getClient(), this);
 
         getClient().disconnect();
 
@@ -243,9 +246,10 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
     @Override
     public void onConnected(Bundle bundle) {
         connected = true;
+        Wearable.DataApi.addListener(getClient(), this);
         clearAndTriggerOnConnectListeners(true);
 
-        Wearable.DataApi.addListener(client, this);
+
     }
 
     @Override
@@ -312,11 +316,11 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
             return;
         }
 
-        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path).setUrgent();
 
         putDataMapRequest.getDataMap().putAll(hashMapToDataMap(payload));
 
-        Wearable.DataApi.putDataItem(client, putDataMapRequest.asPutDataRequest()).setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+        Wearable.DataApi.putDataItem(getClient(), putDataMapRequest.asPutDataRequest()).setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
             @Override
             public void onResult(DataApi.DataItemResult result) {
 
