@@ -37,6 +37,7 @@
             <option value="$PROJECT_DIR$/system" />
             <option value="$PROJECT_DIR$/time" />
             <option value="$PROJECT_DIR$/ux" />
+            <option value="$PROJECT_DIR$/wear" />
             <option value="$PROJECT_DIR$/zip" />
           </set>
         </option>
@@ -71,6 +72,7 @@
             <option value="$PROJECT_DIR$/system" />
             <option value="$PROJECT_DIR$/time" />
             <option value="$PROJECT_DIR$/ux" />
+            <option value="$PROJECT_DIR$/wear" />
             <option value="$PROJECT_DIR$/zip" />
           </set>
         </option>
