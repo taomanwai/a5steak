@@ -316,13 +316,15 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
             return;
         }
 
-        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path).setUrgent();
+        final PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path).setUrgent();
 
         putDataMapRequest.getDataMap().putAll(hashMapToDataMap(payload));
 
         Wearable.DataApi.putDataItem(getClient(), putDataMapRequest.asPutDataRequest()).setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
             @Override
             public void onResult(DataApi.DataItemResult result) {
+
+                Wearable.DataApi.deleteDataItems(getClient(), putDataMapRequest.getUri());
 
                 if (listener != null)
                     listener.onComplete(result.getStatus().isSuccess());
