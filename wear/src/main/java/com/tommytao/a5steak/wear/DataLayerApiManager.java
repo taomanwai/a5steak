@@ -65,33 +65,18 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
     private ArrayList<OnDataListener> onDataListeners = new ArrayList<>();
 
 
-//    private void clearAndTriggerOnDataListeners(String path, HashMap<String, String> data, boolean changedOrDeleted) {
-//
-//        ArrayList<OnDataListener> pendingListeners = new ArrayList<>(onDataListeners);
-//        onDataListeners.clear();
-//
-//        for (OnDataListener pendingListener : pendingListeners) {
-//            if (pendingListener != null) {
-//                if (changedOrDeleted)
-//                    pendingListener.onChanged(path, data);
-//                else
-//                    pendingListener.onDeleted(path, data);
-//            }
-//        }
-//
-//    }
 
     /**
-     * Clear current listener list and trigger current listeners in UI thread
+     * Trigger current listeners on UI thread
      *
      * @param path             Path of data item
      * @param data             Data of data item in HashMap format
      * @param changedOrDeleted TRUE=changed; FALSE=deleted
      */
-    private void clearAndOnUiThreadTriggerOnDataListeners(final String path, final HashMap<String, String> data, final boolean changedOrDeleted) {
+    private void triggerOnDataListeners(final String path, final HashMap<String, String> data, final boolean changedOrDeleted) {
 
         final ArrayList<OnDataListener> pendingListeners = new ArrayList<>(onDataListeners);
-        onDataListeners.clear();
+//        onDataListeners.clear();
 
         if (pendingListeners.isEmpty())
             return;
@@ -369,12 +354,12 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
             switch (event.getType()) {
 
                 case DataEvent.TYPE_CHANGED:
-                    clearAndOnUiThreadTriggerOnDataListeners(event.getDataItem().getUri().getPath(), dataMapToHashMap(dataMap), true);
+                    triggerOnDataListeners(event.getDataItem().getUri().getPath(), dataMapToHashMap(dataMap), true);
                     break;
 
 
                 case DataEvent.TYPE_DELETED:
-                    clearAndOnUiThreadTriggerOnDataListeners(event.getDataItem().getUri().getPath(), dataMapToHashMap(dataMap), false);
+                    triggerOnDataListeners(event.getDataItem().getUri().getPath(), dataMapToHashMap(dataMap), false);
                     break;
 
                 default:
