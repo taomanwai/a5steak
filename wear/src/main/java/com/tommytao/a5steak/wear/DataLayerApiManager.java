@@ -36,12 +36,11 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
     private DataLayerApiManager() {
     }
 
-
     // --
 
     public static interface OnPutListener {
 
-        public void onComplete(boolean succeed);
+        public void onComplete(boolean succeed, Uri uri);
 
     }
 
@@ -49,14 +48,14 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
         public void onChanged(String path, HashMap<String, String> data);
 
-        public void onDeleted(String path, HashMap<String, String> data);
+        public void onDeleted(String path);
 
     }
 
 
     public static interface OnConnectListener {
 
-        public void onConnected(boolean succeed);
+        public void onConnected(boolean succeed, String errMsg);
 
     }
 
@@ -65,12 +64,11 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
     private ArrayList<OnDataListener> onDataListeners = new ArrayList<>();
 
 
-
     /**
      * Trigger current listeners on UI thread
      *
      * @param path             Path of data item
-     * @param data             Data of data item in HashMap format
+     * @param data             Data of data item in HashMap format, will be ignored if changedOrDeleted is false
      * @param changedOrDeleted TRUE=changed; FALSE=deleted
      */
     private void triggerOnDataListeners(final String path, final HashMap<String, String> data, final boolean changedOrDeleted) {
@@ -87,9 +85,9 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
                 for (OnDataListener pendingListener : pendingListeners) {
                     if (pendingListener != null) {
                         if (changedOrDeleted)
-                            pendingListener.onChanged(path, data);
+                            pendingListener.onChanged(path, data == null ? new HashMap<String, String>() : data);
                         else
-                            pendingListener.onDeleted(path, data);
+                            pendingListener.onDeleted(path);
                     }
                 }
             }
@@ -113,19 +111,19 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
     private ArrayList<OnConnectListener> onConnectListeners = new ArrayList<>();
 
-    private void clearAndTriggerOnConnectListeners(boolean succeed) {
+    private void clearAndTriggerOnConnectListeners(boolean succeed, final String errMsg) {
 
         ArrayList<OnConnectListener> pendingListeners = new ArrayList<>(onConnectListeners);
         onConnectListeners.clear();
         for (OnConnectListener pendingListener : pendingListeners) {
             if (pendingListener != null) {
-                pendingListener.onConnected(succeed);
+                pendingListener.onConnected(succeed, errMsg);
             }
         }
 
     }
 
-    private void clearAndOnUiThreadTriggerOnConnectListeners(final boolean succeed) {
+    private void clearAndOnUiThreadTriggerOnConnectListeners(final boolean succeed, final String errMsg) {
 
         final ArrayList<OnConnectListener> pendingListeners = new ArrayList<>(onConnectListeners);
         onConnectListeners.clear();
@@ -136,7 +134,7 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
             public void run() {
                 for (OnConnectListener pendingListener : pendingListeners) {
                     if (pendingListener != null) {
-                        pendingListener.onConnected(succeed);
+                        pendingListener.onConnected(succeed, errMsg);
                     }
                 }
             }
@@ -187,7 +185,7 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onConnectListener.onConnected(true);
+                        onConnectListener.onConnected(true, "");
                     }
                 });
 
@@ -212,7 +210,7 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
         getClient().disconnect();
 
         connected = false;
-        clearAndOnUiThreadTriggerOnConnectListeners(false);
+        clearAndOnUiThreadTriggerOnConnectListeners(false, "Forced disconnect outside " + DataLayerApiManager.class.getSimpleName());
 
     }
 
@@ -232,8 +230,11 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
     @Override
     public void onConnected(Bundle bundle) {
         connected = true;
+
+        Log.d("rtemp", "tt_t add_listener");
+
         Wearable.DataApi.addListener(getClient(), this);
-        clearAndTriggerOnConnectListeners(true);
+        clearAndTriggerOnConnectListeners(true, "");
 
 
     }
@@ -246,9 +247,8 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
-        Log.d("rtemp", "conn_e_t: " + connectionResult.getErrorMessage());
+        clearAndTriggerOnConnectListeners(false, connectionResult.getErrorMessage());
 
-        clearAndTriggerOnConnectListeners(false);
     }
 
     public DataMap hashMapToDataMap(HashMap<String, String> hashMap) {
@@ -289,13 +289,13 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
     public void put(String path, HashMap<String, String> payload, final OnPutListener listener) {
 
-        if (!isConnected()){
+        if (!isConnected()) {
 
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (listener != null)
-                        listener.onComplete(false);
+                        listener.onComplete(false, null);
                 }
             });
 
@@ -311,7 +311,7 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
             public void onResult(DataApi.DataItemResult result) {
 
                 if (listener != null)
-                    listener.onComplete(result.getStatus().isSuccess());
+                    listener.onComplete(result.getStatus().isSuccess(), putDataMapRequest.getUri());
 
             }
         });
@@ -319,25 +319,21 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
     }
 
-    public void remove(String path){
-        Wearable.DataApi.deleteDataItems(getClient(), Uri.parse(path));
+    public void delete(Uri uri) {
+        Wearable.DataApi.deleteDataItems(getClient(), uri);
     }
 
 
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
 
-//        ArrayList<DataEvent> events = new ArrayList<>();
-//
-//        for (DataEvent event : dataEventBuffer) {
-//            events.add(event);
-//        }
-//
-//        clearAndTriggerOnDataChangedListeners(events);
+        Log.d("rtemp", "onDataChanged_t begin");
 
         DataItem dataItem = null;
         DataMap dataMap = null;
         for (DataEvent event : dataEventBuffer) {
+
+            Log.d("rtemp", "onDataChanged_t loop");
 
             dataItem = event.getDataItem();
 
@@ -351,19 +347,24 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
             if (dataItem == null)
                 continue;
 
+            Log.d("rtemp", "onDataChanged_t passed dataItem");
+
             switch (event.getType()) {
 
                 case DataEvent.TYPE_CHANGED:
+                    Log.d("rtemp", "onDataChanged_t changed ");
                     triggerOnDataListeners(event.getDataItem().getUri().getPath(), dataMapToHashMap(dataMap), true);
                     break;
 
 
                 case DataEvent.TYPE_DELETED:
-                    triggerOnDataListeners(event.getDataItem().getUri().getPath(), dataMapToHashMap(dataMap), false);
+                    Log.d("rtemp", "onDataChanged_t del ");
+                    triggerOnDataListeners(event.getDataItem().getUri().getPath(), null, false);
                     break;
 
                 default:
                     // do nothing
+                    Log.d("rtemp", "onDataChanged_t do_nothing ");
                     break;
 
             }

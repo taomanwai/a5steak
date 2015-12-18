@@ -4,17 +4,14 @@ import android.app.Application;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
+import com.tommytao.a5steak.wear.DataLayerApiManager;
 
 
 /**
  * Created by taomanwai on 5/10/2015.
+ *
  */
 public class MainApp extends Application {
-
-
-
-
-
 
     private static Context context;
 
@@ -34,7 +31,7 @@ public class MainApp extends Application {
 
         context = this;
 
-
+        DataLayerApiManager.getInstance().init(this);
 
     }
 }

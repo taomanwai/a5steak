@@ -1,30 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context=".MainActivity">
+    android:layout_height="match_parent"
+    tools:context="com.tommytao.a5steak.sample.MainActivity"
+    tools:deviceIds="wear_round">
 
     <Button
         android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"/>
-
-    <Button
-        android:id="@+id/btnRemove"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Remove"
-        android:layout_below="@+id/btnSend"/>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="send"/>
 
     <TextView
         android:id="@+id/tvMsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="msg"
-        android:layout_below="@+id/btnRemove"/>
-
-
-
-
+        android:layout_centerHorizontal="true"
+        android:text="@string/hello_round"
+        android:layout_below="@+id/btnSend"/>
 </RelativeLayout>
