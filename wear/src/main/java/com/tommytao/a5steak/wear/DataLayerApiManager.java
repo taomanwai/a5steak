@@ -97,11 +97,11 @@ public class DataLayerApiManager extends Foundation implements GoogleApiClient.C
 
     }
 
-    public void addOnReceiveListener(OnDataListener listener) {
+    public void addOnDataListener(OnDataListener listener) {
         onDataListeners.add(listener);
     }
 
-    public boolean removeOnReceiveListener(OnDataListener listener) {
+    public boolean removeOnDataListener(OnDataListener listener) {
         return onDataListeners.remove(listener);
     }
 
