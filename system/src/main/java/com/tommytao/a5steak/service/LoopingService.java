@@ -1,4 +1,4 @@
-package com.tommytao.a5steak.alarm.service;
+package com.tommytao.a5steak.service;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

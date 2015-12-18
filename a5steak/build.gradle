@@ -48,7 +48,6 @@ dependencies {
     compile (project(':facebook'))
     compile (project(':network'))
     compile (project(':database'))
-    compile (project(':alarm'))
     compile (project(':sensor'))
     compile (project(':paypal'))
     compile (project(':misc'))
