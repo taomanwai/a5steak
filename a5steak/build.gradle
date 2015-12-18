@@ -44,7 +44,6 @@ dependencies {
     compile (project(':gson'))
     compile (project(':eventbus'))
     compile (project(':ux'))
-    compile (project(':bluetooth'))
     compile (project(':time'))
     compile (project(':facebook'))
     compile (project(':network'))
