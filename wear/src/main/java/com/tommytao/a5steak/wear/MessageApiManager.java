@@ -1,24 +1,31 @@
 package com.tommytao.a5steak.wear;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.android.volley.RequestQueue;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.CapabilityApi;
 import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import com.tommytao.a5steak.common.Foundation;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 /**
  * Created by tommytao on 16/12/2015.
  */
-public class MessageApiManager extends Foundation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class MessageApiManager extends Foundation
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, MessageApi.MessageListener, CapabilityApi.CapabilityListener {
     private static MessageApiManager instance = new MessageApiManager();
 
     public static MessageApiManager getInstance() {
@@ -30,7 +37,8 @@ public class MessageApiManager extends Foundation implements GoogleApiClient.Con
 
     // --
 
-    private static final String CAPABILITY_NAME = "message_api_manager_transcription";
+    private static final String CAPABILITY_NAME = "message_api_manager_capability_name";
+
 
     public static interface OnConnectListener {
 
@@ -38,46 +46,88 @@ public class MessageApiManager extends Foundation implements GoogleApiClient.Con
 
     }
 
-    private String transcriptionNodeId = "";
+    public static interface OnSendListener {
 
-    public String getTranscriptionNodeId() {
-        return transcriptionNodeId;
+        public void onComplete(boolean succeed);
+
     }
 
-    public void refreshTranscriptionNodeId() {
+    public static interface OnSearchNodeIdListener {
 
-        transcriptionNodeId = "";
+        public void onComplete(boolean succeed);
 
-        if (!isConnected())
+    }
+
+    public static interface OnMessageListener {
+
+        public void onReceive(String message);
+
+
+    }
+
+    private String lastKnownNodeId = "";
+
+    public String getLastKnownNodeId() {
+        return lastKnownNodeId;
+    }
+
+    public void searchNodeId(final OnSearchNodeIdListener listener) {
+
+
+        if (!isConnected()) {
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (listener != null)
+                        listener.onComplete(false);
+
+                }
+            });
+
             return;
+        }
 
-        Wearable.CapabilityApi.addCapabilityListener(
-                getClient(),
-                new CapabilityApi.CapabilityListener() {
-                    @Override
-                    public void onCapabilityChanged(CapabilityInfo capabilityInfo) {
-                        updateTranscriptionCapability(capabilityInfo);
-                    }
-                },
-                CAPABILITY_NAME);
+
+        new AsyncTask<Void, Void, CapabilityInfo>() {
+
+            @Override
+            protected CapabilityInfo doInBackground(Void... params) {
+                CapabilityApi.GetCapabilityResult result =
+                        Wearable.CapabilityApi.getCapability(
+                                getClient(), CAPABILITY_NAME,
+                                CapabilityApi.FILTER_REACHABLE).await();
+                return result.getCapability();
+            }
+
+            @Override
+            protected void onPostExecute(CapabilityInfo result) {
+                updateCapabilityInfo(result);
+
+                if (listener != null)
+                    listener.onComplete(!TextUtils.isEmpty(getLastKnownNodeId()));
+            }
+
+        }.executeOnExecutor(Executors.newCachedThreadPool());
+
+
     }
 
-    private void updateTranscriptionCapability(CapabilityInfo capabilityInfo) {
+    private void updateCapabilityInfo(CapabilityInfo capabilityInfo) {
         Set<Node> connectedNodes = capabilityInfo.getNodes();
 
-        transcriptionNodeId = pickBestNodeId(connectedNodes);
+        lastKnownNodeId = pickBestNodeId(connectedNodes);
     }
 
     private String pickBestNodeId(Set<Node> nodes) {
-        String bestNodeId = null;
         // Find a nearby node or pick one arbitrarily
         for (Node node : nodes) {
-            if (node.isNearby()) {
+            if (node.isNearby())
                 return node.getId();
-            }
-            bestNodeId = node.getId();
+//            bestNodeId = node.getId();
         }
-        return bestNodeId;
+        return "";
     }
 
 
@@ -179,8 +229,9 @@ public class MessageApiManager extends Foundation implements GoogleApiClient.Con
         if (!isConnected() && !isConnecting())
             return;
 
-
         getClient().disconnect();
+        Wearable.CapabilityApi.removeCapabilityListener(getClient(), this, CAPABILITY_NAME);
+        lastKnownNodeId = "";
 
         connected = false;
         clearAndOnUiThreadTriggerOnConnectListeners(false, "Forced disconnect outside " + MessageApiManager.class.getSimpleName());
@@ -204,6 +255,12 @@ public class MessageApiManager extends Foundation implements GoogleApiClient.Con
     public void onConnected(Bundle bundle) {
         connected = true;
 
+        Wearable.MessageApi.addListener(getClient(), this);
+        Wearable.CapabilityApi.addCapabilityListener(
+                getClient(),
+                this,
+                CAPABILITY_NAME);
+
         clearAndTriggerOnConnectListeners(true, "");
 
     }
@@ -220,17 +277,96 @@ public class MessageApiManager extends Foundation implements GoogleApiClient.Con
 
     }
 
+    // == OnMessageListener ==
+
+    private ArrayList<OnMessageListener> onMessageListeners = new ArrayList<>();
+
+    private void triggerOnMessageListeners(final String message) {
+
+        final ArrayList<OnMessageListener> pendingListeners = new ArrayList<>(onMessageListeners);
+
+        if (pendingListeners.isEmpty())
+            return;
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (OnMessageListener pendingListener : pendingListeners) {
+                    if (pendingListener != null) {
+                        pendingListener.onReceive(message);
+                    }
+                }
+            }
+        });
+
+    }
+
+    public void addOnMessageListener(OnMessageListener listener) {
+        onMessageListeners.add(listener);
+    }
+
+    public boolean removeOnMessageListener(OnMessageListener listener) {
+        return onMessageListeners.remove(listener);
+    }
+
+
+    // == End of OnMessageChangedListener ==
+
     // --
 
+    public void send(final String message, final OnSendListener listener) {
+
+        if (TextUtils.isEmpty(getLastKnownNodeId())) {
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (listener != null)
+                        listener.onComplete(false);
+
+                }
+            });
+
+            return;
+        }
+
+        Wearable.MessageApi.sendMessage(getClient(), getLastKnownNodeId(),
+                "/" + CAPABILITY_NAME, message.getBytes()).setResultCallback(
+                new ResultCallback<MessageApi.SendMessageResult>() {
+
+                    @Override
+                    public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+
+                        if (listener != null)
+                            listener.onComplete(sendMessageResult.getStatus().isSuccess());
+
+                    }
+                }
+        );
+
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+
+        if (!("/" + CAPABILITY_NAME).equals(messageEvent.getPath())) {
+            return;
+        }
+
+        String message = new String(messageEvent.getData());
+
+        triggerOnMessageListeners(message);
 
 
+    }
 
+    @Override
+    public void onCapabilityChanged(CapabilityInfo capabilityInfo) {
 
+        updateCapabilityInfo(capabilityInfo);
 
-
-
-
-
+    }
 
 
 }

@@ -8,19 +8,20 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 
+
     <application
         android:name=".MainApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name">
 
-        <!-- <meta-data -->
-        <!-- android:name="com.google.android.gms.version" -->
-        <!-- android:value="@integer/google_play_services_version" /> -->
-        <!-- <meta-data -->
-        <!-- android:name="com.google.android.maps.v2.API_KEY" -->
-        <!-- android:value="AIzaSyCR6yc8A6SsdjoyfJWf3hNgQVKCPERg-aY" /> -->
-        <!-- <uses-library android:name="com.google.android.maps"/> -->
+         <meta-data
+         android:name="com.google.android.gms.version"
+         android:value="@integer/google_play_services_version" />
+         <meta-data
+         android:name="com.google.android.maps.v2.API_KEY"
+         android:value="AIzaSyCR6yc8A6SsdjoyfJWf3hNgQVKCPERg-aY" />
+         <uses-library android:name="com.google.android.maps"/>
 
         <activity
             android:name=".MainActivity"

@@ -1,73 +1,74 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
+
+import com.google.android.gms.maps.MapsInitializer;
+import com.tommytao.a5steak.gmapinteractive.NavMapView;
+import com.tommytao.a5steak.misc.Encyclopedia;
+
+import java.util.Locale;
 
 
 public class MainActivity extends Activity {
 
-
-    private Button btnSend, btnRemove;
-    private TextView tvMsg;
-
-    Uri uri;
+    NavMapView mapView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        btnSend = (Button) findViewById(R.id.btnSend);
-//        btnRemove = (Button) findViewById(R.id.btnRemove);
-//
-//
-//        tvMsg = (TextView) findViewById(R.id.tvMsg);
-//
-//        DataLayerApiManager.getInstance().connect(new DataLayerApiManager.OnConnectListener() {
-//            @Override
-//            public void onConnected(boolean succeed, String errMsg) {
-//                tvMsg.setText("connect_t: " + succeed);
-//            }
-//        });
-//
-//        btnSend.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                HashMap<String, String> h = new HashMap<String, String>();
-//                h.put("content", "hehe " + System.currentTimeMillis());
-//                DataLayerApiManager.getInstance().put("/data", h, new DataLayerApiManager.OnPutListener() {
-//                    @Override
-//                    public void onComplete(boolean succeed, Uri uri) {
-//                        if (succeed) {
-//                            tvMsg.setText("send: " + succeed);
-//
-//                            MainActivity.this.uri = uri;
-//                        }
-//                    }
-//                });
-//
-//            }
-//        });
-//
-//        btnRemove.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                DataLayerApiManager.getInstance().delete(uri);
-//            }
-//        });
+
+        mapView = (NavMapView) findViewById(R.id.mapView);
+
+        mapView.onCreate(savedInstanceState);
+        MapsInitializer.initialize(this);
 
 
+//        RotationVectorSensor.getInstance().init(this);
+//        RotationVectorSensor.getInstance().connect();
+
+        mapView.connectNavigation(new NavMapView.OnConnectListener() {
+            @Override
+            public void onConnected(boolean succeed) {
+                mapView.startNavigation(Encyclopedia.HKSIL_LAT, Encyclopedia.HKSIL_LNG, "", new Locale("zh", "HK"), null);
+            }
+        });
 
 
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
 
+    @Override
+    protected void onPause() {
+        mapView.onPause();
+        super.onPause();
+    }
 
+    @Override
+    protected void onDestroy() {
+        mapView.onDestroy();
+        super.onDestroy();
+    }
 
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
 
+        mapView.onLowMemory();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mapView.onSaveInstanceState(outState);
+    }
 }

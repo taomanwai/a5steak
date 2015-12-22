@@ -3,14 +3,13 @@ package com.tommytao.a5steak.sample;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.tommytao.a5steak.wear.DataLayerApiManager;
+import com.tommytao.a5steak.wear.MessageApiManager;
 
-import java.util.HashMap;
-
-public class MainActivity extends Activity implements DataLayerApiManager.OnDataListener {
+public class MainActivity extends Activity implements MessageApiManager.OnMessageListener{
     Button btnSend;
 
     private TextView tvMsg;
@@ -20,7 +19,7 @@ public class MainActivity extends Activity implements DataLayerApiManager.OnData
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DataLayerApiManager.getInstance().init(this);
+        MessageApiManager.getInstance().init(this);
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -28,6 +27,18 @@ public class MainActivity extends Activity implements DataLayerApiManager.OnData
             public void onLayoutInflated(WatchViewStub stub) {
                 tvMsg = (TextView) stub.findViewById(R.id.tvMsg);
                 btnSend = (Button) stub.findViewById(R.id.btnSend);
+
+                btnSend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MessageApiManager.getInstance().send("hello", new MessageApiManager.OnSendListener() {
+                            @Override
+                            public void onComplete(boolean succeed) {
+                                tvMsg.setText("send: " + succeed);
+                            }
+                        });
+                    }
+                });
 
 
             }
@@ -39,15 +50,26 @@ public class MainActivity extends Activity implements DataLayerApiManager.OnData
     protected void onResume() {
         super.onResume();
 
-        DataLayerApiManager.getInstance().connect(new DataLayerApiManager.OnConnectListener() {
+        MessageApiManager.getInstance().connect(new MessageApiManager.OnConnectListener() {
             @Override
             public void onConnected(boolean succeed, String errMsg) {
-                tvMsg.setText("connect " + succeed );
+
+                tvMsg.setText("connect: " + succeed);
 
                 if (!succeed)
                     return;
 
-                DataLayerApiManager.getInstance().addOnDataListener(MainActivity.this);
+                MessageApiManager.getInstance().searchNodeId(new MessageApiManager.OnSearchNodeIdListener() {
+                    @Override
+                    public void onComplete(boolean succeed) {
+
+                        tvMsg.setText("search id: " + succeed);
+                        MessageApiManager.getInstance().addOnMessageListener(MainActivity.this);
+                    }
+                });
+
+
+
 
             }
         });
@@ -56,32 +78,18 @@ public class MainActivity extends Activity implements DataLayerApiManager.OnData
     @Override
     protected void onPause() {
 
-        DataLayerApiManager.getInstance().removeOnDataListener(MainActivity.this);
-        DataLayerApiManager.getInstance().disconnect();
+        MessageApiManager.getInstance().removeOnMessageListener(MainActivity.this);
+        MessageApiManager.getInstance().disconnect();
 
         super.onPause();
     }
 
-    @Override
-    public void onChanged(String path, HashMap<String, String> data) {
 
-        String content = "";
-        try{
-
-            content = data.get("content");
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        tvMsg.setText("change " + path + " " + content);
-
-    }
 
     @Override
-    public void onDeleted(String path) {
+    public void onReceive(String message) {
 
-
-        tvMsg.setText("del path: " + path);
+        tvMsg.setText("recv: " + message + " ");
 
     }
 }

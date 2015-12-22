@@ -57,10 +57,7 @@ public class GyroSensor extends Foundation implements SensorEventListener {
         return super.removeOnReadingChangeListener(onReadingChangeListener);
     }
 
-    @Override
-    public double getLastKnownMagnitude() {
-        return super.getLastKnownMagnitude();
-    }
+
 
     public void connect() {
         super.connect();
@@ -94,6 +91,7 @@ public class GyroSensor extends Foundation implements SensorEventListener {
     }
 
     // --
+
 
     public float getLastKnownDeltaRotationX() {
         return super.getLastKnownX();

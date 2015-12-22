@@ -28,9 +28,7 @@ import com.tommytao.a5steak.glocation.LocationFusedSensor;
 import com.tommytao.a5steak.gmapwebservice.DirectionsApiManager;
 import com.tommytao.a5steak.gspeech.TextSpeaker;
 import com.tommytao.a5steak.misc.MathManager;
-import com.tommytao.a5steak.sensor.GSensor;
-import com.tommytao.a5steak.sensor.MagneticSensor;
-import com.tommytao.a5steak.sensor.analyzer.OrientationAnalyzer;
+import com.tommytao.a5steak.sensor.RotationVectorSensor;
 import com.tommytao.a5steak.sensor.support.DataProcessor;
 
 import java.lang.ref.WeakReference;
@@ -63,6 +61,7 @@ import java.util.Locale;
  * onCreate()
  * mapView.onCreate(savedInstanceState)
  * MapsInitializer.initialize(activity);
+ *
  * onResume()
  * super.onResume();
  * mapView.onResume();
@@ -159,8 +158,9 @@ public class NavMapView extends MapView {
 
             if (!succeed) {
 
-                GSensor.getInstance().disconnect();
-                MagneticSensor.getInstance().disconnect();
+//                GSensor.getInstance().disconnect();
+//                MagneticSensor.getInstance().disconnect();
+                RotationVectorSensor.getInstance().disconnect();
                 LocationFusedSensor.getInstance().disconnect();
                 TextSpeaker.getInstance().disconnect();
 
@@ -1147,20 +1147,23 @@ public class NavMapView extends MapView {
 
     private double getProcessedRotation(boolean fitToRouteAndFilter) {
 
-        float gX = GSensor.getInstance().getLastKnownX();
-        float gY = GSensor.getInstance().getLastKnownY();
-        float gZ = GSensor.getInstance().getLastKnownZ();
-
-        float mX = MagneticSensor.getInstance().getLastKnownXInuT();
-        float mY = MagneticSensor.getInstance().getLastKnownYInuT();
-        float mZ = MagneticSensor.getInstance().getLastKnownZInuT();
-
-        OrientationAnalyzer.OrientationAnalyzed orientationAnalyzed = OrientationAnalyzer.getInstance().calculateYawPitchRoll(gX, gY, gZ, mX, mY, mZ);
+//        float gX = GSensor.getInstance().getLastKnownX();
+//        float gY = GSensor.getInstance().getLastKnownY();
+//        float gZ = GSensor.getInstance().getLastKnownZ();
+//
+//        float mX = MagneticSensor.getInstance().getLastKnownXInuT();
+//        float mY = MagneticSensor.getInstance().getLastKnownYInuT();
+//        float mZ = MagneticSensor.getInstance().getLastKnownZInuT();
+//
+//        OrientationAnalyzer.OrientationAnalyzed orientationAnalyzed = OrientationAnalyzer.getInstance().calculateYawPitchRoll(gX, gY, gZ, mX, mY, mZ);
+//
+//        double rotation = Double.NaN;
+//        if (orientationAnalyzed != null) {
+//            rotation = orientationAnalyzed.getYaw();
+//        }
 
         double rotation = Double.NaN;
-        if (orientationAnalyzed != null) {
-            rotation = orientationAnalyzed.getYaw();
-        }
+        rotation = RotationVectorSensor.getInstance().getLastKnownYaw();
 
         // replace yaw with road yaw ?
         if (fitToRouteAndFilter && route != null)
@@ -1330,10 +1333,12 @@ public class NavMapView extends MapView {
     private void init() {
         DirectionsApiManager.getInstance().init(getContext(), Volley.newRequestQueue(getContext(), new Foundation.OkHttpStack()), clientIdForWork, cryptoForWork);
         LocationFusedSensor.getInstance().init(getContext());
-        GSensor.getInstance().init(getContext());
-        MagneticSensor.getInstance().init(getContext());
-        OrientationAnalyzer.getInstance().init(getContext());
+//        GSensor.getInstance().init(getContext());
+//        MagneticSensor.getInstance().init(getContext());
+        RotationVectorSensor.getInstance().init(getContext());
+//        OrientationAnalyzer.getInstance().init(getContext());
         TextSpeaker.getInstance().init(getContext());
+
     }
 
 
@@ -1364,8 +1369,9 @@ public class NavMapView extends MapView {
         onConnectListeners.add(onConnectListener);
 
 
-        GSensor.getInstance().connect();
-        MagneticSensor.getInstance().connect();
+//        GSensor.getInstance().connect();
+//        MagneticSensor.getInstance().connect();
+        RotationVectorSensor.getInstance().connect();
         final ArrayList<Integer> numOfConnections = new ArrayList<>();
         numOfConnections.add(0);
         numOfConnections.add(1);
@@ -1390,7 +1396,7 @@ public class NavMapView extends MapView {
     }
 
     /**
-     * Stop NavMapView, then disconnect IO resources (i.e. GSensor, MagneticSensor, LocationFusedSensor, TextSpeaker) used by NavMapView (if disconnectIo is true)
+     * Stop NavMapView, then disconnect IO resources (i.e. RotationVectorSensor, LocationFusedSensor, TextSpeaker) used by NavMapView (if disconnectIo is true)
      * <p/>
      * Note: If disconnectIo is false, it is programmers responsibility to disconnect related IO resources at appropriate time.
      *
@@ -1413,8 +1419,9 @@ public class NavMapView extends MapView {
 
         connectedNavigation = false;
         if (disconnectIo) {
-            GSensor.getInstance().disconnect();
-            MagneticSensor.getInstance().disconnect();
+//            GSensor.getInstance().disconnect();
+//            MagneticSensor.getInstance().disconnect();
+            RotationVectorSensor.getInstance().disconnect();
             LocationFusedSensor.getInstance().disconnect();
             TextSpeaker.getInstance().disconnect();
         }
@@ -1661,8 +1668,9 @@ public class NavMapView extends MapView {
         if (!isStartedNavigation())
             return;
 
-        GSensor.getInstance().connect();
-        MagneticSensor.getInstance().connect();
+//        GSensor.getInstance().connect();
+//        MagneticSensor.getInstance().connect();
+        RotationVectorSensor.getInstance().connect();
         // LocationFusedSensor and TextSpeaker may not be fully connected,
         // but it is Ok!
         // Coz getLastKnownLocation() must not be null (coz checked in startNavigation) and
@@ -1702,8 +1710,9 @@ public class NavMapView extends MapView {
 
         disableFrameUpdate();
 
-        GSensor.getInstance().disconnect();
-        MagneticSensor.getInstance().disconnect();
+//        GSensor.getInstance().disconnect();
+//        MagneticSensor.getInstance().disconnect();
+        RotationVectorSensor.getInstance().disconnect();
         LocationFusedSensor.getInstance().disconnect();
         TextSpeaker.getInstance().disconnect();
 

@@ -51,11 +51,6 @@ public class OrientationSensor extends Foundation implements SensorEventListener
         return super.removeOnReadingChangeListener(onReadingChangeListener);
     }
 
-    @Override
-    public double getLastKnownMagnitude() {
-        return super.getLastKnownMagnitude();
-    }
-
     public void connect() {
         super.connect();
     }
@@ -96,7 +91,6 @@ public class OrientationSensor extends Foundation implements SensorEventListener
     public float getLastKnownYaw() {
         return super.getLastKnownX();
     }
-
 
     public float getLastKnownPitch() {
         return super.getLastKnownY();

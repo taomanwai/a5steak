@@ -52,10 +52,7 @@ public class GSensor extends Foundation implements SensorEventListener {
         return super.removeOnReadingChangeListener(onReadingChangeListener);
     }
 
-    @Override
-    public double getLastKnownMagnitude() {
-        return super.getLastKnownMagnitude();
-    }
+
 
     public void connect() {
         super.connect();
@@ -93,6 +90,10 @@ public class GSensor extends Foundation implements SensorEventListener {
 
     // --
 
+    @Override
+    public double getLastKnownMagnitude() {
+        return super.getLastKnownMagnitude();
+    }
 
     @Override
     public float getLastKnownX() {

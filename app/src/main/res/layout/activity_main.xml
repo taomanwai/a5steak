@@ -4,25 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btnSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"/>
 
-    <Button
-        android:id="@+id/btnRemove"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Remove"
-        android:layout_below="@+id/btnSend"/>
-
-    <TextView
-        android:id="@+id/tvMsg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="msg"
-        android:layout_below="@+id/btnRemove"/>
+    <com.tommytao.a5steak.gmapinteractive.NavMapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 
 

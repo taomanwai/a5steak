@@ -6,6 +6,7 @@ import android.content.Context;
 import com.android.volley.RequestQueue;
 
 
+
 /**
  * Created by taomanwai on 5/10/2015.
  *
@@ -31,6 +32,8 @@ public class MainApp extends Application {
         context = this;
 
 //        DataLayerApiManager.getInstance().init(this);
+//
+//        MessageApiManager.getInstance().init(this);
 
     }
 }

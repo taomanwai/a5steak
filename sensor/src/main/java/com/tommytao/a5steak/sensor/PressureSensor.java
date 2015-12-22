@@ -52,10 +52,7 @@ public class PressureSensor extends Foundation implements SensorEventListener {
         return super.removeOnReadingChangeListener(onReadingChangeListener);
     }
 
-    @Override
-    public double getLastKnownMagnitude() {
-        return super.getLastKnownMagnitude();
-    }
+
 
     public void connect() {
         super.connect();
@@ -89,6 +86,7 @@ public class PressureSensor extends Foundation implements SensorEventListener {
     }
 
     // --
+
 
     public float getPressureInMBar(){
         return super.getLastKnownX();

@@ -50,11 +50,6 @@ public class ProximitySensor extends Foundation implements SensorEventListener {
         return super.removeOnReadingChangeListener(onReadingChangeListener);
     }
 
-    @Override
-    public double getLastKnownMagnitude() {
-        return super.getLastKnownMagnitude();
-    }
-
     public void connect() {
         super.connect();
     }
@@ -86,6 +81,7 @@ public class ProximitySensor extends Foundation implements SensorEventListener {
     }
 
     // --
+
 
 
     public boolean getLastKnownProximity() {
