@@ -35,7 +35,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
     private final float thumbWidth = thumbImage.getWidth();
     private final float thumbHalfWidth = 0.5f * thumbWidth;
     private final float thumbHalfHeight = 0.5f * thumbImage.getHeight();
-    private final float lineHeight = 0.3f * thumbHalfHeight;
+    private final float lineHeight = 0.05f * thumbHalfHeight; // 0.3f
     private final float padding = thumbHalfWidth;
     private final T absoluteMinValue, absoluteMaxValue;
     private final NumberType numberType;
@@ -365,19 +365,20 @@ public class RangeSeekBar<T extends Number> extends ImageView {
         super.onDraw(canvas);
 
         // draw seek bar background line
-        final RectF rect = new RectF(padding, 0.5f * (getHeight() - lineHeight), getWidth() - padding, 0.5f * (getHeight() + lineHeight));
+        final RectF rectUnselected = new RectF(padding, 0.5f * (getHeight() - lineHeight), getWidth() - padding, 0.5f * (getHeight() + lineHeight));
+        final RectF rectSelected = new RectF(padding, 0.5f * (getHeight() - lineHeight * 3), getWidth() - padding, 0.5f * (getHeight() + lineHeight * 3));
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.GRAY);
+        paint.setColor(Color.parseColor("#DDDDDD")); // Color.GRAY
         paint.setAntiAlias(true);
-        canvas.drawRect(rect, paint);
+        canvas.drawRect(rectUnselected, paint);
 
         // draw seek bar active range line
-        rect.left = normalizedToScreen(normalizedMinValue);
-        rect.right = normalizedToScreen(normalizedMaxValue);
+        rectSelected.left = normalizedToScreen(normalizedMinValue); // rectUnselected
+        rectSelected.right = normalizedToScreen(normalizedMaxValue); // rectUnselected
 
         // orange color
         paint.setColor(DEFAULT_COLOR);
-        canvas.drawRect(rect, paint);
+        canvas.drawRect(rectSelected, paint);
 
         // draw minimum thumb
         drawThumb(normalizedToScreen(normalizedMinValue), Thumb.MIN.equals(pressedThumb), canvas);

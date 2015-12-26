@@ -2,8 +2,10 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.MapsInitializer;
+import com.tommytao.a5steak.customview.RangeSeekBar;
 import com.tommytao.a5steak.gmapinteractive.NavMapView;
 import com.tommytao.a5steak.misc.Encyclopedia;
 
@@ -14,6 +16,10 @@ public class MainActivity extends Activity {
 
     NavMapView mapView;
 
+    RelativeLayout rlRangeBarPrice;
+
+    RangeSeekBar<Integer> seekBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,8 +28,25 @@ public class MainActivity extends Activity {
 
         mapView = (NavMapView) findViewById(R.id.mapView);
 
+        rlRangeBarPrice = (RelativeLayout) findViewById(R.id.rlRangeBarPrice);
+
+        seekBar = new RangeSeekBar<Integer>(1, 100, this);
+        seekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+            @Override
+            public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+
+            }
+        });
+
+
+        rlRangeBarPrice.addView(seekBar);
+
         mapView.onCreate(savedInstanceState);
         MapsInitializer.initialize(this);
+
+
+
+
 
 
 //        RotationVectorSensor.getInstance().init(this);

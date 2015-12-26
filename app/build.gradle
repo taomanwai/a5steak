@@ -51,6 +51,7 @@ dependencies {
     compile project(':sensor')
 
     compile project(':gmapinteractive')
+    compile project(':customview')
 
     compile project(':misc')
 
