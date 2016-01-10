@@ -1,97 +1,95 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.widget.RelativeLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.MapsInitializer;
-import com.tommytao.a5steak.customview.RangeSeekBar;
-import com.tommytao.a5steak.gmapinteractive.NavMapView;
-import com.tommytao.a5steak.misc.Encyclopedia;
-
-import java.util.Locale;
+import com.tommytao.a5steak.customview.PullToSearchListView;
 
 
 public class MainActivity extends Activity {
 
-    NavMapView mapView;
+    public class MainAdapter extends BaseAdapter {
 
-    RelativeLayout rlRangeBarPrice;
+        private Context context;
 
-    RangeSeekBar<Integer> seekBar;
+        public MainAdapter(Context context) {
+
+            this.context = context;
+        }
+
+        @Override
+        public int getCount() {
+            return 30;
+        }
+
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            if (convertView==null){
+                convertView = LayoutInflater.from(context).inflate(R.layout.listitem_main, null);
+            }
+
+            return convertView;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+    }
+
+    private PullToSearchListView plvQuery;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        plvQuery = (PullToSearchListView) findViewById(R.id.plvQuery);
 
-        mapView = (NavMapView) findViewById(R.id.mapView);
+        plvQuery.setAdapter(new MainAdapter(this));
 
-        rlRangeBarPrice = (RelativeLayout) findViewById(R.id.rlRangeBarPrice);
-
-        seekBar = new RangeSeekBar<Integer>(1, 100, this);
-        seekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+        plvQuery.addHeaderEditTextTextChangedListener(new TextWatcher() {
             @Override
-            public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Toast.makeText(MainActivity.this, plvQuery.getHeaderEditText().getText().toString(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
 
             }
         });
 
 
-        rlRangeBarPrice.addView(seekBar);
-
-        mapView.onCreate(savedInstanceState);
-        MapsInitializer.initialize(this);
 
 
 
-
-
-
-//        RotationVectorSensor.getInstance().init(this);
-//        RotationVectorSensor.getInstance().connect();
-
-        mapView.connectNavigation(new NavMapView.OnConnectListener() {
-            @Override
-            public void onConnected(boolean succeed) {
-                mapView.startNavigation(Encyclopedia.HKSIL_LAT, Encyclopedia.HKSIL_LNG, "", new Locale("zh", "HK"), null);
-            }
-        });
 
 
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mapView.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        mapView.onPause();
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        mapView.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-
-        mapView.onLowMemory();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        mapView.onSaveInstanceState(outState);
-    }
 }

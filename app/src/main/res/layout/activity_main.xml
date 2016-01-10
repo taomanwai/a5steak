@@ -5,24 +5,10 @@
     android:layout_height="match_parent" tools:context=".MainActivity">
 
 
-    <com.tommytao.a5steak.gmapinteractive.NavMapView
-        android:id="@+id/mapView"
+    <com.tommytao.a5steak.customview.PullToSearchListView
+        android:id="@+id/plvQuery"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
-
-    <RelativeLayout
-        android:id="@+id/rlRangeBarPrice"
-        android:layout_width="match_parent"
-        android:layout_height="33dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="8dp"
-        android:visibility="visible"/>
-
-
-
-
+        android:layout_height="match_parent"/>
 
 
 </RelativeLayout>

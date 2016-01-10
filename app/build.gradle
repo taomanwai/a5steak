@@ -39,8 +39,6 @@ dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    wearApp project(':appwear')
-
     testCompile 'junit:junit:4.12'
 
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
@@ -48,12 +46,7 @@ dependencies {
 
     compile 'com.android.support:appcompat-v7:22.1.1'
 
-    compile project(':sensor')
-
-    compile project(':gmapinteractive')
     compile project(':customview')
-
-    compile project(':misc')
 
 
 }
