@@ -110,6 +110,7 @@ public class PullToSearchListView extends ListView {
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 
+
 //        if (latestY == -1){
 //            ev.getRawY();
 //        }
@@ -134,8 +135,6 @@ public class PullToSearchListView extends ListView {
 //
 //                break;
 //        }
-
-
 
         return super.onTouchEvent(ev);
     }
