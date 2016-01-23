@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -43,9 +44,11 @@ public class PullToSearchListView extends ListView {
 
             RelativeLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 
-            lp.addRule(RelativeLayout.CENTER_VERTICAL);
+//            lp.addRule(RelativeLayout.CENTER_VERTICAL);
 
             editText.setLayoutParams(lp);
+
+            editText.setVisibility(View.GONE);
 
             this.addView(editText);
 
