@@ -48,7 +48,9 @@ public class PullToSearchListView extends ListView {
 
             editText.setLayoutParams(lp);
 
-            editText.setVisibility(View.GONE);
+//            editText.setVisibility(View.GONE);
+
+            editText.setSingleLine(true);
 
             this.addView(editText);
 
