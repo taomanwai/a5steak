@@ -3,9 +3,9 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="1.8" />
+        <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle/gradle-2.14.1" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -38,38 +38,7 @@
             <option value="$PROJECT_DIR$/wear" />
           </set>
         </option>
-        <option name="myModules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/a5steak" />
-            <option value="$PROJECT_DIR$/ai" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/appwear" />
-            <option value="$PROJECT_DIR$/base" />
-            <option value="$PROJECT_DIR$/customview" />
-            <option value="$PROJECT_DIR$/database" />
-            <option value="$PROJECT_DIR$/eventbus" />
-            <option value="$PROJECT_DIR$/facebook" />
-            <option value="$PROJECT_DIR$/gcm" />
-            <option value="$PROJECT_DIR$/glocation" />
-            <option value="$PROJECT_DIR$/gmap" />
-            <option value="$PROJECT_DIR$/gmapinteractive" />
-            <option value="$PROJECT_DIR$/gmapwebservice" />
-            <option value="$PROJECT_DIR$/gplay" />
-            <option value="$PROJECT_DIR$/gplus" />
-            <option value="$PROJECT_DIR$/gson" />
-            <option value="$PROJECT_DIR$/gspeech" />
-            <option value="$PROJECT_DIR$/gvision" />
-            <option value="$PROJECT_DIR$/misc" />
-            <option value="$PROJECT_DIR$/network" />
-            <option value="$PROJECT_DIR$/paypal" />
-            <option value="$PROJECT_DIR$/sensor" />
-            <option value="$PROJECT_DIR$/system" />
-            <option value="$PROJECT_DIR$/time" />
-            <option value="$PROJECT_DIR$/ux" />
-            <option value="$PROJECT_DIR$/wear" />
-          </set>
-        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
