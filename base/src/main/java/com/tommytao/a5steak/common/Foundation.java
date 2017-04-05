@@ -10,6 +10,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Html;
@@ -2098,6 +2099,11 @@ public class Foundation implements SensorEventListener {
         requestQueue.start();
 
         return requestQueue;
+    }
+
+    // == DeviceInfoManager ==
+    protected  int getAndroidApiLevel() {
+        return Build.VERSION.SDK_INT;
     }
 
     // == GSON ==

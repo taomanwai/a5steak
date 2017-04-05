@@ -1,5 +1,7 @@
 package com.tommytao.a5steak.misc;
 
+import android.annotation.TargetApi;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -12,8 +14,11 @@ import android.graphics.Picture;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.PictureDrawable;
+import android.graphics.pdf.PdfRenderer;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.widget.ImageView;
 
@@ -689,6 +694,55 @@ public class BitmapManager extends Foundation {
                 + cacheFile, options);
 
         bitmap.setHasAlpha(true);
+        return bitmap;
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public Bitmap loadPdf(File pdfFile, int pageIndex, int width, int height){
+
+        if (getAndroidApiLevel() < 21){
+            return null;
+        }
+
+        ParcelFileDescriptor fd = null;
+        Uri uri = null;
+        ContentResolver contentResolver = appContext.getContentResolver();
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);;
+
+        try {
+            uri = Uri.fromFile(pdfFile);
+            fd = contentResolver.openFileDescriptor(uri, "r");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // create a new renderer
+        PdfRenderer renderer = null;
+        try {
+            renderer = new PdfRenderer(fd);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // let us just render all pages
+        final int pageCount = renderer.getPageCount();
+
+        if (pageIndex >= pageCount){
+            return null;
+        }
+
+        PdfRenderer.Page page = renderer.openPage(pageIndex);
+
+        // say we render for showing on the screen
+        page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+
+        // close the page
+        page.close();
+
+        // close the renderer
+        renderer.close();
+
         return bitmap;
 
     }

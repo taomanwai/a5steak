@@ -154,8 +154,10 @@ public class DeviceInfoManager extends Foundation {
 
     }
 
+
+    @Override
     public int getAndroidApiLevel() {
-        return Build.VERSION.SDK_INT;
+        return super.getAndroidApiLevel();
     }
 
     public int getStatusBarHeight(Activity activity) {
