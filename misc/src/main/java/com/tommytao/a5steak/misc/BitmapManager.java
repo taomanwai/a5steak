@@ -699,16 +699,17 @@ public class BitmapManager extends Foundation {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public Bitmap loadPdf(File pdfFile, int pageIndex, int width, int height){
+    public Bitmap loadPdf(File pdfFile, int pageIndex,
+                          int specificWidth, int specificHeight){
 
-        if (getAndroidApiLevel() < 21){
+        if (getAndroidApiLevel() < Build.VERSION_CODES.LOLLIPOP){ // i.e. 21
             return null;
         }
 
         ParcelFileDescriptor fd = null;
         Uri uri = null;
         ContentResolver contentResolver = appContext.getContentResolver();
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);;
+        Bitmap bitmap = Bitmap.createBitmap(specificWidth, specificHeight, Bitmap.Config.ARGB_4444);;
 
         try {
             uri = Uri.fromFile(pdfFile);

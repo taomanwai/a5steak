@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.tommytao.a5steak.customview.PullToSearchListView;
@@ -55,6 +56,7 @@ public class MainActivity extends Activity {
 
     private PullToSearchListView plvQuery;
 
+    private ImageView iv_Test;
 
 
 
@@ -63,9 +65,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        iv_Test = (ImageView) findViewById(R.id.iv_Test);
+
         DeviceInfoManager.getInstance().init(this);
 
-        String id = DeviceInfoManager.getInstance().getDeviceId();
 
 
 
