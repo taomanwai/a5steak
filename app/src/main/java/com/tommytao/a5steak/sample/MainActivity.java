@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.Toast;
 
 import com.tommytao.a5steak.customview.PullToSearchListView;
+import com.tommytao.a5steak.system.DeviceInfoManager;
 
 
 public class MainActivity extends Activity {
@@ -61,6 +62,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DeviceInfoManager.getInstance().init(this);
+
+        String id = DeviceInfoManager.getInstance().getDeviceId();
+
+
 
         plvQuery = (PullToSearchListView) findViewById(R.id.plvQuery);
 

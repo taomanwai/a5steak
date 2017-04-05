@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Build;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -46,8 +47,16 @@ public class DeviceInfoManager extends Foundation {
     public String getDeviceId() {
 
         if (deviceId.isEmpty()) {
-            TelephonyManager tm = (TelephonyManager) appContext.getSystemService(Context.TELEPHONY_SERVICE);
-            deviceId = tm.getDeviceId() + "-" + android.os.Build.SERIAL;
+
+            try {
+                TelephonyManager tm = (TelephonyManager) appContext.getSystemService(Context.TELEPHONY_SERVICE);
+                deviceId = tm.getDeviceId() + "-" + android.os.Build.SERIAL;
+            } catch (Exception e){
+                e.printStackTrace();
+                deviceId = Settings.Secure.getString(appContext.getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+            }
+
         }
 
         return deviceId;
