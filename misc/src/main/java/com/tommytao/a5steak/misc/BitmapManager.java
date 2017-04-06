@@ -66,6 +66,13 @@ public class BitmapManager extends Foundation {
 
     }
 
+    public static interface OnLoadPdfListener {
+
+        public void onComplete(Bitmap bitmap);
+
+
+    }
+
     public final static String VERSION_NO = "001";
 
     @Override
@@ -698,53 +705,77 @@ public class BitmapManager extends Foundation {
 
     }
 
+    private void triggerOnLoadPdfListener(final OnLoadPdfListener listener, final Bitmap bitmap){
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onComplete(bitmap);
+            }
+        });
+    }
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public Bitmap loadPdf(File pdfFile, int pageIndex,
-                          int specificWidth, int specificHeight){
+    public void loadPdf(final File pdfFile, final int pageIndex,
+                        final int specificWidth, final int specificHeight, final OnLoadPdfListener listener){
 
         if (getAndroidApiLevel() < Build.VERSION_CODES.LOLLIPOP){ // i.e. 21
-            return null;
+            triggerOnLoadPdfListener(listener, null);
+            return;
         }
 
-        ParcelFileDescriptor fd = null;
-        Uri uri = null;
-        ContentResolver contentResolver = appContext.getContentResolver();
-        Bitmap bitmap = Bitmap.createBitmap(specificWidth, specificHeight, Bitmap.Config.ARGB_4444);;
+        new Thread(){
 
-        try {
-            uri = Uri.fromFile(pdfFile);
-            fd = contentResolver.openFileDescriptor(uri, "r");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            public void run(){
 
-        // create a new renderer
-        PdfRenderer renderer = null;
-        try {
-            renderer = new PdfRenderer(fd);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                ParcelFileDescriptor fd = null;
+                Uri uri = null;
+                ContentResolver contentResolver = appContext.getContentResolver();
+                Bitmap bitmap = Bitmap.createBitmap(specificWidth, specificHeight, Bitmap.Config.ARGB_4444);
 
-        // let us just render all pages
-        final int pageCount = renderer.getPageCount();
+                try {
+                    uri = Uri.fromFile(pdfFile);
+                    fd = contentResolver.openFileDescriptor(uri, "r");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-        if (pageIndex >= pageCount){
-            return null;
-        }
+                if (uri == null){
+                    triggerOnLoadPdfListener(listener, null);
+                }
 
-        PdfRenderer.Page page = renderer.openPage(pageIndex);
+                // create a new renderer
+                PdfRenderer renderer = null;
+                try {
+                    renderer = new PdfRenderer(fd);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-        // say we render for showing on the screen
-        page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+                // let us just render all pages
+                final int pageCount = renderer.getPageCount();
 
-        // close the page
-        page.close();
+                if (pageIndex >= pageCount){
+                    triggerOnLoadPdfListener(listener, null);
+                }
 
-        // close the renderer
-        renderer.close();
+                PdfRenderer.Page page = renderer.openPage(pageIndex);
 
-        return bitmap;
+                // say we render for showing on the screen
+                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+
+                // close the page
+                page.close();
+
+                // close the renderer
+                renderer.close();
+
+                triggerOnLoadPdfListener(listener, bitmap);
+
+            }
+
+        }.start();
+
+
 
     }
 
