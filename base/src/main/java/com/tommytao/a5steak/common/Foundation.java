@@ -1,18 +1,22 @@
 package com.tommytao.a5steak.common;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.pdf.PdfRenderer;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ParcelFileDescriptor;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -133,9 +137,19 @@ public class Foundation implements SensorEventListener {
 
         public void onComplete(JSONObject response);
 
+    }
+
+    public static interface OnLoadPdfListener {
+
+        public void onComplete(Bitmap bitmap);
 
     }
 
+    public static interface OnLoadPdfPageCountListener {
+
+        public void onComplete(int pageCount);
+
+    }
 
     public static final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 60 * 1000; // 10000
     public static final int DEFAULT_READ_TIMEOUT_IN_MS = DEFAULT_CONNECT_TIMEOUT_IN_MS;
@@ -2057,6 +2071,105 @@ public class Foundation implements SensorEventListener {
 //        return convertedBitmap;
 
         return bitmap.copy(config, false);
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    protected PdfRenderer fileToPdfRenderer(File file){
+
+        if (getAndroidApiLevel() < Build.VERSION_CODES.LOLLIPOP){ // i.e. 21
+            return null;
+        }
+
+        PdfRenderer result = null;
+
+        try {
+            result = new PdfRenderer(appContext.getContentResolver().openFileDescriptor(Uri.fromFile(file), "r"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+
+    }
+
+    protected void triggerOnLoadPdfPageCountListener(final OnLoadPdfPageCountListener listener, final int pageCount){
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onComplete(pageCount);
+            }
+        });
+    }
+
+    protected void triggerOnLoadPdfListener(final OnLoadPdfListener listener, final Bitmap bitmap){
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onComplete(bitmap);
+            }
+        });
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void loadPdfPageCount(final File pdfFile, final OnLoadPdfPageCountListener listener){
+
+        new Thread(){
+
+            public void run(){
+
+                // create a new renderer
+                PdfRenderer renderer = fileToPdfRenderer(pdfFile);
+
+                if (renderer == null){
+                    triggerOnLoadPdfPageCountListener(listener, -1);
+                }
+
+                triggerOnLoadPdfPageCountListener(listener, renderer.getPageCount());
+
+            }
+
+        }.start();
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void loadPdf(final File pdfFile, final int pageIndex,
+                        final int specificWidth, final int specificHeight, final OnLoadPdfListener listener){
+
+        new Thread(){
+
+            public void run(){
+
+                // create a new renderer
+                PdfRenderer renderer = fileToPdfRenderer(pdfFile);
+
+                if (renderer == null){
+                    triggerOnLoadPdfListener(listener, null);
+                }
+
+                if (pageIndex >= renderer.getPageCount()){
+                    triggerOnLoadPdfListener(listener, null);
+                }
+
+                // let us just render all pages
+                PdfRenderer.Page page = renderer.openPage(pageIndex);
+
+                // say we render for showing on the screen
+                Bitmap bitmap = Bitmap.createBitmap(specificWidth, specificHeight, Bitmap.Config.ARGB_4444);
+                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+
+                // close the page
+                page.close();
+
+                // close the renderer
+                renderer.close();
+
+                triggerOnLoadPdfListener(listener, bitmap);
+
+            }
+
+        }.start();
 
     }
 

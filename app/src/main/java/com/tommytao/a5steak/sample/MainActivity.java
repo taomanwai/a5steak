@@ -1,63 +1,53 @@
 package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.ContentResolver;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.tommytao.a5steak.customview.PullToSearchListView;
-import com.tommytao.a5steak.system.DeviceInfoManager;
+import com.tommytao.a5steak.common.Foundation;
+import com.tommytao.a5steak.misc.BitmapManager;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 
 public class MainActivity extends Activity {
 
-    public class MainAdapter extends BaseAdapter {
 
-        private Context context;
-
-        public MainAdapter(Context context) {
-
-            this.context = context;
-        }
-
-        @Override
-        public int getCount() {
-            return 30;
-        }
-
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            if (convertView==null){
-                convertView = LayoutInflater.from(context).inflate(R.layout.listitem_main, null);
-            }
-
-            return convertView;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-    }
-
-    private PullToSearchListView plvQuery;
 
     private ImageView iv_Test;
 
+    private File getPdfFile(){
+        ParcelFileDescriptor fd = null;
+
+        ContentResolver contentResolver = getContentResolver();
+
+        File f = null;
+        Uri uri = null;
+
+        f = new File(getCacheDir()+"/m1.map");
+        if (!f.exists()) try {
+
+            InputStream is = getAssets().open("deep.pdf");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(buffer);
+            fos.close();
+        } catch (Exception e) { throw new RuntimeException(e); }
+
+        return f;
+    }
 
 
     @Override
@@ -67,33 +57,28 @@ public class MainActivity extends Activity {
 
         iv_Test = (ImageView) findViewById(R.id.iv_Test);
 
-        DeviceInfoManager.getInstance().init(this);
+        BitmapManager.getInstance().init(this);
 
+        if (true){
 
+            BitmapManager.getInstance().loadPdf(getPdfFile(), 0, 612, 792, new Foundation.OnLoadPdfListener() {
+                @Override
+                public void onComplete(Bitmap bitmap) {
+                    iv_Test.setImageBitmap(bitmap);
+                }
+            });
 
+            return;
+        }
 
-        plvQuery = (PullToSearchListView) findViewById(R.id.plvQuery);
-
-        plvQuery.setAdapter(new MainAdapter(this));
-
-        plvQuery.addHeaderEditTextTextChangedListener(new TextWatcher() {
+        BitmapManager.getInstance().loadPdfPageCount(getPdfFile(), new Foundation.OnLoadPdfPageCountListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void onComplete(int pageCount) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Toast.makeText(MainActivity.this, plvQuery.getHeaderEditText().getText().toString(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+                Log.d("fdsa", "pageCountT " + pageCount);
 
             }
         });
-
-
 
 
 
