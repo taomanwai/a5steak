@@ -2123,6 +2123,7 @@ public class Foundation implements SensorEventListener {
 
                 if (renderer == null){
                     triggerOnLoadPdfPageCountListener(listener, -1);
+                    return;
                 }
 
                 triggerOnLoadPdfPageCountListener(listener, renderer.getPageCount());
@@ -2146,10 +2147,12 @@ public class Foundation implements SensorEventListener {
 
                 if (renderer == null){
                     triggerOnLoadPdfListener(listener, null);
+                    return;
                 }
 
                 if (pageIndex >= renderer.getPageCount()){
                     triggerOnLoadPdfListener(listener, null);
+                    return;
                 }
 
                 // let us just render all pages

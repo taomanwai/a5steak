@@ -17,6 +17,7 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
 import com.tommytao.a5steak.common.Foundation;
+import com.tommytao.a5steak.customview.PdfView;
 import com.tommytao.a5steak.misc.BitmapManager;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public class MainActivity extends Activity {
 
 
 
-    private WebView webView;
+    private PdfView pdfView;
 
     private File getPdfFile(){
         ParcelFileDescriptor fd = null;
@@ -62,60 +63,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        webView = (WebView) findViewById(R.id.webView);
+        pdfView = (PdfView) findViewById(R.id.pdfView);
 
         String url = "https://www.egltours.com/nfit/ism/productPdf/HKOPRENT-A-CAR-B-021mix.pdf";
 
-
-//        webView.setWebChromeClient(new WebChromeClient() {
-//            @Override
-//            public void onProgressChanged(WebView view, int progress) {
-//            }
-//
-//
-//        });
-
-        webView.setWebViewClient(new WebViewClient(){
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-//	            return false;
-
-                if ( url.endsWith(".pdf") || url.contains("fetchPdf.action")){
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse(url), "application/pdf");
-                    try{
-                        view.getContext().startActivity(intent);
-                    } catch (Exception e) {
-                        //user does not have a pdf viewer installed
-                    }
-                } else {
-                    webView.loadUrl(url);
-                }
-                return true;
-            }
-
-            @Override
-            public void onReceivedSslError (WebView view, SslErrorHandler handler, SslError error) {
-                handler.proceed();
-
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-
-            }
-
-            @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-
-
-            }
-
-        });
-
-        webView.loadUrl(url);
+        pdfView.setPdfFile(getPdfFile());
 
 
 

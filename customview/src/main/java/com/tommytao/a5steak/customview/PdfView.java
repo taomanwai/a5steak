@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -54,9 +55,12 @@ public class PdfView extends ListView {
         @Override
         public View getView(final int i, View convertView, ViewGroup viewGroup) {
 
+            // Log.d("fdsa", "getViewIndex " + i + " " + getMeasuredWidth() + " " + getMeasuredHeight());
+
             if (convertView == null){
                 convertView = new ImageView(this.ctx);
                 ((ImageView) convertView).setScaleType(ImageView.ScaleType.FIT_XY);
+                ((ImageView) convertView).setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, getMeasuredHeight()));
             }
 
             convertView.setTag(i);
@@ -73,7 +77,12 @@ public class PdfView extends ListView {
                         return;
                     }
 
-                    // TODO set size
+                    int width = getMeasuredWidth();
+                    int height = bitmap.getHeight() * width / bitmap.getWidth();
+
+                    ((ImageView) convertViewFinal).getLayoutParams().height = height;
+
+
                     ((ImageView) convertViewFinal).setImageBitmap(bitmap);
 
                 }
