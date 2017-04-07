@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
 
     private PdfView pdfView;
 
+
     private File getPdfFile(){
         ParcelFileDescriptor fd = null;
 
@@ -65,9 +66,12 @@ public class MainActivity extends Activity {
 
         pdfView = (PdfView) findViewById(R.id.pdfView);
 
-        String url = "https://www.egltours.com/nfit/ism/productPdf/HKOPRENT-A-CAR-B-021mix.pdf";
 
-        pdfView.setPdfLink(url);
+
+        String url = "https://www.egltours.com/nfit/ism/productPdf/HKOPRENT-A-CAR-B-021mix.pdf";
+        String url2 = "http://tommytaobucket.s3.amazonaws.com/deep.pdf";
+
+        pdfView.setPdfLink(url2);
 
 
 

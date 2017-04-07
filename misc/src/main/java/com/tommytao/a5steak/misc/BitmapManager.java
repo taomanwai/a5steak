@@ -306,7 +306,7 @@ public class BitmapManager extends Foundation {
         return super.chop(bitmap, targetWidth, targetHeight, topHorizontalCenterMode);
     }
 
-    public Bitmap loadPicture(Picture picture) {chop
+    public Bitmap loadPicture(Picture picture) {
 
         PictureDrawable pd = new PictureDrawable(picture);
 

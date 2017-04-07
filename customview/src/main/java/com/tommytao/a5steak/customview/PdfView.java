@@ -1,8 +1,11 @@
 package com.tommytao.a5steak.customview;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +17,8 @@ import android.widget.ListView;
 import com.tommytao.a5steak.common.Foundation;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 /**
  * Created by tommytao on 7/4/2017.
@@ -142,10 +147,33 @@ public class PdfView extends ListView {
 //
 //    }
 
+    private File getPdfFile(){
+        ParcelFileDescriptor fd = null;
 
-    public String getPdfLink() {
-        return pdfLink;
+        ContentResolver contentResolver = getContext().getContentResolver();
+
+        File f = null;
+        Uri uri = null;
+
+        f = new File(getContext().getCacheDir()+"/m1.map");
+        if (!f.exists()) try {
+
+            InputStream is = getContext().getAssets().open("deep.pdf");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(buffer);
+            fos.close();
+        } catch (Exception e) { throw new RuntimeException(e); }
+
+        return f;
     }
+
+
 
     public void setPdfLink(final String link) {
 
@@ -162,6 +190,7 @@ public class PdfView extends ListView {
                     if (pdfLink != link){
                         return;
                     }
+
 
                     getFoundation().loadPdfPageCount(file, new Foundation.OnLoadPdfPageCountListener() {
                         @Override
