@@ -39,6 +39,11 @@ public class PdfView extends ListView {
 
         @Override
         public int getCount() {
+
+            if (pageCount < 0){
+                return 0;
+            }
+
             return pageCount;
         }
 
@@ -55,9 +60,8 @@ public class PdfView extends ListView {
         @Override
         public View getView(final int i, View convertView, ViewGroup viewGroup) {
 
-            // Log.d("fdsa", "getViewIndex " + i + " " + getMeasuredWidth() + " " + getMeasuredHeight());
 
-            if (convertView == null){
+            if (convertView == null) {
                 convertView = new ImageView(this.ctx);
                 ((ImageView) convertView).setScaleType(ImageView.ScaleType.FIT_XY);
                 ((ImageView) convertView).setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, getMeasuredHeight()));
@@ -73,7 +77,13 @@ public class PdfView extends ListView {
 
                     int taggedPosition = (Integer) convertViewFinal.getTag();
 
-                    if (taggedPosition != i){
+                    if (taggedPosition != i) {
+                        return;
+                    }
+
+                    if (bitmap == null){
+                        ((ImageView) convertViewFinal).getLayoutParams().height = getMeasuredHeight();
+                        ((ImageView) convertViewFinal).setImageBitmap(null);
                         return;
                     }
 
@@ -82,6 +92,12 @@ public class PdfView extends ListView {
 
                     ((ImageView) convertViewFinal).getLayoutParams().height = height;
 
+                    int bitmapSize = bitmap.getWidth() * bitmap.getHeight();
+                    int displaySize = width * height;
+
+                    if (bitmapSize > displaySize){
+                        bitmap = foundation.chop(bitmap, width, height, false);
+                    }
 
                     ((ImageView) convertViewFinal).setImageBitmap(bitmap);
 
@@ -93,7 +109,8 @@ public class PdfView extends ListView {
         }
     }
 
-    private File pdfFile;
+    //    private File pdfFile;
+    private String pdfLink = "";
     private Foundation foundation;
 
     public PdfView(Context context) {
@@ -108,9 +125,9 @@ public class PdfView extends ListView {
         super(context, attrs, defStyleAttr);
     }
 
-    private Foundation getFoundation(){
+    private Foundation getFoundation() {
 
-        if (foundation == null){
+        if (foundation == null) {
             foundation = new Foundation();
             foundation.init(getContext());
         }
@@ -119,32 +136,81 @@ public class PdfView extends ListView {
 
     }
 
-    public File getPdfFile() {
+//    public File getPdfFile() {
+//
+//        return pdfFile;
+//
+//    }
 
-        return pdfFile;
 
+    public String getPdfLink() {
+        return pdfLink;
     }
 
-    public void setPdfFile(final File file) {
+    public void setPdfLink(final String link) {
 
-        if (pdfFile != file){
+        if (!pdfLink.equals(link)) {
 
-            pdfFile = file;
+            pdfLink = link;
 
-            getFoundation().loadPdfPageCount(file, new Foundation.OnLoadPdfPageCountListener() {
+            final String cacheFilename = String.valueOf(getFoundation().genUniqueId()) + ".pdf";
+
+            getFoundation().httpGetFile(link, 1, getContext().getCacheDir().getAbsolutePath(), cacheFilename, new Foundation.OnHttpGetFileListener() {
                 @Override
-                public void onComplete(int pageCount) {
+                public void onDownloaded(final File file) {
 
-                    if (pdfFile != file){
+                    if (pdfLink != link){
                         return;
                     }
 
-                    setAdapter(new PdfAdapter(getContext(), getFoundation(), file, pageCount));
+                    getFoundation().loadPdfPageCount(file, new Foundation.OnLoadPdfPageCountListener() {
+                        @Override
+                        public void onComplete(int pageCount) {
+
+                            if (pdfLink != link){
+                                return;
+                            }
+
+                            setAdapter(new PdfAdapter(getContext(), getFoundation(), file, pageCount));
+
+                        }
+                    });
+
+
+                }
+
+                @Override
+                public void onDownloading(int percentage) {
 
                 }
             });
 
+
         }
 
+
     }
+
+//    public void setPdfFile(final File file) {
+//
+//        if (pdfFile != file){
+//
+//            pdfFile = file;
+//
+//            getFoundation().loadPdfPageCount(file, new Foundation.OnLoadPdfPageCountListener() {
+//                @Override
+//                public void onComplete(int pageCount) {
+//
+//                    if (pdfFile != file){
+//                        return;
+//                    }
+//
+//                    setAdapter(new PdfAdapter(getContext(), getFoundation(), file, pageCount));
+//
+//                }
+//            });
+//
+//        }
+//
+//    }
 }

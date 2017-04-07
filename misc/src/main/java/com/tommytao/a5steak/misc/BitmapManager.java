@@ -302,74 +302,8 @@ public class BitmapManager extends Foundation {
 
     }
 
-
-
-    /**
-     * Convert to mutable bitmap (if clear old bitmap function is enabled,
-     * the old bitmap should not be referenced by variable outside this function,
-     * including the caller function)
-     *
-     * @param bitmap       Bitmap being chopped
-     * @param targetWidth  Target width of bitmap
-     * @param targetHeight Target height of bitmap
-     * @param topHorizontalCenterMode True: chop and remain top and horizontal center; False: chop out non-center region
-     * @return Chopped bitmap
-     */
-    private Bitmap chop(Bitmap bitmap, int targetWidth, int targetHeight, boolean topHorizontalCenterMode) {
-
-        if (bitmap == null || bitmap.isRecycled() || targetWidth <= 0 || targetHeight <= 0)
-            return null;
-
-
-        Matrix m = new Matrix();
-
-        // Scale
-        double widthScale = 1;
-        double heightScale = 1;
-        double realScale = 1;
-
-        widthScale = (double) targetWidth / bitmap.getWidth();
-        heightScale = (double) targetHeight / bitmap.getHeight();
-
-        realScale = Math.max(widthScale, heightScale);
-
-        int scaledBMPWidth = (int) (bitmap.getWidth() * realScale);
-        int scaledBMPHeight = (int) (bitmap.getHeight() * realScale);
-
-        m.postScale((float) realScale, (float) realScale);
-
-        // chop location (left, top), width and height
-        int b4choppedBMPWidth = (int) (targetWidth / realScale);
-        int b4choppedBMPHeight = (int) (targetHeight / realScale);
-        int b4choppedBMPLeft = 0;
-        int b4choppedBMPTop = 0;
-
-        if (widthScale > heightScale) {
-            // chop vertical
-            b4choppedBMPLeft = 0;
-            b4choppedBMPTop = topHorizontalCenterMode ? 0 : ((int) (((scaledBMPHeight - (float) targetHeight
-                    / targetWidth * scaledBMPWidth)) / 2 / realScale));
-        } else {
-            // chop horizontal
-            b4choppedBMPLeft = (int) (((scaledBMPWidth - (float) targetWidth
-                    / targetHeight * scaledBMPHeight)) / 2 / realScale);
-
-            b4choppedBMPTop = 0;
-
-        }
-
-        Bitmap result = Bitmap
-                .createBitmap(bitmap, b4choppedBMPLeft, b4choppedBMPTop,
-                        b4choppedBMPWidth, b4choppedBMPHeight, m, true);
-
-
-        if (result.getWidth() != targetWidth
-                || result.getHeight() != targetHeight) {
-            //  do nothing
-        }
-
-        return result;
-
+    public Bitmap chop(Bitmap bitmap, int targetWidth, int targetHeight, boolean topHorizontalCenterMode) {
+        return super.chop(bitmap, targetWidth, targetHeight, topHorizontalCenterMode);
     }
 
     public Bitmap loadPicture(Picture picture) {

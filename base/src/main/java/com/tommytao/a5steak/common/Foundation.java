@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.pdf.PdfRenderer;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -247,7 +248,7 @@ public class Foundation implements SensorEventListener {
 
     }
 
-    protected void httpGetFile(final String link, final int maxNoOfRetries, final String directory, final String fileName, final OnHttpGetFileListener listener) {
+    public void httpGetFile(final String link, final int maxNoOfRetries, final String directory, final String fileName, final OnHttpGetFileListener listener) {
 
         log("base: file: " + link);
 
@@ -2049,7 +2050,7 @@ public class Foundation implements SensorEventListener {
     }
 
     // == Generate unique ID ==
-    protected int genUniqueId() {
+    public int genUniqueId() {
 
         return (int) (Math.random() * Integer.MAX_VALUE);
 
@@ -2062,6 +2063,75 @@ public class Foundation implements SensorEventListener {
     }
 
     // == BitmapManager ==
+
+    /**
+     * Convert to mutable bitmap (if clear old bitmap function is enabled,
+     * the old bitmap should not be referenced by variable outside this function,
+     * including the caller function)
+     *
+     * @param bitmap       Bitmap being chopped
+     * @param targetWidth  Target width of bitmap
+     * @param targetHeight Target height of bitmap
+     * @param topHorizontalCenterMode True: chop and remain top and horizontal center; False: chop out non-center region
+     * @return Chopped bitmap
+     */
+    public Bitmap chop(Bitmap bitmap, int targetWidth, int targetHeight, boolean topHorizontalCenterMode) {
+
+        if (bitmap == null || bitmap.isRecycled() || targetWidth <= 0 || targetHeight <= 0)
+            return null;
+
+
+        Matrix m = new Matrix();
+
+        // Scale
+        double widthScale = 1;
+        double heightScale = 1;
+        double realScale = 1;
+
+        widthScale = (double) targetWidth / bitmap.getWidth();
+        heightScale = (double) targetHeight / bitmap.getHeight();
+
+        realScale = Math.max(widthScale, heightScale);
+
+        int scaledBMPWidth = (int) (bitmap.getWidth() * realScale);
+        int scaledBMPHeight = (int) (bitmap.getHeight() * realScale);
+
+        m.postScale((float) realScale, (float) realScale);
+
+        // chop location (left, top), width and height
+        int b4choppedBMPWidth = (int) (targetWidth / realScale);
+        int b4choppedBMPHeight = (int) (targetHeight / realScale);
+        int b4choppedBMPLeft = 0;
+        int b4choppedBMPTop = 0;
+
+        if (widthScale > heightScale) {
+            // chop vertical
+            b4choppedBMPLeft = 0;
+            b4choppedBMPTop = topHorizontalCenterMode ? 0 : ((int) (((scaledBMPHeight - (float) targetHeight
+                    / targetWidth * scaledBMPWidth)) / 2 / realScale));
+        } else {
+            // chop horizontal
+            b4choppedBMPLeft = (int) (((scaledBMPWidth - (float) targetWidth
+                    / targetHeight * scaledBMPHeight)) / 2 / realScale);
+
+            b4choppedBMPTop = 0;
+
+        }
+
+        Bitmap result = Bitmap
+                .createBitmap(bitmap, b4choppedBMPLeft, b4choppedBMPTop,
+                        b4choppedBMPWidth, b4choppedBMPHeight, m, true);
+
+
+        if (result.getWidth() != targetWidth
+                || result.getHeight() != targetHeight) {
+            //  do nothing
+        }
+
+        return result;
+
+    }
+
     protected Bitmap convertBitmapConfig(Bitmap bitmap, Bitmap.Config config) {
 //        Bitmap convertedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), config);
 //        Canvas canvas = new Canvas(convertedBitmap);
@@ -2142,8 +2212,12 @@ public class Foundation implements SensorEventListener {
 
             public void run(){
 
+
+
                 // create a new renderer
                 PdfRenderer renderer = fileToPdfRenderer(pdfFile);
+
+
 
                 if (renderer == null){
                     triggerOnLoadPdfListener(listener, null);
@@ -2155,11 +2229,14 @@ public class Foundation implements SensorEventListener {
                     return;
                 }
 
+                Log.d("fds", "pageIndexTT: " + pageIndex);
+
                 // let us just render all pages
                 PdfRenderer.Page page = renderer.openPage(pageIndex);
 
+
                 // say we render for showing on the screen
-                Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+                Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_4444);
                 page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
 
                 // close the page

@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
 
         String url = "https://www.egltours.com/nfit/ism/productPdf/HKOPRENT-A-CAR-B-021mix.pdf";
 
-        pdfView.setPdfFile(getPdfFile());
+        pdfView.setPdfLink(url);
 
 
 
