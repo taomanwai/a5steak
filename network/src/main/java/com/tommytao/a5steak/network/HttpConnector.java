@@ -72,7 +72,7 @@ public class HttpConnector extends Foundation {
     }
 
     @Override
-    protected void httpGetFile(String link, int maxNoOfRetries, String directory, String fileName, OnHttpGetFileListener listener) {
+    public void httpGetFile(String link, int maxNoOfRetries, String directory, String fileName, OnHttpGetFileListener listener) {
         super.httpGetFile(link, maxNoOfRetries, directory, fileName, listener);
     }
 
