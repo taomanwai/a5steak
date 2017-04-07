@@ -2,11 +2,18 @@ package com.tommytao.a5steak.sample;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
+import android.view.View;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
 import com.tommytao.a5steak.common.Foundation;
@@ -21,7 +28,7 @@ public class MainActivity extends Activity {
 
 
 
-    private ImageView iv_Test;
+    private WebView webView;
 
     private File getPdfFile(){
         ParcelFileDescriptor fd = null;
@@ -55,30 +62,62 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        iv_Test = (ImageView) findViewById(R.id.iv_Test);
+        webView = (WebView) findViewById(R.id.webView);
 
-        BitmapManager.getInstance().init(this);
+        String url = "https://www.egltours.com/nfit/ism/productPdf/HKOPRENT-A-CAR-B-021mix.pdf";
 
-        if (true){
 
-            BitmapManager.getInstance().loadPdf(getPdfFile(), 0, new Foundation.OnLoadPdfListener() {
-                @Override
-                public void onComplete(Bitmap bitmap) {
-                    iv_Test.setImageBitmap(bitmap);
-                }
-            });
+//        webView.setWebChromeClient(new WebChromeClient() {
+//            @Override
+//            public void onProgressChanged(WebView view, int progress) {
+//            }
+//
+//
+//        });
 
-            return;
-        }
+        webView.setWebViewClient(new WebViewClient(){
 
-        BitmapManager.getInstance().loadPdfPageCount(getPdfFile(), new Foundation.OnLoadPdfPageCountListener() {
             @Override
-            public void onComplete(int pageCount) {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//	            return false;
 
-                Log.d("fdsa", "pageCountT " + pageCount);
+                if ( url.endsWith(".pdf") || url.contains("fetchPdf.action")){
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse(url), "application/pdf");
+                    try{
+                        view.getContext().startActivity(intent);
+                    } catch (Exception e) {
+                        //user does not have a pdf viewer installed
+                    }
+                } else {
+                    webView.loadUrl(url);
+                }
+                return true;
+            }
+
+            @Override
+            public void onReceivedSslError (WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
 
             }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+
+
+            }
+
         });
+
+        webView.loadUrl(url);
+
+
 
 
 

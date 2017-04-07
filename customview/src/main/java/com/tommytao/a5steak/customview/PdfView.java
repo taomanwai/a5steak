@@ -1,6 +1,8 @@
 package com.tommytao.a5steak.customview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,16 +20,18 @@ import java.io.File;
 
 public class PdfView extends ListView {
 
-    public class PdfAdapter extends BaseAdapter {
+    private class PdfAdapter extends BaseAdapter {
 
         private Context ctx;
 
+        private Foundation foundation;
         private File pdfFile;
         private int pageCount = -1;
 
 
-        public PdfAdapter(Context ctx, File pdfFile, int pageCount) {
+        public PdfAdapter(Context ctx, Foundation foundation, File pdfFile, int pageCount) {
             this.ctx = ctx;
+            this.foundation = foundation;
             this.pdfFile = pdfFile;
             this.pageCount = pageCount;
         }
@@ -48,12 +52,32 @@ public class PdfView extends ListView {
         }
 
         @Override
-        public View getView(int i, View convertView, ViewGroup viewGroup) {
+        public View getView(final int i, View convertView, ViewGroup viewGroup) {
 
             if (convertView == null){
                 convertView = new ImageView(this.ctx);
+                ((ImageView) convertView).setScaleType(ImageView.ScaleType.FIT_XY);
             }
 
+            convertView.setTag(i);
+
+            final View convertViewFinal = convertView;
+
+            foundation.loadPdf(pdfFile, i, new Foundation.OnLoadPdfListener() {
+                @Override
+                public void onComplete(Bitmap bitmap) {
+
+                    int taggedPosition = (Integer) convertViewFinal.getTag();
+
+                    if (taggedPosition != i){
+                        return;
+                    }
+
+                    // TODO set size
+                    ((ImageView) convertViewFinal).setImageBitmap(bitmap);
+
+                }
+            });
 
 
             return convertView;
@@ -106,7 +130,7 @@ public class PdfView extends ListView {
                         return;
                     }
 
-                    setAdapter(new PdfAdapter(getContext(), file, pageCount));
+                    setAdapter(new PdfAdapter(getContext(), getFoundation(), file, pageCount));
 
                 }
             });
