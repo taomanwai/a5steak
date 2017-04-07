@@ -2075,7 +2075,7 @@ public class Foundation implements SensorEventListener {
      * @param topHorizontalCenterMode True: chop and remain top and horizontal center; False: chop out non-center region
      * @return Chopped bitmap
      */
-    public Bitmap chop(Bitmap bitmap, int targetWidth, int targetHeight, boolean topHorizontalCenterMode) {
+    protected Bitmap chop(Bitmap bitmap, int targetWidth, int targetHeight, boolean topHorizontalCenterMode) {
 
         if (bitmap == null || bitmap.isRecycled() || targetWidth <= 0 || targetHeight <= 0)
             return null;

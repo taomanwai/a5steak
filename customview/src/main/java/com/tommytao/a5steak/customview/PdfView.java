@@ -92,12 +92,12 @@ public class PdfView extends ListView {
 
                     ((ImageView) convertViewFinal).getLayoutParams().height = height;
 
-                    int bitmapSize = bitmap.getWidth() * bitmap.getHeight();
-                    int displaySize = width * height;
-
-                    if (bitmapSize > displaySize){
-                        bitmap = foundation.chop(bitmap, width, height, false);
-                    }
+//                    int bitmapSize = bitmap.getWidth() * bitmap.getHeight();
+//                    int displaySize = width * height;
+//
+//                    if (bitmapSize > displaySize){
+//                        bitmap = foundation.chop(bitmap, width, height, false);
+//                    }
 
                     ((ImageView) convertViewFinal).setImageBitmap(bitmap);
 
