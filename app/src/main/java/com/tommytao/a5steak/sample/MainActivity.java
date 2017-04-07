@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
 
         if (true){
 
-            BitmapManager.getInstance().loadPdf(getPdfFile(), 0, 612, 792, new Foundation.OnLoadPdfListener() {
+            BitmapManager.getInstance().loadPdf(getPdfFile(), 0, new Foundation.OnLoadPdfListener() {
                 @Override
                 public void onComplete(Bitmap bitmap) {
                     iv_Test.setImageBitmap(bitmap);

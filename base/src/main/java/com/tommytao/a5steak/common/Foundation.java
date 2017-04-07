@@ -2135,7 +2135,7 @@ public class Foundation implements SensorEventListener {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void loadPdf(final File pdfFile, final int pageIndex,
-                        final int specificWidth, final int specificHeight, final OnLoadPdfListener listener){
+                        final OnLoadPdfListener listener){
 
         new Thread(){
 
@@ -2156,7 +2156,7 @@ public class Foundation implements SensorEventListener {
                 PdfRenderer.Page page = renderer.openPage(pageIndex);
 
                 // say we render for showing on the screen
-                Bitmap bitmap = Bitmap.createBitmap(specificWidth, specificHeight, Bitmap.Config.ARGB_4444);
+                Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
                 page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
 
                 // close the page

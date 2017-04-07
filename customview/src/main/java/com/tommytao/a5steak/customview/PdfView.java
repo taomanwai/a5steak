@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.tommytao.a5steak.common.Foundation;
@@ -47,8 +48,15 @@ public class PdfView extends ListView {
         }
 
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            return null;
+        public View getView(int i, View convertView, ViewGroup viewGroup) {
+
+            if (convertView == null){
+                convertView = new ImageView(this.ctx);
+            }
+
+
+
+            return convertView;
         }
     }
 

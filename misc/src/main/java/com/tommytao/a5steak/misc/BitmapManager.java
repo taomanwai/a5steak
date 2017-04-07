@@ -408,8 +408,8 @@ public class BitmapManager extends Foundation {
 
     @Override
     public void loadPdf(final File pdfFile, final int pageIndex,
-                           final int specificWidth, final int specificHeight, final OnLoadPdfListener listener){
-        super.loadPdf(pdfFile, pageIndex, specificWidth, specificHeight, listener);
+                        final OnLoadPdfListener listener){
+        super.loadPdf(pdfFile, pageIndex, listener);
     }
 
     public void save(Bitmap bitmap, String folderName, String fileName) {
