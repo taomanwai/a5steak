@@ -19,6 +19,9 @@ import com.tommytao.a5steak.common.Foundation;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by tommytao on 7/4/2017.
@@ -45,7 +48,7 @@ public class PdfView extends ListView {
         @Override
         public int getCount() {
 
-            if (pageCount < 0){
+            if (pageCount < 0) {
                 return 0;
             }
 
@@ -86,7 +89,7 @@ public class PdfView extends ListView {
                         return;
                     }
 
-                    if (bitmap == null){
+                    if (bitmap == null) {
                         ((ImageView) convertViewFinal).getLayoutParams().height = getMeasuredHeight();
                         ((ImageView) convertViewFinal).setImageBitmap(null);
                         return;
@@ -100,7 +103,7 @@ public class PdfView extends ListView {
                     int bitmapSize = bitmap.getWidth() * bitmap.getHeight();
                     int displaySize = width * height;
 
-                    if (bitmapSize > displaySize){
+                    if (bitmapSize > displaySize) {
                         bitmap = foundation.chop(bitmap, width, height, false);
                     }
 
@@ -117,6 +120,7 @@ public class PdfView extends ListView {
     //    private File pdfFile;
     private String pdfLink = "";
     private Foundation foundation;
+
 
     public PdfView(Context context) {
         super(context);
@@ -147,7 +151,7 @@ public class PdfView extends ListView {
 //
 //    }
 
-    private File getPdfFile(){
+    private File getPdfFile() {
         ParcelFileDescriptor fd = null;
 
         ContentResolver contentResolver = getContext().getContentResolver();
@@ -155,7 +159,7 @@ public class PdfView extends ListView {
         File f = null;
         Uri uri = null;
 
-        f = new File(getContext().getCacheDir()+"/m1.map");
+        f = new File(getContext().getCacheDir() + "/m1.map");
         if (!f.exists()) try {
 
             InputStream is = getContext().getAssets().open("deep.pdf");
@@ -168,11 +172,12 @@ public class PdfView extends ListView {
             FileOutputStream fos = new FileOutputStream(f);
             fos.write(buffer);
             fos.close();
-        } catch (Exception e) { throw new RuntimeException(e); }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return f;
     }
-
 
 
     public void setPdfLink(final String link) {
@@ -187,7 +192,7 @@ public class PdfView extends ListView {
                 @Override
                 public void onDownloaded(final File file) {
 
-                    if (pdfLink != link){
+                    if (pdfLink != link) {
                         return;
                     }
 
@@ -196,7 +201,7 @@ public class PdfView extends ListView {
                         @Override
                         public void onComplete(int pageCount) {
 
-                            if (pdfLink != link){
+                            if (pdfLink != link) {
                                 return;
                             }
 

@@ -82,6 +82,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -166,6 +169,8 @@ public class Foundation implements SensorEventListener {
 
     protected RequestQueue requestQueue;
 
+    protected ThreadPoolExecutor renderPdfExecutor;
+
     public boolean init(Context context) {
 
         return init(context, null);
@@ -185,7 +190,16 @@ public class Foundation implements SensorEventListener {
 
         this.requestQueue = requestQueue;
 
+        initRenderPdfExecutor();
+
         return true;
+
+    }
+
+    public void initRenderPdfExecutor(){
+
+        renderPdfExecutor = new ThreadPoolExecutor(1, 1, Long.MAX_VALUE, TimeUnit.DAYS, new LinkedBlockingQueue<Runnable>());
+        renderPdfExecutor.allowCoreThreadTimeOut(true);
 
     }
 
@@ -2184,14 +2198,33 @@ public class Foundation implements SensorEventListener {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void loadPdfPageCount(final File pdfFile, final OnLoadPdfPageCountListener listener){
 
-        new Thread(){
+//        new Thread(){
+//
+//            public void run(){
+//
+//                // create a new renderer
+//                PdfRenderer renderer = fileToPdfRenderer(pdfFile);
+//
+//                if (renderer == null){
+//                    triggerOnLoadPdfPageCountListener(listener, -1);
+//                    return;
+//                }
+//
+//                triggerOnLoadPdfPageCountListener(listener, renderer.getPageCount());
+//
+//            }
+//
+//        }.start();
 
-            public void run(){
+
+        renderPdfExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
 
                 // create a new renderer
                 PdfRenderer renderer = fileToPdfRenderer(pdfFile);
 
-                if (renderer == null){
+                if (renderer == null) {
                     triggerOnLoadPdfPageCountListener(listener, -1);
                     return;
                 }
@@ -2199,8 +2232,7 @@ public class Foundation implements SensorEventListener {
                 triggerOnLoadPdfPageCountListener(listener, renderer.getPageCount());
 
             }
-
-        }.start();
+        });
 
     }
 
@@ -2208,11 +2240,50 @@ public class Foundation implements SensorEventListener {
     public void loadPdf(final File pdfFile, final int pageIndex,
                         final OnLoadPdfListener listener){
 
-        new Thread(){
+//        new Thread(){
+//
+//            public void run(){
+//
+//                // create a new renderer
+//                PdfRenderer renderer = fileToPdfRenderer(pdfFile);
+//
+//
+//
+//                if (renderer == null){
+//                    triggerOnLoadPdfListener(listener, null);
+//                    return;
+//                }
+//
+//                if (pageIndex >= renderer.getPageCount()){
+//                    triggerOnLoadPdfListener(listener, null);
+//                    return;
+//                }
+//
+//                Log.d("fds", "pageIndexTT: " + pageIndex);
+//
+//                // let us just render all pages
+//                PdfRenderer.Page page = renderer.openPage(pageIndex);
+//
+//
+//                // say we render for showing on the screen
+//                Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_4444);
+//                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+//
+//                // close the page
+//                page.close();
+//
+//                // close the renderer
+//                renderer.close();
+//
+//                triggerOnLoadPdfListener(listener, bitmap);
+//
+//            }
+//
+//        }.start();
 
-            public void run(){
-
-
+        renderPdfExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
 
                 // create a new renderer
                 PdfRenderer renderer = fileToPdfRenderer(pdfFile);
@@ -2248,8 +2319,7 @@ public class Foundation implements SensorEventListener {
                 triggerOnLoadPdfListener(listener, bitmap);
 
             }
-
-        }.start();
+        });
 
     }
 
