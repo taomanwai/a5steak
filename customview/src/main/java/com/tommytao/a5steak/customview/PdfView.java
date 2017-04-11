@@ -79,6 +79,8 @@ public class PdfView extends ListView {
 
             final View convertViewFinal = convertView;
 
+            ((ImageView) convertViewFinal).setImageBitmap(null);
+
             foundation.loadPdf(pdfFile, i, new Foundation.OnLoadPdfListener() {
                 @Override
                 public void onComplete(Bitmap bitmap) {
